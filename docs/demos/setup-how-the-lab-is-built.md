@@ -330,9 +330,10 @@ oc patch console.operator cluster --type json -p "[{\"op\":\"add\",\"path\":\"/s
   (MTV's disk copy), and the peer cluster's `api-int` 6443 and ingress 443.
 - On each tooled site, Secret + **`Provider/ovedr-vcenter0<N>`** (type `vsphere`, url `https://vcenter0<N>…/sdk`). It
   carries `user`, `password`, `url` and **`cacert`**: the certificate chain vCenter serves, so TLS is verified, never skipped.
-- **VDDK:** if the repo variable `MTV_VDDK_IMAGE` is set, the provider gets `settings.vddkInitImage`. Without it,
-  migrations are **cold only** and slower. Warm migration (Demo 2) needs it. Why the customer must supply it, and how to
-  build it: [S.15](#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence).
+- **VDDK:** the step before (`vddk`) copies the lab's saved VDDK image into the cluster's registry, and the provider
+  gets `settings.vddkInitImage` pointing at it. Without it, migrations are **cold only** and slower. Warm migration
+  (Demo 2) needs it. Why the customer must supply it, and how to build it:
+  [S.15](#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence).
 
 **Check:**
 
@@ -988,7 +989,11 @@ public registry. In a real migration project this is one of the first prerequisi
    oc -n openshift-mtv get istag vddk:latest                    # image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest
    ```
 
-   **[verify: the image-pull grant the migration pods need to read `openshift-mtv/vddk` from the target namespaces]**
+   MTV's migration pods run in the **target** namespace, so let every service account pull from `openshift-mtv`:
+
+   ```bash
+   oc -n openshift-mtv policy add-role-to-group system:image-puller system:serviceaccounts
+   ```
 
 4. Point the vSphere provider at it. **Console:** Migration for Virtualization → Providers → your vSphere provider →
    **VDDK init image** → edit. **CLI:**
@@ -998,10 +1003,26 @@ public registry. In a real migration project this is one of the first prerequisi
      -p '{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'
    ```
 
-**How this lab does it (BL-B27, being built):** the operator downloads the kit once into private, CI-readable storage
-(never git). When MTV is installed on a cluster, the build above runs **inside that cluster** into its own registry, and
-the provider is pointed at it. So every booking gets VDDK, nothing is redistributed, and the licensed file never leaves
-the lab's private storage. Until then the warm plans show `VDDKInitImageUnavailable` (Demo 2 §2.5).
+**How this lab does it** (`automation/customize/vddk.sh`, job `vddk`, after MTV is installed):
+
+1. **Once per VDDK version, the operator** downloads the kit with the lab's Broadcom account and runs
+   `automation/tools/vddk_image.sh <kit>`. It builds the image above and saves it in the lab's **private** registry
+   (never git, never public: the script refuses to finish if the image can be read without credentials). The image
+   holds the unpacked kit, so it is also the lab's only stored copy of the download.
+2. **Every booking, on each cluster that runs MTV:** a Docker `BuildConfig` whose `Containerfile` is just
+   `FROM <the saved image>` copies it into the cluster's own registry as `openshift-mtv/vddk:<version>`, with a
+   short-lived read-only pull credential that is deleted when the build ends. Then the `image-puller` grant above.
+3. **The vSphere provider** gets `vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:<version>`,
+   and the run's readiness table shows Demo 2 ready.
+
+So nothing is redistributed, the licensed file leaves the lab's private storage only into the lab's own clusters, and a
+booking never waits on a download. If no saved image exists yet, the `vddk` job warns, Demo 2 shows **blocked** and
+the warm plans show `VDDKInitImageUnavailable` (Demo 2 §2.5); the cold class runs as normal.
+
+**Where Broadcom keeps it:** VDDK moved to Broadcom's developer portal
+([developer.broadcom.com → SDKs → VMware Virtual Disk Development Kit](https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest)),
+behind a Broadcom sign-in. Older VMware download links no longer work. Use a VDDK version your vSphere release and your
+MTV release both support (Red Hat's MTV prerequisites list them).
 
 **Check:**
 
