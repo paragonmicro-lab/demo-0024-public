@@ -530,7 +530,7 @@
 
 <h1 id="lab-diagram">Lab diagram<a class="headerlink" href="#lab-diagram" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.0 · draft · 2026-10-06</strong> · class/demos/lab-diagram.md</p>
+<p><strong>Version 0.3.1 · draft · 2026-10-12</strong> · class/demos/lab-diagram.md</p>
 </blockquote>
 <p>One booking reserves <strong>three environments</strong> together: a vSphere landing zone (<code>lzN</code>) and two OpenShift clusters
 (<code>ocp-lzX</code> = <strong>site A</strong>, <code>ocp-lzY</code> = <strong>site B</strong>). They all run as VMs on the same four physical hosts
@@ -540,7 +540,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
 <details><summary>Diagram source (Mermaid). The SVG above is rendered from this; edit here, then re-render.</summary>
 
 <pre class="mermaid"><code>flowchart TB
-  STU(["👩‍🎓 Students: browser + oc / virtctl&lt;br/&gt;one identity (SSO), one password everywhere"])
+  STU(["👩‍🎓 Students: a web browser only&lt;br/&gt;(vSphere Client, both consoles, their browser terminal)&lt;br/&gt;one identity (SSO), one password everywhere"])
 
   subgraph VS["① vSphere · lzN · VLAN 22+N"]
     direction LR
@@ -556,7 +556,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
     A1["OpenShift Virtualization · ACM · cert-manager&lt;br/&gt;bridge → NAD vmnet(22+N)"]
     A2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzY&lt;br/&gt;staged plans d1-&amp;lt;vm&amp;gt; (not started)"]
     A3[("ODF (4 scratch SSDs)&lt;br/&gt;ceph-rbd-virtualization")]
-    A4["one namespace per student (admin)&lt;br/&gt;+ ovedr-app · sql-client"]
+    A4["one namespace per student (admin)&lt;br/&gt;with their browser terminal sql-client&lt;br/&gt;+ ovedr-app"]
     A1 --- A2 --- A3 --- A4
   end
 
@@ -565,7 +565,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
     B1["OpenShift Virtualization · ACM · cert-manager&lt;br/&gt;the same bridges / NADs"]
     B2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzX&lt;br/&gt;staged plans d1b-&amp;lt;vm&amp;gt;-to-lzY (not started)"]
     B3[("NFS · nfs-csi&lt;br/&gt;(ODF when more SSDs land)")]
-    B4["one namespace per student (admin)&lt;br/&gt;+ ovedr-app · sql-client"]
+    B4["one namespace per student (admin)&lt;br/&gt;with their browser terminal sql-client&lt;br/&gt;+ ovedr-app"]
     B1 --- B2 --- B3 --- B4
   end
 

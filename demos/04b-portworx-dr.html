@@ -683,7 +683,7 @@
 
 <h1 id="demo-4b-portworx-asynchronous-dr">Demo 4b: Portworx asynchronous DR<a class="headerlink" href="#demo-4b-portworx-asynchronous-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.0.1 · framework · 2026-10-05</strong> · class/demos/04b-portworx-dr.md</p>
+<p><strong>Version 0.1.0 · framework · 2026-10-12</strong> · class/demos/04b-portworx-dr.md</p>
 <p>🚧 <strong>Framework: to be completed when Portworx is offered on the lab clusters.</strong> This guide has the shape of the
 demo and the stages it will have, but not its final commands. Every stage lists what still needs to be written
 (<strong>TODO</strong>). The few command shapes kept here are unproven <strong>[verify]</strong>. For a class today, use
@@ -707,6 +707,13 @@ compare how Portworx and ODF each run the same disaster-recovery story.</p>
 </ul>
 <blockquote>
 <p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a> in this terminal (variables, contexts, helpers).</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
+terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
+<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
+Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
+console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
 <h2 id="4b1-pair-the-clusters-and-schedule-replication-every-15-minutes">4b.1 Pair the clusters and schedule replication every 15 minutes<a class="headerlink" href="#4b1-pair-the-clusters-and-schedule-replication-every-15-minutes" title="Permanent link">&para;</a></h2>
@@ -751,7 +758,7 @@ compare how Portworx and ODF each run the same disaster-recovery story.</p>
 <p><strong>Intent:</strong> the same proof as Demo 4 §4.4. Inject a row, then wait for a successful cycle that started after it.</p>
 <p><strong>TODO</strong>
 - Status reads: the MigrationSchedule status, each Migration's stage and bytes, and <code>pxctl</code> volume status (the jsonpaths are <strong>[verify]</strong>).
-- A poll loop like Demo 4's: <code>mark site-a d4b-wait-for-sync</code>, then poll until the last successful migration started after the mark's <code>ts</code>.
+- A poll loop like Demo 4's: <code>mark d4b-wait-for-sync</code>, then poll until the last successful migration started after the mark's <code>ts</code>.
 - 📸 <code>04b-cycle-complete</code>.</p>
 <hr />
 <h2 id="4b3-snapshot-then-a-planned-failover-to-site-b">4b.3 Snapshot, then a planned failover to site B<a class="headerlink" href="#4b3-snapshot-then-a-planned-failover-to-site-b" title="Permanent link">&para;</a></h2>
@@ -769,7 +776,7 @@ storkctl<span class="w"> </span>--context<span class="w"> </span>site-a<span cla
 storkctl<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>activate<span class="w"> </span>migration<span class="w"> </span>-n<span class="w"> </span>ovedr-app
 </code></pre></div>
 <ul>
-<li>Checks on site B: refresh your address (Lab 0 §0.6), then <code>verify site-b</code> with <code>chain_ok = t</code>, and read the touch file.</li>
+<li>Checks on site B: refresh your address (Lab 0 §0.6), then <code>verify</code> with <code>chain_ok = t</code>, and read the touch file.</li>
 </ul>
 <hr />
 <h2 id="4b4-reverse-replication-b-a-then-come-home">4b.4 Reverse replication B → A, then come home<a class="headerlink" href="#4b4-reverse-replication-b-a-then-come-home" title="Permanent link">&para;</a></h2>

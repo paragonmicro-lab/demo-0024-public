@@ -1096,7 +1096,7 @@
 
 <h1 id="demo-3-ove-ove-cold-migration">Demo 3: OVE → OVE cold migration<a class="headerlink" href="#demo-3-ove-ove-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.0 · draft · 2026-10-06</strong> · class/demos/03-ove-to-ove-cold.md</p>
+<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/03-ove-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In this demo you move your VM between two OpenShift clusters: from site A to site B. You will see how Advanced
@@ -1144,7 +1144,7 @@ and <a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</
 <td>provider <code>ovedr-ocp-&lt;A-slot&gt;</code> (type <code>openshift</code>, reads site A over <code>api-int</code> with site A's CA), plus its network map and storage map, <strong>Ready</strong>. <a href="setup-how-the-lab-is-built.html">S.5</a> · <a href="setup-how-the-lab-is-built.html">S.7</a> · <a href="setup-how-the-lab-is-built.html">S.8</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11</a></td>
 </tr>
 <tr>
-<td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID, you are <strong>admin</strong>) with your <code>Service/&lt;VM&gt;-sql</code>; <code>ovedr-app</code> with the shared <code>sql-client</code></td>
+<td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID, you are <strong>admin</strong>) with your <code>Service/&lt;VM&gt;-sql</code> and your browser terminal <code>sql-client</code></td>
 <td><strong>both</strong> clusters</td>
 <td>your VM lands in your namespace on each site; you may create and run your own plans. <a href="setup-how-the-lab-is-built.html">S.9</a></td>
 </tr>
@@ -1168,6 +1168,13 @@ site B too, so Lab 0 §0.6 is not needed.</p>
 <blockquote>
 <p><strong>Before you start:</strong> complete <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need <code>$ME</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>,
 both contexts (<code>site-a</code>, <code>site-b</code>) and the helpers (<code>sql</code>, <code>mark</code>, <code>verify</code>, <code>alive</code>, <code>where</code>).</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
+terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
+<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
+Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
+console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
 <h2 id="31-prerequisites-your-vm-is-running-on-site-a">3.1 Prerequisites: your VM is running on site A<a class="headerlink" href="#31-prerequisites-your-vm-is-running-on-site-a" title="Permanent link">&para;</a></h2>
@@ -1184,12 +1191,12 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <p>The staged plan put your VM on the VLAN bridge, so it still answers at <strong>its own <code>$VM_IP</code></strong>. (Only if you moved it
 with the pod map in Demo 1 and followed Lab 0 §0.6: keep that <code>PGHOST</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span>
-alive<span class="w">  </span>site-a<span class="w">                                  </span><span class="c1"># staleness &lt; 10 s</span>
-verify<span class="w"> </span>site-a<span class="w">                                  </span><span class="c1"># chain_ok = t, carried over from demos 1/2</span>
+alive<span class="w">                                          </span><span class="c1"># staleness &lt; 10 s</span>
+verify<span class="w">                                         </span><span class="c1"># chain_ok = t, carried over from demos 1/2</span>
 </code></pre></div>
 <h3 id="inject-before-the-move">Inject: before the move<a class="headerlink" href="#inject-before-the-move" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d3-before<span class="w"> </span><span class="s2">"on </span><span class="nv">$A</span><span class="s2">, about to move to </span><span class="nv">$B</span><span class="s2">"</span>
-verify<span class="w"> </span>site-a<span class="w">                                  </span><span class="c1"># ✍️ note marks, last id, fingerprint</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d3-before<span class="w"> </span><span class="s2">"on </span><span class="nv">$A</span><span class="s2">, about to move to </span><span class="nv">$B</span><span class="s2">"</span>
+verify<span class="w">                                         </span><span class="c1"># ✍️ note marks, last id, fingerprint</span>
 </code></pre></div>
 <p>In your VM (site A console: <strong>Virtualization → VirtualMachines → <code>&lt;VM&gt;</code> → Console</strong>, log in as <code>.\&lt;WINUSER&gt;</code>), add a
 line to your file:</p>
@@ -1363,13 +1370,13 @@ over the network</strong>. The source PVCs on site A are left untouched. That is
 <p><a href="../.images/03-3-4-check-destination-namespace-site-b.mp4"><img alt="🎬 Video: 3.4 Check the destination namespace on site B. Watch it, then do the same in the console" src="../.images/03-3-4-check-destination-namespace-site-b.jpg" /></a>
 <sub>🎬 <em>3.4 Check the destination namespace on site B: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-4-check-destination-namespace-site-b.mp4</code>).</em></sub></p>
 <p>Your VM lands in <strong>your own namespace</strong> (<code>$VMNS</code>) on site B. CI built the same things there as on site A: your
-namespace with you as admin, your Service <code>&lt;VM&gt;-sql</code> in it, and the shared <code>sql-client</code> pod in <code>ovedr-app</code> that selects each VM by name (<a href="setup-how-the-lab-is-built.html">Lab S §S.9</a>).</p>
+namespace with you as admin, your Service <code>&lt;VM&gt;-sql</code> in it (it selects your VM by name), and your site-B browser terminal <code>sql-client</code> (<a href="setup-how-the-lab-is-built.html">Lab S §S.9</a>).</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>ns<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                                        </span><span class="c1"># your namespace, on site B too</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span>get<span class="w"> </span>deploy/sql-client
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>deploy/sql-client<span class="w">                      </span><span class="c1"># your browser terminal on site B</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-sql"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.selector}{"\n"}'</span><span class="w">   </span><span class="c1"># vm.kubevirt.io/name=&lt;VM&gt;</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"no </span><span class="nv">$VM</span><span class="s2"> on site B yet"</span><span class="w">   </span><span class="c1"># expected</span>
 </code></pre></div>
-<p>✅ <code>ovedr-app</code> exists on site B, with <code>sql-client</code> ready, <code>&lt;VM&gt;-sql</code> waiting, and no copy of your VM yet.</p>
+<p>✅ Your namespace exists on site B, with your <code>sql-client</code> ready, <code>&lt;VM&gt;-sql</code> waiting, and no copy of your VM yet.</p>
 <hr />
 <h2 id="35-the-cold-move">3.5 The cold move<a class="headerlink" href="#35-the-cold-move" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 03-3-5-cold-move -->
@@ -1377,7 +1384,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <sub>🎬 <em>3.5 The cold move: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-5-cold-move.mp4</code>).</em></sub></p>
 <h3 id="stop-your-vm-on-site-a">Stop your VM on site A<a class="headerlink" href="#stop-your-vm-on-site-a" title="Permanent link">&para;</a></h3>
 <p>A cold migration copies <strong>stopped</strong> disks. Stop your VM cleanly first. Windows shuts down and PostgreSQL flushes.</p>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d3-last-before-stop<span class="w"> </span><span class="s2">"final row on </span><span class="nv">$A</span><span class="s2">"</span><span class="w">            </span><span class="c1"># your last row on site A</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d3-last-before-stop<span class="w"> </span><span class="s2">"final row on </span><span class="nv">$A</span><span class="s2">"</span><span class="w">                   </span><span class="c1"># your last row on site A</span>
 virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>stop<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span><span class="o">||</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>patch<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s1">'{"spec":{"runStrategy":"Halted"}}'</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">            </span><span class="c1"># STATUS → Stopped (Ctrl-C)</span>
@@ -1496,27 +1503,27 @@ your VLAN's bridge with <strong>the same static address <code>$VM_IP</code></str
 on site B: then re-read it as in Lab 0 §0.6, step 5, with <code>CTX=site-b</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nv">CTX</span><span class="o">=</span>site-b
 <span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
+pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
 </code></pre></div>
 <h3 id="read-and-verify-your-data">Read and verify: your data<a class="headerlink" href="#read-and-verify-your-data" title="Permanent link">&para;</a></h3>
 <p>Run the helpers against <strong>site B</strong> now:</p>
-<div class="highlight"><pre><span></span><code>alive<span class="w">  </span>site-b<span class="w">                                  </span><span class="c1"># beats resume; postgres_started = the boot on site B</span>
-verify<span class="w"> </span>site-b<span class="w">                                  </span><span class="c1"># chain_ok = t, marks = row 3.0 + 2 (d3-before, d3-last-before-stop)</span>
-sql<span class="w">    </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, left(sha,12) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
+<div class="highlight"><pre><span></span><code>alive<span class="w">                                          </span><span class="c1"># beats resume; postgres_started = the boot on site B</span>
+verify<span class="w">                                         </span><span class="c1"># chain_ok = t, marks = row 3.0 + 2 (d3-before, d3-last-before-stop)</span>
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, left(sha,12) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
 </code></pre></div>
 <p>✅ <code>d3-before</code> and <code>d3-last-before-stop</code> are both there, and <code>chain_ok = t</code>.
 ✅ The <code>fingerprint</code> from <code>ovedr_checksum</code> matches the one you wrote down. Your VM is yours alone, so no one else's
 marks are in its database.</p>
 <h3 id="the-outage-measured-by-the-heartbeat">The outage, measured by the heartbeat<a class="headerlink" href="#the-outage-measured-by-the-heartbeat" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>sql<span class="w"> </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS gap</span>
+<div class="highlight"><pre><span></span><code>sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS gap</span>
 <span class="s2">               FROM (SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
 <span class="s2">               WHERE gap &gt; interval '10 seconds' AND ts &gt; timestamptz '</span><span class="nv">$STOPPED_AT</span><span class="s2">' - interval '1 minute'</span>
 <span class="s2">               ORDER BY id;"</span>
 </code></pre></div>
 <p>✍️ <strong>Row 3.4:</strong> the gap that ends after <code>$STOPPED_AT</code>. That is the Demo 3 outage: stop on A → boot on B.</p>
 <h3 id="inject-after-the-move">Inject: after the move<a class="headerlink" href="#inject-after-the-move" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w">   </span>site-b<span class="w"> </span>d3-after<span class="w"> </span><span class="s2">"running on </span><span class="nv">$B</span><span class="s2">, storage </span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>--arg<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="s1">'[.items[] | select(.metadata.name | contains($vm)) | .spec.storageClassName][0]'</span><span class="k">)</span><span class="s2">"</span>
-verify<span class="w"> </span>site-b
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d3-after<span class="w"> </span><span class="s2">"running on </span><span class="nv">$B</span><span class="s2">, storage </span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>--arg<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="s1">'[.items[] | select(.metadata.name | contains($vm)) | .spec.storageClassName][0]'</span><span class="k">)</span><span class="s2">"</span>
+verify
 </code></pre></div>
 <h3 id="your-file-on-the-new-cluster">Your file, on the new cluster<a class="headerlink" href="#your-file-on-the-new-cluster" title="Permanent link">&para;</a></h3>
 <p>Site B console: <strong>Virtualization → VirtualMachines → <code>&lt;VM&gt;</code> → Console</strong>, log in as <code>.\&lt;WINUSER&gt;</code>:</p>

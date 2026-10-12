@@ -540,6 +540,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="S.9 Namespaces: one per student (admin), plus the class namespace ovedr-app (both sites)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-browser-terminal-one-per-student-and-instructor-both-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      The browser terminal (one per student and instructor, both sites)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -798,6 +813,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="S.9 Namespaces: one per student (admin), plus the class namespace ovedr-app (both sites)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-browser-terminal-one-per-student-and-instructor-both-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      The browser terminal (one per student and instructor, both sites)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -922,7 +952,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.4 · draft · 2026-10-06</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1373,6 +1403,8 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
     SSO, their UPN.
   - The instructors' group <code>demo-instructors</code> is <code>admin</code> there too (<code>ovedr-instructors-admin</code>).
   - Their VM's Service <strong><code>&lt;vm&gt;-sql</code></strong> (selector <code>vm.kubevirt.io/name: &lt;vm&gt;</code>, port 5432).
+  - <strong>Their browser terminal</strong>, Deployment <strong><code>sql-client</code></strong> + ConfigMap <strong><code>ovedr-tools</code></strong> (see <em>The browser terminal</em>
+    below). Instructors get one in their own namespace too, pointed at <code>win-pg-i01</code>.
 - <strong>Instructors:</strong> their own namespace (their class ID; the instructor VM <code>win-pg-i01</code> lands in the first instructor's), and
   <strong>cluster-admin</strong> on both clusters (<code>ClusterRoleBinding/ovedr-instructor-cluster-admin-*</code>, one per identity), so they can
   help with any student, storage or operator issue. CLI: <code>oc adm policy add-cluster-role-to-user cluster-admin &lt;user&gt;</code>; console:
@@ -1380,18 +1412,19 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 - The class namespace <strong><code>ovedr-app</code></strong>: the shared <code>sql-client</code>. It holds RoleBinding
   <code>ovedr-students-edit</code> (ClusterRole <code>edit</code>, group <code>demo-students</code>), the instructor VM's Service <code>win-pg-i01-sql</code>, Secret
   <strong><code>bcdr-db</code></strong> (the <code>bcdr</code> database password, from the vault), and Deployment <strong><code>sql-client</code></strong>
-  (<code>registry.redhat.io/rhel9/postgresql-16</code>) that the whole class uses for <code>psql</code>. With the bridge map every VM keeps its
-  own address, so <code>sql-client</code> reaches any student's VM by IP from here.
+  (<code>registry.redhat.io/rhel9/postgresql-16</code>), the instructor's tool as the database owner (<code>bcdr</code>): the healthcheck
+  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1 Bonus B). Students
+  never need it.
 - ClusterRole + ClusterRoleBinding <strong><code>ovedr-class-read</code></strong>: students may read NNCPs and node network states, storage
   classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span>
 <span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                                     </span><span class="c1"># your namespace exists on both sites</span>
 <span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>rolebinding,svc<span class="w">                          </span><span class="c1"># your admin binding(s) and your VM's Service</span>
-<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span>get<span class="w"> </span>deploy/sql-client
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>deploy/sql-client<span class="w"> </span>cm/ovedr-tools<span class="w">           </span><span class="c1"># your browser terminal and its commands</span>
 <span class="k">done</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span><span class="s1">'*'</span><span class="w"> </span><span class="s1">'*'</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                         </span><span class="c1"># yes: admin in your own namespace</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>create<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w">                    </span><span class="c1"># yes (edit in the class namespace)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>create<span class="w"> </span>pods/exec<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                  </span><span class="c1"># yes: the console's Terminal tab needs it</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>list<span class="w"> </span>nodenetworkconfigurationpolicies<span class="w">      </span><span class="c1"># yes (class read)</span>
 </code></pre></div>
 <p><strong>Do it yourself (CLI):</strong> a namespace for a student with admin rights, and the VM's Service:</p>
@@ -1416,6 +1449,35 @@ oc<span class="w"> </span>-n<span class="w"> </span>my-app<span class="w"> </spa
    student, role <strong>admin</strong>; add the group <code>demo-instructors</code> as <strong>admin</strong>. 📸 <code>S-project-access</code>
 3. <strong>Networking → Services → Create Service</strong> in that project (selector <code>vm.kubevirt.io/name</code>). 📸 <code>S-service</code>
 4. In <code>ovedr-app</code>: <strong>Workloads → Secrets → Create</strong> and <strong>Workloads → Deployments → Create</strong> for <code>sql-client</code>.</p>
+<h3 id="the-browser-terminal-one-per-student-and-instructor-both-sites">The browser terminal (one per student and instructor, both sites)<a class="headerlink" href="#the-browser-terminal-one-per-student-and-instructor-both-sites" title="Permanent link">&para;</a></h3>
+<p>The class runs <strong>entirely in the browser</strong> (operator, 2026-10-12): students are external, may not install anything on
+their computers, and have no network path to the lab. So every command runs in a pod of their own, opened from the
+console's <strong>Terminal</strong> tab (the console's <code>exec</code>, which <code>admin</code> in their namespace allows).</p>
+<p><strong>What CI built</strong>, in every student's and instructor's namespace (<code>ansible/roles/class_namespace</code>):
+- ConfigMap <strong><code>ovedr-tools</code></strong>: the class commands (<code>dblogin</code>, <code>mark</code>, <code>load</code>, <code>verify</code>, <code>alive</code>, <code>sql</code>, <code>oclogin</code>,
+  <code>where</code>, <code>ovedr</code>), mounted at <code>/opt/ovedr/bin</code> (mode 0755). Source: <code>ansible/roles/class_namespace/files/ovedr-tools/</code>.
+- Deployment <strong><code>sql-client</code></strong> (<code>rhel9/postgresql-16</code>, <code>sleep infinity</code>), with:
+  - init containers that copy <strong><code>oc</code></strong> from the cluster's own <code>openshift/cli</code> image, fetch <strong><code>virtctl</code></strong> from
+    OpenShift Virtualization's in-cluster download service, and fetch <strong><code>jq</code></strong> (pinned, checksum-verified);
+  - its environment preset per person: <code>ME</code>, <code>VM</code>, <code>VM_IP</code>, <code>VMNS</code>, <code>WINUSER</code>, <code>N</code>, <code>A</code>, <code>B</code>, <code>VC</code>, <code>SITE</code>, and
+    <code>PGHOST</code> (the VM's own address), <code>PGUSER</code> (<code>student_NN</code>), <code>PGDATABASE=bcdr</code>;
+  - <strong>no password</strong> anywhere: <code>dblogin</code> asks for the student's class password once and keeps it in the pod
+    (<code>~/.pgpass</code>, 0600); <code>oclogin</code> takes the token from the console's <strong>Copy login command</strong>, so <code>oc</code> and <code>virtctl</code>
+    act <strong>as the student</strong>. The pod has no service-account token (<code>automountServiceAccountToken: false</code>).
+- A change to the commands rolls the pod (annotation <code>ovedr/tools-sha</code>). The healthcheck drives student-01's terminal
+  on both sites, as the student: <code>dblogin</code>, <code>alive</code>, <code>verify</code>, and <code>oc</code>/<code>virtctl</code>/<code>jq</code> present.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>deploy/sql-client<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.availableReplicas}{"\n"}'</span><span class="w">   </span><span class="c1"># 1</span>
+ovedr<span class="w">                                                                    </span><span class="c1"># in the Terminal: who, where, what is signed in</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong> the same idea for any namespace (here without the class commands):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$NS</span><span class="s2">"</span><span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>toolbox<span class="w"> </span>--image<span class="o">=</span>registry.redhat.io/rhel9/postgresql-16<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span>infinity
+oc<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$NS</span><span class="s2">"</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deployment/toolbox<span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span>&lt;VM<span class="w"> </span>address&gt;<span class="w"> </span><span class="nv">PGUSER</span><span class="o">=</span>&lt;login&gt;<span class="w"> </span><span class="nv">PGDATABASE</span><span class="o">=</span>bcdr
+</code></pre></div>
+<p><strong>Console:</strong> <strong>Workloads → Pods → <code>sql-client-…</code> → Terminal</strong>. 📸 <code>S-browser-terminal</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/building_applications/odc-viewing-application-composition-using-topology-view">Accessing a pod's terminal from the web console</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc#cli-logging-in-web_cli-developer-commands">Logging in to the OpenShift CLI with a web console token</a> [verify link]</p>
 <p><strong>Red Hat docs:</strong>
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/building_applications/projects">Working with projects</a> [verify link]
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac">Using RBAC to define and apply permissions</a> [verify link]

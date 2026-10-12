@@ -650,7 +650,7 @@
 
 <h1 id="student-guide">Student Guide<a class="headerlink" href="#student-guide" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.1 · draft · 2026-10-12</strong> · class/student-guide.md</p>
+<p><strong>Version 0.6.0 · draft · 2026-10-12</strong> · class/student-guide.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In this class you take a real Windows Server + PostgreSQL VM from VMware vSphere onto Red Hat OpenShift
@@ -659,6 +659,13 @@ protect it with OpenShift Data Foundation disaster recovery: replication, failov
 step you write your own data into the VM's database and then prove that none of it was lost, changed or reordered.
 You leave knowing what each tool does, and with the evidence that it worked.</p>
 <p>This guide is the <strong>map</strong>. The commands are in the demo guides it points to.</p>
+<blockquote>
+<p>🌐 <strong>All you need is a web browser.</strong> You install nothing and need no access to the lab's network from your computer.
+You work in three browser pages: the <strong>vSphere Client</strong>, the <strong>site A</strong> and <strong>site B</strong> OpenShift consoles, plus this
+class site. Every command runs in <strong>your browser terminal</strong>, a shell in your own pod in the OpenShift console (Lab 0
+§0.3), with <code>psql</code>, <code>oc</code>, <code>virtctl</code> and the class commands ready. Copy a command here with its copy button, and
+paste it there with <strong>right-click → Paste</strong>.</p>
+</blockquote>
 <hr />
 <h2 id="1-how-the-lab-is-put-together">1. How the lab is put together<a class="headerlink" href="#1-how-the-lab-is-put-together" title="Permanent link">&para;</a></h2>
 <p>Each class gets its <strong>own</strong> three environments, built together when the booking starts and removed together when it
@@ -706,8 +713,8 @@ fail it over yourself.</p>
 <p><strong>You get your own OpenShift namespace.</strong> On <strong>both</strong> clusters you have a namespace (project) named exactly your
 class ID in lower case, for example <code>student-03-0024-005</code>, the same name as your vCenter folder. You are <strong>admin</strong>
 there: full rights, but only in that namespace. Your migration plans move your VM into it, and your VM's database
-Service (<code>&lt;your VM&gt;-sql</code>) lives there. The shared <code>sql-client</code> the helpers use sits in the class namespace <code>ovedr-app</code>,
-which is also where the instructor's VM lands. Lab 0 sets it up as <code>$VMNS</code>.</p>
+Service (<code>&lt;your VM&gt;-sql</code>) lives there, and so does <strong>your browser terminal</strong> (pod <code>sql-client</code>), where you run every
+command. Lab 0 sets it up as <code>$VMNS</code>.</p>
 <p><strong>Everything is staged; you do the last step.</strong> The lab pre-builds every customization a demo needs: the migration
 operator and its connection to vCenter, the network and storage maps, the class namespace, and <strong>a migration plan for
 your VM on each cluster, ready but not started</strong> (<code>d1-&lt;your VM&gt;</code> on site A, <code>d1b-&lt;your VM&gt;-to-&lt;B&gt;</code> on site B). Each
@@ -736,8 +743,8 @@ your session times out. Typical signs: a refresh brings back the same stale page
 or you see "unauthorized" even after signing in. The browser has cached your old, expired sign-in.
 Open a <strong>private / incognito window</strong> (Chrome/Edge: <code>Ctrl+Shift+N</code>, Firefox: <code>Ctrl+Shift+P</code>, Safari:
 <code>Cmd+Shift+N</code>) and sign in there with SSO again. If that works, carry on in the private window, or clear the
-site's cookies in your normal window. Your work is not lost: the VM, your data and your CLI contexts live on
-the clusters, not in the browser.</p>
+site's cookies in your normal window. Your work is not lost: the VM, your data and your browser terminal's sign-ins
+live on the clusters, not in the browser.</p>
 </blockquote>
 <p>Full steps: <a href="demos/00-access-and-tools.html">Lab 0 §0.0-0.4</a>.</p>
 <h3 id="your-vm-windows-and-database-logins">Your VM: Windows and database logins<a class="headerlink" href="#your-vm-windows-and-database-logins" title="Permanent link">&para;</a></h3>
@@ -776,8 +783,8 @@ the clusters, not in the browser.</p>
 <span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_verify</span><span class="p">(</span><span class="s1">'&lt;your class ID&gt;'</span><span class="p">);</span><span class="w">      </span><span class="c1">-- chain_ok = t</span>
 </code></pre></div></li>
 </ol>
-<p>From your terminal, the Lab 0 helpers (<code>mark</code>, <code>verify</code>, <code>alive</code>) reach the same database through the class
-<code>sql-client</code>, so you do not need to sign in to PostgreSQL there.</p>
+<p>From your browser terminal, the class commands (<code>mark</code>, <code>verify</code>, <code>alive</code>) reach the same database as your own
+PostgreSQL login: run <code>dblogin</code> once (Lab 0 §0.5).</p>
 <hr />
 <h2 id="3-the-demos-in-order">3. The demos, in order<a class="headerlink" href="#3-the-demos-in-order" title="Permanent link">&para;</a></h2>
 <p>Each demo guide opens with what you will learn and <strong>how the lab was prepared for it</strong> (what is installed, and the
@@ -798,7 +805,7 @@ that it all arrived intact.</p>
 <tr>
 <td>0</td>
 <td><a href="demos/00-access-and-tools.html">Access and tools</a></td>
-<td>sign in everywhere, set up your terminal, write and verify your first row</td>
+<td>sign in everywhere, open your browser terminal, write and verify your first row</td>
 <td>20 min</td>
 <td>§0.6 a pod-network address for your VM (15 min)</td>
 </tr>

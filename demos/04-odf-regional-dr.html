@@ -1180,7 +1180,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.1 · draft · 2026-10-06</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1238,9 +1238,9 @@ console steps behind the shared pieces.</p>
 <td>§4.2</td>
 </tr>
 <tr>
-<td><code>ovedr-app</code> with <code>sql-client</code> and a Service per class VM (<code>&lt;VM&gt;-sql</code>), on <strong>both</strong> sites</td>
+<td>Your namespace with your browser terminal <code>sql-client</code> and your VM's Service (<code>&lt;VM&gt;-sql</code>); <code>ovedr-app</code> with the instructor's, on <strong>both</strong> sites</td>
 <td>both</td>
-<td><code>oc --context site-b -n ovedr-app get deploy,svc</code></td>
+<td><code>oc --context site-b -n "$VMNS" get deploy,svc</code></td>
 <td><a href="setup-how-the-lab-is-built.html">S.9</a></td>
 </tr>
 <tr>
@@ -1252,7 +1252,7 @@ console steps behind the shared pieces.</p>
 <tr>
 <td>Your Windows login (<code>.\&lt;WINUSER&gt;</code>) and the PostgreSQL toolkit (<code>marks</code>, <code>ovedr_*</code>) inside your VM</td>
 <td>your VM</td>
-<td><code>verify site-a</code></td>
+<td><code>verify</code></td>
 <td><a href="setup-how-the-lab-is-built.html">S.11</a></td>
 </tr>
 </tbody>
@@ -1271,6 +1271,13 @@ together, so 🧑‍🏫 the driver runs the DR actions, and <strong>each of you
 DRPC per student VM, selecting that VM's disks by label) is possible but not built here <strong>[verify]</strong>.</p>
 <p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need the variables (<code>ME N A B VM</code>),
 the two contexts (<code>site-a</code>, <code>site-b</code>) and the helpers (<code>sql mark load verify alive where</code>).</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
+terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
+<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
+Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
+console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
 <h2 id="40-point-the-helpers-at-your-vm">4.0 Point the helpers at your VM<a class="headerlink" href="#40-point-the-helpers-at-your-vm" title="Permanent link">&para;</a></h2>
@@ -1290,9 +1297,9 @@ drpc<span class="o">()</span><span class="w"> </span><span class="o">{</span><sp
 rbdmirror<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>rsh<span class="w"> </span>deploy/rook-ceph-tools<span class="w"> </span><span class="se">\</span>
 <span class="w">                </span>rbd<span class="w"> </span>mirror<span class="w"> </span>pool<span class="w"> </span>status<span class="w"> </span>ocs-storagecluster-cephblockpool<span class="w"> </span>--verbose<span class="p">;</span><span class="w"> </span><span class="o">}</span>
 
-where<span class="p">;</span><span class="w"> </span>alive<span class="w"> </span>site-a
-mark<span class="w"> </span>site-a<span class="w"> </span>d4-start
-verify<span class="w"> </span>site-a
+where<span class="p">;</span><span class="w"> </span>alive
+mark<span class="w"> </span>d4-start
+verify
 </code></pre></div>
 <p>✍️ <strong>Row 4.0:</strong> your <code>d4-start</code> mark id and the <code>fingerprint</code>.</p>
 <hr />
@@ -1390,7 +1397,7 @@ MirrorPeer offers <code>2m</code> and <code>5m</code> today, so <code>15m</code>
 <!-- 🎬 video slot 04-4-3-protect-vm -->
 <p><a href="../.images/04-4-3-protect-vm.mp4"><img alt="🎬 Video: 4.3 Protect the VM. Watch it, then do the same in the console" src="../.images/04-4-3-protect-vm.jpg" /></a>
 <sub>🎬 <em>4.3 Protect the VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-3-protect-vm.mp4</code>).</em></sub></p>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d4-before-protect
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4-before-protect
 </code></pre></div>
 <h3 id="driver-enrol-the-vm">🧑‍🏫 Driver: enrol the VM<a class="headerlink" href="#driver-enrol-the-vm" title="Permanent link">&para;</a></h3>
 <p>The VMs were created by MTV, not by a GitOps application, so they are a <strong>discovered application</strong>. Protect
@@ -1452,9 +1459,9 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 </code></pre></div>
 <p>✅ Primary: <code>state: up+stopped</code>, with <code>description</code> showing the last mirror snapshot. Secondary: <code>up+replaying</code>.</p>
 <h3 id="inject-then-wait-for-one-complete-sync-that-contains-your-row">Inject, then wait for ONE complete sync that contains your row<a class="headerlink" href="#inject-then-wait-for-one-complete-sync-that-contains-your-row" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>load<span class="w"> </span>site-a<span class="w"> </span>d4-busy<span class="w"> </span><span class="m">200</span><span class="w">                          </span><span class="c1"># a burst: the database is busy</span>
-mark<span class="w"> </span>site-a<span class="w"> </span>d4-wait-for-sync<span class="w">                     </span><span class="c1"># the row that must reach site B</span>
-<span class="nv">T</span><span class="o">=</span><span class="k">$(</span>sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(ts) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">'"</span><span class="k">)</span>
+<div class="highlight"><pre><span></span><code>load<span class="w"> </span>d4-busy<span class="w"> </span><span class="m">200</span><span class="w">                                 </span><span class="c1"># a burst: the database is busy</span>
+mark<span class="w"> </span>d4-wait-for-sync<span class="w">                            </span><span class="c1"># the row that must reach site B</span>
+<span class="nv">T</span><span class="o">=</span><span class="k">$(</span>sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(ts) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">'"</span><span class="k">)</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">"my row's time: </span><span class="nv">$T</span><span class="s2">"</span>
 <span class="c1"># poll the hub until a group sync STARTED after your row's time (each sync is a crash-consistent snapshot)</span>
 <span class="k">until</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.lastGroupSyncTime}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="m">0</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
@@ -1464,7 +1471,7 @@ mark<span class="w"> </span>site-a<span class="w"> </span>d4-wait-for-sync<span 
 <span class="nb">echo</span><span class="w"> </span><span class="s2">"✅ a sync completed after your row"</span><span class="p">;</span><span class="w"> </span>drpc
 </code></pre></div>
 <blockquote>
-<p>⚠ The loop uses GNU <code>date -d</code>. On macOS, run it from the lab's Linux shell, or install <code>coreutils</code> and use <code>gdate</code>.</p>
+<p>The loop uses GNU <code>date -d</code>, which your browser terminal (Linux) has.</p>
 <p>💡 With a 15-minute interval this can take up to 15 minutes. That wait <strong>is</strong> the RPO you are buying. The
 instructor may use a 5-minute policy in a short session.</p>
 </blockquote>
@@ -1521,7 +1528,7 @@ releases).</p>
 </table>
 <p>A "clean migration" between sites is a <strong>Relocate</strong>. The bonus round does a real Failover.</p>
 <h3 id="driver-relocate-to-site-b">🧑‍🏫 Driver: Relocate to site B<a class="headerlink" href="#driver-relocate-to-site-b" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d4-before-relocate
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4-before-relocate
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"</span><span class="nv">$B</span><span class="s2">\"}}"</span>
 </code></pre></div>
@@ -1531,9 +1538,9 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w<span class="w">           </span><span class="c1"># Relocating → Relocated</span>
 where<span class="w">                                                                        </span><span class="c1"># site-b Running</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,vmi,pvc,svc,deploy<span class="w">                   </span><span class="c1"># everything came with it</span>
-alive<span class="w">  </span>site-b
-verify<span class="w"> </span>site-b
-sql<span class="w">    </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
+alive
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
 </code></pre></div>
 <p>✅ <code>d4-before-relocate</code> is present on site B, so a planned move loses nothing.
 ✅ <code>chain_ok = t</code>. The <code>fingerprint</code> equals the one you would get on A at the moment it stopped.
@@ -1550,7 +1557,7 @@ sql<span class="w">    </span>site-b<span class="w"> </span>-c<span class="w"> <
 <sub>🎬 <em>4.6 Reverse replication B → A, then come home cleanly: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4</code>).</em></sub></p>
 <p>The VM now runs on B, and B is the <strong>primary</strong>. Before you move it again, check that protection has
 <strong>reversed</strong>: B replicates back to A, and A's images are the secondaries.</p>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4-on-b
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4-on-b
 drpc
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'</span>
@@ -1560,7 +1567,7 @@ rbdmirror<span class="w"> </span>site-a<span class="w">            </span><span 
 <p>✅ <code>PeerReady=True</code> and <code>Protected=True</code>. ✅ A's images are <code>up+replaying</code>.
 Wait for one sync after <code>d4-on-b</code>, using the same loop as §4.4, with <code>site-b</code> in place of <code>site-a</code> in the <code>sql</code> call.</p>
 <h3 id="driver-relocate-home-to-site-a">🧑‍🏫 Driver: Relocate home to site A<a class="headerlink" href="#driver-relocate-home-to-site-a" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4-before-home
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4-before-home
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"</span><span class="nv">$A</span><span class="s2">\"}}"</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w
@@ -1568,9 +1575,9 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <h3 id="check-the-vm-is-home-and-the-data-made-the-full-round-trip">Check: the VM is home, and the data made the full round trip<a class="headerlink" href="#check-the-vm-is-home-and-the-data-made-the-full-round-trip" title="Permanent link">&para;</a></h3>
 <p>Same address again, now on site A:</p>
 <div class="highlight"><pre><span></span><code>where<span class="w">                                            </span><span class="c1"># site-a Running</span>
-alive<span class="w">  </span>site-a
-verify<span class="w"> </span>site-a
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, count(*), min(id), max(id) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' GROUP BY stage ORDER BY min(id);"</span>
+alive
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, count(*), min(id), max(id) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' GROUP BY stage ORDER BY min(id);"</span>
 drpc<span class="w">                                             </span><span class="c1"># Relocated; protection A → B again</span>
 </code></pre></div>
 <p>✅ Every stage is present: <code>d4-start</code>, <code>d4-busy</code> (200 rows), <code>d4-wait-for-sync</code>, <code>d4-before-protect</code>,
@@ -1580,16 +1587,16 @@ drpc<span class="w">                                             </span><span cl
 <p>Console on site A:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="n">-Tail</span> <span class="n">4</span>        <span class="c"># both "site A" and "site B" lines</span>
 </code></pre></div>
-<p>📸 <code>04-home</code>: <code>verify site-a</code> with <code>chain_ok = t</code>, and the file's tail.</p>
+<p>📸 <code>04-home</code>: <code>verify</code> with <code>chain_ok = t</code>, and the file's tail.</p>
 <hr />
 <h2 id="47-end-of-demo-validation">4.7 End-of-demo validation<a class="headerlink" href="#47-end-of-demo-validation" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 04-4-7-end-demo-validation -->
 <p><a href="../.images/04-4-7-end-demo-validation.mp4"><img alt="🎬 Video: 4.7 End-of-demo validation. Watch it, then do the same in the console" src="../.images/04-4-7-end-demo-validation.jpg" /></a>
 <sub>🎬 <em>4.7 End-of-demo validation: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-7-end-demo-validation.mp4</code>).</em></sub></p>
-<div class="highlight"><pre><span></span><code>alive<span class="w">  </span>site-a
-verify<span class="w"> </span>site-a
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify();"</span><span class="w">                 </span><span class="c1"># the whole class: every student's chain_ok</span>
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS outage FROM (</span>
+<div class="highlight"><pre><span></span><code>alive
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify();"</span><span class="w">                        </span><span class="c1"># the whole class: every student's chain_ok</span>
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS outage FROM (</span>
 <span class="s2">                 SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
 <span class="s2">               WHERE gap &gt; interval '10 seconds' ORDER BY id DESC LIMIT 5;"</span><span class="w">   </span><span class="c1"># each move's outage (RTO)</span>
 </code></pre></div>
@@ -1730,11 +1737,11 @@ completed sync holds. Then it repairs the link and <strong>forces the resync</st
 still run, so the class sees a link failure rather than a site loss. It is reversed with one command. Option B is
 the scripted disaster in the classic M6 module.</p>
 <h3 id="step-1-inject-and-note-the-last-sync-that-got-through">Step 1: inject, and note the last sync that got through<a class="headerlink" href="#step-1-inject-and-note-the-last-sync-that-got-through" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d4h-before-break
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4h-before-break
 <span class="k">until</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.lastGroupSyncTime}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">        </span>-gt<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(ts) FROM marks WHERE student='</span><span class="nv">$ME</span><span class="s2">'"</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>drpc<span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<span class="w">        </span>-gt<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(ts) FROM marks WHERE student='</span><span class="nv">$ME</span><span class="s2">'"</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>drpc<span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
 drpc<span class="w">                       </span><span class="c1"># ✍️ lastSync = the last checkpoint that will reach B</span>
-sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(id) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">'"</span><span class="w">   </span><span class="c1"># ✍️ your last SAFE id</span>
+sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(id) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">'"</span><span class="w">          </span><span class="c1"># ✍️ your last SAFE id</span>
 </code></pre></div>
 <h3 id="step-2-break-the-link-option-a-verify">Step 2: 🧑‍🏫 break the link (option A) <strong>[verify]</strong><a class="headerlink" href="#step-2-break-the-link-option-a-verify" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># the gateway node(s) on site B carry the label submariner.io/gateway=true; removing it stops the tunnel</span>
@@ -1744,8 +1751,8 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>submariner-operator<span class="w"> </span>get<span class="w"> </span>gateways<span class="w"> </span>-o<span class="w"> </span>wide<span class="w">      </span><span class="c1"># no active gateway / connection error</span>
 </code></pre></div>
 <h3 id="step-3-keep-writing-on-a-these-rows-will-not-reach-b">Step 3: keep writing on A. These rows will NOT reach B.<a class="headerlink" href="#step-3-keep-writing-on-a-these-rows-will-not-reach-b" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>mark<span class="w"> </span>site-a<span class="w"> </span><span class="s2">"d4h-after-break-</span><span class="nv">$n</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">20</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 4;"</span>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>mark<span class="w"> </span><span class="s2">"d4h-after-break-</span><span class="nv">$n</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">20</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 4;"</span>
 </code></pre></div>
 <p>✍️ Write down these ids and the first 12 characters of each <code>sha</code>. They are the rows you are about to lose.</p>
 <div class="highlight"><pre><span></span><code><span class="c"># in your VM's console on site A</span>
@@ -1766,8 +1773,8 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <h3 id="step-5-measure-what-was-lost-the-rpo">Step 5: measure what was lost (the RPO)<a class="headerlink" href="#step-5-measure-what-was-lost-the-rpo" title="Permanent link">&para;</a></h3>
 <p>Same address, on site B:</p>
 <div class="highlight"><pre><span></span><code>where<span class="w">                                                   </span><span class="c1"># site-b Running</span>
-verify<span class="w"> </span>site-b
-sql<span class="w"> </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, left(sha,12) AS sha FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 4;"</span>
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, left(sha,12) AS sha FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 4;"</span>
 </code></pre></div>
 <p>What you should see, and why:
 - The last row present is your <strong>last SAFE id</strong> from step 1. Every <code>d4h-after-break-*</code> row is <strong>missing</strong>.
@@ -1776,8 +1783,8 @@ sql<span class="w"> </span>site-b<span class="w"> </span>-c<span class="w"> </sp
   evidence of what the failover cost.
 - Write a new mark on B. Its <code>id</code> may <strong>reuse</strong> one of the lost ids, because B's sequence continues from the
   replicated state. Its <code>sha</code> differs from your note, so it is a different row with the same number.</p>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4h-on-b-after-failover
-sql<span class="w"> </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, stage, left(sha,12) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 2;"</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4h-on-b-after-failover
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, stage, left(sha,12) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 2;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="c"># console on site B: the "AFTER the link broke" line is gone, because the disk is from the last sync</span>
 <span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="n">-Tail</span> <span class="n">3</span>
@@ -1804,14 +1811,14 @@ the <strong>old primary (A)</strong>. This copies the whole image, so use it onl
 <p>✍️ <strong>Row 4.8b:</strong> resync bytes and duration. A <strong>delta</strong> (from the last common checkpoint) proves the DESIGN's
 claim. A <strong>full</strong> copy means the hostile path costs one full copy, and the guide says so honestly (DESIGN §6.4).</p>
 <h3 id="step-7-relocate-home-and-verify-the-history">Step 7: 🧑‍🏫 Relocate home, and verify the history<a class="headerlink" href="#step-7-relocate-home-and-verify-the-history" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4h-before-home
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4h-before-home
 <span class="c1"># wait for one sync after that mark (§4.4 loop, site-b), then:</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"</span><span class="nv">$A</span><span class="s2">\"}}"</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w
 where
-verify<span class="w"> </span>site-a
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, stage, left(sha,12) AS sha FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' AND stage LIKE 'd4h%' ORDER BY id;"</span>
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, stage, left(sha,12) AS sha FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' AND stage LIKE 'd4h%' ORDER BY id;"</span>
 </code></pre></div>
 <p>✅ Present: <code>d4h-before-break</code>, <code>d4h-on-b-after-failover</code> and <code>d4h-before-home</code>.
 ✅ Missing: every <code>d4h-after-break-*</code>. These were written only on A after the link broke, then discarded when A

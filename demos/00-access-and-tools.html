@@ -361,9 +361,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli-two-named-contexts" class="md-nav__link">
+  <a href="#your-browser-terminal" class="md-nav__link">
     <span class="md-ellipsis">
-      CLI: two named contexts
+      Your browser terminal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-your-terminals-oc-in-for-both-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sign your terminal's oc in, for both sites
     </span>
   </a>
   
@@ -409,9 +418,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#helpers-paste-once-per-terminal" class="md-nav__link">
+  <a href="#your-class-commands-already-in-your-terminal" class="md-nav__link">
     <span class="md-ellipsis">
-      Helpers (paste once per terminal)
+      Your class commands (already in your terminal)
     </span>
   </a>
   
@@ -784,9 +793,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cli-two-named-contexts" class="md-nav__link">
+  <a href="#your-browser-terminal" class="md-nav__link">
     <span class="md-ellipsis">
-      CLI: two named contexts
+      Your browser terminal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-your-terminals-oc-in-for-both-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sign your terminal's oc in, for both sites
     </span>
   </a>
   
@@ -832,9 +850,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#helpers-paste-once-per-terminal" class="md-nav__link">
+  <a href="#your-class-commands-already-in-your-terminal" class="md-nav__link">
     <span class="md-ellipsis">
-      Helpers (paste once per terminal)
+      Your class commands (already in your terminal)
     </span>
   </a>
   
@@ -958,11 +976,12 @@
 
 <h1 id="lab-0-access-and-tools">Lab 0: Access and tools<a class="headerlink" href="#lab-0-access-and-tools" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.0 · draft · 2026-10-06</strong> · class/demos/00-access-and-tools.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/00-access-and-tools.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will sign in to all three platforms of the lab (vSphere and two OpenShift clusters) with one class identity
-and one password, and set up a terminal that always says which cluster it is talking to. You will find <strong>your own</strong>
+and one password, and open your <strong>browser terminal</strong>: a shell in the OpenShift console, already set up for you, so
+you install nothing on your computer. You will find <strong>your own</strong>
 Windows Server + PostgreSQL VM and leave your first mark in it: a line in a file on its disk, and a hash-chained row
 in its database. Every later demo repeats that pattern (inject, change, verify), so by the end of this lab you can
 prove, with one command, that none of your data was lost, changed or reordered.</p>
@@ -991,18 +1010,23 @@ the console, with links to the Red Hat documentation.</p>
 </tr>
 <tr>
 <td><strong>Site A</strong> and <strong>site B</strong> (this demo's customization)</td>
-<td><strong>MTV</strong> on both tooled sites, with its <strong>Migration for Virtualization</strong> console menu, the vSphere and peer-cluster providers and the network and storage maps. <strong>A migration plan for every class VM, staged but not started</strong>: <code>d1-&lt;vm&gt;</code> on site A and <code>d1b-&lt;vm&gt;-to-&lt;B&gt;</code> on site B. <strong>Your own namespace on both sites</strong> (your class ID, you are admin there) where your VM lands, with your <code>Service/&lt;VM&gt;-sql</code>; the class namespace <strong><code>ovedr-app</code></strong> with the shared <code>sql-client</code> pod. The instructor has their own namespace (the instructor VM lands there) and is cluster-admin. Read access for students to the migration objects, bridges, storage classes and ACM clusters, and the right to run their own plans.</td>
+<td><strong>MTV</strong> on both tooled sites, with its <strong>Migration for Virtualization</strong> console menu, the vSphere and peer-cluster providers and the network and storage maps. <strong>A migration plan for every class VM, staged but not started</strong>: <code>d1-&lt;vm&gt;</code> on site A and <code>d1b-&lt;vm&gt;-to-&lt;B&gt;</code> on site B. <strong>Your own namespace on both sites</strong> (your class ID, you are admin there) where your VM lands, with your <code>Service/&lt;VM&gt;-sql</code>; <strong>your browser terminal</strong>, pod <code>sql-client</code> in your namespace on both sites (<code>psql</code>, the class commands, <code>oc</code>,</td>
+<td></td>
+</tr>
+<tr>
+<td><code>virtctl</code> and <code>jq</code>, preset with your VM and logins); the class namespace <strong><code>ovedr-app</code></strong>. The instructor has their own namespace (the instructor VM lands there) and is cluster-admin. Read access for students to the migration objects, bridges, storage classes and ACM clusters, and the right to run their own plans.</td>
 <td><a href="setup-how-the-lab-is-built.html">S.5</a>-<a href="setup-how-the-lab-is-built.html">S.10</a> · <a href="setup-how-the-lab-is-built.html">S.12</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11</a></td>
+<td></td>
 </tr>
 <tr>
 <td><strong>Accounts</strong> (core-web + core-sso)</td>
-<td>One roster. <code>$ME</code> signs in with <strong>SSO (Entra)</strong> on vCenter and on both OpenShift consoles (one browser sign-in carries across all three), and the CLIs use a console token, and in Windows (<code>.\student-NN</code>).</td>
+<td>One roster. <code>$ME</code> signs in with <strong>SSO (Entra)</strong> on vCenter and on both OpenShift consoles (one browser sign-in carries across all three), and your browser terminal's <code>oc</code> uses a token from the console, and in Windows (<code>.\student-NN</code>).</td>
 <td><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index">Authentication and authorization</a></td>
 </tr>
 </tbody>
 </table>
-<p><strong>You do yourself:</strong> sign in everywhere, set up the CLI contexts and helpers, open your VM's console, and write your
-first file line and first database mark.</p>
+<p><strong>You do yourself:</strong> sign in everywhere, open your browser terminal and sign it in, open your VM's console, and write
+your first file line and first database mark. <strong>Everything happens in your web browser:</strong> nothing to install.</p>
 <blockquote>
 <p><strong>How to read these guides</strong>
 - <code>$ME</code> is your class ID, for example <code>student-03-0024-005</code>. <strong>One password</strong> works everywhere: vCenter, both
@@ -1097,31 +1121,14 @@ order (for example vSphere <code>lz2</code> with site A <code>ocp-lz3</code> and
 </tbody>
 </table>
 <p><strong>[verify: BL-D10, per-student clones and their address plan]</strong></p>
-<div class="highlight"><pre><span></span><code><span class="c1"># ── paste once per terminal, with YOUR values ────────────────────────────────────────────────</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">ME</span><span class="o">=</span>student-03-0024-005
-<span class="nb">export</span><span class="w"> </span><span class="nv">N</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">A</span><span class="o">=</span>ocp-lz1<span class="w"> </span><span class="nv">B</span><span class="o">=</span>ocp-lz2
-<span class="nb">export</span><span class="w"> </span><span class="nv">DOMAIN</span><span class="o">=</span>demo.lab-paragonmicro.com
-<span class="nb">export</span><span class="w"> </span><span class="nv">VC</span><span class="o">=</span>vcenter0<span class="nv">$N</span>.<span class="nv">$DOMAIN</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">WINUSER</span><span class="o">=</span><span class="si">${</span><span class="nv">ME</span><span class="p">%-*-*</span><span class="si">}</span><span class="w">                    </span><span class="c1"># your Windows login: student-03 (Windows caps names at 20 characters)</span>
-<span class="k">case</span><span class="w"> </span><span class="s2">"</span><span class="nv">$WINUSER</span><span class="s2">"</span><span class="w"> </span><span class="k">in</span>
-<span class="w">  </span>student-*<span class="o">)</span><span class="w"> </span><span class="nv">NN</span><span class="o">=</span><span class="si">${</span><span class="nv">WINUSER</span><span class="p">#student-</span><span class="si">}</span><span class="w">                          </span><span class="c1"># 03</span>
-<span class="w">             </span><span class="nb">export</span><span class="w"> </span><span class="nv">VM</span><span class="o">=</span>win-pg-s<span class="nv">$NN</span><span class="w">                           </span><span class="c1"># your own VM</span>
-<span class="w">             </span><span class="nb">export</span><span class="w"> </span><span class="nv">VM_IP</span><span class="o">=</span><span class="m">10</span>.101.<span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span>.<span class="k">$((</span><span class="m">100</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">10#</span><span class="nv">$NN</span><span class="k">))</span><span class="w">    </span><span class="c1"># its address while it still runs on vSphere</span>
-<span class="w">             </span><span class="nb">export</span><span class="w"> </span><span class="nv">VMNS</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ME</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">'[:upper:]'</span><span class="w"> </span><span class="s1">'[:lower:]'</span><span class="k">)</span><span class="w"> </span><span class="p">;;</span><span class="w">   </span><span class="c1"># YOUR namespace on both clusters</span>
-<span class="w">  </span>*<span class="o">)</span><span class="w">         </span><span class="nb">export</span><span class="w"> </span><span class="nv">VM</span><span class="o">=</span>win-pg-i01<span class="w"> </span><span class="nv">VM_IP</span><span class="o">=</span><span class="m">10</span>.101.<span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span>.62<span class="w"> </span><span class="nv">VMNS</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s'</span><span class="w"> </span><span class="s2">"</span><span class="nv">$ME</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">'[:upper:]'</span><span class="w"> </span><span class="s1">'[:lower:]'</span><span class="k">)</span><span class="w"> </span><span class="p">;;</span><span class="w">   </span><span class="c1"># the instructor's VM and namespace</span>
-<span class="k">esac</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">"me=</span><span class="nv">$ME</span><span class="s2">  vcenter=</span><span class="nv">$VC</span><span class="s2">  site-a=</span><span class="nv">$A</span><span class="s2">  site-b=</span><span class="nv">$B</span><span class="s2">  vm=</span><span class="nv">$VM</span><span class="s2"> (</span><span class="nv">$VM_IP</span><span class="s2">)  namespace=</span><span class="nv">$VMNS</span><span class="s2">  windows=.\\</span><span class="nv">$WINUSER</span><span class="s2">"</span>
-</code></pre></div>
+<p><strong>You don't type these in.</strong> Your browser terminal (§0.3) already holds all of them, and your VM's name and address,
+as <code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$VMNS</code>, <code>$WINUSER</code>, <code>$VC</code> and <code>$DOMAIN</code>. Type <code>ovedr</code> there to see
+them. Check that they match your card.</p>
 <p><strong>Your namespace, <code>$VMNS</code>.</strong> On <strong>both</strong> OpenShift clusters you have your own namespace (project), named exactly your
 class ID in lower case, for example <code>student-03-0024-005</code>. It matches your vCenter folder. You are <strong>admin</strong> there:
 full rights, scoped to that namespace only. Your migration plans land your VM there, and your VM's SQL Service
-(<code>$VM-sql</code>) lives there. The shared <code>sql-client</code> pod that the helpers below use stays in the class namespace
-<code>ovedr-app</code>. Instructors get their own namespace too (their class ID, where <code>win-pg-i01</code> lands), are admin in every student
+(<code>$VM-sql</code>) lives there, and so does <strong>your browser terminal</strong>, pod <code>sql-client</code> (§0.3). Instructors get their own namespace too (their class ID, where <code>win-pg-i01</code> lands), are admin in every student
 namespace, and are <strong>cluster-admin</strong> on both clusters, so they can help with any student, storage or operator issue.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># yours, on site A …</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># … and on site B</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span><span class="s1">'*'</span><span class="w"> </span><span class="s1">'*'</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">          </span><span class="c1"># yes: admin in your own namespace</span>
-</code></pre></div>
 <hr />
 <h2 id="02-log-in-to-vcenter">0.2 Log in to vCenter<a class="headerlink" href="#02-log-in-to-vcenter" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 00-0-2-login-vcenter -->
@@ -1164,22 +1171,51 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 class signs in, and it puts the same identity and group (<code>demo-students</code>) on both clusters. If SSO is down, tell the
 instructor.</p>
 <p>📸 <code>00-ocp-login</code>: the login page's identity-provider choice, with <strong>Entra (SSO)</strong> highlighted.</p>
-<h3 id="cli-two-named-contexts">CLI: two named contexts<a class="headerlink" href="#cli-two-named-contexts" title="Permanent link">&para;</a></h3>
-<p>With SSO, the CLI logs in with a <strong>token</strong> from the console, not a password:</p>
+<h3 id="your-browser-terminal">Your browser terminal<a class="headerlink" href="#your-browser-terminal" title="Permanent link">&para;</a></h3>
+<p>Every command in these guides runs in <strong>your browser terminal</strong>: a shell inside your own pod, <code>sql-client</code>, opened
+from the OpenShift console. <strong>Nothing is installed on your computer.</strong> It has <code>psql</code>, the class commands (§0.5), <code>oc</code>,
+<code>virtctl</code> and <code>jq</code>, and it already knows who you are and where your VM is. You have one on each site; use the one on
+site A unless a guide says otherwise.</p>
 <ol>
-<li>In the site A console, open your name (top right) → <strong>Copy login command</strong> → <strong>Display Token</strong>.</li>
-<li>Copy the <code>oc login --token=… --server=…</code> line and run it. Then do the same on site B.</li>
+<li>In the <strong>site A</strong> console, open your project: <strong>Home → Projects → <code>&lt;your class ID&gt;</code></strong> (or pick it in the
+   <strong>Project</strong> list at the top of any page).</li>
+<li>Go to <strong>Workloads → Pods</strong>, open the pod <strong><code>sql-client-…</code></strong>, and choose the <strong>Terminal</strong> tab.</li>
+<li>Type <code>ovedr</code> and press Enter. It shows your class ID, your VM and its address, which site this terminal is on,
+   and what is signed in yet.</li>
 </ol>
-<p>Every later command names the site it talks to (<code>--context site-a</code> / <code>--context site-b</code>), so you never run a
-step against the wrong cluster.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span><span class="s1">'&lt;site A token&gt;'</span><span class="w"> </span>--server<span class="o">=</span><span class="s2">"https://api.</span><span class="nv">$A</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">:6443"</span><span class="w">     </span><span class="c1"># from "Copy login command" on site A</span>
-oc<span class="w"> </span>config<span class="w"> </span>rename-context<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>config<span class="w"> </span>current-context<span class="k">)</span><span class="s2">"</span><span class="w"> </span>site-a
-oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span><span class="s1">'&lt;site B token&gt;'</span><span class="w"> </span>--server<span class="o">=</span><span class="s2">"https://api.</span><span class="nv">$B</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">:6443"</span><span class="w">     </span><span class="c1"># from "Copy login command" on site B</span>
-oc<span class="w"> </span>config<span class="w"> </span>rename-context<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>config<span class="w"> </span>current-context<span class="k">)</span><span class="s2">"</span><span class="w"> </span>site-b
-oc<span class="w"> </span>config<span class="w"> </span>get-contexts
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">      </span><span class="c1"># both print $ME</span>
+<blockquote>
+<p>📋 <strong>Copy and paste.</strong> The Terminal tab is a normal browser terminal:
+- <strong>Paste</strong> a command from these guides with <strong>right-click → Paste</strong>, or <strong>Ctrl+Shift+V</strong> (Windows/Linux) /
+  <strong>⌘V</strong> (Mac). The copy button on each command block in the class site copies it for you.
+- <strong>Copy</strong> output by selecting it with the mouse, then <strong>right-click → Copy</strong> (or <strong>Ctrl+Shift+C</strong> / <strong>⌘C</strong>). Plain
+  <strong>Ctrl+C</strong> stops the running command, as in any terminal.
+- Paste one block at a time and wait for the prompt. Most class commands are one short line you can also type.</p>
+<p><strong>[verify: paste and copy shortcuts in the 4.19 console terminal, per browser]</strong></p>
+<p>💡 The terminal <strong>keeps your sign-ins while the pod runs</strong>, even if you close the tab or the browser. If the pod is
+ever restarted, run <code>dblogin</code> and <code>oclogin</code> again. Leaving a long command running? Keep its tab open.</p>
+</blockquote>
+<h3 id="sign-your-terminals-oc-in-for-both-sites">Sign your terminal's <code>oc</code> in, for both sites<a class="headerlink" href="#sign-your-terminals-oc-in-for-both-sites" title="Permanent link">&para;</a></h3>
+<p>With SSO, <code>oc</code> signs in with a <strong>token</strong> from the console, never a password. Do this once per site, in the <strong>same</strong>
+terminal:</p>
+<ol>
+<li>In the <strong>site A</strong> console, open your name (top right) → <strong>Copy login command</strong> → <strong>Display Token</strong>. Copy the line
+   that starts with <code>oc login --token=…</code>.</li>
+<li>In your terminal, type <code>oclogin</code> and a space, paste the line, and press Enter.</li>
+<li>Repeat in the <strong>site B</strong> console: copy its login command and paste it after <code>oclogin</code> in the <strong>same</strong> terminal.</li>
+</ol>
+<div class="highlight"><pre><span></span><code>oclogin<span class="w"> </span>oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span>sha256~…<span class="w"> </span>--server<span class="o">=</span>https://api.ocp-lz1.demo.lab-paragonmicro.com:6443<span class="w">   </span><span class="c1"># ✓ site-a: signed in as …</span>
+oclogin<span class="w"> </span>oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span>sha256~…<span class="w"> </span>--server<span class="o">=</span>https://api.ocp-lz2.demo.lab-paragonmicro.com:6443<span class="w">   </span><span class="c1"># ✓ site-b: signed in as …</span>
 </code></pre></div>
-<p><strong>Check:</strong> ✅ you are signed in on vCenter, site A and site B as yourself (<code>oc whoami</code> prints your class ID).</p>
+<p><code>oclogin</code> names each sign-in after its site, so every later command says which cluster it talks to
+(<code>--context site-a</code> / <code>--context site-b</code>), and it sets your namespace as the default. Tokens last 24 hours: if <code>oc</code>
+says <em>Unauthorized</em>, repeat the step for that site.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">   </span><span class="c1"># both print your class ID</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># yours, on site A …</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># … and on site B</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span><span class="s1">'*'</span><span class="w"> </span><span class="s1">'*'</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">          </span><span class="c1"># yes: admin in your own namespace</span>
+</code></pre></div>
+<p><strong>Check:</strong> ✅ you are signed in on vCenter and both consoles as yourself, your browser terminal is open, and <code>oc whoami</code>
+prints your class ID on both sites.</p>
 <hr />
 <h2 id="04-log-in-to-your-windows-vm">0.4 Log in to your Windows VM<a class="headerlink" href="#04-log-in-to-your-windows-vm" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 00-0-4-login-windows-vm -->
@@ -1231,32 +1267,62 @@ with your class password <strong>[verify: BL-D08, student Windows accounts]</str
 </table>
 <p>Each of your <code>marks</code> rows carries a SHA-256 hash of the previous row. If a row is lost, changed or reordered,
 <code>ovedr_verify</code> reports <code>chain_ok = f</code> and names the first broken row.</p>
-<h3 id="helpers-paste-once-per-terminal">Helpers (paste once per terminal)<a class="headerlink" href="#helpers-paste-once-per-terminal" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="c1"># where is the database? Your VM keeps its OWN address ($VM_IP) on vSphere AND after a move: the staged plans map</span>
-<span class="c1"># its NIC onto the same VLAN (bridge map). Only a plan that uses the POD network needs §0.6 and a new PGHOST.</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">PGHOST_SITE_A</span><span class="o">=</span><span class="nv">$VM_IP</span>
-sql<span class="o">()</span><span class="w">    </span><span class="o">{</span><span class="w"> </span><span class="nb">local</span><span class="w"> </span><span class="nv">ctx</span><span class="o">=</span><span class="nv">$1</span><span class="p">;</span><span class="w"> </span><span class="nb">shift</span>
-<span class="w">           </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$ctx</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">             </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$PGHOST_SITE_A</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-U<span class="w"> </span>bcdr<span class="w"> </span>-d<span class="w"> </span>bcdr<span class="w"> </span>-v<span class="w"> </span><span class="nv">ON_ERROR_STOP</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="s2">"</span><span class="nv">$@</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
-mark<span class="o">()</span><span class="w">   </span><span class="o">{</span><span class="w"> </span>sql<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('</span><span class="nv">$ME</span><span class="s2">', '</span><span class="nv">$2</span><span class="s2">', '</span><span class="si">${</span><span class="nv">3</span><span class="k">:-</span><span class="si">}</span><span class="s2">');"</span><span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="w">            </span><span class="c1"># inject one row</span>
-load<span class="o">()</span><span class="w">   </span><span class="o">{</span><span class="w"> </span>sql<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_load('</span><span class="nv">$ME</span><span class="s2">', '</span><span class="nv">$2</span><span class="s2">', </span><span class="si">${</span><span class="nv">3</span><span class="k">:-</span><span class="nv">100</span><span class="si">}</span><span class="s2">);"</span><span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="w">           </span><span class="c1"># inject a burst</span>
-verify<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>sql<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('</span><span class="nv">$ME</span><span class="s2">');"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">                   </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_checksum();"</span><span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="w">                             </span><span class="c1"># read + prove</span>
-alive<span class="o">()</span><span class="w">  </span><span class="o">{</span><span class="w"> </span>sql<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT count(*) AS beats, max(ts) AS last_beat,</span>
-<span class="s2">                        date_trunc('second', clock_timestamp() - max(ts)) AS staleness,</span>
-<span class="s2">                        pg_postmaster_start_time() AS postgres_started FROM heartbeat;"</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
-where<span class="o">()</span><span class="w">  </span><span class="o">{</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%-7s '</span><span class="w"> </span><span class="s2">"</span><span class="nv">$s</span><span class="s2">"</span>
-<span class="w">             </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">               </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}{"  node="}{.status.nodeName}{"\n"}'</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"-"</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+<h3 id="your-class-commands-already-in-your-terminal">Your class commands (already in your terminal)<a class="headerlink" href="#your-class-commands-already-in-your-terminal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dblogin</code></td>
+<td>sign in to <strong>your VM's</strong> database as you (<code>student_NN</code>), with your class password. Once per pod</td>
+</tr>
+<tr>
+<td><code>mark &lt;label&gt; [note]</code></td>
+<td><strong>inject</strong> one hash-chained row; note its <code>id</code>. Example: <code>mark d1-before</code></td>
+</tr>
+<tr>
+<td><code>load &lt;label&gt; [rows]</code></td>
+<td>inject a burst of rows (default 100)</td>
+</tr>
+<tr>
+<td><code>verify</code></td>
+<td><strong>read and prove</strong> your rows: <code>chain_ok = t</code>, and the fingerprint of all marks</td>
+</tr>
+<tr>
+<td><code>alive</code></td>
+<td>is your VM writing? <code>staleness</code> under 10 s = yes</td>
+</tr>
+<tr>
+<td><code>sql [psql options]</code></td>
+<td><code>psql</code> to your VM's database, e.g. <code>sql -c "SELECT count(*) FROM marks"</code></td>
+</tr>
+<tr>
+<td><code>where</code></td>
+<td>which site and node runs your VM right now</td>
+</tr>
+<tr>
+<td><code>ovedr</code></td>
+<td>who and where you are, and what is signed in</td>
+</tr>
+</tbody>
+</table>
+<p>They talk to your VM at its own address, <code>$VM_IP</code>, which it keeps on vSphere, site A and site B (the staged plans
+use a bridge network map). So they work from either site's terminal, before and after every move. If you ever move
+your VM onto the pod network yourself, §0.6 shows how to point them at its new address (<code>export PGHOST=…</code>).</p>
+<div class="highlight"><pre><span></span><code>dblogin<span class="w">                          </span><span class="c1"># Password for student_NN: your class password (it is not shown as you type)</span>
 </code></pre></div>
 <blockquote>
 <p><code>ovedr_checksum</code> fingerprints <strong>every</strong> mark in your VM's database. On your own VM that is your rows only. On the
 instructor's <code>win-pg-i01</code> it covers everyone who marked it.</p>
 </blockquote>
 <h3 id="try-it-now">Try it now<a class="headerlink" href="#try-it-now" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>alive<span class="w">  </span>site-a<span class="w">                    </span><span class="c1"># staleness under 10 s: your VM is writing</span>
-mark<span class="w">   </span>site-a<span class="w"> </span>lab0-hello<span class="w">         </span><span class="c1"># your first row: note its id and sha</span>
-verify<span class="w"> </span>site-a<span class="w">                    </span><span class="c1"># chain_ok = t, marks = 1</span>
+<div class="highlight"><pre><span></span><code>alive<span class="w">                            </span><span class="c1"># staleness under 10 s: your VM is writing</span>
+mark<span class="w"> </span>lab0-hello<span class="w">                  </span><span class="c1"># your first row: note its id and sha</span>
+verify<span class="w">                           </span><span class="c1"># chain_ok = t, marks = 1</span>
 </code></pre></div>
 <p>📸 <code>00-verify</code>: the <code>verify</code> output with <code>chain_ok = t</code>.</p>
 <p>✍️ <strong>Proof table, row 0:</strong> your first mark's <code>id</code>, and the <code>fingerprint</code> from <code>ovedr_checksum</code>.</p>
@@ -1341,16 +1407,15 @@ pinned the static IP to the new adapter, reset it:
 <p>The alternative is your VM's <strong>Service</strong>, <code>Service/$VM-sql</code>. It selects <code>vm.kubevirt.io/name=$VM</code> on port 5432, so
 it follows your VM whatever its IP: <code>export PGHOST=$VM-sql</code>.</p>
 <h3 id="6-connection-test">6. Connection test<a class="headerlink" href="#6-connection-test" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="nv">$PGHOST</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w">   </span><span class="c1"># accepting connections</span>
-alive<span class="w">  </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span>
-mark<span class="w">   </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>own-address<span class="w"> </span><span class="s2">"ip=</span><span class="nv">$PGHOST</span><span class="s2">"</span>
-verify<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span>
+<div class="highlight"><pre><span></span><code>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="nv">$PGHOST</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w">          </span><span class="c1"># accepting connections</span>
+alive
+mark<span class="w"> </span>own-address<span class="w"> </span><span class="s2">"ip=</span><span class="nv">$PGHOST</span><span class="s2">"</span>
+verify
 </code></pre></div>
 <p>✅ <code>pg_isready</code> answers <em>accepting connections</em>, the heartbeat is fresh, and <code>chain_ok = t</code>.</p>
 <blockquote>
-<p>Windows has no SSH server by default, so the PostgreSQL connection above <strong>is</strong> the connection test. If your
-instructor enables RDP, the same address works: <code>virtctl --context "$CTX" -n "$VMNS" port-forward "vm/$VM" 3389</code>,
-then RDP to <code>localhost:3389</code> as <code>.\&lt;WINUSER&gt;</code> <strong>[verify]</strong>.</p>
+<p>Windows has no SSH server by default, so the PostgreSQL connection above <strong>is</strong> the connection test. To work inside
+Windows, use the VM's <strong>Console</strong> tab in the OpenShift console.</p>
 </blockquote>
 <p>📸 <code>00-own-address</code>: <code>ipconfig</code> on the new adapter beside the <code>PGHOST</code> echo.</p>
 <hr />
@@ -1385,7 +1450,7 @@ survived, is now one command. To go deeper on the platform you'll use today:</p>
 <li><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a>: every pre-built piece, from the CLI and in the console</li>
 <li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization documentation (4.19)</a></li>
 <li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index">OpenShift authentication and authorization (4.19)</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc">OpenShift CLI (<code>oc</code>)</a> [verify link]</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc">OpenShift CLI (<code>oc</code>)</a>, the CLI your browser terminal runs [verify link]</li>
 <li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></li>
 <li><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization">Red Hat OpenShift Virtualization (product overview)</a></li>
 <li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)</a></li>

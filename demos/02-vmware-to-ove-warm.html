@@ -1240,7 +1240,7 @@
 
 <h1 id="demo-2-warm-migration-vsphere-ove">Demo 2: Warm migration, vSphere → OVE<a class="headerlink" href="#demo-2-warm-migration-vsphere-ove" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.1 · draft · 2026-10-06</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In this demo you migrate a running VMware VM to OpenShift Virtualization while it keeps serving its database.
@@ -1303,7 +1303,7 @@ connect, and <strong><a href="setup-how-the-lab-is-built.html">Lab S — how thi
 <td>for Demos 1 and 1b. Demo 2's <strong>warm</strong> plan is the one <strong>you</strong> build here. <a href="setup-how-the-lab-is-built.html">S.12</a></td>
 </tr>
 <tr>
-<td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID, you are <strong>admin</strong>) with your <code>Service/&lt;VM&gt;-sql</code>; <code>ovedr-app</code> with the shared <code>sql-client</code></td>
+<td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID, you are <strong>admin</strong>) with your <code>Service/&lt;VM&gt;-sql</code> and your browser terminal <code>sql-client</code></td>
 <td>both clusters</td>
 <td>your VM lands in your namespace. <a href="setup-how-the-lab-is-built.html">S.9</a></td>
 </tr>
@@ -1333,6 +1333,13 @@ address on OpenShift, so Lab 0 §0.6 is not needed.</p>
 <p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need <code>site-a</code> / <code>site-b</code>
 contexts, the variables (<code>ME</code>, <code>N</code>, <code>A</code>, <code>B</code>, <code>VM</code>, <code>VM_IP</code>, <code>WINUSER</code>) and the helpers (<code>sql</code>, <code>mark</code>, <code>load</code>,
 <code>verify</code>, <code>alive</code>, <code>where</code>).</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
+terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
+<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
+Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
+console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
 <h2 id="21-prerequisites-and-the-starting-state">2.1 Prerequisites and the starting state<a class="headerlink" href="#21-prerequisites-and-the-starting-state" title="Permanent link">&para;</a></h2>
@@ -1365,11 +1372,11 @@ either refuse to start, or fall back to behaviour this guide doesn't describe.</
 <span class="w">  </span>-p<span class="w"> </span><span class="s1">'{"spec":{"controller_precopy_interval":5}}'</span><span class="w">          </span><span class="c1"># minutes between pre-copies [verify]</span>
 </code></pre></div>
 <h3 id="check-your-vm-is-up-and-writing-on-vsphere">Check: your VM is up and writing on vSphere<a class="headerlink" href="#check-your-vm-is-up-and-writing-on-vsphere" title="Permanent link">&para;</a></h3>
-<p>Your VM still runs on vSphere, so the site-A <code>sql-client</code> reaches it at your own address, <code>$VM_IP</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">unset</span><span class="w"> </span>PGHOST<span class="w">                    </span><span class="c1"># sql() falls back to $PGHOST_SITE_A = $VM_IP</span>
-alive<span class="w">  </span>site-a<span class="w">                   </span><span class="c1"># staleness &lt; 10 s</span>
-mark<span class="w">   </span>site-a<span class="w"> </span>d2-start<span class="w">          </span><span class="c1"># ✍️ note the id</span>
-verify<span class="w"> </span>site-a<span class="w">                   </span><span class="c1"># chain_ok = t</span>
+<p>Your VM still runs on vSphere, and your browser terminal reaches it at its own address, <code>$VM_IP</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="nv">$VM_IP</span><span class="w">            </span><span class="c1"># your VM's own address (the terminal's default)</span>
+alive<span class="w">                           </span><span class="c1"># staleness &lt; 10 s</span>
+mark<span class="w"> </span>d2-start<span class="w">                   </span><span class="c1"># ✍️ note the id</span>
+verify<span class="w">                          </span><span class="c1"># chain_ok = t</span>
 </code></pre></div>
 <p>📸 <code>02-start-alive</code> — <code>alive</code> and <code>verify</code> output, with the VM on vSphere.</p>
 <hr />
@@ -1417,7 +1424,7 @@ CBT enabled.</p>
 <p>CBT is a per-VM switch (<code>ctkEnabled</code>) <strong>plus</strong> a per-disk switch for each virtual disk (<code>scsi0:N.ctkEnabled</code>).
 It takes effect at the next power-on, so turn it on while the VM is <strong>off</strong>.</p>
 <h3 id="leave-a-mark-then-shut-your-vm-down-cleanly">Leave a mark, then shut your VM down cleanly<a class="headerlink" href="#leave-a-mark-then-shut-your-vm-down-cleanly" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d2-before-cbt
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d2-before-cbt
 </code></pre></div>
 <p>In your VM's web console (vCenter → <code>&lt;VM&gt;</code> → <strong>Launch Web Console</strong>, log in as <code>.\&lt;WINUSER&gt;</code>), in PowerShell:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-before-cbt"</span>
@@ -1524,10 +1531,10 @@ govc<span class="w"> </span>vm.info<span class="w"> </span>-e<span class="w"> </
 </code></pre></div>
 <p>📸 <code>02-ctk-files</code> — the datastore browser listing three <code>-ctk.vmdk</code> files.</p>
 <p>Wait for the database to come back, then prove nothing was lost across the shutdown:</p>
-<div class="highlight"><pre><span></span><code><span class="k">until</span><span class="w"> </span>alive<span class="w"> </span>site-a<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'beats'</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
-alive<span class="w">  </span>site-a<span class="w">                        </span><span class="c1"># postgres_started is new: the VM rebooted</span>
-mark<span class="w">   </span>site-a<span class="w"> </span>d2-cbt-on
-verify<span class="w"> </span>site-a<span class="w">                        </span><span class="c1"># chain_ok = t — the reboot lost nothing</span>
+<div class="highlight"><pre><span></span><code><span class="k">until</span><span class="w"> </span>alive<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'beats'</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+alive<span class="w">                                </span><span class="c1"># postgres_started is new: the VM rebooted</span>
+mark<span class="w"> </span>d2-cbt-on
+verify<span class="w">                               </span><span class="c1"># chain_ok = t — the reboot lost nothing</span>
 </code></pre></div>
 <p>✍️ <strong>Row 2.1:</strong> CBT on (yes/no), the number of <code>-ctk.vmdk</code> files, and your <code>d2-cbt-on</code> id.</p>
 <hr />
@@ -1541,10 +1548,10 @@ verify<span class="w"> </span>site-a<span class="w">                        </sp
 </code></pre></div>
 <h3 id="from-your-terminal">From your terminal<a class="headerlink" href="#from-your-terminal" title="Permanent link">&para;</a></h3>
 <p>A burst now, then a small burst every minute in the background, so each pre-copy round has new blocks to ship:</p>
-<div class="highlight"><pre><span></span><code>load<span class="w"> </span>site-a<span class="w"> </span>d2-precopy<span class="w"> </span><span class="m">500</span><span class="w">                                     </span><span class="c1"># 500 hash-chained rows, right now</span>
-<span class="o">(</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">30</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>load<span class="w"> </span>site-a<span class="w"> </span><span class="s2">"d2-precopy-</span><span class="nv">$i</span><span class="s2">"</span><span class="w"> </span><span class="m">50</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w"> </span><span class="o">)</span><span class="w"> </span><span class="p">&amp;</span>
+<div class="highlight"><pre><span></span><code>load<span class="w"> </span>d2-precopy<span class="w"> </span><span class="m">500</span><span class="w">                                            </span><span class="c1"># 500 hash-chained rows, right now</span>
+<span class="o">(</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">30</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>load<span class="w"> </span><span class="s2">"d2-precopy-</span><span class="nv">$i</span><span class="s2">"</span><span class="w"> </span><span class="m">50</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w"> </span><span class="o">)</span><span class="w"> </span><span class="p">&amp;</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">LOADER</span><span class="o">=</span><span class="nv">$!</span><span class="w">                                               </span><span class="c1"># stop it before cutover (2.6)</span>
-verify<span class="w"> </span>site-a
+verify
 </code></pre></div>
 <p>✍️ <strong>Row 2.2:</strong> your <code>marks</code> count after the 500-row burst.</p>
 <hr />
@@ -1642,8 +1649,8 @@ precopies
 watch<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="s2">"oc --context site-a -n openshift-mtv get migration </span><span class="nv">$PLAN</span><span class="s2"> -o jsonpath='{.status.vms[0].phase}{\"  precopies=\"}{.status.vms[0].warm.successes}{\"\n\"}'"</span>
 </code></pre></div>
 <p>While pre-copies run:</p>
-<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-a<span class="w">                      </span><span class="c1"># STILL writing: the VM is up during pre-copy</span>
-mark<span class="w">  </span>site-a<span class="w"> </span>d2-during-precopy
+<div class="highlight"><pre><span></span><code>alive<span class="w">                             </span><span class="c1"># STILL writing: the VM is up during pre-copy</span>
+mark<span class="w"> </span>d2-during-precopy
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w">      </span><span class="c1"># three PVCs filling for your VM</span>
 </code></pre></div>
 <p>In vCenter, open your VM → <strong>Snapshots</strong>. MTV creates a snapshot for each round and removes the previous one.</p>
@@ -1662,7 +1669,7 @@ later one.</p>
 <sub>🎬 <em>2.6 Cutover: the only downtime: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-6-cutover-only-downtime.mp4</code>).</em></sub></p>
 <p>Let at least <strong>two</strong> pre-copies complete, then stop the background load and leave a last mark on vSphere:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">kill</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
-mark<span class="w"> </span>site-a<span class="w"> </span>d2-before-cutover<span class="w">           </span><span class="c1"># ✍️ note this id: it must survive the cutover</span>
+mark<span class="w"> </span>d2-before-cutover<span class="w">                  </span><span class="c1"># ✍️ note this id: it must survive the cutover</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">CUTOVER_AT</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%Y-%m-%dT%H:%M:%SZ<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"cutover requested at </span><span class="nv">$CUTOVER_AT</span><span class="s2">"</span>
 </code></pre></div>
 <p>In the guest:</p>
@@ -1690,14 +1697,14 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 with <code>CTX=site-a</code> and <code>VM=$TARGET</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nv">VM</span><span class="o">=</span><span class="nv">$TARGET</span><span class="w"> </span>where<span class="w">                                   </span><span class="c1"># site-a Running, and the node it landed on</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
+pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
 </code></pre></div>
 <h3 id="check-every-row-arrived-in-order-unaltered">Check: every row arrived, in order, unaltered<a class="headerlink" href="#check-every-row-arrived-in-order-unaltered" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">until</span><span class="w"> </span>alive<span class="w"> </span>site-a<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span>beats<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w">    </span><span class="c1"># Windows boot + PostgreSQL start</span>
-alive<span class="w">  </span>site-a<span class="w">                    </span><span class="c1"># writing again, postgres_started = after cutover</span>
-verify<span class="w"> </span>site-a<span class="w">                    </span><span class="c1"># chain_ok = t; last_stage = d2-before-cutover (or later)</span>
-mark<span class="w">   </span>site-a<span class="w"> </span>d2-after-cutover
-verify<span class="w"> </span>site-a
+<div class="highlight"><pre><span></span><code><span class="k">until</span><span class="w"> </span>alive<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span>beats<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w">           </span><span class="c1"># Windows boot + PostgreSQL start</span>
+alive<span class="w">                            </span><span class="c1"># writing again, postgres_started = after cutover</span>
+verify<span class="w">                           </span><span class="c1"># chain_ok = t; last_stage = d2-before-cutover (or later)</span>
+mark<span class="w"> </span>d2-after-cutover
+verify
 </code></pre></div>
 <p>✅ <code>chain_ok = t</code>. Every row from <code>d2-start</code>, the 500-row burst, every background round and <code>d2-before-cutover</code>
 is present and in order.
@@ -1705,7 +1712,7 @@ is present and in order.
 pre-copy didn't lose the tail, because the cutover copied it.</p>
 <h3 id="check-the-real-downtime">Check: the real downtime<a class="headerlink" href="#check-the-real-downtime" title="Permanent link">&para;</a></h3>
 <p>The heartbeat writer runs every 5 s, so the outage is the gap in it around the cutover:</p>
-<div class="highlight"><pre><span></span><code>sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
+<div class="highlight"><pre><span></span><code>sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
 <span class="s2">SELECT ts AS resumed_at, date_trunc('second', gap) AS outage</span>
 <span class="s2">FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
 <span class="s2">WHERE gap &gt; interval '10 seconds' AND ts &gt; timestamptz '</span><span class="nv">$CUTOVER_AT</span><span class="s2">' - interval '5 minutes'</span>
@@ -1752,7 +1759,7 @@ copies its memory while it runs. (This is in-cluster live migration, not MTV.)</
 <p>✅ <code>LiveMigratable=True</code>. That needs ReadWriteMany disks: true on the NFS class, and on ODF's virtualization class
 with RWX block. If it says <code>False</code>, read the message (usually the access mode) and tell the instructor <strong>[verify]</strong>.</p>
 <h3 id="inject-migrate-verify">Inject, migrate, verify<a class="headerlink" href="#inject-migrate-verify" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d2-before-livemig
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d2-before-livemig
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}{"\n"}'</span><span class="w">     </span><span class="c1"># ✍️ node before</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">LM_AT</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%Y-%m-%dT%H:%M:%SZ<span class="k">)</span>
 </code></pre></div>
@@ -1770,9 +1777,9 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <p>Watch it, then prove the data. A live migration keeps the VM's address: on the bridge it stays <code>$VM_IP</code>.</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                         </span><span class="c1"># Ctrl-C at Succeeded</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}{"  "}{.status.migrationState.endTimestamp}{"\n"}'</span>
-mark<span class="w">   </span>site-a<span class="w"> </span>d2-after-livemig
-verify<span class="w"> </span>site-a<span class="w">                                                        </span><span class="c1"># chain_ok = t</span>
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
+mark<span class="w"> </span>d2-after-livemig
+verify<span class="w">                                                               </span><span class="c1"># chain_ok = t</span>
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
 <span class="s2">SELECT max(gap) AS worst_gap FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap</span>
 <span class="s2">FROM heartbeat WHERE ts &gt; timestamptz '</span><span class="nv">$LM_AT</span><span class="s2">' - interval '1 minute') g;"</span><span class="w">   </span><span class="c1"># ≈ 5 s: no outage</span>
 </code></pre></div>

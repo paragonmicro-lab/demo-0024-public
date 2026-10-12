@@ -718,7 +718,7 @@
 
 <h1 id="demo-1b-vmware-to-both-openshift-clusters">Demo 1b: VMware to both OpenShift clusters<a class="headerlink" href="#demo-1b-vmware-to-both-openshift-clusters" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.0 · draft · 2026-10-06</strong> · class/demos/01b-vmware-to-both-sites.md</p>
+<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/01b-vmware-to-both-sites.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You migrate one VMware VM to <strong>two</strong> different OpenShift clusters, first site A and then site B, using the
@@ -742,7 +742,7 @@ the OpenShift guest agent. <strong>CI runs exactly these command-line steps</str
 <tr>
 <td>Your VM <code>win-pg-s&lt;NN&gt;</code> on vSphere, in your folder <code>vms/students/&lt;class ID&gt;</code>, at its own address <code>10.101.&lt;22+N&gt;.&lt;100+NN&gt;</code>, PostgreSQL WAL on <code>L:</code> and data on <code>D:</code>, validated</td>
 <td>vSphere <code>lzN</code></td>
-<td><code>alive site-a</code> (Lab 0)</td>
+<td><code>alive</code> (Lab 0)</td>
 <td><a href="setup-how-the-lab-is-built.html">S.11</a></td>
 </tr>
 <tr>
@@ -770,9 +770,9 @@ the OpenShift guest agent. <strong>CI runs exactly these command-line steps</str
 <td><a href="setup-how-the-lab-is-built.html">S.12</a></td>
 </tr>
 <tr>
-<td>Your namespace <code>$VMNS</code> (admin) with your <code>win-pg-s&lt;NN&gt;-sql</code> Service; the shared <code>sql-client</code> in <code>ovedr-app</code></td>
+<td>Your namespace <code>$VMNS</code> (admin) with your <code>win-pg-s&lt;NN&gt;-sql</code> Service and your browser terminal <code>sql-client</code></td>
 <td>both sites</td>
-<td><code>oc -n "$VMNS" get svc</code> · <code>oc -n ovedr-app get deploy/sql-client</code></td>
+<td><code>oc -n "$VMNS" get svc,deploy</code></td>
 <td><a href="setup-how-the-lab-is-built.html">S.9</a></td>
 </tr>
 <tr>
@@ -789,15 +789,22 @@ Because every copy keeps <code>$VM_IP</code>, the helpers work unchanged on both
 <blockquote>
 <p><strong>Already ran Demo 1?</strong> Then your VM is already on site A (named <code>$VM</code> in your namespace <code>$VMNS</code>). Skip 1b.2, stop that copy
 (one copy on the VLAN), power the vSphere original back on, and go straight to 1b.3.</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
+terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
+<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
+Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
+console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
 <h2 id="1b1-inject-before-you-move">1b.1 Inject before you move<a class="headerlink" href="#1b1-inject-before-you-move" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 01b-1b-1-inject-before-move -->
 <p><a href="../.images/01b-1b-1-inject-before-move.mp4"><img alt="🎬 Video: 1b.1 Inject before you move. Watch it, then do the same in the console" src="../.images/01b-1b-1-inject-before-move.jpg" /></a>
 <sub>🎬 <em>1b.1 Inject before you move: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01b-1b-1-inject-before-move.mp4</code>).</em></sub></p>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1b-before<span class="w">                 </span><span class="c1"># your row, over the network, to the VM still on vSphere</span>
-verify<span class="w"> </span>site-a<span class="w">                          </span><span class="c1"># chain_ok = t</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">FP</span><span class="o">=</span><span class="k">$(</span>sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"fingerprint before: </span><span class="nv">$FP</span><span class="s2">"</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d1b-before<span class="w">                        </span><span class="c1"># your row, over the network, to the VM still on vSphere</span>
+verify<span class="w">                                 </span><span class="c1"># chain_ok = t</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">FP</span><span class="o">=</span><span class="k">$(</span>sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"fingerprint before: </span><span class="nv">$FP</span><span class="s2">"</span>
 </code></pre></div>
 <p>In the VM (vCenter → your VM → <strong>Launch Web Console</strong>, as <code>.\student-NN</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1b-before (vSphere)"</span>
@@ -851,10 +858,10 @@ oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}{"  agent="}{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'</span>
 </code></pre></div>
 <h3 id="check-on-site-a">Check on site A<a class="headerlink" href="#check-on-site-a" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-a<span class="w">                           </span><span class="c1"># heartbeat live again (staleness &lt; 10 s), postgres_started is new</span>
-verify<span class="w"> </span>site-a<span class="w">                          </span><span class="c1"># chain_ok = t, your d1b-before row is there</span>
-sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="w">     </span><span class="c1"># = $FP: every mark arrived, unchanged</span>
-mark<span class="w"> </span>site-a<span class="w"> </span>d1b-after-site-a
+<div class="highlight"><pre><span></span><code>alive<span class="w">                                  </span><span class="c1"># heartbeat live again (staleness &lt; 10 s), postgres_started is new</span>
+verify<span class="w">                                 </span><span class="c1"># chain_ok = t, your d1b-before row is there</span>
+sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="w">            </span><span class="c1"># = $FP: every mark arrived, unchanged</span>
+mark<span class="w"> </span>d1b-after-site-a
 </code></pre></div>
 <p>In the VM (<strong>Virtualization → VirtualMachines → your VM → Console</strong>): read the file back, then add a line:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
@@ -909,10 +916,10 @@ oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX
 oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span>vmi/<span class="nv">$VM</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}'</span><span class="o">=</span>Running<span class="w"> </span>--timeout<span class="o">=</span>15m
 </code></pre></div>
 <h3 id="check-on-site-b">Check on site B<a class="headerlink" href="#check-on-site-b" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-b
-verify<span class="w"> </span>site-b<span class="w">                          </span><span class="c1"># d1b-before is there; d1b-after-site-a is NOT (that row lives only in the site A copy)</span>
-sql<span class="w"> </span>site-b<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="w">     </span><span class="c1"># = $FP again</span>
-mark<span class="w"> </span>site-b<span class="w"> </span>d1b-after-site-b
+<div class="highlight"><pre><span></span><code>alive
+verify<span class="w">                                 </span><span class="c1"># d1b-before is there; d1b-after-site-a is NOT (that row lives only in the site A copy)</span>
+sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="w">            </span><span class="c1"># = $FP again</span>
+mark<span class="w"> </span>d1b-after-site-b
 </code></pre></div>
 <blockquote>
 <p>💡 <strong>Why is <code>d1b-after-site-a</code> missing on B?</strong> Both migrations copied the VM <strong>from vSphere</strong>, and the site A copy

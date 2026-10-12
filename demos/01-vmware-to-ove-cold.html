@@ -1498,7 +1498,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.3 · draft · 2026-10-06</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will take your own Windows Server + PostgreSQL VM off VMware vSphere and rehost it on OpenShift Virtualization
@@ -1541,7 +1541,7 @@ section in <a href="setup-how-the-lab-is-built.html">Lab S</a></strong>, with th
 </tr>
 <tr>
 <td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID) on site A and site B, plus <code>ovedr-app</code></td>
-<td>in yours: <strong>admin</strong> rights for you, and <code>Service/&lt;your VM&gt;-sql</code> waiting for your VM to arrive; in <code>ovedr-app</code>: the shared <code>sql-client</code>.</td>
+<td>in yours: <strong>admin</strong> rights for you, <code>Service/&lt;your VM&gt;-sql</code> waiting for your VM to arrive, and your browser terminal <code>sql-client</code> (Lab 0 §0.3).</td>
 <td><a href="setup-how-the-lab-is-built.html">S.9</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac">Using RBAC</a> [verify link]</td>
 </tr>
 <tr>
@@ -1567,6 +1567,13 @@ Lab 0 §0.6 is not needed.</p>
 <code>load</code>, <code>verify</code>, <code>alive</code> and <code>where</code>.</p>
 <p><strong>Your own VM.</strong> Every step below acts on <strong>your</strong> <code>$VM</code> (<code>win-pg-s&lt;NN&gt;</code>), so you drive your own migration from
 start to finish. 🧑‍🏫 marks the few steps only the instructor runs.</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
+terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
+<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
+Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
+console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
 <h2 id="11-login-recap-2-min">1.1 Login recap (2 min)<a class="headerlink" href="#11-login-recap-2-min" title="Permanent link">&para;</a></h2>
@@ -1574,8 +1581,8 @@ start to finish. 🧑‍🏫 marks the few steps only the instructor runs.</p>
 <p><a href="../.images/01-1-1-login-recap.mp4"><img alt="🎬 Video: 1.1 Login recap. Watch it, then do the same in the console" src="../.images/01-1-1-login-recap.jpg" /></a>
 <sub>🎬 <em>1.1 Login recap: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-1-login-recap.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">        </span><span class="c1"># both print $ME</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">"vm=</span><span class="nv">$VM</span><span class="s2">  db-host=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$PGHOST_SITE_A</span><span class="si">}</span><span class="s2">"</span><span class="w">                  </span><span class="c1"># still the vSphere IP ($VM_IP) for now</span>
-alive<span class="w"> </span>site-a<span class="w">                                                      </span><span class="c1"># staleness &lt; 10 s</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"vm=</span><span class="nv">$VM</span><span class="s2">  db-host=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w">                          </span><span class="c1"># still the vSphere IP ($VM_IP) for now</span>
+alive<span class="w">                                                             </span><span class="c1"># staleness &lt; 10 s</span>
 </code></pre></div>
 <p><strong>Check:</strong> ✅ both contexts answer as <code>$ME</code>, and the heartbeat is fresh. If not, go back to Lab 0.</p>
 <hr />
@@ -1625,8 +1632,8 @@ alive<span class="w"> </span>site-a<span class="w">                             
 </code></pre></div>
 <p>✅ <code>VMTools</code> is <em>Running</em>. <code>postgresql-16</code> is <em>Running</em>. <code>D:</code> is <code>pgdata</code> and <code>L:</code> is <code>pg_wal</code>.</p>
 <h3 id="inject-your-database-row">Inject: your database row<a class="headerlink" href="#inject-your-database-row" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w">   </span>site-a<span class="w"> </span>d1-before
-verify<span class="w"> </span>site-a
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d1-before
+verify
 </code></pre></div>
 <p>✍️ <strong>Row 1.1:</strong> the mark <code>id</code>, <code>chain_ok</code>, <code>fingerprint</code>.</p>
 <hr />
@@ -1853,8 +1860,8 @@ Afterwards, clean up: <code>oc --context site-a -n "$VMNS" delete provider,secre
 <p>A <strong>cold</strong> migration copies the disks while the VM is <strong>off</strong>. It is simple and consistent. The outage is the whole
 copy plus the driver conversion.</p>
 <h3 id="inject-before-the-move">Inject before the move<a class="headerlink" href="#inject-before-the-move" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1-before-migration<span class="w"> </span><span class="s2">"on=vSphere"</span>
-verify<span class="w"> </span>site-a
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d1-before-migration<span class="w"> </span><span class="s2">"on=vSphere"</span>
+verify
 </code></pre></div>
 <p>In the Windows console:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1-before-migration  on=vSphere"</span>
@@ -1864,7 +1871,7 @@ verify<span class="w"> </span>site-a
 <p>In vCenter, choose <strong>your VM → Actions → Power → Shut Down Guest OS</strong>. (MTV can also power it off for you,
 but a clean guest shutdown flushes PostgreSQL first.)</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># the heartbeat goes stale once the guest is down</span>
-alive<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># staleness grows; then the query fails once Windows is off: expected</span>
+alive<span class="w">                 </span><span class="c1"># staleness grows; then the query fails once Windows is off: expected</span>
 </code></pre></div>
 <h3 id="review-your-staged-plan">Review your staged plan<a class="headerlink" href="#review-your-staged-plan" title="Permanent link">&para;</a></h3>
 <p>The lab already created <strong>your</strong> plan, <code>d1-&lt;your VM&gt;</code>, and left it <strong>not started</strong>. Read it before you run it.</p>
@@ -2108,14 +2115,14 @@ stopped, which is why this step exists <strong>[verify: target power state in th
 helpers keep using <code>$VM_IP</code>. (Only if you built and ran a plan with the <strong>pod</strong> map: follow
 <a href="00-access-and-tools.html#06-optional-give-your-vm-a-pod-network-address-on-openshift">Lab 0 §0.6</a> with <code>CTX=site-a</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w">         </span><span class="c1"># still your own address</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
+pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
 </code></pre></div>
 <h3 id="the-database-now-lives-on-openshift">The database now lives on OpenShift<a class="headerlink" href="#the-database-now-lives-on-openshift" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>where<span class="w">                                   </span><span class="c1"># site-a Running  node=…</span>
-alive<span class="w">  </span>site-a<span class="w">                           </span><span class="c1"># postgres_started is NEW (the VM rebooted); staleness &lt; 10 s again</span>
-verify<span class="w"> </span>site-a<span class="w">                           </span><span class="c1"># your d1-before and d1-before-migration rows are present, chain_ok = t</span>
-mark<span class="w">   </span>site-a<span class="w"> </span>d1-after-migration<span class="w"> </span><span class="s2">"on=OVE site-a"</span>
-sql<span class="w">    </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS outage</span>
+alive<span class="w">                                   </span><span class="c1"># postgres_started is NEW (the VM rebooted); staleness &lt; 10 s again</span>
+verify<span class="w">                                  </span><span class="c1"># your d1-before and d1-before-migration rows are present, chain_ok = t</span>
+mark<span class="w"> </span>d1-after-migration<span class="w"> </span><span class="s2">"on=OVE site-a"</span>
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS outage</span>
 <span class="s2">                  FROM (SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
 <span class="s2">                  WHERE gap &gt; interval '10 seconds' ORDER BY id DESC LIMIT 3;"</span>
 </code></pre></div>
@@ -2180,16 +2187,16 @@ virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span clas
 </code></pre></div>
 <p>✅ The versions changed (or matched already), and <code>QEMU-GA</code> is <em>Running</em>. Back on the CLI, <code>AgentConnected=True</code>.
 Remove the drivers disk again in the console (untick it) and restart.</p>
-<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-a<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>verify<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># the reboots cost heartbeat gaps, never rows</span>
+<div class="highlight"><pre><span></span><code>alive<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>verify<span class="w">                        </span><span class="c1"># the reboots cost heartbeat gaps, never rows</span>
 </code></pre></div>
 <hr />
 <h2 id="17-end-of-demo-prove-the-data-5-min">1.7 End of demo: prove the data (5 min)<a class="headerlink" href="#17-end-of-demo-prove-the-data-5-min" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 01-1-7-end-demo-prove-data -->
 <p><a href="../.images/01-1-7-end-demo-prove-data.mp4"><img alt="🎬 Video: 1.7 End of demo: prove the data. Watch it, then do the same in the console" src="../.images/01-1-7-end-demo-prove-data.jpg" /></a>
 <sub>🎬 <em>1.7 End of demo: prove the data: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-7-end-demo-prove-data.mp4</code>).</em></sub></p>
-<div class="highlight"><pre><span></span><code>mark<span class="w">   </span>site-a<span class="w"> </span>d1-end<span class="w"> </span><span class="s2">"demo 1 complete"</span>
-verify<span class="w"> </span>site-a
-sql<span class="w">    </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, id, ts FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id;"</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d1-end<span class="w"> </span><span class="s2">"demo 1 complete"</span>
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, id, ts FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
 </code></pre></div>
@@ -2235,7 +2242,7 @@ needs the disks to be reachable from <strong>both</strong> nodes at once, which 
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="LiveMigratable")].status}  {.status.conditions[?(@.type=="LiveMigratable")].message}{"\n"}'</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,MODES:.spec.accessModes,SC:.spec.storageClassName
 where<span class="w">                                                  </span><span class="c1"># ✍️ the node it is on now</span>
-mark<span class="w"> </span>site-a<span class="w"> </span>d1-bonusA-before
+mark<span class="w"> </span>d1-bonusA-before
 </code></pre></div>
 <p>✅ <code>LiveMigratable=True</code>. If it is <code>False</code>, the message names the reason: usually a RWO disk or a mounted CD.</p>
 <p>Start the live migration:</p>
@@ -2250,10 +2257,10 @@ mark<span class="w"> </span>site-a<span class="w"> </span>d1-bonusA-before
 <p>Watch it:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                          </span><span class="c1"># Scheduling → … → Succeeded</span>
 where<span class="w">                                                                 </span><span class="c1"># a different node</span>
-alive<span class="w"> </span>site-a<span class="w">                                                          </span><span class="c1"># postgres_started UNCHANGED: no reboot</span>
-mark<span class="w">  </span>site-a<span class="w"> </span>d1-bonusA-after
-verify<span class="w"> </span>site-a
-sql<span class="w">   </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT max(gap) FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap</span>
+alive<span class="w">                                                                 </span><span class="c1"># postgres_started UNCHANGED: no reboot</span>
+mark<span class="w"> </span>d1-bonusA-after
+verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT max(gap) FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap</span>
 <span class="s2">                 FROM heartbeat WHERE ts &gt; now() - interval '10 minutes') g;"</span>
 </code></pre></div>
 <p>✅ New node, same <code>postgres_started</code>, and the largest gap is around the normal 5 s tick (a cold move costs minutes).
@@ -2274,7 +2281,7 @@ lose the database again. Restore <strong>both</strong> disks from the <strong>sa
 freezes all disks at the same instant (VSS), so its <code>D:</code> and <code>L:</code> match.</p>
 </blockquote>
 <h3 id="snapshot">Snapshot<a class="headerlink" href="#snapshot" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1-pre-snapshot<span class="w"> </span><span class="s2">"this row must come back"</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d1-pre-snapshot<span class="w"> </span><span class="s2">"this row must come back"</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: snapshot.kubevirt.io/v1beta1</span>
 <span class="s">kind: VirtualMachineSnapshot</span>
@@ -2292,7 +2299,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/backup-and-restore">Backing up and restoring VMs with snapshots</a> [verify link].</p>
 <p>📸 <code>01-snapshot-ready</code>: the Snapshots tab with the snapshot <em>Ready</em> and indications <em>Online, GuestAgent</em>.</p>
 <p>Now write a row <strong>after</strong> the snapshot. It exists only in the live database, so the restore must lose it:</p>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1-after-snapshot<span class="w"> </span><span class="s2">"this row must NOT come back"</span>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d1-after-snapshot<span class="w"> </span><span class="s2">"this row must NOT come back"</span>
 </code></pre></div>
 <h3 id="delete-the-database">Delete the database<a class="headerlink" href="#delete-the-database" title="Permanent link">&para;</a></h3>
 <p>In your VM's console, in an <strong>elevated</strong> PowerShell (<em>Run as administrator</em>: on your own VM, your <code>.\student-NN</code>
@@ -2300,12 +2307,14 @@ login is a local administrator <strong>[verify: BL-D10]</strong>), stop the hear
 <div class="highlight"><pre><span></span><code><span class="nb">Disable-ScheduledTask</span> <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span> <span class="p">|</span> <span class="nb">Out-Null</span>
 <span class="nb">Stop-ScheduledTask</span>    <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span>
 </code></pre></div>
-<p>Then drop the database (the <code>bcdr</code> role owns it):</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="nv">$PGHOST</span><span class="s2">"</span><span class="w"> </span>-U<span class="w"> </span>bcdr<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>-c<span class="w"> </span><span class="s1">'DROP DATABASE bcdr WITH (FORCE);'</span>
+<p>Then drop the database. The <code>bcdr</code> role owns it, and its password is the instructor's, so <strong>🧑‍🏫 ask your
+instructor</strong> to run this from their browser terminal, with <strong>your</strong> VM's address:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 🧑‍🏫 instructor (cluster-admin), in their browser terminal: the class pod holds the bcdr owner's password</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>psql<span class="w"> </span>-h<span class="w"> </span>&lt;student<span class="w"> </span>VM_IP&gt;<span class="w"> </span>-U<span class="w"> </span>bcdr<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>-c<span class="w"> </span><span class="s1">'DROP DATABASE bcdr WITH (FORCE);'</span>
 </code></pre></div>
 <p>Confirm the damage:</p>
-<div class="highlight"><pre><span></span><code>verify<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># FATAL: database "bcdr" does not exist. That is the disaster.</span>
+<div class="highlight"><pre><span></span><code>verify<span class="w">                 </span><span class="c1"># FATAL: database "bcdr" does not exist. That is the disaster.</span>
 </code></pre></div>
 <p>📸 <code>01-database-gone</code>: the <code>does not exist</code> error.</p>
 <h3 id="shut-postgresql-down-and-take-the-damaged-disks-offline">Shut PostgreSQL down and take the damaged disks offline<a class="headerlink" href="#shut-postgresql-down-and-take-the-damaged-disks-offline" title="Permanent link">&para;</a></h3>
@@ -2368,10 +2377,10 @@ copy online while the originals are offline gives it a new signature. That is ex
 <p>📸 <code>01-disks-restored</code>: Disk Management, with the restored disks online as <code>D:</code> (<code>pgdata</code>) and <code>L:</code> (<code>pg_wal</code>) and
 the originals offline.</p>
 <h3 id="what-came-back">What came back<a class="headerlink" href="#what-came-back" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>verify<span class="w"> </span>site-a
-sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, id, ts FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
-alive<span class="w">  </span>site-a
-mark<span class="w">   </span>site-a<span class="w"> </span>d1-bonusB-restored
+<div class="highlight"><pre><span></span><code>verify
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, id, ts FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
+alive
+mark<span class="w"> </span>d1-bonusB-restored
 </code></pre></div>
 <p>✅ The database exists again, <code>chain_ok = t</code>, and your newest row is <strong><code>d1-pre-snapshot</code></strong>.
 ✅ <code>d1-after-snapshot</code> is <strong>gone</strong>. It was written after the snapshot, so it was never in it. This is the
@@ -2439,19 +2448,21 @@ Shared access (RWX)</em><em>, so the VM can live-migrate (Bonus A); the dialog's
 <strong><a href="../examples/centos9-vm-from-template.yaml"><code>class/examples/centos9-vm-from-template.yaml</code></a></strong>. It was exported from
 the console after the steps above, with the cluster-generated fields and the password removed. Each part is commented
 with the console step it replaces: the root disk cloned from Red Hat's boot source, the blank data disk, the NIC on
-your VLAN's bridge, and cloud-init for your login key and static address.</p>
+your VLAN's bridge, and cloud-init for the <code>centos</code> login and your static address. In your browser terminal, it is
+fetched from the class site, filled in and applied (or paste it into <strong>+ → Import YAML</strong> in the console, with your
+values in place of each <code>${…}</code>).</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">NAME</span><span class="o">=</span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">-centos9"</span><span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span><span class="w"> </span><span class="nv">SC</span><span class="o">=</span>nfs-csi<span class="w">       </span><span class="c1"># SC: ocs-storagecluster-ceph-rbd-virtualization on an ODF site</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">VIP</span><span class="o">=</span><span class="s2">"10.101.</span><span class="nv">$VLAN</span><span class="s2">.</span><span class="k">$((</span><span class="m">150</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">10#</span><span class="si">${</span><span class="nv">WINUSER</span><span class="p">#student-</span><span class="si">}</span><span class="k">))</span><span class="s2">"</span><span class="w">   </span><span class="c1"># your static address on the VLAN (no lab DHCP)</span>
-<span class="o">[</span><span class="w"> </span>-f<span class="w"> </span>~/.ssh/id_ed25519.pub<span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-N<span class="w"> </span><span class="s1">''</span><span class="w"> </span>-f<span class="w"> </span>~/.ssh/id_ed25519
-<span class="nb">export</span><span class="w"> </span><span class="nv">SSH_PUBKEY</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>cat<span class="w"> </span>~/.ssh/id_ed25519.pub<span class="k">)</span><span class="s2">"</span>
-envsubst<span class="w"> </span>&lt;<span class="w"> </span>class/examples/centos9-vm-from-template.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+<span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Password for user centos: '</span><span class="w"> </span>CENTOS_PASSWORD<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span><span class="nb">export</span><span class="w"> </span>CENTOS_PASSWORD<span class="w">   </span><span class="c1"># typed, never in a file</span>
+curl<span class="w"> </span>-sSf<span class="w"> </span>https://paragonmicro-lab.github.io/demo-0024-public/examples/centos9-vm-from-template.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>envsubst<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,dv<span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">-data"</span><span class="w">                   </span><span class="c1"># DataVolumes clone/create, then the VM runs</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span>vmi/<span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}'</span><span class="o">=</span>Running<span class="w"> </span>--timeout<span class="o">=</span>10m
-ssh<span class="w"> </span>centos@<span class="s2">"</span><span class="nv">$VIP</span><span class="s2">"</span><span class="w"> </span><span class="s1">'lsblk; ip -4 addr show eth0'</span><span class="w">                                </span><span class="c1"># your key, your address</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.interfaces[0].ipAddresses}{"\n"}'</span><span class="w">   </span><span class="c1"># your address</span>
 </code></pre></div>
 <h3 id="4-use-the-data-disk-and-prove-it">4 · Use the data disk, and prove it<a class="headerlink" href="#4-use-the-data-disk-and-prove-it" title="Permanent link">&para;</a></h3>
-<p>Log in: <code>ssh centos@$VIP</code> if you used the YAML, or the <strong>Console</strong> tab (the user and password the template generated
-are on the VM's <strong>Overview → Details</strong>):</p>
+<p>Log in on the VM's <strong>Console</strong> tab: as <code>centos</code> with the password you typed if you used the YAML, or with the user and
+password the template generated (on the VM's <strong>Overview → Details</strong>) if you used the console:</p>
 <div class="highlight"><pre><span></span><code>lsblk<span class="w">                                   </span><span class="c1"># the 10 GiB disk with no partitions is your data disk (vdc from the YAML, vdb from the console)</span>
 <span class="nv">DATA</span><span class="o">=</span>/dev/vdc<span class="w">                           </span><span class="c1"># ← the one lsblk showed</span>
 sudo<span class="w"> </span>mkfs.xfs<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA</span><span class="s2">"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/data<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>mount<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA</span><span class="s2">"</span><span class="w"> </span>/data
