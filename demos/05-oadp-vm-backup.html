@@ -1014,7 +1014,7 @@
 
 <h1 id="demo-5-bonus-back-up-and-restore-your-vm-with-oadp">Demo 5 (bonus): Back up and restore your VM with OADP<a class="headerlink" href="#demo-5-bonus-back-up-and-restore-your-vm-with-oadp" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.2.0 · framework · 2026-10-12</strong> · class/demos/05-oadp-vm-backup.md</p>
+<p><strong>Version 0.2.1 · framework · 2026-10-12</strong> · class/demos/05-oadp-vm-backup.md</p>
 <p>🚧 <strong>Bonus, framework.</strong> OADP is now built by the lab when a class books it (option <code>backup: oadp</code>, the default for this
 class). The commands below are unproven <strong>[verify]</strong> until a booking has run them. Ask your instructor whether your
 lab has OADP before you start.</p>
@@ -1067,9 +1067,14 @@ its <strong>data</strong>: each disk is snapshotted, and the Data Mover copies t
 survives even if the cluster's storage is lost. A running Windows VM is backed up <strong>crash-consistent</strong> unless the guest
 agent freezes it first: PostgreSQL recovers from that like from a power cut, and your hash chain proves it.</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,dv,pvc,svc<span class="w">               </span><span class="c1"># what your backup will contain</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminbackupstoragelocations<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"(the class's location is the default one)"</span><span class="w">   </span><span class="c1"># [verify]</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminbackupstoragelocations.oadp.openshift.io<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"(the class's location is the default one)"</span><span class="w">   </span><span class="c1"># [verify]</span>
 </code></pre></div>
 <hr />
+<blockquote>
+<p>💡 <strong>Use full resource names here.</strong> On these clusters <code>oc get backup</code> finds ODF's database-backup type and
+<code>oc get restore</code> finds ACM's, not OADP's. Several operators define a "backup" or "restore". Always write the full name,
+for example <code>nonadminbackups.oadp.openshift.io</code> or <code>backups.velero.io</code>.</p>
+</blockquote>
 <h2 id="52-inject-before-the-backup">5.2 Inject before the backup<a class="headerlink" href="#52-inject-before-the-backup" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 05-5-2-inject-before-backup -->
 <p><a href="../.images/05-5-2-inject-before-backup.mp4"><img alt="🎬 Video: 5.2 Inject before the backup. Watch it, then do the same in the console" src="../.images/05-5-2-inject-before-backup.jpg" /></a>
@@ -1098,11 +1103,11 @@ grants)]</strong></p>
 <span class="s">    snapshotMoveData: true        # the Data Mover: your disks' data leaves the cluster's storage</span>
 <span class="s">    ttl: 24h0m0s</span>
 <span class="s">EOF</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminbackup<span class="w"> </span>d5<span class="w"> </span>-w<span class="w">            </span><span class="c1"># Ctrl-C when its phase is Created and the backup Completed</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminbackups.oadp.openshift.io<span class="w"> </span>d5<span class="w"> </span>-w<span class="w">            </span><span class="c1"># Ctrl-C when its phase is Created and the backup Completed</span>
 mark<span class="w"> </span>d5-after-backup<span class="w">               </span><span class="c1"># this row is NOT in the backup: it must be gone after the restore</span>
 </code></pre></div>
 <p><strong>Console:</strong> your project → <strong>Operators → Installed Operators → OADP → NonAdminBackup → Create</strong>.</p>
-<p>✍️ <strong>Row 5.3:</strong> the backup's duration and size (<code>oc -n "$VMNS" get nonadminbackup d5 -o yaml</code>, under <code>status</code>).</p>
+<p>✍️ <strong>Row 5.3:</strong> the backup's duration and size (<code>oc -n "$VMNS" get nonadminbackups.oadp.openshift.io d5 -o yaml</code>, under <code>status</code>).</p>
 <hr />
 <h2 id="54-lose-it-delete-your-vm">5.4 Lose it: delete your VM<a class="headerlink" href="#54-lose-it-delete-your-vm" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 05-5-4-lose-delete-vm -->
@@ -1125,7 +1130,7 @@ alive<span class="w">                                                           
 <span class="s">  restoreSpec:</span>
 <span class="s">    backupName: d5                # your NonAdminBackup   [verify]</span>
 <span class="s">EOF</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminrestore<span class="w"> </span>d5<span class="w"> </span>-w<span class="w">           </span><span class="c1"># Ctrl-C when the restore Completed</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminrestores.oadp.openshift.io<span class="w"> </span>d5<span class="w"> </span>-w<span class="w">           </span><span class="c1"># Ctrl-C when the restore Completed</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">                      </span><span class="c1"># Running again</span>
 <span class="k">until</span><span class="w"> </span>alive<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="p">;</span><span class="w"> </span>alive<span class="w">              </span><span class="c1"># Windows booted, PostgreSQL recovered</span>
 verify<span class="w">                                                             </span><span class="c1"># chain_ok = t</span>
