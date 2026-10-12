@@ -1,0 +1,923 @@
+---
+title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
+subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
+version: 0.3.4
+date: 2026-10-06
+---
+
+# Lab S: How this lab was built
+
+> **Version 0.3.4 · draft · 2026-10-06** · class/demos/setup-how-the-lab-is-built.md
+
+## What you will learn
+
+Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
+storage, migration providers and maps, a namespace with a database client, one Windows + PostgreSQL VM per student,
+and a staged migration plan for each VM. This guide walks through every one of those pieces in the order CI builds
+them. For each piece you see what was built, how to check it, how to build it yourself from the **command line**, and
+how to do the same in the **console**, with links to the Red Hat documentation that describes it. The demo guides only
+ask you to do the **last step** yourself (start your migration). This guide is how you would do everything before it.
+
+## How the lab is set up
+
+| Built by | What | Where |
+|---|---|---|
+| **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts, the shared NFS datastore `coresan01_data00`, port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
+| **demo-openshift** (core-web dispatches it, twice) | OpenShift 4.19, OpenShift Virtualization (`ove: cnv`), ACM and cert-manager, NMState bridges + NADs per VLAN, `nfs-csi` storage; **ODF on site A only** | site A `<A>` and site B `<B>` |
+| **this demo's CI** (`customize`, sections S.5–S.12) | MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans | all three |
+| **you** | start your own migration plan (Demo 1 / 1b), then everything in the demo guides | |
+
+Picture: [lab diagram](lab-diagram.md). Every command below uses the Lab 0 variables (`$A`, `$B`, `$N`, `$VM`, `$DOMAIN`)
+and the contexts `site-a` / `site-b`. Most "do it yourself" steps need **cluster-admin**. In class you only **read**
+these objects; the instructor (or a cluster you own) can run the build steps.
+
+```bash
+export VLAN=$((22 + N))                 # the vSphere zone's VLAN: also the bridge your migrated VM can join
+```
+
+---
+
+## S.1 The three environments, and what both clusters should look like
+
+**What CI built:** core-web booked one vSphere zone and two OpenShift clusters together. Both clusters are built from the
+**same** member selections (`ove: cnv`, ACM, cert-manager), so they carry the same operators. The one difference is
+storage: the lab has four scratch SSDs, enough for **one** ODF cluster, so site A runs ODF and site B uses NFS (`nfs-csi`).
+The healthcheck compares the two sites' operators and reports any difference (ODF excluded).
+
+**Check:**
+
+```bash
+for s in site-a site-b; do echo "== $s"; oc --context $s get csv -A --no-headers \
+  | awk '{print $2}' | sed 's/\.v\{0,1\}[0-9].*$//' | sort -u; done
+oc --context site-a get storageclass; oc --context site-b get storageclass
+```
+
+**Console:** **Operators → Installed Operators**, project *All Projects*, on each site.
+📸 `S-operators-site-a` · 📸 `S-operators-site-b`: the two installed-operator lists side by side.
+
+**Red Hat docs:**
+- [OpenShift Container Platform 4.19 documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19)
+- [Operators: understanding OLM and installed operators](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/operators/index)
+- [About OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/about)
+
+---
+
+## S.2 OpenShift Virtualization (built by demo-openshift)
+
+**What was built:** the **OpenShift Virtualization** operator (`kubevirt-hyperconverged`) in `openshift-cnv`, and its
+`HyperConverged` resource `kubevirt-hyperconverged`. That resource deploys KubeVirt, CDI (the disk importer), the
+templates and the boot sources.
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-cnv get hyperconverged kubevirt-hyperconverged \
+  -o jsonpath='{.status.conditions[?(@.type=="Available")].status}{"\n"}'      # True
+oc --context site-a -n openshift-cnv get csv | grep -i kubevirt
+```
+
+**Do it yourself (CLI):**
+
+```bash
+oc apply -f - <<'YAML'
+apiVersion: v1
+kind: Namespace
+metadata: { name: openshift-cnv }
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata: { name: kubevirt-hyperconverged-group, namespace: openshift-cnv }
+spec: { targetNamespaces: [ openshift-cnv ] }
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata: { name: hco-operatorhub, namespace: openshift-cnv }
+spec: { source: redhat-operators, sourceNamespace: openshift-marketplace, name: kubevirt-hyperconverged, channel: stable }
+YAML
+# once the CSV says Succeeded:
+oc apply -f - <<'YAML'
+apiVersion: hco.kubevirt.io/v1beta1
+kind: HyperConverged
+metadata: { name: kubevirt-hyperconverged, namespace: openshift-cnv }
+spec: {}
+YAML
+```
+
+**Console:**
+1. **Operators → OperatorHub** → search *OpenShift Virtualization* → **Install** (namespace `openshift-cnv`).
+   📸 `S-cnv-operatorhub`
+2. **Installed Operators → OpenShift Virtualization → Create HyperConverged** → **Create**.
+   📸 `S-cnv-hyperconverged`
+3. A **Virtualization** menu appears in the left navigation. 📸 `S-cnv-menu`
+
+**Red Hat docs:**
+- [Installing OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/installing)
+- [Preparing your cluster for OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/installing#preparing-cluster-for-virt) [verify link]
+- [OpenShift Virtualization architecture](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/about#virt-architecture) [verify link]
+
+---
+
+## S.3 Networking: VLANs to bridges to network attachments
+
+**What was built (demo-openshift):** the **Kubernetes NMState** operator, and on every node a Linux bridge
+`br<VLAN>` on the trunk NIC for each lab VLAN. Each bridge is a `NodeNetworkConfigurationPolicy` (NNCP) named
+`br<VLAN>-policy`. In `default` there is a `NetworkAttachmentDefinition` (NAD) `vmnet<VLAN>` that lets a VM plug into
+that bridge. The VLAN is the same one the vSphere port group `vm-network` uses, so a migrated VM can **keep its address**.
+
+| vSphere | OpenShift |
+|---|---|
+| port group `vm-network`, VLAN 22+N | NNCP `br<22+N>-policy` → bridge `br<22+N>` → NAD `default/vmnet<22+N>` |
+
+**Check:**
+
+```bash
+oc --context site-a get nncp                                                   # br<VLAN>-policy … Available
+oc --context site-a get nncp "br${VLAN}-policy" -o jsonpath='{.status.conditions[?(@.type=="Available")].status}{"\n"}'
+oc --context site-a -n default get net-attach-def "vmnet${VLAN}" -o jsonpath='{.spec.config}{"\n"}' | jq .
+```
+
+**Do it yourself (CLI):** install *Kubernetes NMState Operator* from OperatorHub, create its `NMState` instance, then:
+
+```bash
+TRUNK='<trunk NIC on the nodes, e.g. ens224>'          # [verify] the trunk interface name on your nodes
+oc apply -f - <<YAML
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata: { name: br${VLAN}-policy }
+spec:
+  desiredState:
+    interfaces:
+      - name: ${TRUNK}.${VLAN}
+        type: vlan
+        state: up
+        vlan: { base-iface: ${TRUNK}, id: ${VLAN} }
+      - name: br${VLAN}
+        type: linux-bridge
+        state: up
+        ipv4: { enabled: false }
+        bridge: { options: { stp: { enabled: false } }, port: [ { name: ${TRUNK}.${VLAN} } ] }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata: { name: vmnet${VLAN}, namespace: default }
+spec:
+  config: '{"cniVersion":"0.3.1","name":"vmnet${VLAN}","type":"bridge","bridge":"br${VLAN}","macspoofchk":true}'
+YAML
+```
+
+**Console:**
+1. **Networking → NodeNetworkConfigurationPolicy → Create** (form or YAML), as above. 📸 `S-nncp-create`
+2. Wait for **Available** on every node. 📸 `S-nncp-available`
+3. **Networking → NetworkAttachmentDefinitions → Create** in `default`: type *Linux bridge*, bridge name `br<VLAN>`.
+   📸 `S-nad-create`
+
+**Red Hat docs:**
+- [Kubernetes NMState operator](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index) [verify link]
+- [Connecting a VM to a Linux bridge network](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking#virt-connecting-vm-to-linux-bridge) [verify link]
+- [Multiple networks: NetworkAttachmentDefinition](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/multiple_networks/index) [verify link]
+
+---
+
+## S.4 Storage: whatever the booking chose, and snapshot classes
+
+**Storage is not this demo's choice.** demo-openshift deploys each cluster's storage from its `storage` option (`na` = NFS,
+`odf`, and later Portworx, SAN and others) and marks the class VMs belong on. CI's customize only **reads** that class
+(the `storageclass.kubevirt.io/is-default-virt-class` one, else the cluster default) and proves a test claim binds before
+any VM lands there. The demos work the same on any of them: they are about migration and BCDR.
+
+```bash
+# the class your VMs land on, per site (what CI's sc_live reads)
+for s in site-a site-b; do
+  oc --context $s get sc -o jsonpath='{range .items[?(@.metadata.annotations.storageclass\.kubevirt\.io/is-default-virt-class=="true")]}{.metadata.name}{"\n"}{end}'
+done
+```
+
+**What this booking's build has today:**
+- **Site A**: OpenShift Data Foundation (ODF), Ceph on the four scratch SSDs. VMs use the storage class
+  `ocs-storagecluster-ceph-rbd-virtualization` (block, RWX, so live migration works). Built by demo-openshift
+  (`storage: odf`); core-web reserves the SSDs for the booking.
+- **Site B**: `nfs-csi` on the lab NFS server (demo-openshift's default).
+- **Snapshot classes** come with the storage, from demo-openshift: `nfs-csi-snapclass` (driver `nfs.csi.k8s.io`) and
+  ODF's own. Demo 1's snapshot bonus needs one. CI's `demo-prep` only reports a VM storage driver without one.
+
+**Check:**
+
+```bash
+oc --context site-a get storageclass ocs-storagecluster-ceph-rbd-virtualization
+oc --context site-a -n openshift-storage get storagecluster      # Ready
+oc --context site-b get storageclass nfs-csi
+for s in site-a site-b; do oc --context $s get volumesnapshotclass; done
+```
+
+**Do it yourself (CLI):** a snapshot class for a driver that has none (what demo-openshift creates for NFS):
+
+```bash
+oc --context site-b apply -f - <<'YAML'
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata: { name: nfs-csi-snapclass }
+driver: nfs.csi.k8s.io
+deletionPolicy: Delete
+YAML
+```
+
+ODF itself: install the **OpenShift Data Foundation** operator, label the storage nodes, and create a
+`StorageSystem` / `StorageCluster` on the local SSDs (the Local Storage operator discovers them).
+
+**Console:**
+1. **Operators → OperatorHub → OpenShift Data Foundation → Install.** 📸 `S-odf-install`
+2. **Storage → Data Foundation → Create StorageSystem** → *Create a new StorageClass using local storage devices*.
+   📸 `S-odf-storagesystem`
+3. **Storage → StorageClasses**: see `ocs-storagecluster-ceph-rbd-virtualization` (site A) and `nfs-csi` (site B).
+   📸 `S-storageclasses`
+4. **Storage → VolumeSnapshotClasses → Create.** 📸 `S-snapclass`
+
+**Red Hat docs:**
+- [Deploying ODF using local storage devices](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/deploying_openshift_data_foundation_using_bare_metal_infrastructure/index) [verify link]
+- [Storage for virtual machines](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/storage) [verify link]
+- [CSI volume snapshots](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/storage/using-container-storage-interface-csi#persistent-storage-csi-snapshots) [verify link]
+
+---
+
+## S.5 The Migration Toolkit for Virtualization (MTV) operator
+
+**Who built it:** the booking's `migration_tools` decides which sites get MTV (`both`: site A and site B; `site-a`: site B is
+left bare so students install MTV there). On those sites **demo-openshift** installs it (`ove: cnv-mtv`), and CI
+(`ansible/roles/mtv_operator`) checks it and customizes it for the class:
+- *(demo-openshift)* Namespace **`openshift-mtv`**, OperatorGroup **`migration`** (targets `openshift-mtv`), and Subscription
+  **`mtv-operator`**: channel **`release-v2.11`**, source `redhat-operators`. CI waits for the CSV to report **Succeeded**.
+- *(demo-openshift)* **`ForkliftController/forklift-controller`** with `feature_ui_plugin`, `feature_validation`,
+  `feature_volume_populator` and `feature_must_gather_api` all `"true"`. *(CI)* adds `controller_precopy_interval: "5"` for
+  Demo 2 and waits for `deploy/forklift-controller` to be Available.
+- *(demo-openshift; CI re-checks)* MTV's **console plugin** enabled in `consoles.operator.openshift.io/cluster` → `spec.plugins`.
+  This is what adds the **Migration for Virtualization** menu.
+- Class access: RoleBinding `ovedr-students-view` (ClusterRole `view`) and Role + RoleBinding
+  `ovedr-students-migrate`. The second lets students create, start and delete **plans and migrations**, and only read
+  providers, maps and hosts. It never grants secrets.
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-mtv get subscription mtv-operator -o jsonpath='{.spec.channel}{"\n"}'   # release-v2.11
+oc --context site-a -n openshift-mtv get csv | grep mtv
+oc --context site-a -n openshift-mtv get forkliftcontroller,deploy/forklift-controller
+oc --context site-a get console.operator cluster -o jsonpath='{.spec.plugins}{"\n"}'                    # includes forklift…
+oc --context site-a auth can-i create plans.forklift.konveyor.io -n openshift-mtv                        # yes (students)
+```
+
+**Do it yourself (CLI):**
+
+```bash
+oc apply -f - <<'YAML'
+apiVersion: v1
+kind: Namespace
+metadata: { name: openshift-mtv }
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata: { name: migration, namespace: openshift-mtv }
+spec: { targetNamespaces: [ openshift-mtv ] }
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata: { name: mtv-operator, namespace: openshift-mtv }
+spec: { name: mtv-operator, channel: release-v2.11, source: redhat-operators, sourceNamespace: openshift-marketplace }
+YAML
+oc -n openshift-mtv get csv -w                                  # wait for Succeeded, then:
+oc apply -f - <<'YAML'
+apiVersion: forklift.konveyor.io/v1beta1
+kind: ForkliftController
+metadata: { name: forklift-controller, namespace: openshift-mtv }
+spec:
+  feature_ui_plugin: "true"
+  feature_validation: "true"
+  feature_volume_populator: "true"
+  feature_must_gather_api: "true"
+YAML
+PLUGIN=$(oc get consoleplugin -o name | grep forklift | cut -d/ -f2); echo "$PLUGIN"
+oc patch console.operator cluster --type json -p "[{\"op\":\"add\",\"path\":\"/spec/plugins/-\",\"value\":\"$PLUGIN\"}]"
+```
+
+**Console:**
+1. **Operators → OperatorHub** → *Migration Toolkit for Virtualization Operator* → **Install**, channel `release-v2.11`,
+   namespace `openshift-mtv`. 📸 `S-mtv-operatorhub`
+2. **Installed Operators → MTV → ForkliftController → Create.** 📸 `S-mtv-forkliftcontroller`
+3. Accept **"Web console update is available"** and refresh. **Migration for Virtualization** appears in the menu.
+   📸 `S-mtv-menu`
+
+**Red Hat docs:**
+- [Installing and using the Migration Toolkit for Virtualization 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link]
+- [MTV prerequisites](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv) [verify link]
+- [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11)
+
+---
+
+## S.6 The vSphere side: an MTV account, its role, and the vSphere provider
+
+**What CI built** (`automation/customize/mtv_fabric.sh`):
+- On vCenter, an SSO user **`ovedr-mtv@vsphere.local`**, with a minted password stored in the class vault and never
+  shown, and a role **`ovedr-mtv`** with MTV's minimal privilege set:
+  - power on/off and guest control;
+  - all of *Provisioning*;
+  - create/remove snapshot;
+  - **ChangeTracking** (CBT, for warm migration);
+  - datastore browse and file management;
+  - session validation;
+  - Cryptographer decrypt/access.
+
+  It is granted on the vCenter root (`/`), propagating. CI checks the user can then list the inventory.
+- A **network probe** run from inside each cluster before any provider: vCenter 443, every ESXi host on 443 and **902**
+  (MTV's disk copy), and the peer cluster's `api-int` 6443 and ingress 443.
+- On each tooled site, Secret + **`Provider/ovedr-vcenter0<N>`** (type `vsphere`, url `https://vcenter0<N>…/sdk`). It
+  carries `user`, `password`, `url` and **`cacert`**: the certificate chain vCenter serves, so TLS is verified, never skipped.
+- **VDDK:** if the repo variable `MTV_VDDK_IMAGE` is set, the provider gets `settings.vddkInitImage`. Without it,
+  migrations are **cold only** and slower. Warm migration (Demo 2) needs it.
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-mtv get provider "ovedr-vcenter0$N" \
+  -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'
+oc --context site-a -n openshift-mtv get provider "ovedr-vcenter0$N" -o jsonpath='{.spec.settings}{"\n"}'   # vddkInitImage?
+```
+
+**Do it yourself (CLI):** the vSphere role and user (govc, as a vCenter administrator), then the provider:
+
+```bash
+export GOVC_URL="https://vcenter0$N.$DOMAIN" GOVC_USERNAME='administrator@vsphere.local'   # GOVC_PASSWORD from your vault
+govc role.create my-mtv VirtualMachine.Interact.PowerOff VirtualMachine.Interact.PowerOn \
+  VirtualMachine.State.CreateSnapshot VirtualMachine.State.RemoveSnapshot VirtualMachine.Config.ChangeTracking \
+  Datastore.Browse Datastore.FileManagement Sessions.ValidateSession   # … plus Provisioning.*, GuestControl, Cryptographer.*
+govc sso.user.create -p '<password>' my-mtv        # the one place a password goes on argv: govc has no other way
+govc permissions.set -principal my-mtv@vsphere.local -role my-mtv -propagate=true /
+
+CA="$(openssl s_client -showcerts -servername "vcenter0$N.$DOMAIN" -connect "vcenter0$N.$DOMAIN:443" </dev/null 2>/dev/null \
+      | sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p')"
+oc -n openshift-mtv create secret generic my-vcenter --from-literal=user=my-mtv@vsphere.local \
+  --from-literal=password='<password>' --from-literal=url="https://vcenter0$N.$DOMAIN/sdk" --from-literal=cacert="$CA" \
+  --from-literal=insecureSkipVerify=false
+oc -n openshift-mtv label secret my-vcenter createdForProviderType=vsphere createdForResourceType=providers
+oc apply -f - <<YAML
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Provider
+metadata: { name: my-vcenter, namespace: openshift-mtv }
+spec: { type: vsphere, url: "https://vcenter0$N.$DOMAIN/sdk", secret: { name: my-vcenter, namespace: openshift-mtv } }
+YAML
+```
+
+**Console:**
+1. vSphere Client: **Administration → Roles → New** (privileges as above); **Single Sign On → Users and Groups → Add**;
+   **Hosts and Clusters → vCenter → Permissions → Add**. 📸 `S-vsphere-role` · 📸 `S-vsphere-permission`
+2. OpenShift: **Migration for Virtualization → Providers → Create Provider → VMware**: URL, user, password, and either
+   *fetch certificate* or paste the CA. 📸 `S-mtv-provider-vsphere`
+3. The provider shows **Ready**, with VM and host counts. 📸 `S-mtv-provider-ready`
+
+**Red Hat docs:**
+- [VMware prerequisites and privileges for MTV](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#vmware-prerequisites_mtv) [verify link]
+- [Adding a VMware vSphere source provider](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-vmware_vmware) [verify link]
+- [Creating a VDDK image](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#creating-vddk-image_mtv) [verify link]
+
+---
+
+## S.7 OpenShift ⇄ OpenShift providers
+
+**What CI built:** on **both** sites, ServiceAccount **`ovedr-mtv-peer`** in `openshift-mtv` (bound to `cluster-admin`,
+MTV's documented simplest grant for an OpenShift source; the cluster exists only for the booking) and a long-lived token
+Secret `ovedr-mtv-peer-token`. On each tooled site, a Provider **`ovedr-ocp-<peer>`** (type `openshift`) whose `url`
+and `cacert` both come from the **peer's kubeconfig**: the URL is `https://api-int.<peer>…:6443` and the CA is the
+cluster's internal CA.
+
+> 💡 **Why `api-int` and not `api`?** After demo-openshift's customize, `api.<cluster>` serves a public Let's Encrypt
+> certificate. `api-int` keeps the cluster's internal CA. URL and CA must come from the same place, or TLS verification
+> fails (`x509: certificate signed by unknown authority`). That happened in this lab, and it is why CI reads both from one
+> kubeconfig.
+
+**Check:**
+
+```bash
+oc --context site-b -n openshift-mtv get provider "ovedr-ocp-${A#ocp-}" \
+  -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'
+```
+
+**Do it yourself (CLI):** on the source cluster, create the service account and token. On the destination, create the provider.
+
+```bash
+oc --context site-a -n openshift-mtv create sa my-peer
+oc --context site-a adm policy add-cluster-role-to-user cluster-admin -z my-peer -n openshift-mtv
+oc --context site-a -n openshift-mtv apply -f - <<'YAML'
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata: { name: my-peer-token, namespace: openshift-mtv, annotations: { kubernetes.io/service-account.name: my-peer } }
+YAML
+TOKEN="$(oc --context site-a -n openshift-mtv get secret my-peer-token -o jsonpath='{.data.token}' | base64 -d)"
+URL="https://api-int.$A.$DOMAIN:6443"                  # match the CA below
+oc --context site-a config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d > peer-ca.pem
+oc --context site-b -n openshift-mtv create secret generic my-ocp-a --from-literal=token="$TOKEN" \
+  --from-literal=url="$URL" --from-file=cacert=peer-ca.pem --from-literal=insecureSkipVerify=false
+oc --context site-b -n openshift-mtv label secret my-ocp-a createdForProviderType=openshift createdForResourceType=providers
+oc --context site-b apply -f - <<YAML
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Provider
+metadata: { name: my-ocp-a, namespace: openshift-mtv }
+spec: { type: openshift, url: "$URL", secret: { name: my-ocp-a, namespace: openshift-mtv } }
+YAML
+unset TOKEN; rm -f peer-ca.pem
+```
+
+**Console:** site B, **Migration for Virtualization → Providers → Create Provider → OpenShift Virtualization**: URL,
+service-account token, CA certificate. 📸 `S-mtv-provider-ocp`
+
+**Red Hat docs:**
+- [Adding an OpenShift Virtualization source provider](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-virt_cnv) [verify link]
+- [Using service accounts](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/understanding-and-creating-service-accounts) [verify link]
+
+---
+
+## S.8 Network maps and storage maps
+
+**What CI built**, per tooled site, in `openshift-mtv`:
+
+| Map | Source → destination | Why |
+|---|---|---|
+| `ovedr-vcenter0<N>-net` | vSphere `vm-network` → **pod** network | works everywhere; the VM gets a new, cluster-internal address |
+| `ovedr-vcenter0<N>-net-bridge` | vSphere `vm-network` → **multus** `default/vmnet<22+N>` | the VM stays on its VLAN and **keeps its own address**. Created only when the NAD's bridge is **Available** |
+| `ovedr-vcenter0<N>-storage` | datastore `coresan01_data00` → **this site's** class | site A: `ocs-storagecluster-ceph-rbd-virtualization`; site B: `nfs-csi` |
+| `ovedr-ocp-<peer>-net` | pod → pod, plus each VLAN NAD present on **both** sites → the same NAD | OVE ⇄ OVE |
+| `ovedr-ocp-<peer>-storage` | **the peer's** class → **this** site's class | OVE ⇄ OVE converts ODF ⇄ NFS: the disks are copied into the destination's storage |
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-mtv get networkmap,storagemap
+oc --context site-a -n openshift-mtv get storagemap "ovedr-vcenter0$N-storage" -o jsonpath='{.spec.map}{"\n"}' | jq .
+```
+
+**Do it yourself (CLI):**
+
+```bash
+P="ovedr-vcenter0$N"
+oc --context site-a apply -f - <<YAML
+apiVersion: forklift.konveyor.io/v1beta1
+kind: NetworkMap
+metadata: { name: my-net-bridge, namespace: openshift-mtv }
+spec:
+  provider: { source: { name: $P, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
+  map: [ { source: { name: vm-network }, destination: { type: multus, name: vmnet${VLAN}, namespace: default } } ]
+---
+apiVersion: forklift.konveyor.io/v1beta1
+kind: StorageMap
+metadata: { name: my-storage, namespace: openshift-mtv }
+spec:
+  provider: { source: { name: $P, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
+  map: [ { source: { name: coresan01_data00 }, destination: { storageClass: ocs-storagecluster-ceph-rbd-virtualization } } ]
+YAML
+```
+
+**Console:** **Migration for Virtualization → Network maps → Create** (source network → *Multus: default/vmnet<VLAN>*);
+**Storage maps → Create** (datastore → storage class). 📸 `S-networkmap` · 📸 `S-storagemap`
+
+**Red Hat docs:**
+- [Creating network and storage mappings](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link: the mappings chapter]
+- [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11)
+
+---
+
+## S.9 Namespaces: one per student (admin), plus the class namespace `ovedr-app` (both sites)
+
+**What CI built** (`ansible/roles/class_namespace`) on **both** sites:
+- **One namespace per student**, named exactly the student's class ID in lower case (e.g. `student-01-0024-006`, the
+  same name as their vCenter folder `vms/students/<class ID>`). Their VM migrates **there**.
+  - The student is **`admin`** there: full rights, scoped to that namespace only. That is one RoleBinding
+    (`ovedr-student-admin-<hash>`) per identity the student can log in as: the htpasswd user (their class ID) and, with
+    SSO, their UPN.
+  - The instructors' group `demo-instructors` is `admin` there too (`ovedr-instructors-admin`).
+  - Their VM's Service **`<vm>-sql`** (selector `vm.kubevirt.io/name: <vm>`, port 5432).
+- **Instructors:** their own namespace (their class ID; the instructor VM `win-pg-i01` lands in the first instructor's), and
+  **cluster-admin** on both clusters (`ClusterRoleBinding/ovedr-instructor-cluster-admin-*`, one per identity), so they can
+  help with any student, storage or operator issue. CLI: `oc adm policy add-cluster-role-to-user cluster-admin <user>`; console:
+  **User Management → RoleBindings → Create binding** (cluster-wide, role `cluster-admin`). [Using RBAC](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac) [verify link]
+- The class namespace **`ovedr-app`**: the shared `sql-client`. It holds RoleBinding
+  `ovedr-students-edit` (ClusterRole `edit`, group `demo-students`), the instructor VM's Service `win-pg-i01-sql`, Secret
+  **`bcdr-db`** (the `bcdr` database password, from the vault), and Deployment **`sql-client`**
+  (`registry.redhat.io/rhel9/postgresql-16`) that the whole class uses for `psql`. With the bridge map every VM keeps its
+  own address, so `sql-client` reaches any student's VM by IP from here.
+- ClusterRole + ClusterRoleBinding **`ovedr-class-read`**: students may read NNCPs and node network states, storage
+  classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.
+
+**Check:**
+
+```bash
+for s in site-a site-b; do
+  oc --context $s get project "$VMNS"                                     # your namespace exists on both sites
+  oc --context $s -n "$VMNS" get rolebinding,svc                          # your admin binding(s) and your VM's Service
+  oc --context $s -n ovedr-app get deploy/sql-client
+done
+oc --context site-a auth can-i '*' '*' -n "$VMNS"                         # yes: admin in your own namespace
+oc --context site-a auth can-i create pods -n ovedr-app                    # yes (edit in the class namespace)
+oc --context site-a auth can-i list nodenetworkconfigurationpolicies      # yes (class read)
+```
+
+**Do it yourself (CLI):** a namespace for a student with admin rights, and the VM's Service:
+
+```bash
+NS=student-99-demo                         # a student's namespace = their class ID, lower case
+U=student-99-demo                          # the user they log in as (add a second binding for their SSO UPN)
+oc new-project "$NS" --display-name="$U: your VM migrates here"
+oc adm policy add-role-to-user admin "$U" -n "$NS"                        # full rights, only in this namespace
+oc adm policy add-role-to-group admin demo-instructors -n "$NS"           # instructors too
+oc -n "$NS" create service clusterip "$VM-sql" --tcp=5432:5432 --dry-run=client -o yaml \
+  | sed "s/app: $VM-sql/vm.kubevirt.io\/name: $VM/" | oc apply -f -
+```
+
+The class namespace, by hand:
+
+```bash
+oc new-project my-app
+oc -n my-app create rolebinding students-edit --clusterrole=edit --group=demo-students
+oc -n my-app create secret generic bcdr-db --from-literal=PGPASSWORD='<bcdr password>'
+oc -n my-app create deployment sql-client --image=registry.redhat.io/rhel9/postgresql-16 -- sleep infinity
+oc -n my-app set env deployment/sql-client --from=secret/bcdr-db
+```
+
+**Console:**
+1. **Home → Projects → Create Project**: the name is the student's class ID. 📸 `S-namespace`
+2. That project → **Project access** (or **User Management → RoleBindings → Create binding**): subject **User** = the
+   student, role **admin**; add the group `demo-instructors` as **admin**. 📸 `S-project-access`
+3. **Networking → Services → Create Service** in that project (selector `vm.kubevirt.io/name`). 📸 `S-service`
+4. In `ovedr-app`: **Workloads → Secrets → Create** and **Workloads → Deployments → Create** for `sql-client`.
+
+**Red Hat docs:**
+- [Working with projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/building_applications/projects) [verify link]
+- [Using RBAC to define and apply permissions](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac) [verify link]
+- [Default cluster roles (admin, edit, view)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac#default-roles_using-rbac) [verify link]
+- [Exposing a VM by using a Service](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking#virt-exposing-vm-with-service) [verify link]
+
+---
+
+## S.10 Demo preparation
+
+**What CI built** (`demo-prep` job, `ansible/roles/demo_prep` and the play after it):
+- **MTV pre-copy interval**: `ForkliftController.spec.controller_precopy_interval: 5` (minutes), so a warm migration
+  (Demo 2) shows several pre-copies instead of one per hour **[verify: field name on MTV 2.11]**.
+- **Snapshot classes**: see S.4.
+- **ACM**: if site B is an ACM hub and site A is **not**, CI creates a `ManagedCluster` for site A with an
+  `auto-import-secret` (site A's kubeconfig; ACM deletes it after use) and waits for **Available**. ⚠ demo-openshift
+  now installs ACM on **both** clusters. A cluster that is itself a hub cannot simply be imported into another hub, so CI
+  **skips** the import and the readiness table says so (BL-D11, an open decision).
+- A **per-demo readiness table** in the run summary: which demos this booking can run (for example, Demo 2 needs a VDDK image).
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-mtv get forkliftcontroller forklift-controller -o jsonpath='{.spec}{"\n"}' | jq .
+oc --context site-b get managedclusters                       # local-cluster, and site A if imported
+```
+
+**Do it yourself (CLI):**
+
+```bash
+oc -n openshift-mtv patch forkliftcontroller forklift-controller --type merge -p '{"spec":{"controller_precopy_interval":5}}'
+oc --context site-b apply -f - <<YAML
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata: { name: $A, labels: { cloud: auto-detect, vendor: auto-detect } }
+spec: { hubAcceptsClient: true }
+YAML
+# then, in namespace $A on the hub: Secret auto-import-secret with autoImportRetry and site A's kubeconfig (or token + server)
+```
+
+**Console:** ACM: **All Clusters → Infrastructure → Clusters → Import cluster** (name, *Kubeconfig* or *Server URL and API
+token*). 📸 `S-acm-import` · 📸 `S-acm-clusters`
+
+**Red Hat docs:**
+- [Importing a managed cluster (ACM 2.13)](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13/html/clusters/cluster_mce_overview#import-intro) [verify link]
+- [Red Hat Advanced Cluster Management 2.13 documentation](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13)
+- [Warm migration and pre-copy settings](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) [verify link: the warm-migration section]
+
+---
+
+## S.11 The class VMs on vSphere
+
+**What CI built** (`source_vm.sh`, `student_vms.sh`, `lib/vm.sh`, `windows/*.ps1`), entirely through vCenter's API (govc)
+and VMware guest operations:
+- **Instructor VM `win-pg-i01`** in `vms/ovedr`: Windows Server 2022 (BIOS, LSI Logic SAS, e1000e), installed unattended
+  from the lab ISO plus an answer ISO (VMware Tools included). Three disks: **C:** 60 GB, **L:** 5 GB (PostgreSQL **WAL**,
+  label `pg_wal`) and **D:** 10 GB (PostgreSQL **data**, label `pgdata`). Static address `10.101.<22+N>.62`.
+  - PostgreSQL 16 runs as service `postgresql-16`, with `PGDATA=D:\pgdata` and WAL at `L:\pg_wal`.
+  - The `bcdr` database holds the heartbeat writer (a startup task) and the **integrity toolkit**
+    (`ovedr_mark/load/verify/checksum`).
+  - Each roster account has a Windows login (`.\student-NN`).
+  - WinRM is enabled over HTTPS (5986, lab networks only) so Ansible can manage the VM.
+- **One VM per student, `win-pg-s<NN>`**: a full clone of the instructor VM's snapshot `ovedr-golden`, 2 vCPU / 4 GB.
+  - Re-addressed to `10.101.<22+N>.<100+NN>` with its network card **disconnected**, so it never appears with the
+    instructor's address.
+  - Renamed, with its own WinRM certificate. Its student is a local administrator.
+  - Moved into **`vms/students/<your ID>`**, where you hold vCenter rights on it (role `ovedr-student-vm`: power,
+    console, Edit Settings, snapshots).
+- Every VM is validated **in the guest** before you get it (`Test-SourceVm.ps1`: volumes, the PostgreSQL layout, the
+  heartbeat, the toolkit, logins, the address, WinRM).
+- On the shared datastore every VM's folder carries its zone (`ovedr-<zone>-<name>`), so classes on different zones never collide.
+
+**Check:**
+
+```bash
+alive site-a; verify site-a                                  # Lab 0 helpers: your VM answers and your chain is intact
+```
+
+In vCenter: **VMs and Templates → datacenter01 → vm → vms → students → <your ID> → `win-pg-s<NN>`** → Summary,
+Configure → Hardware (three disks). 📸 `S-vm-in-student-folder` · 📸 `S-vm-disks`
+
+**Do it yourself (CLI, condensed from the CI scripts):**
+
+```bash
+export GOVC_URL="https://vcenter0$N.$DOMAIN"                 # credentials from your vault
+F=/datacenter01/vm/vms/ovedr; POOL="/datacenter01/host/cluster-lz$N/Resources"; DS=coresan01_data00
+govc vm.create -on=false -folder "$F" -pool "$POOL" -ds "$DS" -c 4 -m 8192 -g windows2019srvNext_64Guest \
+  -firmware bios -net vm-network -net.adapter e1000e -disk.controller lsilogic-sas -disk 60GB \
+  -iso '<path of the Windows ISO>' -iso-datastore "$DS" my-win-pg
+govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/log  -size 5GB
+govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/data -size 10GB
+# … install Windows + PostgreSQL (initdb -D D:\pgdata -X L:\pg_wal), then clone one per student:
+govc snapshot.create -vm my-win-pg -m=false golden
+govc vm.clone -vm my-win-pg -snapshot golden -link=false -on=false -folder "$F" -pool "$POOL" -ds "$DS" -c 2 -m 4096 my-win-pg-s01
+govc object.mv "$F/my-win-pg-s01" '/datacenter01/vm/vms/students/<student ID>'
+```
+
+**Console (vSphere Client):**
+1. **New Virtual Machine** → create → guest *Windows Server 2022*; add two hard disks (5 GB, 10 GB). 📸 `S-vsphere-newvm`
+2. Install Windows and PostgreSQL. In **Disk Management**, give `L:` (pg_wal) and `D:` (pgdata). 📸 `S-windows-disks`
+3. **Snapshots → Take Snapshot**; **Clone → Clone to Virtual Machine** from it. 📸 `S-vsphere-clone`
+4. Drag the clone into **vms → students → <ID>**; **Permissions → Add** for that student. 📸 `S-vsphere-move`
+
+**Red Hat docs (what MTV needs from the VM):**
+- [VMware prerequisites: the source VM](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#vmware-prerequisites_mtv) [verify link]
+- [Windows virtual machines on OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/creating-a-virtual-machine) [verify link]
+
+---
+
+## S.12 The staged migration plans: your task is to start yours
+
+**What CI built** (`automation/customize/stage.sh`), for **every** class VM (`win-pg-i01` and every `win-pg-s<NN>`):
+
+| Site | Plan | Moves |
+|---|---|---|
+| site A | **`d1-<vm>`** | vSphere → site A, cold (Demo 1) |
+| site A | **`d2-<vm>`** | vSphere → site A, **warm** (Demo 2): lands as `<vm>-warm`. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking) |
+| site B | **`d1b-<vm>-to-<B slot>`** | vSphere → site B, cold (Demo 1b) |
+| site B | **`d2b-<vm>-to-<B slot>`** | vSphere → site B, **warm**: lands as `<vm>-warm`, waits on CBT like `d2-<vm>` |
+
+Each plan targets **its VM's owner's namespace**: a student's VM lands in that student's own namespace (their class ID,
+`$VMNS`), the instructor's `win-pg-i01` in `ovedr-app`. It uses the **bridge** network map when it exists (your VM keeps its own address), plus the
+site's storage map. CI waits until every plan is **Ready**: MTV found the VM and the maps validate. **No plan is started.**
+That is the one step left to you (Demo 1 / 1b). A plan that has started is never touched again.
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-mtv get plan "d1-$VM" \
+  -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}{"\n"}'     # True
+oc --context site-a -n openshift-mtv get plan "d1-$VM" -o yaml | sed -n '/^spec:/,/^status:/p'
+```
+
+**Your task: start it (CLI):**
+
+```bash
+oc --context site-a apply -f - <<YAML
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Migration
+metadata: { name: d1-$VM-run, namespace: openshift-mtv }
+spec: { plan: { name: d1-$VM, namespace: openshift-mtv } }
+YAML
+```
+
+**Your task: start it (console):** **Migration for Virtualization → Migration plans → `d1-<your VM>` → Start**, and
+confirm. 📸 `S-plan-list` · 📸 `S-plan-start`
+
+**How CI created it (so you can create one yourself):**
+
+```bash
+oc --context site-a apply -f - <<YAML
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Plan
+metadata: { name: my-plan, namespace: openshift-mtv }
+spec:
+  warm: false
+  targetNamespace: $VMNS                    # your own namespace
+  provider:
+    source:      { name: ovedr-vcenter0$N, namespace: openshift-mtv }
+    destination: { name: host,             namespace: openshift-mtv }
+  map:
+    network: { name: ovedr-vcenter0$N-net-bridge, namespace: openshift-mtv }
+    storage: { name: ovedr-vcenter0$N-storage,    namespace: openshift-mtv }
+  vms: [ { name: $VM } ]
+YAML
+```
+
+Console: **Migration plans → Create plan** → source provider → select your VM → target project **your own** (`<your class ID>`) → network and
+storage maps → **Cold** → **Create**. 📸 `S-plan-create`
+
+**Red Hat docs:**
+- [Creating and running a migration plan](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-vmware_vmware) [verify link]
+- [Cold and warm migration](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/about-mtv_mtv) [verify link]
+
+---
+
+## S.13 What "ready" means: the healthcheck
+
+The booking turns **READY** only when CI's last job passes every check, against the live systems:
+
+| Check | Proves |
+|---|---|
+| vCenter answers an admin API session; every ESXi host CONNECTED + POWERED_ON; the instructor VM is on | vSphere is up and responsive |
+| each cluster: `/readyz` ok, every node Ready, no ClusterOperator degraded or unavailable, the console answers 200 | both OpenShift clusters are up and responsive |
+| operator sets compared between the sites (ODF excluded) | the two sites are built the same (differences are reported) |
+| **`win_ping`** over WinRM to every class VM | each VM answers as an Ansible-managed host |
+| every VM's heartbeat is fresh, read over the network from `sql-client` | PostgreSQL is up and writing in every VM |
+| the roster's instructor and student-01 log in on vCenter and both clusters with one password | one identity everywhere |
+| every MTV provider Ready on the tooled sites (a bare site has no MTV, and does have OpenShift Virtualization + storage) | migration is ready |
+
+**Red Hat docs:**
+- [Verifying cluster health](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/support/troubleshooting) [verify link]
+- [ansible.windows.win_ping](https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_ping_module.html)
+
+---
+
+## S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery
+
+Two clusters become one DR pair in **three layers**, and each layer needs the one before it. Demo 3 (moving a VM between
+clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR) needs all three layers.
+
+```
+  layer 1  ACM       one hub MANAGES both clusters        ManagedCluster, ManagedClusterSet
+  layer 2  Submariner the clusters' pod/service networks  submariner add-on, Broker, (Globalnet)
+           can reach each other
+  layer 3  ODF DR    Ceph RBD mirroring between the two   ODF Multicluster Orchestrator: MirrorPeer,
+           ODF clusters, driven from the hub              DRCluster, DRPolicy; per app: DRPlacementControl
+```
+
+### What this lab has today (read live on 0024-008, 2026-10-08)
+
+| | ocp-lzX (site A) | ocp-lzY (site B) |
+|---|---|---|
+| ACM | MultiClusterHub **2.16.6**, its own hub (manages only `local-cluster`) | the same: **its own hub** |
+| Joined to the other? | **no** | **no** |
+| Submariner add-on | available on the hub, not deployed | available, not deployed |
+| ODF | **ODF 4.19** (`ocs-storagecluster` Ready, 4 scratch SSDs) | none: NFS only (the lab has SSDs for one ODF site) |
+| Pod / service networks | `10.128.0.0/14` / `172.30.0.0/16` | **the same**: overlapping, so Submariner needs **Globalnet** |
+
+That was **before** `acm_join.sh`: on 0024-008 the clusters were not joined. From the next deploy, CI joins them on every
+deploy (layer 1 below). ODF replication (layer 3) also needs ODF on **both** sites, which waits on more SSDs.
+
+### Layer 1: one hub manages both clusters (ACM)
+
+**Automated on every deploy:** CI's `demo-prep` job runs `automation/customize/acm_join.sh`. The commands below are
+what it does, so you can do the same by hand.
+
+**Design for this lab:** site B is the hub, and site A is imported into it as a managed cluster. Site B's own `local-cluster`
+is the second managed cluster. Because site A also runs a hub, its self-management must be turned off first
+**[verify: importing a cluster that runs a MultiClusterHub into another hub, ACM 2.16; the supported alternative is
+Multicluster Global Hub]**. That is a change to how demo-openshift built site A's ACM, so it waits on their agreement (BL-D11).
+
+**CLI** (instructor; on the hub `site-b` unless noted):
+
+```bash
+A_NAME="ocp-$A"
+# 1. site A's hub does not manage itself: done at BUILD time by demo-openshift's member option acm=managed (this
+#    demo books site A that way). By hand on a standalone cluster it is this one field:
+#    oc --context site-a patch mch multiclusterhub -n open-cluster-management --type merge -p '{"spec":{"disableHubSelfManagement":true}}'
+oc --context site-a get mch -A -o jsonpath='{.items[0].spec.disableHubSelfManagement}{"\n"}'      # true
+# 2. on the hub: a namespace + ManagedCluster for site A, and a one-time auto-import secret with site A's kubeconfig
+oc --context site-b create namespace "$A_NAME" --dry-run=client -o yaml | oc --context site-b apply -f -
+oc --context site-b apply -f - <<EOF
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata: { name: $A_NAME, labels: { cloud: auto-detect, vendor: auto-detect, cluster.open-cluster-management.io/clusterset: ovedr } }
+spec: { hubAcceptsClient: true }
+EOF
+oc --context site-b -n "$A_NAME" create secret generic auto-import-secret \
+  --from-literal=autoImportRetry=5 --from-file=kubeconfig="$HOME/.kube/site-a.kubeconfig"   # ACM deletes it after import
+# 3. a cluster set holding both clusters (DR policies select clusters by set)
+oc --context site-b apply -f - <<EOF
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSet
+metadata: { name: ovedr }
+EOF
+oc --context site-b label managedcluster local-cluster cluster.open-cluster-management.io/clusterset=ovedr --overwrite
+oc --context site-b get managedclusters          # local-cluster and ocp-<A>: JOINED True, AVAILABLE True
+```
+
+**Console:** site B → **All Clusters** (top-left switcher) → **Infrastructure → Clusters → Import cluster**: name `ocp-<A>`,
+cluster set `ovedr`, import mode **Kubeconfig** (paste site A's), **Import**. Then **Cluster sets → Create cluster set**
+`ovedr` and add both clusters.
+📸 `S-acm-import` · 📸 `S-acm-clusters`.
+Red Hat: [Importing a managed cluster](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index) [verify link] ·
+[Managed cluster sets](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index) [verify link].
+
+### Layer 2: the clusters' networks reach each other (Submariner)
+
+ODF mirrors Ceph images over the clusters' **pod/service networks**. Here both clusters use the same CIDRs, so Submariner
+runs with **Globalnet**, which gives each cluster a non-overlapping virtual range.
+
+**Console:** hub → **Infrastructure → Clusters → Cluster sets → `ovedr` → Submariner add-ons → Install Submariner add-ons**,
+select both clusters, **enable Globalnet**, keep the defaults, **Install**. Wait until both show *Healthy* (connection and agent).
+📸 `S-submariner-install` · 📸 `S-submariner-healthy`.
+
+**CLI** (the add-on is a ManagedClusterAddOn per cluster plus a broker in the set's namespace) **[verify: field names, ACM 2.16]**:
+
+```bash
+oc --context site-b apply -f - <<EOF
+apiVersion: submariner.io/v1alpha1
+kind: Broker
+metadata: { name: submariner-broker, namespace: ovedr-broker }
+spec: { globalnetEnabled: true }
+EOF
+for c in local-cluster "ocp-$A"; do
+  oc --context site-b apply -f - <<EOF
+apiVersion: addon.open-cluster-management.io/v1alpha1
+kind: ManagedClusterAddOn
+metadata: { name: submariner, namespace: $c }
+spec: { installNamespace: submariner-operator }
+EOF
+done
+oc --context site-b get managedclusteraddon -A | grep submariner     # AVAILABLE True on both
+```
+
+Red Hat: [Submariner networking service](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/networking/index) [verify link].
+
+### Layer 3: linking ODF for replication (Demo 4)
+
+Each site runs its **own** Ceph cluster (ODF). Replication links the two so every protected RBD image (a VM disk) on the
+primary is **mirrored** to the other site as snapshots on a schedule. The link has four parts, all created from the hub:
+
+| Part | What it is | Created by |
+|---|---|---|
+| **MCG (NooBaa) on both sites** | object storage where Ramen keeps each protected app's DR metadata | `dr_fabric.sh` step 1 (ODF ships it off here) |
+| **MirrorPeer** | pairs the two StorageClusters: exchanges Ceph keys/endpoints, turns on RBD mirroring (`rbd-mirror` daemons) between them, over Submariner | `dr_fabric.sh` step 3 (or the console's DRPolicy wizard) |
+| **DRCluster** × 2 | the hub's view of each site as a DR peer (its S3 profile, fencing state) | ODF Multicluster Orchestrator, from the MirrorPeer |
+| **DRPolicy** | "these two clusters, async, every **15m**" | `dr_policy.sh` (`<A>-<B>-15m`) |
+
+Then each protected application (Demo 4: the `ovedr-app` + student namespaces) gets a **DRPlacementControl** on the hub,
+which tells Ramen which cluster is primary and drives Failover/Relocate.
+
+**Prerequisites, in order:** both clusters managed by the hub (layer 1) · Submariner connected (layer 2) · ODF **Ready on both**
+sites · then the parts above.
+
+**CLI** (hub = site B; what `dr_fabric.sh` / `dr_policy.sh` apply) **[verify on first ODF-on-both booking]**:
+
+```bash
+A_NAME="ocp-$A"; B_NAME=local-cluster
+oc --context site-b apply -f - <<EOF
+apiVersion: multicluster.odf.openshift.io/v1alpha1
+kind: MirrorPeer
+metadata: { name: ovedr-$A-$B }
+spec:
+  type: async
+  manageS3: true
+  schedulingIntervals: [ 2m, 5m, 15m ]
+  items:
+    - { clusterName: $A_NAME, storageClusterRef: { name: ocs-storagecluster, namespace: openshift-storage } }
+    - { clusterName: $B_NAME, storageClusterRef: { name: ocs-storagecluster, namespace: openshift-storage } }
+EOF
+oc --context site-b get mirrorpeer,drcluster                                       # DRClusters Validated=True
+oc --context site-b apply -f - <<EOF
+apiVersion: ramendr.openshift.io/v1alpha1
+kind: DRPolicy
+metadata: { name: ocp-$A-ocp-$B-15m }
+spec: { drClusters: [ $A_NAME, $B_NAME ], schedulingInterval: 15m }
+EOF
+oc --context site-b get drpolicy -o wide                                          # Validated=True
+# the link itself, seen from each Ceph cluster (instructor: rook-ceph-tools)
+oc --context site-a -n openshift-storage rsh deploy/rook-ceph-tools rbd mirror pool status ocs-storagecluster-cephblockpool
+```
+
+**Console:** hub → **All Clusters → Data Services → Disaster recovery → Create DRPolicy**: select both clusters,
+replication **Asynchronous**, interval **15m**, **Create**. The wizard creates the MirrorPeer and DRClusters for you.
+📸 `S-drpolicy-create` · 📸 `S-drpolicy-validated`.
+
+Requires ODF on **both** sites, which waits on more scratch SSDs (BL-C20). CI runs `dr-fabric` and `dr-policy` when a booking
+sets DR=on.
+Red Hat: [ODF Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) [verify link].
+
+### What CI automates, and what waits on a decision
+
+| Layer | Automated | Waits on |
+|---|---|---|
+| MTV between the clusters (Demo 3) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | — |
+| 1 · ACM join | ✅ **every deploy**: site A booked `acm: managed` (demo-openshift's member option), then `acm_join.sh` (demo-prep) imports it into site B's hub; both in set `ovedr` | first proof on the next booking **[verify]** |
+| 2 · Submariner (Globalnet) | ✅ when DR=on: `dr_fabric.sh` | ODF on both sites |
+| 3 · ODF replication link | ✅ when DR=on: `dr_fabric.sh` (MCG, MirrorPeer, DRClusters) + `dr_policy.sh` (DRPolicy 15m) | ODF on both sites (SSDs, BL-C20) |
+
+## Thank you
+
+Thank you for looking under the hood. Everything your demos rely on is listed here, and you could rebuild each piece
+yourself. To go further:
+
+- [OpenShift Virtualization 4.19 documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index)
+- [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11)
+- [OpenShift Data Foundation 4.19 documentation](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19)
+- [Red Hat Advanced Cluster Management 2.13 documentation](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13)
+- [Red Hat OpenShift Virtualization](https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization)
+- [DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization](https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization)
+- [Red Hat interactive labs](https://www.redhat.com/en/interactive-labs)
+- [Red Hat Developer: OpenShift](https://developers.redhat.com/products/openshift/overview)

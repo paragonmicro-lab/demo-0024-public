@@ -1,0 +1,59 @@
+# The public class site (BL-D14). class_site.py copies this next to the assembled docs/ and builds it with
+# `mkdocs build --strict`: a broken link or a page missing from nav fails the publish.
+site_name: "VMware to OpenShift Virtualization: student guides"
+site_description: "Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)"
+site_url: !ENV [CLASS_SITE_URL, ""]
+docs_dir: docs
+use_directory_urls: false          # keeps every guide's relative links (../.images/x.mp4, lab-diagram.md#…) as they are in git
+exclude_docs: |                    # MkDocs skips dot-folders by default; .images/ holds the 🎬 recordings and screenshots
+  !.images/
+copyright: "Paragon Micro lab · generated from the class source; changes made here are overwritten"
+
+theme:
+  name: material
+  features:
+    - content.code.copy            # a copy button on every command block
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      toggle: { icon: material/weather-night, name: Dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      toggle: { icon: material/weather-sunny, name: Light mode }
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc: { permalink: true }
+  - pymdownx.details
+  - pymdownx.highlight: { anchor_linenums: false }
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - { name: mermaid, class: mermaid, format: !!python/name:pymdownx.superfences.fence_code_format }
+
+validation:
+  links:
+    not_found: warn                # --strict turns these into failures
+    anchors: info                  # GitHub-style anchors (emoji, punctuation) differ from MkDocs' slugs: reported, not fatal
+
+nav:
+  - Start here: index.md
+  - "Lab 0: Access and tools": demos/00-access-and-tools.md
+  - "Demo 1: VMware → OpenShift, cold": demos/01-vmware-to-ove-cold.md
+  - "Demo 1b: VMware → both clusters": demos/01b-vmware-to-both-sites.md
+  - "Demo 2: Warm migration": demos/02-vmware-to-ove-warm.md
+  - "Demo 3: OpenShift → OpenShift": demos/03-ove-to-ove-cold.md
+  - "Demo 4: ODF Regional-DR": demos/04-odf-regional-dr.md
+  - "Demo 4b: Portworx DR": demos/04b-portworx-dr.md
+  - "Lab S: how this lab was built": demos/setup-how-the-lab-is-built.md
+  - "Lab diagram": demos/lab-diagram.md
