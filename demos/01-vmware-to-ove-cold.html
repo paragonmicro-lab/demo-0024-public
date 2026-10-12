@@ -619,6 +619,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#your-vm-keeps-its-address" class="md-nav__link">
     <span class="md-ellipsis">
       Your VM keeps its address
@@ -1556,6 +1565,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#your-vm-keeps-its-address" class="md-nav__link">
     <span class="md-ellipsis">
       Your VM keeps its address
@@ -1829,7 +1847,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.1 · draft · 2026-10-12</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 0.7.0 · draft · 2026-10-12</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will take your own Windows Server + PostgreSQL VM off VMware vSphere and rehost it on OpenShift Virtualization
@@ -2445,6 +2463,15 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 </code></pre></div>
 <p>(MTV starts the target if the source was running when the plan began. After a guest shutdown it may stay
 stopped, which is why this step exists <strong>[verify: target power state in this MTV release]</strong>.)</p>
+<h3 id="check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in">✅ Check: VMware Tools out, virtio and the QEMU guest agent in<a class="headerlink" href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" title="Permanent link">&para;</a></h3>
+<p>Every migration off vSphere must swap the guest's tools: <code>virt-v2v</code> installs the <strong>virtio</strong> drivers and the <strong>QEMU guest
+agent</strong>, and VMware Tools must no longer run. Your VM reports its own guest tools at every boot (its heartbeat writer):</p>
+<div class="highlight"><pre><span></span><code>tools<span class="w">                                  </span><span class="c1"># platform = not VMware · vmtools = Stopped or absent · qemu_ga = Running · virtio = netkvm,vioscsi…</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'</span><span class="w">   </span><span class="c1"># True</span>
+</code></pre></div>
+<p>✅ <code>qemu_ga</code> is <strong>Running</strong>, <code>virtio</code> lists the network (<code>netkvm</code>) and disk (<code>vioscsi</code>/<code>viostor</code>) drivers, and <code>vmtools</code> is
+<strong>not</strong> Running. In the console, the VM's <strong>Overview</strong> shows the <em>Guest agent</em> as connected. If <code>vmtools</code> still runs, remove
+it (<a href="01-vmware-to-ove-cold.html">Demo 1 §1.6</a>).</p>
 <h3 id="your-vm-keeps-its-address">Your VM keeps its address<a class="headerlink" href="#your-vm-keeps-its-address" title="Permanent link">&para;</a></h3>
 <p>The staged plan used the <strong>bridge</strong> map, so your VM's NIC is on the same VLAN with the same static address, and the
 helpers keep using <code>$VM_IP</code>. (Only if you built and ran a plan with the <strong>pod</strong> map: follow
@@ -2480,7 +2507,8 @@ sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id
 <p>On vSphere, <strong>VMware Tools</strong> provided paravirtual drivers and the guest agent. On OpenShift, <strong>virtio-win</strong>
 drivers and the <strong>QEMU guest agent</strong> do that job. <code>virt-v2v</code> installed them during <em>ImageConversion</em>.</p>
 <h3 id="from-openshift">From OpenShift<a class="headerlink" href="#from-openshift" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>tools<span class="w">                                                                                </span><span class="c1"># the guest's own report (§1.5's check)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'</span><span class="w">          </span><span class="c1"># AgentConnected=True</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.guestOSInfo}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.interfaces}'</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.<span class="w">   </span><span class="c1"># IPs reported by the agent</span>

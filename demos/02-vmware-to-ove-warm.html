@@ -694,6 +694,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#check-your-file-came-across-too" class="md-nav__link">
     <span class="md-ellipsis">
       Check: your file came across too
@@ -1481,6 +1490,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#check-your-file-came-across-too" class="md-nav__link">
     <span class="md-ellipsis">
       Check: your file came across too
@@ -1571,7 +1589,7 @@
 
 <h1 id="demo-2-warm-migration-vsphere-ove">Demo 2: Warm migration, vSphere → OVE<a class="headerlink" href="#demo-2-warm-migration-vsphere-ove" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.1 · draft · 2026-10-12</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 0.6.0 · draft · 2026-10-12</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In this demo you migrate a running VMware VM to OpenShift Virtualization while it keeps serving its database.
@@ -2052,11 +2070,20 @@ pre-copy didn't lose the tail, because the cutover copied it.</p>
 </code></pre></div>
 <p>The <strong>first</strong> gap after <code>$CUTOVER_AT</code> is the cutover. Compare the cutover gap with Demo 1's cold outage (your proof table, row 1.x), which was the whole copy.</p>
 <p>📸 <code>02-outage-sql</code> — the gap query result next to Demo 1's.</p>
+<h3 id="check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in">✅ Check: VMware Tools out, virtio and the QEMU guest agent in<a class="headerlink" href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" title="Permanent link">&para;</a></h3>
+<p>Every migration off vSphere must swap the guest's tools: <code>virt-v2v</code> installs the <strong>virtio</strong> drivers and the <strong>QEMU guest
+agent</strong>, and VMware Tools must no longer run. Your VM reports its own guest tools at every boot (its heartbeat writer):</p>
+<div class="highlight"><pre><span></span><code>tools<span class="w">                                  </span><span class="c1"># platform = not VMware · vmtools = Stopped or absent · qemu_ga = Running · virtio = netkvm,vioscsi…</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'</span><span class="w">   </span><span class="c1"># True</span>
+</code></pre></div>
+<p>✅ <code>qemu_ga</code> is <strong>Running</strong>, <code>virtio</code> lists the network (<code>netkvm</code>) and disk (<code>vioscsi</code>/<code>viostor</code>) drivers, and <code>vmtools</code> is
+<strong>not</strong> Running. In the console, the VM's <strong>Overview</strong> shows the <em>Guest agent</em> as connected. If <code>vmtools</code> still runs, remove
+it (<a href="01-vmware-to-ove-cold.html">Demo 1 §1.6</a>).</p>
 <h3 id="check-your-file-came-across-too">Check: your file came across too<a class="headerlink" href="#check-your-file-came-across-too" title="Permanent link">&para;</a></h3>
 <p>Console, site A → <strong>Virtualization → VirtualMachines → <code>&lt;TARGET&gt;</code> → Console</strong>. Log in as <code>.\&lt;WINUSER&gt;</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>          <span class="c"># d1 … d2-before-cutover, all there</span>
 <span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-on-ove"</span>
-<span class="nb">Get-Service</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">Name</span> <span class="o">-match</span> <span class="s1">'qemu-ga|vmtools'</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span>   <span class="c"># guest agent vs VMware Tools [verify]</span>
+<span class="nb">Get-Service</span> <span class="n">QEMU-GA</span><span class="p">,</span> <span class="n">VMTools</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span>   <span class="c"># QEMU-GA Running; VMTools gone or stopped</span>
 </code></pre></div>
 <p>📸 <code>02-ove-console-file</code> — the OVE VNC console showing your file's lines.</p>
 <p>✍️ <strong>Row 2.4:</strong> cutover downtime (heartbeat gap) versus Demo 1's outage, <code>chain_ok</code>, and the fingerprint.</p>

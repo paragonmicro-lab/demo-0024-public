@@ -878,6 +878,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#the-guest-tools-came-along" class="md-nav__link">
+    <span class="md-ellipsis">
+      The guest tools came along
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#your-file-on-the-new-cluster" class="md-nav__link">
     <span class="md-ellipsis">
       Your file, on the new cluster
@@ -1361,6 +1370,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#the-guest-tools-came-along" class="md-nav__link">
+    <span class="md-ellipsis">
+      The guest tools came along
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#your-file-on-the-new-cluster" class="md-nav__link">
     <span class="md-ellipsis">
       Your file, on the new cluster
@@ -1427,7 +1445,7 @@
 
 <h1 id="demo-3-ove-ove-cold-migration">Demo 3: OVE → OVE cold migration<a class="headerlink" href="#demo-3-ove-ove-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/03-ove-to-ove-cold.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/03-ove-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In this demo you move your VM between two OpenShift clusters: from site A to site B. You will see how Advanced
@@ -1857,6 +1875,11 @@ marks are in its database.</p>
 <h3 id="inject-after-the-move">Inject: after the move<a class="headerlink" href="#inject-after-the-move" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d3-after<span class="w"> </span><span class="s2">"running on </span><span class="nv">$B</span><span class="s2">, storage </span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>--arg<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="s1">'[.items[] | select(.metadata.name | contains($vm)) | .spec.storageClassName][0]'</span><span class="k">)</span><span class="s2">"</span>
 verify
+</code></pre></div>
+<h3 id="the-guest-tools-came-along">The guest tools came along<a class="headerlink" href="#the-guest-tools-came-along" title="Permanent link">&para;</a></h3>
+<p>An OVE → OVE move keeps the VM on KVM, so nothing is converted: the virtio drivers and the QEMU guest agent from
+Demo 1 simply run on site B.</p>
+<div class="highlight"><pre><span></span><code>tools<span class="w">                                  </span><span class="c1"># qemu_ga Running, virtio drivers, vmtools not Running, as on site A</span>
 </code></pre></div>
 <h3 id="your-file-on-the-new-cluster">Your file, on the new cluster<a class="headerlink" href="#your-file-on-the-new-cluster" title="Permanent link">&para;</a></h3>
 <p>Site B console: <strong>Virtualization → VirtualMachines → <code>&lt;VM&gt;</code> → Console</strong>, log in as <code>.\&lt;WINUSER&gt;</code>:</p>

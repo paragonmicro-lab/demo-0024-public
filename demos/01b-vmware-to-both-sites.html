@@ -1049,7 +1049,7 @@
 
 <h1 id="demo-1b-vmware-to-both-openshift-clusters">Demo 1b: VMware to both OpenShift clusters<a class="headerlink" href="#demo-1b-vmware-to-both-openshift-clusters" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/01b-vmware-to-both-sites.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/01b-vmware-to-both-sites.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You migrate one VMware VM to <strong>two</strong> different OpenShift clusters, first site A and then site B, using the
@@ -1192,6 +1192,7 @@ oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX
 <div class="highlight"><pre><span></span><code>alive<span class="w">                                  </span><span class="c1"># heartbeat live again (staleness &lt; 10 s), postgres_started is new</span>
 verify<span class="w">                                 </span><span class="c1"># chain_ok = t, your d1b-before row is there</span>
 sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="w">            </span><span class="c1"># = $FP: every mark arrived, unchanged</span>
+tools<span class="w">                                  </span><span class="c1"># VMware Tools out: qemu_ga Running, virtio drivers, vmtools not Running</span>
 mark<span class="w"> </span>d1b-after-site-a
 </code></pre></div>
 <p>In the VM (<strong>Virtualization → VirtualMachines → your VM → Console</strong>): read the file back, then add a line:</p>
@@ -1250,8 +1251,11 @@ oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX
 <div class="highlight"><pre><span></span><code>alive
 verify<span class="w">                                 </span><span class="c1"># d1b-before is there; d1b-after-site-a is NOT (that row lives only in the site A copy)</span>
 sql<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT fingerprint FROM ovedr_checksum()"</span><span class="w">            </span><span class="c1"># = $FP again</span>
+tools<span class="w">                                  </span><span class="c1"># the same swap on site B's copy</span>
 mark<span class="w"> </span>d1b-after-site-b
 </code></pre></div>
+<p>✅ On both sites <code>tools</code> shows <code>qemu_ga</code> <strong>Running</strong>, the virtio drivers, and <code>vmtools</code> <strong>not</strong> Running: each copy was
+converted from VMware Tools to virtio + the QEMU guest agent (<a href="01-vmware-to-ove-cold.html">Demo 1 §1.6</a>).</p>
 <blockquote>
 <p>💡 <strong>Why is <code>d1b-after-site-a</code> missing on B?</strong> Both migrations copied the VM <strong>from vSphere</strong>, and the site A copy
 added that row after its own move. Two migrations of one source give two independent copies. To carry site A's
