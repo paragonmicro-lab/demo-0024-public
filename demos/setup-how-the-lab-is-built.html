@@ -1,0 +1,1952 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)">
+      
+      
+      
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/setup-how-the-lab-is-built.html">
+      
+      
+        <link rel="prev" href="04b-portworx-dr.html">
+      
+      
+        <link rel="next" href="lab-diagram.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Lab S — How this lab was built: every operator and customization, by command line and by console - VMware to OpenShift Virtualization: student guides</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lab-s-how-this-lab-was-built" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VMware to OpenShift Virtualization: student guides
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab S — How this lab was built: every operator and customization, by command line and by console
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VMware to OpenShift Virtualization: student guides
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start here
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00-access-and-tools.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0: Access and tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1: VMware → OpenShift, cold
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-vmware-to-both-sites.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: VMware → both clusters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 2: Warm migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 3: OpenShift → OpenShift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-odf-regional-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4: ODF Regional-DR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04b-portworx-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4b: Portworx DR
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Lab S: how this lab was built
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="setup-how-the-lab-is-built.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Lab S: how this lab was built
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-lab-is-set-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      How the lab is set up
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s1-the-three-environments-and-what-both-clusters-should-look-like" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.1 The three environments, and what both clusters should look like
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s2-openshift-virtualization-built-by-demo-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.2 OpenShift Virtualization (built by demo-openshift)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s3-networking-vlans-to-bridges-to-network-attachments" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.3 Networking: VLANs to bridges to network attachments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s4-storage-whatever-the-booking-chose-and-snapshot-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.4 Storage: whatever the booking chose, and snapshot classes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-the-migration-toolkit-for-virtualization-mtv-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.5 The Migration Toolkit for Virtualization (MTV) operator
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s6-the-vsphere-side-an-mtv-account-its-role-and-the-vsphere-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.6 The vSphere side: an MTV account, its role, and the vSphere provider
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s7-openshift-openshift-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.7 OpenShift ⇄ OpenShift providers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s8-network-maps-and-storage-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.8 Network maps and storage maps
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s9-namespaces-one-per-student-admin-plus-the-class-namespace-ovedr-app-both-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.9 Namespaces: one per student (admin), plus the class namespace ovedr-app (both sites)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s10-demo-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.10 Demo preparation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s11-the-class-vms-on-vsphere" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.11 The class VMs on vSphere
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-the-staged-migration-plans-your-task-is-to-start-yours" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.12 The staged migration plans: your task is to start yours
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s13-what-ready-means-the-healthcheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.13 What "ready" means: the healthcheck
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-this-lab-has-today-read-live-on-0024-008-2026-10-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      What this lab has today (read live on 0024-008, 2026-10-08)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-1-one-hub-manages-both-clusters-acm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 1: one hub manages both clusters (ACM)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-2-the-clusters-networks-reach-each-other-submariner" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 2: the clusters' networks reach each other (Submariner)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-3-linking-odf-for-replication-demo-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 3: linking ODF for replication (Demo 4)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-ci-automates-and-what-waits-on-a-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      What CI automates, and what waits on a decision
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab-diagram.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab diagram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-lab-is-set-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      How the lab is set up
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s1-the-three-environments-and-what-both-clusters-should-look-like" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.1 The three environments, and what both clusters should look like
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s2-openshift-virtualization-built-by-demo-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.2 OpenShift Virtualization (built by demo-openshift)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s3-networking-vlans-to-bridges-to-network-attachments" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.3 Networking: VLANs to bridges to network attachments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s4-storage-whatever-the-booking-chose-and-snapshot-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.4 Storage: whatever the booking chose, and snapshot classes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-the-migration-toolkit-for-virtualization-mtv-operator" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.5 The Migration Toolkit for Virtualization (MTV) operator
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s6-the-vsphere-side-an-mtv-account-its-role-and-the-vsphere-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.6 The vSphere side: an MTV account, its role, and the vSphere provider
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s7-openshift-openshift-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.7 OpenShift ⇄ OpenShift providers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s8-network-maps-and-storage-maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.8 Network maps and storage maps
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s9-namespaces-one-per-student-admin-plus-the-class-namespace-ovedr-app-both-sites" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.9 Namespaces: one per student (admin), plus the class namespace ovedr-app (both sites)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s10-demo-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.10 Demo preparation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s11-the-class-vms-on-vsphere" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.11 The class VMs on vSphere
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-the-staged-migration-plans-your-task-is-to-start-yours" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.12 The staged migration plans: your task is to start yours
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s13-what-ready-means-the-healthcheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.13 What "ready" means: the healthcheck
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-this-lab-has-today-read-live-on-0024-008-2026-10-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      What this lab has today (read live on 0024-008, 2026-10-08)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-1-one-hub-manages-both-clusters-acm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 1: one hub manages both clusters (ACM)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-2-the-clusters-networks-reach-each-other-submariner" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 2: the clusters' networks reach each other (Submariner)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-3-linking-odf-for-replication-demo-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layer 3: linking ODF for replication (Demo 4)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-ci-automates-and-what-waits-on-a-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      What CI automates, and what waits on a decision
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Version 0.3.4 · draft · 2026-10-06</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+</blockquote>
+<h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
+<p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
+storage, migration providers and maps, a namespace with a database client, one Windows + PostgreSQL VM per student,
+and a staged migration plan for each VM. This guide walks through every one of those pieces in the order CI builds
+them. For each piece you see what was built, how to check it, how to build it yourself from the <strong>command line</strong>, and
+how to do the same in the <strong>console</strong>, with links to the Red Hat documentation that describes it. The demo guides only
+ask you to do the <strong>last step</strong> yourself (start your migration). This guide is how you would do everything before it.</p>
+<h2 id="how-the-lab-is-set-up">How the lab is set up<a class="headerlink" href="#how-the-lab-is-set-up" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Built by</th>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>demo-vmware</strong> (core-web dispatches it)</td>
+<td>vCenter <code>vcenter0&lt;N&gt;</code>, 4 nested ESXi hosts, the shared NFS datastore <code>coresan01_data00</code>, port group <code>vm-network</code> on VLAN 22+N, your vCenter folder <code>vms/students/&lt;your ID&gt;</code></td>
+<td>vSphere <code>lzN</code></td>
+</tr>
+<tr>
+<td><strong>demo-openshift</strong> (core-web dispatches it, twice)</td>
+<td>OpenShift 4.19, OpenShift Virtualization (<code>ove: cnv</code>), ACM and cert-manager, NMState bridges + NADs per VLAN, <code>nfs-csi</code> storage; <strong>ODF on site A only</strong></td>
+<td>site A <code>&lt;A&gt;</code> and site B <code>&lt;B&gt;</code></td>
+</tr>
+<tr>
+<td><strong>this demo's CI</strong> (<code>customize</code>, sections S.5–S.12)</td>
+<td>MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans</td>
+<td>all three</td>
+</tr>
+<tr>
+<td><strong>you</strong></td>
+<td>start your own migration plan (Demo 1 / 1b), then everything in the demo guides</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Picture: <a href="lab-diagram.html">lab diagram</a>. Every command below uses the Lab 0 variables (<code>$A</code>, <code>$B</code>, <code>$N</code>, <code>$VM</code>, <code>$DOMAIN</code>)
+and the contexts <code>site-a</code> / <code>site-b</code>. Most "do it yourself" steps need <strong>cluster-admin</strong>. In class you only <strong>read</strong>
+these objects; the instructor (or a cluster you own) can run the build steps.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span><span class="w">                 </span><span class="c1"># the vSphere zone's VLAN: also the bridge your migrated VM can join</span>
+</code></pre></div>
+<hr />
+<h2 id="s1-the-three-environments-and-what-both-clusters-should-look-like">S.1 The three environments, and what both clusters should look like<a class="headerlink" href="#s1-the-three-environments-and-what-both-clusters-should-look-like" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built:</strong> core-web booked one vSphere zone and two OpenShift clusters together. Both clusters are built from the
+<strong>same</strong> member selections (<code>ove: cnv</code>, ACM, cert-manager), so they carry the same operators. The one difference is
+storage: the lab has four scratch SSDs, enough for <strong>one</strong> ODF cluster, so site A runs ODF and site B uses NFS (<code>nfs-csi</code>).
+The healthcheck compares the two sites' operators and reports any difference (ODF excluded).</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"== </span><span class="nv">$s</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>csv<span class="w"> </span>-A<span class="w"> </span>--no-headers<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $2}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">'s/\.v\{0,1\}[0-9].*$//'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>storageclass<span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>storageclass
+</code></pre></div>
+<p><strong>Console:</strong> <strong>Operators → Installed Operators</strong>, project <em>All Projects</em>, on each site.
+📸 <code>S-operators-site-a</code> · 📸 <code>S-operators-site-b</code>: the two installed-operator lists side by side.</p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19">OpenShift Container Platform 4.19 documentation</a>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/operators/index">Operators: understanding OLM and installed operators</a>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/about">About OpenShift Virtualization</a></p>
+<hr />
+<h2 id="s2-openshift-virtualization-built-by-demo-openshift">S.2 OpenShift Virtualization (built by demo-openshift)<a class="headerlink" href="#s2-openshift-virtualization-built-by-demo-openshift" title="Permanent link">&para;</a></h2>
+<p><strong>What was built:</strong> the <strong>OpenShift Virtualization</strong> operator (<code>kubevirt-hyperconverged</code>) in <code>openshift-cnv</code>, and its
+<code>HyperConverged</code> resource <code>kubevirt-hyperconverged</code>. That resource deploys KubeVirt, CDI (the disk importer), the
+templates and the boot sources.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-cnv<span class="w"> </span>get<span class="w"> </span>hyperconverged<span class="w"> </span>kubevirt-hyperconverged<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Available")].status}{"\n"}'</span><span class="w">      </span><span class="c1"># True</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-cnv<span class="w"> </span>get<span class="w"> </span>csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>kubevirt
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Namespace</span>
+<span class="s">metadata: { name: openshift-cnv }</span>
+<span class="s">---</span>
+<span class="s">apiVersion: operators.coreos.com/v1</span>
+<span class="s">kind: OperatorGroup</span>
+<span class="s">metadata: { name: kubevirt-hyperconverged-group, namespace: openshift-cnv }</span>
+<span class="s">spec: { targetNamespaces: [ openshift-cnv ] }</span>
+<span class="s">---</span>
+<span class="s">apiVersion: operators.coreos.com/v1alpha1</span>
+<span class="s">kind: Subscription</span>
+<span class="s">metadata: { name: hco-operatorhub, namespace: openshift-cnv }</span>
+<span class="s">spec: { source: redhat-operators, sourceNamespace: openshift-marketplace, name: kubevirt-hyperconverged, channel: stable }</span>
+<span class="s">YAML</span>
+<span class="c1"># once the CSV says Succeeded:</span>
+oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="s">apiVersion: hco.kubevirt.io/v1beta1</span>
+<span class="s">kind: HyperConverged</span>
+<span class="s">metadata: { name: kubevirt-hyperconverged, namespace: openshift-cnv }</span>
+<span class="s">spec: {}</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p><strong>Console:</strong>
+1. <strong>Operators → OperatorHub</strong> → search <em>OpenShift Virtualization</em> → <strong>Install</strong> (namespace <code>openshift-cnv</code>).
+   📸 <code>S-cnv-operatorhub</code>
+2. <strong>Installed Operators → OpenShift Virtualization → Create HyperConverged</strong> → <strong>Create</strong>.
+   📸 <code>S-cnv-hyperconverged</code>
+3. A <strong>Virtualization</strong> menu appears in the left navigation. 📸 <code>S-cnv-menu</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/installing">Installing OpenShift Virtualization</a>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/installing#preparing-cluster-for-virt">Preparing your cluster for OpenShift Virtualization</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/about#virt-architecture">OpenShift Virtualization architecture</a> [verify link]</p>
+<hr />
+<h2 id="s3-networking-vlans-to-bridges-to-network-attachments">S.3 Networking: VLANs to bridges to network attachments<a class="headerlink" href="#s3-networking-vlans-to-bridges-to-network-attachments" title="Permanent link">&para;</a></h2>
+<p><strong>What was built (demo-openshift):</strong> the <strong>Kubernetes NMState</strong> operator, and on every node a Linux bridge
+<code>br&lt;VLAN&gt;</code> on the trunk NIC for each lab VLAN. Each bridge is a <code>NodeNetworkConfigurationPolicy</code> (NNCP) named
+<code>br&lt;VLAN&gt;-policy</code>. In <code>default</code> there is a <code>NetworkAttachmentDefinition</code> (NAD) <code>vmnet&lt;VLAN&gt;</code> that lets a VM plug into
+that bridge. The VLAN is the same one the vSphere port group <code>vm-network</code> uses, so a migrated VM can <strong>keep its address</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>vSphere</th>
+<th>OpenShift</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>port group <code>vm-network</code>, VLAN 22+N</td>
+<td>NNCP <code>br&lt;22+N&gt;-policy</code> → bridge <code>br&lt;22+N&gt;</code> → NAD <code>default/vmnet&lt;22+N&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>nncp<span class="w">                                                   </span><span class="c1"># br&lt;VLAN&gt;-policy … Available</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>nncp<span class="w"> </span><span class="s2">"br</span><span class="si">${</span><span class="nv">VLAN</span><span class="si">}</span><span class="s2">-policy"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Available")].status}{"\n"}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>default<span class="w"> </span>get<span class="w"> </span>net-attach-def<span class="w"> </span><span class="s2">"vmnet</span><span class="si">${</span><span class="nv">VLAN</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.config}{"\n"}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong> install <em>Kubernetes NMState Operator</em> from OperatorHub, create its <code>NMState</code> instance, then:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">TRUNK</span><span class="o">=</span><span class="s1">'&lt;trunk NIC on the nodes, e.g. ens224&gt;'</span><span class="w">          </span><span class="c1"># [verify] the trunk interface name on your nodes</span>
+oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: nmstate.io/v1</span>
+<span class="s">kind: NodeNetworkConfigurationPolicy</span>
+<span class="s">metadata: { name: br${VLAN}-policy }</span>
+<span class="s">spec:</span>
+<span class="s">  desiredState:</span>
+<span class="s">    interfaces:</span>
+<span class="s">      - name: ${TRUNK}.${VLAN}</span>
+<span class="s">        type: vlan</span>
+<span class="s">        state: up</span>
+<span class="s">        vlan: { base-iface: ${TRUNK}, id: ${VLAN} }</span>
+<span class="s">      - name: br${VLAN}</span>
+<span class="s">        type: linux-bridge</span>
+<span class="s">        state: up</span>
+<span class="s">        ipv4: { enabled: false }</span>
+<span class="s">        bridge: { options: { stp: { enabled: false } }, port: [ { name: ${TRUNK}.${VLAN} } ] }</span>
+<span class="s">---</span>
+<span class="s">apiVersion: k8s.cni.cncf.io/v1</span>
+<span class="s">kind: NetworkAttachmentDefinition</span>
+<span class="s">metadata: { name: vmnet${VLAN}, namespace: default }</span>
+<span class="s">spec:</span>
+<span class="s">  config: '{"cniVersion":"0.3.1","name":"vmnet${VLAN}","type":"bridge","bridge":"br${VLAN}","macspoofchk":true}'</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p><strong>Console:</strong>
+1. <strong>Networking → NodeNetworkConfigurationPolicy → Create</strong> (form or YAML), as above. 📸 <code>S-nncp-create</code>
+2. Wait for <strong>Available</strong> on every node. 📸 <code>S-nncp-available</code>
+3. <strong>Networking → NetworkAttachmentDefinitions → Create</strong> in <code>default</code>: type <em>Linux bridge</em>, bridge name <code>br&lt;VLAN&gt;</code>.
+   📸 <code>S-nad-create</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index">Kubernetes NMState operator</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking#virt-connecting-vm-to-linux-bridge">Connecting a VM to a Linux bridge network</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/multiple_networks/index">Multiple networks: NetworkAttachmentDefinition</a> [verify link]</p>
+<hr />
+<h2 id="s4-storage-whatever-the-booking-chose-and-snapshot-classes">S.4 Storage: whatever the booking chose, and snapshot classes<a class="headerlink" href="#s4-storage-whatever-the-booking-chose-and-snapshot-classes" title="Permanent link">&para;</a></h2>
+<p><strong>Storage is not this demo's choice.</strong> demo-openshift deploys each cluster's storage from its <code>storage</code> option (<code>na</code> = NFS,
+<code>odf</code>, and later Portworx, SAN and others) and marks the class VMs belong on. CI's customize only <strong>reads</strong> that class
+(the <code>storageclass.kubevirt.io/is-default-virt-class</code> one, else the cluster default) and proves a test claim binds before
+any VM lands there. The demos work the same on any of them: they are about migration and BCDR.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># the class your VMs land on, per site (what CI's sc_live reads)</span>
+<span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>sc<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .items[?(@.metadata.annotations.storageclass\.kubevirt\.io/is-default-virt-class=="true")]}{.metadata.name}{"\n"}{end}'</span>
+<span class="k">done</span>
+</code></pre></div>
+<p><strong>What this booking's build has today:</strong>
+- <strong>Site A</strong>: OpenShift Data Foundation (ODF), Ceph on the four scratch SSDs. VMs use the storage class
+  <code>ocs-storagecluster-ceph-rbd-virtualization</code> (block, RWX, so live migration works). Built by demo-openshift
+  (<code>storage: odf</code>); core-web reserves the SSDs for the booking.
+- <strong>Site B</strong>: <code>nfs-csi</code> on the lab NFS server (demo-openshift's default).
+- <strong>Snapshot classes</strong> come with the storage, from demo-openshift: <code>nfs-csi-snapclass</code> (driver <code>nfs.csi.k8s.io</code>) and
+  ODF's own. Demo 1's snapshot bonus needs one. CI's <code>demo-prep</code> only reports a VM storage driver without one.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>storageclass<span class="w"> </span>ocs-storagecluster-ceph-rbd-virtualization
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>get<span class="w"> </span>storagecluster<span class="w">      </span><span class="c1"># Ready</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>storageclass<span class="w"> </span>nfs-csi
+<span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>volumesnapshotclass<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong> a snapshot class for a driver that has none (what demo-openshift creates for NFS):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="s">apiVersion: snapshot.storage.k8s.io/v1</span>
+<span class="s">kind: VolumeSnapshotClass</span>
+<span class="s">metadata: { name: nfs-csi-snapclass }</span>
+<span class="s">driver: nfs.csi.k8s.io</span>
+<span class="s">deletionPolicy: Delete</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p>ODF itself: install the <strong>OpenShift Data Foundation</strong> operator, label the storage nodes, and create a
+<code>StorageSystem</code> / <code>StorageCluster</code> on the local SSDs (the Local Storage operator discovers them).</p>
+<p><strong>Console:</strong>
+1. <strong>Operators → OperatorHub → OpenShift Data Foundation → Install.</strong> 📸 <code>S-odf-install</code>
+2. <strong>Storage → Data Foundation → Create StorageSystem</strong> → <em>Create a new StorageClass using local storage devices</em>.
+   📸 <code>S-odf-storagesystem</code>
+3. <strong>Storage → StorageClasses</strong>: see <code>ocs-storagecluster-ceph-rbd-virtualization</code> (site A) and <code>nfs-csi</code> (site B).
+   📸 <code>S-storageclasses</code>
+4. <strong>Storage → VolumeSnapshotClasses → Create.</strong> 📸 <code>S-snapclass</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/deploying_openshift_data_foundation_using_bare_metal_infrastructure/index">Deploying ODF using local storage devices</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/storage">Storage for virtual machines</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/storage/using-container-storage-interface-csi#persistent-storage-csi-snapshots">CSI volume snapshots</a> [verify link]</p>
+<hr />
+<h2 id="s5-the-migration-toolkit-for-virtualization-mtv-operator">S.5 The Migration Toolkit for Virtualization (MTV) operator<a class="headerlink" href="#s5-the-migration-toolkit-for-virtualization-mtv-operator" title="Permanent link">&para;</a></h2>
+<p><strong>Who built it:</strong> the booking's <code>migration_tools</code> decides which sites get MTV (<code>both</code>: site A and site B; <code>site-a</code>: site B is
+left bare so students install MTV there). On those sites <strong>demo-openshift</strong> installs it (<code>ove: cnv-mtv</code>), and CI
+(<code>ansible/roles/mtv_operator</code>) checks it and customizes it for the class:
+- <em>(demo-openshift)</em> Namespace <strong><code>openshift-mtv</code></strong>, OperatorGroup <strong><code>migration</code></strong> (targets <code>openshift-mtv</code>), and Subscription
+  <strong><code>mtv-operator</code></strong>: channel <strong><code>release-v2.11</code></strong>, source <code>redhat-operators</code>. CI waits for the CSV to report <strong>Succeeded</strong>.
+- <em>(demo-openshift)</em> <strong><code>ForkliftController/forklift-controller</code></strong> with <code>feature_ui_plugin</code>, <code>feature_validation</code>,
+  <code>feature_volume_populator</code> and <code>feature_must_gather_api</code> all <code>"true"</code>. <em>(CI)</em> adds <code>controller_precopy_interval: "5"</code> for
+  Demo 2 and waits for <code>deploy/forklift-controller</code> to be Available.
+- <em>(demo-openshift; CI re-checks)</em> MTV's <strong>console plugin</strong> enabled in <code>consoles.operator.openshift.io/cluster</code> → <code>spec.plugins</code>.
+  This is what adds the <strong>Migration for Virtualization</strong> menu.
+- Class access: RoleBinding <code>ovedr-students-view</code> (ClusterRole <code>view</code>) and Role + RoleBinding
+  <code>ovedr-students-migrate</code>. The second lets students create, start and delete <strong>plans and migrations</strong>, and only read
+  providers, maps and hosts. It never grants secrets.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>subscription<span class="w"> </span>mtv-operator<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.channel}{"\n"}'</span><span class="w">   </span><span class="c1"># release-v2.11</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>mtv
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>forkliftcontroller,deploy/forklift-controller
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>console.operator<span class="w"> </span>cluster<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.plugins}{"\n"}'</span><span class="w">                    </span><span class="c1"># includes forklift…</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>create<span class="w"> </span>plans.forklift.konveyor.io<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w">                        </span><span class="c1"># yes (students)</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Namespace</span>
+<span class="s">metadata: { name: openshift-mtv }</span>
+<span class="s">---</span>
+<span class="s">apiVersion: operators.coreos.com/v1</span>
+<span class="s">kind: OperatorGroup</span>
+<span class="s">metadata: { name: migration, namespace: openshift-mtv }</span>
+<span class="s">spec: { targetNamespaces: [ openshift-mtv ] }</span>
+<span class="s">---</span>
+<span class="s">apiVersion: operators.coreos.com/v1alpha1</span>
+<span class="s">kind: Subscription</span>
+<span class="s">metadata: { name: mtv-operator, namespace: openshift-mtv }</span>
+<span class="s">spec: { name: mtv-operator, channel: release-v2.11, source: redhat-operators, sourceNamespace: openshift-marketplace }</span>
+<span class="s">YAML</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>csv<span class="w"> </span>-w<span class="w">                                  </span><span class="c1"># wait for Succeeded, then:</span>
+oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: ForkliftController</span>
+<span class="s">metadata: { name: forklift-controller, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  feature_ui_plugin: "true"</span>
+<span class="s">  feature_validation: "true"</span>
+<span class="s">  feature_volume_populator: "true"</span>
+<span class="s">  feature_must_gather_api: "true"</span>
+<span class="s">YAML</span>
+<span class="nv">PLUGIN</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>get<span class="w"> </span>consoleplugin<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>forklift<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d/<span class="w"> </span>-f2<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$PLUGIN</span><span class="s2">"</span>
+oc<span class="w"> </span>patch<span class="w"> </span>console.operator<span class="w"> </span>cluster<span class="w"> </span>--type<span class="w"> </span>json<span class="w"> </span>-p<span class="w"> </span><span class="s2">"[{\"op\":\"add\",\"path\":\"/spec/plugins/-\",\"value\":\"</span><span class="nv">$PLUGIN</span><span class="s2">\"}]"</span>
+</code></pre></div>
+<p><strong>Console:</strong>
+1. <strong>Operators → OperatorHub</strong> → <em>Migration Toolkit for Virtualization Operator</em> → <strong>Install</strong>, channel <code>release-v2.11</code>,
+   namespace <code>openshift-mtv</code>. 📸 <code>S-mtv-operatorhub</code>
+2. <strong>Installed Operators → MTV → ForkliftController → Create.</strong> 📸 <code>S-mtv-forkliftcontroller</code>
+3. Accept <strong>"Web console update is available"</strong> and refresh. <strong>Migration for Virtualization</strong> appears in the menu.
+   📸 <code>S-mtv-menu</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Installing and using the Migration Toolkit for Virtualization 2.11</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv">MTV prerequisites</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></p>
+<hr />
+<h2 id="s6-the-vsphere-side-an-mtv-account-its-role-and-the-vsphere-provider">S.6 The vSphere side: an MTV account, its role, and the vSphere provider<a class="headerlink" href="#s6-the-vsphere-side-an-mtv-account-its-role-and-the-vsphere-provider" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built</strong> (<code>automation/customize/mtv_fabric.sh</code>):
+- On vCenter, an SSO user <strong><code>ovedr-mtv@vsphere.local</code></strong>, with a minted password stored in the class vault and never
+  shown, and a role <strong><code>ovedr-mtv</code></strong> with MTV's minimal privilege set:
+  - power on/off and guest control;
+  - all of <em>Provisioning</em>;
+  - create/remove snapshot;
+  - <strong>ChangeTracking</strong> (CBT, for warm migration);
+  - datastore browse and file management;
+  - session validation;
+  - Cryptographer decrypt/access.</p>
+<p>It is granted on the vCenter root (<code>/</code>), propagating. CI checks the user can then list the inventory.
+- A <strong>network probe</strong> run from inside each cluster before any provider: vCenter 443, every ESXi host on 443 and <strong>902</strong>
+  (MTV's disk copy), and the peer cluster's <code>api-int</code> 6443 and ingress 443.
+- On each tooled site, Secret + <strong><code>Provider/ovedr-vcenter0&lt;N&gt;</code></strong> (type <code>vsphere</code>, url <code>https://vcenter0&lt;N&gt;…/sdk</code>). It
+  carries <code>user</code>, <code>password</code>, <code>url</code> and <strong><code>cacert</code></strong>: the certificate chain vCenter serves, so TLS is verified, never skipped.
+- <strong>VDDK:</strong> if the repo variable <code>MTV_VDDK_IMAGE</code> is set, the provider gets <code>settings.vddkInitImage</code>. Without it,
+  migrations are <strong>cold only</strong> and slower. Warm migration (Demo 2) needs it.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.settings}{"\n"}'</span><span class="w">   </span><span class="c1"># vddkInitImage?</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong> the vSphere role and user (govc, as a vCenter administrator), then the provider:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">GOVC_URL</span><span class="o">=</span><span class="s2">"https://vcenter0</span><span class="nv">$N</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">"</span><span class="w"> </span><span class="nv">GOVC_USERNAME</span><span class="o">=</span><span class="s1">'administrator@vsphere.local'</span><span class="w">   </span><span class="c1"># GOVC_PASSWORD from your vault</span>
+govc<span class="w"> </span>role.create<span class="w"> </span>my-mtv<span class="w"> </span>VirtualMachine.Interact.PowerOff<span class="w"> </span>VirtualMachine.Interact.PowerOn<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>VirtualMachine.State.CreateSnapshot<span class="w"> </span>VirtualMachine.State.RemoveSnapshot<span class="w"> </span>VirtualMachine.Config.ChangeTracking<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>Datastore.Browse<span class="w"> </span>Datastore.FileManagement<span class="w"> </span>Sessions.ValidateSession<span class="w">   </span><span class="c1"># … plus Provisioning.*, GuestControl, Cryptographer.*</span>
+govc<span class="w"> </span>sso.user.create<span class="w"> </span>-p<span class="w"> </span><span class="s1">'&lt;password&gt;'</span><span class="w"> </span>my-mtv<span class="w">        </span><span class="c1"># the one place a password goes on argv: govc has no other way</span>
+govc<span class="w"> </span>permissions.set<span class="w"> </span>-principal<span class="w"> </span>my-mtv@vsphere.local<span class="w"> </span>-role<span class="w"> </span>my-mtv<span class="w"> </span>-propagate<span class="o">=</span><span class="nb">true</span><span class="w"> </span>/
+
+<span class="nv">CA</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>openssl<span class="w"> </span>s_client<span class="w"> </span>-showcerts<span class="w"> </span>-servername<span class="w"> </span><span class="s2">"vcenter0</span><span class="nv">$N</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">"</span><span class="w"> </span>-connect<span class="w"> </span><span class="s2">"vcenter0</span><span class="nv">$N</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">:443"</span><span class="w"> </span>&lt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'</span><span class="k">)</span><span class="s2">"</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>my-vcenter<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">user</span><span class="o">=</span>my-mtv@vsphere.local<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;password&gt;'</span><span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">url</span><span class="o">=</span><span class="s2">"https://vcenter0</span><span class="nv">$N</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">/sdk"</span><span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">cacert</span><span class="o">=</span><span class="s2">"</span><span class="nv">$CA</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">insecureSkipVerify</span><span class="o">=</span><span class="nb">false</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>label<span class="w"> </span>secret<span class="w"> </span>my-vcenter<span class="w"> </span><span class="nv">createdForProviderType</span><span class="o">=</span>vsphere<span class="w"> </span><span class="nv">createdForResourceType</span><span class="o">=</span>providers
+oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Provider</span>
+<span class="s">metadata: { name: my-vcenter, namespace: openshift-mtv }</span>
+<span class="s">spec: { type: vsphere, url: "https://vcenter0$N.$DOMAIN/sdk", secret: { name: my-vcenter, namespace: openshift-mtv } }</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p><strong>Console:</strong>
+1. vSphere Client: <strong>Administration → Roles → New</strong> (privileges as above); <strong>Single Sign On → Users and Groups → Add</strong>;
+   <strong>Hosts and Clusters → vCenter → Permissions → Add</strong>. 📸 <code>S-vsphere-role</code> · 📸 <code>S-vsphere-permission</code>
+2. OpenShift: <strong>Migration for Virtualization → Providers → Create Provider → VMware</strong>: URL, user, password, and either
+   <em>fetch certificate</em> or paste the CA. 📸 <code>S-mtv-provider-vsphere</code>
+3. The provider shows <strong>Ready</strong>, with VM and host counts. 📸 <code>S-mtv-provider-ready</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#vmware-prerequisites_mtv">VMware prerequisites and privileges for MTV</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-vmware_vmware">Adding a VMware vSphere source provider</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#creating-vddk-image_mtv">Creating a VDDK image</a> [verify link]</p>
+<hr />
+<h2 id="s7-openshift-openshift-providers">S.7 OpenShift ⇄ OpenShift providers<a class="headerlink" href="#s7-openshift-openshift-providers" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built:</strong> on <strong>both</strong> sites, ServiceAccount <strong><code>ovedr-mtv-peer</code></strong> in <code>openshift-mtv</code> (bound to <code>cluster-admin</code>,
+MTV's documented simplest grant for an OpenShift source; the cluster exists only for the booking) and a long-lived token
+Secret <code>ovedr-mtv-peer-token</code>. On each tooled site, a Provider <strong><code>ovedr-ocp-&lt;peer&gt;</code></strong> (type <code>openshift</code>) whose <code>url</code>
+and <code>cacert</code> both come from the <strong>peer's kubeconfig</strong>: the URL is <code>https://api-int.&lt;peer&gt;…:6443</code> and the CA is the
+cluster's internal CA.</p>
+<blockquote>
+<p>💡 <strong>Why <code>api-int</code> and not <code>api</code>?</strong> After demo-openshift's customize, <code>api.&lt;cluster&gt;</code> serves a public Let's Encrypt
+certificate. <code>api-int</code> keeps the cluster's internal CA. URL and CA must come from the same place, or TLS verification
+fails (<code>x509: certificate signed by unknown authority</code>). That happened in this lab, and it is why CI reads both from one
+kubeconfig.</p>
+</blockquote>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-ocp-</span><span class="si">${</span><span class="nv">A</span><span class="p">#ocp-</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong> on the source cluster, create the service account and token. On the destination, create the provider.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>create<span class="w"> </span>sa<span class="w"> </span>my-peer
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>adm<span class="w"> </span>policy<span class="w"> </span>add-cluster-role-to-user<span class="w"> </span>cluster-admin<span class="w"> </span>-z<span class="w"> </span>my-peer<span class="w"> </span>-n<span class="w"> </span>openshift-mtv
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Secret</span>
+<span class="s">type: kubernetes.io/service-account-token</span>
+<span class="s">metadata: { name: my-peer-token, namespace: openshift-mtv, annotations: { kubernetes.io/service-account.name: my-peer } }</span>
+<span class="s">YAML</span>
+<span class="nv">TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>my-peer-token<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.data.token}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="k">)</span><span class="s2">"</span>
+<span class="nv">URL</span><span class="o">=</span><span class="s2">"https://api-int.</span><span class="nv">$A</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">:6443"</span><span class="w">                  </span><span class="c1"># match the CA below</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--raw<span class="w"> </span>--minify<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.clusters[0].cluster.certificate-authority-data}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>peer-ca.pem
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>my-ocp-a<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">token</span><span class="o">=</span><span class="s2">"</span><span class="nv">$TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">url</span><span class="o">=</span><span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span><span class="w"> </span>--from-file<span class="o">=</span><span class="nv">cacert</span><span class="o">=</span>peer-ca.pem<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">insecureSkipVerify</span><span class="o">=</span><span class="nb">false</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>label<span class="w"> </span>secret<span class="w"> </span>my-ocp-a<span class="w"> </span><span class="nv">createdForProviderType</span><span class="o">=</span>openshift<span class="w"> </span><span class="nv">createdForResourceType</span><span class="o">=</span>providers
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Provider</span>
+<span class="s">metadata: { name: my-ocp-a, namespace: openshift-mtv }</span>
+<span class="s">spec: { type: openshift, url: "$URL", secret: { name: my-ocp-a, namespace: openshift-mtv } }</span>
+<span class="s">YAML</span>
+<span class="nb">unset</span><span class="w"> </span>TOKEN<span class="p">;</span><span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>peer-ca.pem
+</code></pre></div>
+<p><strong>Console:</strong> site B, <strong>Migration for Virtualization → Providers → Create Provider → OpenShift Virtualization</strong>: URL,
+service-account token, CA certificate. 📸 <code>S-mtv-provider-ocp</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-virt_cnv">Adding an OpenShift Virtualization source provider</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/understanding-and-creating-service-accounts">Using service accounts</a> [verify link]</p>
+<hr />
+<h2 id="s8-network-maps-and-storage-maps">S.8 Network maps and storage maps<a class="headerlink" href="#s8-network-maps-and-storage-maps" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built</strong>, per tooled site, in <code>openshift-mtv</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Map</th>
+<th>Source → destination</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ovedr-vcenter0&lt;N&gt;-net</code></td>
+<td>vSphere <code>vm-network</code> → <strong>pod</strong> network</td>
+<td>works everywhere; the VM gets a new, cluster-internal address</td>
+</tr>
+<tr>
+<td><code>ovedr-vcenter0&lt;N&gt;-net-bridge</code></td>
+<td>vSphere <code>vm-network</code> → <strong>multus</strong> <code>default/vmnet&lt;22+N&gt;</code></td>
+<td>the VM stays on its VLAN and <strong>keeps its own address</strong>. Created only when the NAD's bridge is <strong>Available</strong></td>
+</tr>
+<tr>
+<td><code>ovedr-vcenter0&lt;N&gt;-storage</code></td>
+<td>datastore <code>coresan01_data00</code> → <strong>this site's</strong> class</td>
+<td>site A: <code>ocs-storagecluster-ceph-rbd-virtualization</code>; site B: <code>nfs-csi</code></td>
+</tr>
+<tr>
+<td><code>ovedr-ocp-&lt;peer&gt;-net</code></td>
+<td>pod → pod, plus each VLAN NAD present on <strong>both</strong> sites → the same NAD</td>
+<td>OVE ⇄ OVE</td>
+</tr>
+<tr>
+<td><code>ovedr-ocp-&lt;peer&gt;-storage</code></td>
+<td><strong>the peer's</strong> class → <strong>this</strong> site's class</td>
+<td>OVE ⇄ OVE converts ODF ⇄ NFS: the disks are copied into the destination's storage</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>networkmap,storagemap
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>storagemap<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-storage"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}{"\n"}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nv">P</span><span class="o">=</span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: NetworkMap</span>
+<span class="s">metadata: { name: my-net-bridge, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  provider: { source: { name: $P, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }</span>
+<span class="s">  map: [ { source: { name: vm-network }, destination: { type: multus, name: vmnet${VLAN}, namespace: default } } ]</span>
+<span class="s">---</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: StorageMap</span>
+<span class="s">metadata: { name: my-storage, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  provider: { source: { name: $P, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }</span>
+<span class="s">  map: [ { source: { name: coresan01_data00 }, destination: { storageClass: ocs-storagecluster-ceph-rbd-virtualization } } ]</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p><strong>Console:</strong> <strong>Migration for Virtualization → Network maps → Create</strong> (source network → <em>Multus: default/vmnet<VLAN></em>);
+<strong>Storage maps → Create</strong> (datastore → storage class). 📸 <code>S-networkmap</code> · 📸 <code>S-storagemap</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Creating network and storage mappings</a> [verify link: the mappings chapter]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></p>
+<hr />
+<h2 id="s9-namespaces-one-per-student-admin-plus-the-class-namespace-ovedr-app-both-sites">S.9 Namespaces: one per student (admin), plus the class namespace <code>ovedr-app</code> (both sites)<a class="headerlink" href="#s9-namespaces-one-per-student-admin-plus-the-class-namespace-ovedr-app-both-sites" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built</strong> (<code>ansible/roles/class_namespace</code>) on <strong>both</strong> sites:
+- <strong>One namespace per student</strong>, named exactly the student's class ID in lower case (e.g. <code>student-01-0024-006</code>, the
+  same name as their vCenter folder <code>vms/students/&lt;class ID&gt;</code>). Their VM migrates <strong>there</strong>.
+  - The student is <strong><code>admin</code></strong> there: full rights, scoped to that namespace only. That is one RoleBinding
+    (<code>ovedr-student-admin-&lt;hash&gt;</code>) per identity the student can log in as: the htpasswd user (their class ID) and, with
+    SSO, their UPN.
+  - The instructors' group <code>demo-instructors</code> is <code>admin</code> there too (<code>ovedr-instructors-admin</code>).
+  - Their VM's Service <strong><code>&lt;vm&gt;-sql</code></strong> (selector <code>vm.kubevirt.io/name: &lt;vm&gt;</code>, port 5432).
+- <strong>Instructors:</strong> their own namespace (their class ID; the instructor VM <code>win-pg-i01</code> lands in the first instructor's), and
+  <strong>cluster-admin</strong> on both clusters (<code>ClusterRoleBinding/ovedr-instructor-cluster-admin-*</code>, one per identity), so they can
+  help with any student, storage or operator issue. CLI: <code>oc adm policy add-cluster-role-to-user cluster-admin &lt;user&gt;</code>; console:
+  <strong>User Management → RoleBindings → Create binding</strong> (cluster-wide, role <code>cluster-admin</code>). <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac">Using RBAC</a> [verify link]
+- The class namespace <strong><code>ovedr-app</code></strong>: the shared <code>sql-client</code>. It holds RoleBinding
+  <code>ovedr-students-edit</code> (ClusterRole <code>edit</code>, group <code>demo-students</code>), the instructor VM's Service <code>win-pg-i01-sql</code>, Secret
+  <strong><code>bcdr-db</code></strong> (the <code>bcdr</code> database password, from the vault), and Deployment <strong><code>sql-client</code></strong>
+  (<code>registry.redhat.io/rhel9/postgresql-16</code>) that the whole class uses for <code>psql</code>. With the bridge map every VM keeps its
+  own address, so <code>sql-client</code> reaches any student's VM by IP from here.
+- ClusterRole + ClusterRoleBinding <strong><code>ovedr-class-read</code></strong>: students may read NNCPs and node network states, storage
+  classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                                     </span><span class="c1"># your namespace exists on both sites</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>rolebinding,svc<span class="w">                          </span><span class="c1"># your admin binding(s) and your VM's Service</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span>get<span class="w"> </span>deploy/sql-client
+<span class="k">done</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span><span class="s1">'*'</span><span class="w"> </span><span class="s1">'*'</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                         </span><span class="c1"># yes: admin in your own namespace</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>create<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w">                    </span><span class="c1"># yes (edit in the class namespace)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span>list<span class="w"> </span>nodenetworkconfigurationpolicies<span class="w">      </span><span class="c1"># yes (class read)</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong> a namespace for a student with admin rights, and the VM's Service:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">NS</span><span class="o">=</span>student-99-demo<span class="w">                         </span><span class="c1"># a student's namespace = their class ID, lower case</span>
+<span class="nv">U</span><span class="o">=</span>student-99-demo<span class="w">                          </span><span class="c1"># the user they log in as (add a second binding for their SSO UPN)</span>
+oc<span class="w"> </span>new-project<span class="w"> </span><span class="s2">"</span><span class="nv">$NS</span><span class="s2">"</span><span class="w"> </span>--display-name<span class="o">=</span><span class="s2">"</span><span class="nv">$U</span><span class="s2">: your VM migrates here"</span>
+oc<span class="w"> </span>adm<span class="w"> </span>policy<span class="w"> </span>add-role-to-user<span class="w"> </span>admin<span class="w"> </span><span class="s2">"</span><span class="nv">$U</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$NS</span><span class="s2">"</span><span class="w">                        </span><span class="c1"># full rights, only in this namespace</span>
+oc<span class="w"> </span>adm<span class="w"> </span>policy<span class="w"> </span>add-role-to-group<span class="w"> </span>admin<span class="w"> </span>demo-instructors<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$NS</span><span class="s2">"</span><span class="w">           </span><span class="c1"># instructors too</span>
+oc<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$NS</span><span class="s2">"</span><span class="w"> </span>create<span class="w"> </span>service<span class="w"> </span>clusterip<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-sql"</span><span class="w"> </span>--tcp<span class="o">=</span><span class="m">5432</span>:5432<span class="w"> </span>--dry-run<span class="o">=</span>client<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s2">"s/app: </span><span class="nv">$VM</span><span class="s2">-sql/vm.kubevirt.io\/name: </span><span class="nv">$VM</span><span class="s2">/"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+</code></pre></div>
+<p>The class namespace, by hand:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>new-project<span class="w"> </span>my-app
+oc<span class="w"> </span>-n<span class="w"> </span>my-app<span class="w"> </span>create<span class="w"> </span>rolebinding<span class="w"> </span>students-edit<span class="w"> </span>--clusterrole<span class="o">=</span>edit<span class="w"> </span>--group<span class="o">=</span>demo-students
+oc<span class="w"> </span>-n<span class="w"> </span>my-app<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>bcdr-db<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">PGPASSWORD</span><span class="o">=</span><span class="s1">'&lt;bcdr password&gt;'</span>
+oc<span class="w"> </span>-n<span class="w"> </span>my-app<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>sql-client<span class="w"> </span>--image<span class="o">=</span>registry.redhat.io/rhel9/postgresql-16<span class="w"> </span>--<span class="w"> </span>sleep<span class="w"> </span>infinity
+oc<span class="w"> </span>-n<span class="w"> </span>my-app<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deployment/sql-client<span class="w"> </span>--from<span class="o">=</span>secret/bcdr-db
+</code></pre></div>
+<p><strong>Console:</strong>
+1. <strong>Home → Projects → Create Project</strong>: the name is the student's class ID. 📸 <code>S-namespace</code>
+2. That project → <strong>Project access</strong> (or <strong>User Management → RoleBindings → Create binding</strong>): subject <strong>User</strong> = the
+   student, role <strong>admin</strong>; add the group <code>demo-instructors</code> as <strong>admin</strong>. 📸 <code>S-project-access</code>
+3. <strong>Networking → Services → Create Service</strong> in that project (selector <code>vm.kubevirt.io/name</code>). 📸 <code>S-service</code>
+4. In <code>ovedr-app</code>: <strong>Workloads → Secrets → Create</strong> and <strong>Workloads → Deployments → Create</strong> for <code>sql-client</code>.</p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/building_applications/projects">Working with projects</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac">Using RBAC to define and apply permissions</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac#default-roles_using-rbac">Default cluster roles (admin, edit, view)</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking#virt-exposing-vm-with-service">Exposing a VM by using a Service</a> [verify link]</p>
+<hr />
+<h2 id="s10-demo-preparation">S.10 Demo preparation<a class="headerlink" href="#s10-demo-preparation" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built</strong> (<code>demo-prep</code> job, <code>ansible/roles/demo_prep</code> and the play after it):
+- <strong>MTV pre-copy interval</strong>: <code>ForkliftController.spec.controller_precopy_interval: 5</code> (minutes), so a warm migration
+  (Demo 2) shows several pre-copies instead of one per hour <strong>[verify: field name on MTV 2.11]</strong>.
+- <strong>Snapshot classes</strong>: see S.4.
+- <strong>ACM</strong>: if site B is an ACM hub and site A is <strong>not</strong>, CI creates a <code>ManagedCluster</code> for site A with an
+  <code>auto-import-secret</code> (site A's kubeconfig; ACM deletes it after use) and waits for <strong>Available</strong>. ⚠ demo-openshift
+  now installs ACM on <strong>both</strong> clusters. A cluster that is itself a hub cannot simply be imported into another hub, so CI
+  <strong>skips</strong> the import and the readiness table says so (BL-D11, an open decision).
+- A <strong>per-demo readiness table</strong> in the run summary: which demos this booking can run (for example, Demo 2 needs a VDDK image).</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>forkliftcontroller<span class="w"> </span>forklift-controller<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec}{"\n"}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                       </span><span class="c1"># local-cluster, and site A if imported</span>
+</code></pre></div>
+<p><strong>Do it yourself (CLI):</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>forkliftcontroller<span class="w"> </span>forklift-controller<span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s1">'{"spec":{"controller_precopy_interval":5}}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: cluster.open-cluster-management.io/v1</span>
+<span class="s">kind: ManagedCluster</span>
+<span class="s">metadata: { name: $A, labels: { cloud: auto-detect, vendor: auto-detect } }</span>
+<span class="s">spec: { hubAcceptsClient: true }</span>
+<span class="s">YAML</span>
+<span class="c1"># then, in namespace $A on the hub: Secret auto-import-secret with autoImportRetry and site A's kubeconfig (or token + server)</span>
+</code></pre></div>
+<p><strong>Console:</strong> ACM: <strong>All Clusters → Infrastructure → Clusters → Import cluster</strong> (name, <em>Kubeconfig</em> or <em>Server URL and API
+token</em>). 📸 <code>S-acm-import</code> · 📸 <code>S-acm-clusters</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13/html/clusters/cluster_mce_overview#import-intro">Importing a managed cluster (ACM 2.13)</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">Red Hat Advanced Cluster Management 2.13 documentation</a>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Warm migration and pre-copy settings</a> [verify link: the warm-migration section]</p>
+<hr />
+<h2 id="s11-the-class-vms-on-vsphere">S.11 The class VMs on vSphere<a class="headerlink" href="#s11-the-class-vms-on-vsphere" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built</strong> (<code>source_vm.sh</code>, <code>student_vms.sh</code>, <code>lib/vm.sh</code>, <code>windows/*.ps1</code>), entirely through vCenter's API (govc)
+and VMware guest operations:
+- <strong>Instructor VM <code>win-pg-i01</code></strong> in <code>vms/ovedr</code>: Windows Server 2022 (BIOS, LSI Logic SAS, e1000e), installed unattended
+  from the lab ISO plus an answer ISO (VMware Tools included). Three disks: <strong>C:</strong> 60 GB, <strong>L:</strong> 5 GB (PostgreSQL <strong>WAL</strong>,
+  label <code>pg_wal</code>) and <strong>D:</strong> 10 GB (PostgreSQL <strong>data</strong>, label <code>pgdata</code>). Static address <code>10.101.&lt;22+N&gt;.62</code>.
+  - PostgreSQL 16 runs as service <code>postgresql-16</code>, with <code>PGDATA=D:\pgdata</code> and WAL at <code>L:\pg_wal</code>.
+  - The <code>bcdr</code> database holds the heartbeat writer (a startup task) and the <strong>integrity toolkit</strong>
+    (<code>ovedr_mark/load/verify/checksum</code>).
+  - Each roster account has a Windows login (<code>.\student-NN</code>).
+  - WinRM is enabled over HTTPS (5986, lab networks only) so Ansible can manage the VM.
+- <strong>One VM per student, <code>win-pg-s&lt;NN&gt;</code></strong>: a full clone of the instructor VM's snapshot <code>ovedr-golden</code>, 2 vCPU / 4 GB.
+  - Re-addressed to <code>10.101.&lt;22+N&gt;.&lt;100+NN&gt;</code> with its network card <strong>disconnected</strong>, so it never appears with the
+    instructor's address.
+  - Renamed, with its own WinRM certificate. Its student is a local administrator.
+  - Moved into <strong><code>vms/students/&lt;your ID&gt;</code></strong>, where you hold vCenter rights on it (role <code>ovedr-student-vm</code>: power,
+    console, Edit Settings, snapshots).
+- Every VM is validated <strong>in the guest</strong> before you get it (<code>Test-SourceVm.ps1</code>: volumes, the PostgreSQL layout, the
+  heartbeat, the toolkit, logins, the address, WinRM).
+- On the shared datastore every VM's folder carries its zone (<code>ovedr-&lt;zone&gt;-&lt;name&gt;</code>), so classes on different zones never collide.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-a<span class="p">;</span><span class="w"> </span>verify<span class="w"> </span>site-a<span class="w">                                  </span><span class="c1"># Lab 0 helpers: your VM answers and your chain is intact</span>
+</code></pre></div>
+<p>In vCenter: <strong>VMs and Templates → datacenter01 → vm → vms → students → <your ID> → <code>win-pg-s&lt;NN&gt;</code></strong> → Summary,
+Configure → Hardware (three disks). 📸 <code>S-vm-in-student-folder</code> · 📸 <code>S-vm-disks</code></p>
+<p><strong>Do it yourself (CLI, condensed from the CI scripts):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">GOVC_URL</span><span class="o">=</span><span class="s2">"https://vcenter0</span><span class="nv">$N</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">"</span><span class="w">                 </span><span class="c1"># credentials from your vault</span>
+<span class="nv">F</span><span class="o">=</span>/datacenter01/vm/vms/ovedr<span class="p">;</span><span class="w"> </span><span class="nv">POOL</span><span class="o">=</span><span class="s2">"/datacenter01/host/cluster-lz</span><span class="nv">$N</span><span class="s2">/Resources"</span><span class="p">;</span><span class="w"> </span><span class="nv">DS</span><span class="o">=</span>coresan01_data00
+govc<span class="w"> </span>vm.create<span class="w"> </span>-on<span class="o">=</span><span class="nb">false</span><span class="w"> </span>-folder<span class="w"> </span><span class="s2">"</span><span class="nv">$F</span><span class="s2">"</span><span class="w"> </span>-pool<span class="w"> </span><span class="s2">"</span><span class="nv">$POOL</span><span class="s2">"</span><span class="w"> </span>-ds<span class="w"> </span><span class="s2">"</span><span class="nv">$DS</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>-m<span class="w"> </span><span class="m">8192</span><span class="w"> </span>-g<span class="w"> </span>windows2019srvNext_64Guest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-firmware<span class="w"> </span>bios<span class="w"> </span>-net<span class="w"> </span>vm-network<span class="w"> </span>-net.adapter<span class="w"> </span>e1000e<span class="w"> </span>-disk.controller<span class="w"> </span>lsilogic-sas<span class="w"> </span>-disk<span class="w"> </span>60GB<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-iso<span class="w"> </span><span class="s1">'&lt;path of the Windows ISO&gt;'</span><span class="w"> </span>-iso-datastore<span class="w"> </span><span class="s2">"</span><span class="nv">$DS</span><span class="s2">"</span><span class="w"> </span>my-win-pg
+govc<span class="w"> </span>vm.disk.create<span class="w"> </span>-vm<span class="w"> </span>my-win-pg<span class="w"> </span>-ds<span class="w"> </span><span class="s2">"</span><span class="nv">$DS</span><span class="s2">"</span><span class="w"> </span>-name<span class="w"> </span>my-win-pg/log<span class="w">  </span>-size<span class="w"> </span>5GB
+govc<span class="w"> </span>vm.disk.create<span class="w"> </span>-vm<span class="w"> </span>my-win-pg<span class="w"> </span>-ds<span class="w"> </span><span class="s2">"</span><span class="nv">$DS</span><span class="s2">"</span><span class="w"> </span>-name<span class="w"> </span>my-win-pg/data<span class="w"> </span>-size<span class="w"> </span>10GB
+<span class="c1"># … install Windows + PostgreSQL (initdb -D D:\pgdata -X L:\pg_wal), then clone one per student:</span>
+govc<span class="w"> </span>snapshot.create<span class="w"> </span>-vm<span class="w"> </span>my-win-pg<span class="w"> </span>-m<span class="o">=</span><span class="nb">false</span><span class="w"> </span>golden
+govc<span class="w"> </span>vm.clone<span class="w"> </span>-vm<span class="w"> </span>my-win-pg<span class="w"> </span>-snapshot<span class="w"> </span>golden<span class="w"> </span>-link<span class="o">=</span><span class="nb">false</span><span class="w"> </span>-on<span class="o">=</span><span class="nb">false</span><span class="w"> </span>-folder<span class="w"> </span><span class="s2">"</span><span class="nv">$F</span><span class="s2">"</span><span class="w"> </span>-pool<span class="w"> </span><span class="s2">"</span><span class="nv">$POOL</span><span class="s2">"</span><span class="w"> </span>-ds<span class="w"> </span><span class="s2">"</span><span class="nv">$DS</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span>-m<span class="w"> </span><span class="m">4096</span><span class="w"> </span>my-win-pg-s01
+govc<span class="w"> </span>object.mv<span class="w"> </span><span class="s2">"</span><span class="nv">$F</span><span class="s2">/my-win-pg-s01"</span><span class="w"> </span><span class="s1">'/datacenter01/vm/vms/students/&lt;student ID&gt;'</span>
+</code></pre></div>
+<p><strong>Console (vSphere Client):</strong>
+1. <strong>New Virtual Machine</strong> → create → guest <em>Windows Server 2022</em>; add two hard disks (5 GB, 10 GB). 📸 <code>S-vsphere-newvm</code>
+2. Install Windows and PostgreSQL. In <strong>Disk Management</strong>, give <code>L:</code> (pg_wal) and <code>D:</code> (pgdata). 📸 <code>S-windows-disks</code>
+3. <strong>Snapshots → Take Snapshot</strong>; <strong>Clone → Clone to Virtual Machine</strong> from it. 📸 <code>S-vsphere-clone</code>
+4. Drag the clone into <strong>vms → students → <ID></strong>; <strong>Permissions → Add</strong> for that student. 📸 <code>S-vsphere-move</code></p>
+<p><strong>Red Hat docs (what MTV needs from the VM):</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#vmware-prerequisites_mtv">VMware prerequisites: the source VM</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/creating-a-virtual-machine">Windows virtual machines on OpenShift Virtualization</a> [verify link]</p>
+<hr />
+<h2 id="s12-the-staged-migration-plans-your-task-is-to-start-yours">S.12 The staged migration plans: your task is to start yours<a class="headerlink" href="#s12-the-staged-migration-plans-your-task-is-to-start-yours" title="Permanent link">&para;</a></h2>
+<p><strong>What CI built</strong> (<code>automation/customize/stage.sh</code>), for <strong>every</strong> class VM (<code>win-pg-i01</code> and every <code>win-pg-s&lt;NN&gt;</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Site</th>
+<th>Plan</th>
+<th>Moves</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>site A</td>
+<td><strong><code>d1-&lt;vm&gt;</code></strong></td>
+<td>vSphere → site A, cold (Demo 1)</td>
+</tr>
+<tr>
+<td>site A</td>
+<td><strong><code>d2-&lt;vm&gt;</code></strong></td>
+<td>vSphere → site A, <strong>warm</strong> (Demo 2): lands as <code>&lt;vm&gt;-warm</code>. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking)</td>
+</tr>
+<tr>
+<td>site B</td>
+<td><strong><code>d1b-&lt;vm&gt;-to-&lt;B slot&gt;</code></strong></td>
+<td>vSphere → site B, cold (Demo 1b)</td>
+</tr>
+<tr>
+<td>site B</td>
+<td><strong><code>d2b-&lt;vm&gt;-to-&lt;B slot&gt;</code></strong></td>
+<td>vSphere → site B, <strong>warm</strong>: lands as <code>&lt;vm&gt;-warm</code>, waits on CBT like <code>d2-&lt;vm&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each plan targets <strong>its VM's owner's namespace</strong>: a student's VM lands in that student's own namespace (their class ID,
+<code>$VMNS</code>), the instructor's <code>win-pg-i01</code> in <code>ovedr-app</code>. It uses the <strong>bridge</strong> network map when it exists (your VM keeps its own address), plus the
+site's storage map. CI waits until every plan is <strong>Ready</strong>: MTV found the VM and the maps validate. <strong>No plan is started.</strong>
+That is the one step left to you (Demo 1 / 1b). A plan that has started is never touched again.</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}{"\n"}'</span><span class="w">     </span><span class="c1"># True</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/^spec:/,/^status:/p'</span>
+</code></pre></div>
+<p><strong>Your task: start it (CLI):</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Migration</span>
+<span class="s">metadata: { name: d1-$VM-run, namespace: openshift-mtv }</span>
+<span class="s">spec: { plan: { name: d1-$VM, namespace: openshift-mtv } }</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p><strong>Your task: start it (console):</strong> <strong>Migration for Virtualization → Migration plans → <code>d1-&lt;your VM&gt;</code> → Start</strong>, and
+confirm. 📸 <code>S-plan-list</code> · 📸 <code>S-plan-start</code></p>
+<p><strong>How CI created it (so you can create one yourself):</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Plan</span>
+<span class="s">metadata: { name: my-plan, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  warm: false</span>
+<span class="s">  targetNamespace: $VMNS                    # your own namespace</span>
+<span class="s">  provider:</span>
+<span class="s">    source:      { name: ovedr-vcenter0$N, namespace: openshift-mtv }</span>
+<span class="s">    destination: { name: host,             namespace: openshift-mtv }</span>
+<span class="s">  map:</span>
+<span class="s">    network: { name: ovedr-vcenter0$N-net-bridge, namespace: openshift-mtv }</span>
+<span class="s">    storage: { name: ovedr-vcenter0$N-storage,    namespace: openshift-mtv }</span>
+<span class="s">  vms: [ { name: $VM } ]</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p>Console: <strong>Migration plans → Create plan</strong> → source provider → select your VM → target project <strong>your own</strong> (<code>&lt;your class ID&gt;</code>) → network and
+storage maps → <strong>Cold</strong> → <strong>Create</strong>. 📸 <code>S-plan-create</code></p>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-vmware_vmware">Creating and running a migration plan</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/about-mtv_mtv">Cold and warm migration</a> [verify link]</p>
+<hr />
+<h2 id="s13-what-ready-means-the-healthcheck">S.13 What "ready" means: the healthcheck<a class="headerlink" href="#s13-what-ready-means-the-healthcheck" title="Permanent link">&para;</a></h2>
+<p>The booking turns <strong>READY</strong> only when CI's last job passes every check, against the live systems:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Proves</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vCenter answers an admin API session; every ESXi host CONNECTED + POWERED_ON; the instructor VM is on</td>
+<td>vSphere is up and responsive</td>
+</tr>
+<tr>
+<td>each cluster: <code>/readyz</code> ok, every node Ready, no ClusterOperator degraded or unavailable, the console answers 200</td>
+<td>both OpenShift clusters are up and responsive</td>
+</tr>
+<tr>
+<td>operator sets compared between the sites (ODF excluded)</td>
+<td>the two sites are built the same (differences are reported)</td>
+</tr>
+<tr>
+<td><strong><code>win_ping</code></strong> over WinRM to every class VM</td>
+<td>each VM answers as an Ansible-managed host</td>
+</tr>
+<tr>
+<td>every VM's heartbeat is fresh, read over the network from <code>sql-client</code></td>
+<td>PostgreSQL is up and writing in every VM</td>
+</tr>
+<tr>
+<td>the roster's instructor and student-01 log in on vCenter and both clusters with one password</td>
+<td>one identity everywhere</td>
+</tr>
+<tr>
+<td>every MTV provider Ready on the tooled sites (a bare site has no MTV, and does have OpenShift Virtualization + storage)</td>
+<td>migration is ready</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/support/troubleshooting">Verifying cluster health</a> [verify link]
+- <a href="https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_ping_module.html">ansible.windows.win_ping</a></p>
+<hr />
+<h2 id="s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery">S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery<a class="headerlink" href="#s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery" title="Permanent link">&para;</a></h2>
+<p>Two clusters become one DR pair in <strong>three layers</strong>, and each layer needs the one before it. Demo 3 (moving a VM between
+clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR) needs all three layers.</p>
+<div class="highlight"><pre><span></span><code>  layer 1  ACM       one hub MANAGES both clusters        ManagedCluster, ManagedClusterSet
+  layer 2  Submariner the clusters' pod/service networks  submariner add-on, Broker, (Globalnet)
+           can reach each other
+  layer 3  ODF DR    Ceph RBD mirroring between the two   ODF Multicluster Orchestrator: MirrorPeer,
+           ODF clusters, driven from the hub              DRCluster, DRPolicy; per app: DRPlacementControl
+</code></pre></div>
+<h3 id="what-this-lab-has-today-read-live-on-0024-008-2026-10-08">What this lab has today (read live on 0024-008, 2026-10-08)<a class="headerlink" href="#what-this-lab-has-today-read-live-on-0024-008-2026-10-08" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ocp-lzX (site A)</th>
+<th>ocp-lzY (site B)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACM</td>
+<td>MultiClusterHub <strong>2.16.6</strong>, its own hub (manages only <code>local-cluster</code>)</td>
+<td>the same: <strong>its own hub</strong></td>
+</tr>
+<tr>
+<td>Joined to the other?</td>
+<td><strong>no</strong></td>
+<td><strong>no</strong></td>
+</tr>
+<tr>
+<td>Submariner add-on</td>
+<td>available on the hub, not deployed</td>
+<td>available, not deployed</td>
+</tr>
+<tr>
+<td>ODF</td>
+<td><strong>ODF 4.19</strong> (<code>ocs-storagecluster</code> Ready, 4 scratch SSDs)</td>
+<td>none: NFS only (the lab has SSDs for one ODF site)</td>
+</tr>
+<tr>
+<td>Pod / service networks</td>
+<td><code>10.128.0.0/14</code> / <code>172.30.0.0/16</code></td>
+<td><strong>the same</strong>: overlapping, so Submariner needs <strong>Globalnet</strong></td>
+</tr>
+</tbody>
+</table>
+<p>That was <strong>before</strong> <code>acm_join.sh</code>: on 0024-008 the clusters were not joined. From the next deploy, CI joins them on every
+deploy (layer 1 below). ODF replication (layer 3) also needs ODF on <strong>both</strong> sites, which waits on more SSDs.</p>
+<h3 id="layer-1-one-hub-manages-both-clusters-acm">Layer 1: one hub manages both clusters (ACM)<a class="headerlink" href="#layer-1-one-hub-manages-both-clusters-acm" title="Permanent link">&para;</a></h3>
+<p><strong>Automated on every deploy:</strong> CI's <code>demo-prep</code> job runs <code>automation/customize/acm_join.sh</code>. The commands below are
+what it does, so you can do the same by hand.</p>
+<p><strong>Design for this lab:</strong> site B is the hub, and site A is imported into it as a managed cluster. Site B's own <code>local-cluster</code>
+is the second managed cluster. Because site A also runs a hub, its self-management must be turned off first
+<strong>[verify: importing a cluster that runs a MultiClusterHub into another hub, ACM 2.16; the supported alternative is
+Multicluster Global Hub]</strong>. That is a change to how demo-openshift built site A's ACM, so it waits on their agreement (BL-D11).</p>
+<p><strong>CLI</strong> (instructor; on the hub <code>site-b</code> unless noted):</p>
+<div class="highlight"><pre><span></span><code><span class="nv">A_NAME</span><span class="o">=</span><span class="s2">"ocp-</span><span class="nv">$A</span><span class="s2">"</span>
+<span class="c1"># 1. site A's hub does not manage itself: done at BUILD time by demo-openshift's member option acm=managed (this</span>
+<span class="c1">#    demo books site A that way). By hand on a standalone cluster it is this one field:</span>
+<span class="c1">#    oc --context site-a patch mch multiclusterhub -n open-cluster-management --type merge -p '{"spec":{"disableHubSelfManagement":true}}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>mch<span class="w"> </span>-A<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].spec.disableHubSelfManagement}{"\n"}'</span><span class="w">      </span><span class="c1"># true</span>
+<span class="c1"># 2. on the hub: a namespace + ManagedCluster for site A, and a one-time auto-import secret with site A's kubeconfig</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span><span class="s2">"</span><span class="nv">$A_NAME</span><span class="s2">"</span><span class="w"> </span>--dry-run<span class="o">=</span>client<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: cluster.open-cluster-management.io/v1</span>
+<span class="s">kind: ManagedCluster</span>
+<span class="s">metadata: { name: $A_NAME, labels: { cloud: auto-detect, vendor: auto-detect, cluster.open-cluster-management.io/clusterset: ovedr } }</span>
+<span class="s">spec: { hubAcceptsClient: true }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$A_NAME</span><span class="s2">"</span><span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>auto-import-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">autoImportRetry</span><span class="o">=</span><span class="m">5</span><span class="w"> </span>--from-file<span class="o">=</span><span class="nv">kubeconfig</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.kube/site-a.kubeconfig"</span><span class="w">   </span><span class="c1"># ACM deletes it after import</span>
+<span class="c1"># 3. a cluster set holding both clusters (DR policies select clusters by set)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: cluster.open-cluster-management.io/v1beta2</span>
+<span class="s">kind: ManagedClusterSet</span>
+<span class="s">metadata: { name: ovedr }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>label<span class="w"> </span>managedcluster<span class="w"> </span>local-cluster<span class="w"> </span>cluster.open-cluster-management.io/clusterset<span class="o">=</span>ovedr<span class="w"> </span>--overwrite
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">          </span><span class="c1"># local-cluster and ocp-&lt;A&gt;: JOINED True, AVAILABLE True</span>
+</code></pre></div>
+<p><strong>Console:</strong> site B → <strong>All Clusters</strong> (top-left switcher) → <strong>Infrastructure → Clusters → Import cluster</strong>: name <code>ocp-&lt;A&gt;</code>,
+cluster set <code>ovedr</code>, import mode <strong>Kubeconfig</strong> (paste site A's), <strong>Import</strong>. Then <strong>Cluster sets → Create cluster set</strong>
+<code>ovedr</code> and add both clusters.
+📸 <code>S-acm-import</code> · 📸 <code>S-acm-clusters</code>.
+Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index">Importing a managed cluster</a> [verify link] ·
+<a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index">Managed cluster sets</a> [verify link].</p>
+<h3 id="layer-2-the-clusters-networks-reach-each-other-submariner">Layer 2: the clusters' networks reach each other (Submariner)<a class="headerlink" href="#layer-2-the-clusters-networks-reach-each-other-submariner" title="Permanent link">&para;</a></h3>
+<p>ODF mirrors Ceph images over the clusters' <strong>pod/service networks</strong>. Here both clusters use the same CIDRs, so Submariner
+runs with <strong>Globalnet</strong>, which gives each cluster a non-overlapping virtual range.</p>
+<p><strong>Console:</strong> hub → <strong>Infrastructure → Clusters → Cluster sets → <code>ovedr</code> → Submariner add-ons → Install Submariner add-ons</strong>,
+select both clusters, <strong>enable Globalnet</strong>, keep the defaults, <strong>Install</strong>. Wait until both show <em>Healthy</em> (connection and agent).
+📸 <code>S-submariner-install</code> · 📸 <code>S-submariner-healthy</code>.</p>
+<p><strong>CLI</strong> (the add-on is a ManagedClusterAddOn per cluster plus a broker in the set's namespace) <strong>[verify: field names, ACM 2.16]</strong>:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: submariner.io/v1alpha1</span>
+<span class="s">kind: Broker</span>
+<span class="s">metadata: { name: submariner-broker, namespace: ovedr-broker }</span>
+<span class="s">spec: { globalnetEnabled: true }</span>
+<span class="s">EOF</span>
+<span class="k">for</span><span class="w"> </span>c<span class="w"> </span><span class="k">in</span><span class="w"> </span>local-cluster<span class="w"> </span><span class="s2">"ocp-</span><span class="nv">$A</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: addon.open-cluster-management.io/v1alpha1</span>
+<span class="s">kind: ManagedClusterAddOn</span>
+<span class="s">metadata: { name: submariner, namespace: $c }</span>
+<span class="s">spec: { installNamespace: submariner-operator }</span>
+<span class="s">EOF</span>
+<span class="k">done</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusteraddon<span class="w"> </span>-A<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>submariner<span class="w">     </span><span class="c1"># AVAILABLE True on both</span>
+</code></pre></div>
+<p>Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/networking/index">Submariner networking service</a> [verify link].</p>
+<h3 id="layer-3-linking-odf-for-replication-demo-4">Layer 3: linking ODF for replication (Demo 4)<a class="headerlink" href="#layer-3-linking-odf-for-replication-demo-4" title="Permanent link">&para;</a></h3>
+<p>Each site runs its <strong>own</strong> Ceph cluster (ODF). Replication links the two so every protected RBD image (a VM disk) on the
+primary is <strong>mirrored</strong> to the other site as snapshots on a schedule. The link has four parts, all created from the hub:</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it is</th>
+<th>Created by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MCG (NooBaa) on both sites</strong></td>
+<td>object storage where Ramen keeps each protected app's DR metadata</td>
+<td><code>dr_fabric.sh</code> step 1 (ODF ships it off here)</td>
+</tr>
+<tr>
+<td><strong>MirrorPeer</strong></td>
+<td>pairs the two StorageClusters: exchanges Ceph keys/endpoints, turns on RBD mirroring (<code>rbd-mirror</code> daemons) between them, over Submariner</td>
+<td><code>dr_fabric.sh</code> step 3 (or the console's DRPolicy wizard)</td>
+</tr>
+<tr>
+<td><strong>DRCluster</strong> × 2</td>
+<td>the hub's view of each site as a DR peer (its S3 profile, fencing state)</td>
+<td>ODF Multicluster Orchestrator, from the MirrorPeer</td>
+</tr>
+<tr>
+<td><strong>DRPolicy</strong></td>
+<td>"these two clusters, async, every <strong>15m</strong>"</td>
+<td><code>dr_policy.sh</code> (<code>&lt;A&gt;-&lt;B&gt;-15m</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Then each protected application (Demo 4: the <code>ovedr-app</code> + student namespaces) gets a <strong>DRPlacementControl</strong> on the hub,
+which tells Ramen which cluster is primary and drives Failover/Relocate.</p>
+<p><strong>Prerequisites, in order:</strong> both clusters managed by the hub (layer 1) · Submariner connected (layer 2) · ODF <strong>Ready on both</strong>
+sites · then the parts above.</p>
+<p><strong>CLI</strong> (hub = site B; what <code>dr_fabric.sh</code> / <code>dr_policy.sh</code> apply) <strong>[verify on first ODF-on-both booking]</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">A_NAME</span><span class="o">=</span><span class="s2">"ocp-</span><span class="nv">$A</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="nv">B_NAME</span><span class="o">=</span>local-cluster
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: multicluster.odf.openshift.io/v1alpha1</span>
+<span class="s">kind: MirrorPeer</span>
+<span class="s">metadata: { name: ovedr-$A-$B }</span>
+<span class="s">spec:</span>
+<span class="s">  type: async</span>
+<span class="s">  manageS3: true</span>
+<span class="s">  schedulingIntervals: [ 2m, 5m, 15m ]</span>
+<span class="s">  items:</span>
+<span class="s">    - { clusterName: $A_NAME, storageClusterRef: { name: ocs-storagecluster, namespace: openshift-storage } }</span>
+<span class="s">    - { clusterName: $B_NAME, storageClusterRef: { name: ocs-storagecluster, namespace: openshift-storage } }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>mirrorpeer,drcluster<span class="w">                                       </span><span class="c1"># DRClusters Validated=True</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: ramendr.openshift.io/v1alpha1</span>
+<span class="s">kind: DRPolicy</span>
+<span class="s">metadata: { name: ocp-$A-ocp-$B-15m }</span>
+<span class="s">spec: { drClusters: [ $A_NAME, $B_NAME ], schedulingInterval: 15m }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drpolicy<span class="w"> </span>-o<span class="w"> </span>wide<span class="w">                                          </span><span class="c1"># Validated=True</span>
+<span class="c1"># the link itself, seen from each Ceph cluster (instructor: rook-ceph-tools)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>rsh<span class="w"> </span>deploy/rook-ceph-tools<span class="w"> </span>rbd<span class="w"> </span>mirror<span class="w"> </span>pool<span class="w"> </span>status<span class="w"> </span>ocs-storagecluster-cephblockpool
+</code></pre></div>
+<p><strong>Console:</strong> hub → <strong>All Clusters → Data Services → Disaster recovery → Create DRPolicy</strong>: select both clusters,
+replication <strong>Asynchronous</strong>, interval <strong>15m</strong>, <strong>Create</strong>. The wizard creates the MirrorPeer and DRClusters for you.
+📸 <code>S-drpolicy-create</code> · 📸 <code>S-drpolicy-validated</code>.</p>
+<p>Requires ODF on <strong>both</strong> sites, which waits on more scratch SSDs (BL-C20). CI runs <code>dr-fabric</code> and <code>dr-policy</code> when a booking
+sets DR=on.
+Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF Regional-DR</a> [verify link].</p>
+<h3 id="what-ci-automates-and-what-waits-on-a-decision">What CI automates, and what waits on a decision<a class="headerlink" href="#what-ci-automates-and-what-waits-on-a-decision" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Automated</th>
+<th>Waits on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTV between the clusters (Demo 3)</td>
+<td>✅ every deploy: providers <code>ovedr-ocp-&lt;peer&gt;</code> + maps, both directions</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1 · ACM join</td>
+<td>✅ <strong>every deploy</strong>: site A booked <code>acm: managed</code> (demo-openshift's member option), then <code>acm_join.sh</code> (demo-prep) imports it into site B's hub; both in set <code>ovedr</code></td>
+<td>first proof on the next booking <strong>[verify]</strong></td>
+</tr>
+<tr>
+<td>2 · Submariner (Globalnet)</td>
+<td>✅ when DR=on: <code>dr_fabric.sh</code></td>
+<td>ODF on both sites</td>
+</tr>
+<tr>
+<td>3 · ODF replication link</td>
+<td>✅ when DR=on: <code>dr_fabric.sh</code> (MCG, MirrorPeer, DRClusters) + <code>dr_policy.sh</code> (DRPolicy 15m)</td>
+<td>ODF on both sites (SSDs, BL-C20)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<p>Thank you for looking under the hood. Everything your demos rely on is listed here, and you could rebuild each piece
+yourself. To go further:</p>
+<ul>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization 4.19 documentation</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">OpenShift Data Foundation 4.19 documentation</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">Red Hat Advanced Cluster Management 2.13 documentation</a></li>
+<li><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization">Red Hat OpenShift Virtualization</a></li>
+<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization</a></li>
+<li><a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs</a></li>
+<li><a href="https://developers.redhat.com/products/openshift/overview">Red Hat Developer: OpenShift</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="04b-portworx-dr.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 4b: Portworx DR">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Demo 4b: Portworx DR
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="lab-diagram.html" class="md-footer__link md-footer__link--next" aria-label="Next: Lab diagram">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Lab diagram
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Paragon Micro lab · generated from the class source; changes made here are overwritten
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+    
+  </body>
+</html>

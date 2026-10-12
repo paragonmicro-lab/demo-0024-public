@@ -1,0 +1,2009 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)">
+      
+      
+      
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/04-odf-regional-dr.html">
+      
+      
+        <link rel="prev" href="03-ove-to-ove-cold.html">
+      
+      
+        <link rel="next" href="04b-portworx-dr.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Demo 4 — ODF Regional-DR: async replication, failover and clean failback - VMware to OpenShift Virtualization: student guides</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#demo-4-odf-regional-dr" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VMware to OpenShift Virtualization: student guides
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Demo 4 — ODF Regional-DR: async replication, failover and clean failback
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VMware to OpenShift Virtualization: student guides
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start here
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00-access-and-tools.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0: Access and tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1: VMware → OpenShift, cold
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-vmware-to-both-sites.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: VMware → both clusters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 2: Warm migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 3: OpenShift → OpenShift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Demo 4: ODF Regional-DR
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="04-odf-regional-dr.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4: ODF Regional-DR
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      How the lab is set up for this demo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#40-point-the-helpers-at-your-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.0 Point the helpers at your VM
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#41-inside-the-vm-your-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Inside the VM: your file
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42-set-up-asynchronous-replication-between-the-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 Set up asynchronous replication between the clusters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 Set up asynchronous replication between the clusters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#driver-the-15-minute-drpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: the 15-minute DRPolicy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43-protect-the-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 Protect the VM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3 Protect the VM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#driver-enrol-the-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: enrol the VM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-first-sync-is-a-full-copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check: the first sync is a FULL copy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44-prove-replication-is-running-and-that-a-cycle-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 Prove replication is running, and that a cycle completed
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4 Prove replication is running, and that a cycle completed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-running-looks-like-at-three-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      What "running" looks like, at three levels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inject-then-wait-for-one-complete-sync-that-contains-your-row" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inject, then wait for ONE complete sync that contains your row
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#45-snapshot-then-a-planned-failover-to-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 Snapshot, then a planned failover to site B
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.5 Snapshot, then a planned failover to site B">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-snapshot-as-a-local-safety-net" class="md-nav__link">
+    <span class="md-ellipsis">
+      A snapshot as a local safety net
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relocate-vs-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relocate vs Failover
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-relocate-to-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: Relocate to site B
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-on-site-b-nothing-lost" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check: on site B, nothing lost
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46-reverse-replication-b-a-then-come-home-cleanly" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.6 Reverse replication B → A, then come home cleanly
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.6 Reverse replication B → A, then come home cleanly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#driver-relocate-home-to-site-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: Relocate home to site A
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-vm-is-home-and-the-data-made-the-full-round-trip" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check: the VM is home, and the data made the full round trip
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#47-end-of-demo-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.7 End-of-demo validation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#48-bonus-a-hostile-failover-with-a-broken-replication-link" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.8 BONUS: a hostile failover, with a broken replication link
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.8 BONUS: a hostile failover, with a broken replication link">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-break-the-link-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to break the link: options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-inject-and-note-the-last-sync-that-got-through" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: inject, and note the last sync that got through
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-break-the-link-option-a-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: 🧑‍🏫 break the link (option A) [verify]
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-keep-writing-on-a-these-rows-will-not-reach-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: keep writing on A. These rows will NOT reach B.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-force-failover-to-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: 🧑‍🏫 force Failover to site B
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-measure-what-was-lost-the-rpo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: measure what was lost (the RPO)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-restore-the-link-and-force-the-resync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 6: 🧑‍🏫 restore the link and force the resync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-relocate-home-and-verify-the-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 7: 🧑‍🏫 Relocate home, and verify the history
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Glossary
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04b-portworx-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4b: Portworx DR
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="setup-how-the-lab-is-built.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab S: how this lab was built
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab-diagram.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab diagram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      How the lab is set up for this demo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#40-point-the-helpers-at-your-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.0 Point the helpers at your VM
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#41-inside-the-vm-your-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 Inside the VM: your file
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#42-set-up-asynchronous-replication-between-the-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 Set up asynchronous replication between the clusters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 Set up asynchronous replication between the clusters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#driver-the-15-minute-drpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: the 15-minute DRPolicy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#43-protect-the-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 Protect the VM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3 Protect the VM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#driver-enrol-the-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: enrol the VM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-first-sync-is-a-full-copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check: the first sync is a FULL copy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#44-prove-replication-is-running-and-that-a-cycle-completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 Prove replication is running, and that a cycle completed
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4 Prove replication is running, and that a cycle completed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-running-looks-like-at-three-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      What "running" looks like, at three levels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inject-then-wait-for-one-complete-sync-that-contains-your-row" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inject, then wait for ONE complete sync that contains your row
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#45-snapshot-then-a-planned-failover-to-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 Snapshot, then a planned failover to site B
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.5 Snapshot, then a planned failover to site B">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-snapshot-as-a-local-safety-net" class="md-nav__link">
+    <span class="md-ellipsis">
+      A snapshot as a local safety net
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relocate-vs-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relocate vs Failover
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-relocate-to-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: Relocate to site B
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-on-site-b-nothing-lost" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check: on site B, nothing lost
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#46-reverse-replication-b-a-then-come-home-cleanly" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.6 Reverse replication B → A, then come home cleanly
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.6 Reverse replication B → A, then come home cleanly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#driver-relocate-home-to-site-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      🧑‍🏫 Driver: Relocate home to site A
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-vm-is-home-and-the-data-made-the-full-round-trip" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check: the VM is home, and the data made the full round trip
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#47-end-of-demo-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.7 End-of-demo validation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#48-bonus-a-hostile-failover-with-a-broken-replication-link" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.8 BONUS: a hostile failover, with a broken replication link
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.8 BONUS: a hostile failover, with a broken replication link">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-break-the-link-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to break the link: options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-inject-and-note-the-last-sync-that-got-through" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: inject, and note the last sync that got through
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-break-the-link-option-a-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: 🧑‍🏫 break the link (option A) [verify]
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-keep-writing-on-a-these-rows-will-not-reach-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: keep writing on A. These rows will NOT reach B.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-force-failover-to-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: 🧑‍🏫 force Failover to site B
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-measure-what-was-lost-the-rpo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: measure what was lost (the RPO)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-restore-the-link-and-force-the-resync" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 6: 🧑‍🏫 restore the link and force the resync
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-relocate-home-and-verify-the-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 7: 🧑‍🏫 Relocate home, and verify the history
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Glossary
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Version 0.3.1 · draft · 2026-10-06</strong> · class/demos/04-odf-regional-dr.md</p>
+</blockquote>
+<h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
+<p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
+disks asynchronously from site A to site B every 15 minutes. You will prove that a replication cycle really
+completed, by injecting rows into PostgreSQL and watching them reach the other site. You will move the VMs to site
+B and home again <strong>without losing a single row</strong>, and you will see that only the changes travel, not whole disks.
+In the bonus round you break the replication link, force a failover and measure exactly what an unplanned
+disaster costs (the RPO).</p>
+<h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>How the two clusters are joined</strong> (ACM hub, Submariner with Globalnet, then ODF's MirrorPeer/DRPolicy), what this lab
+has today and what CI automates: <a href="setup-how-the-lab-is-built.html">Lab S §S.14</a>. Read it first: this demo depends on all three layers.</p>
+</blockquote>
+<p>The booking's CI customization (the <code>dr-fabric</code> and <code>dr-policy</code> jobs, which run when DR is on) built all of this
+before class. See the <a href="lab-diagram.html">lab diagram</a>, and <a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a> for the CLI and
+console steps behind the shared pieces.</p>
+<table>
+<thead>
+<tr>
+<th>Pre-built</th>
+<th>Where</th>
+<th>How to check</th>
+<th>How it was built · Red Hat docs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ODF on BOTH sites</strong> (<code>storage: odf</code> on site A <strong>and</strong> site B, an operator toggle on the booking)</td>
+<td>site A, site B</td>
+<td><code>oc --context site-X -n openshift-storage get storagecluster</code> → <code>Ready</code> on both</td>
+<td><a href="setup-how-the-lab-is-built.html">S.4</a> · <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">ODF 4.19</a></td>
+</tr>
+<tr>
+<td>ACM and cert-manager on both clusters (demo-openshift's base build, the same operators on both). DR runs from <strong>site B's hub</strong>, with site A imported as a managed cluster</td>
+<td>site B</td>
+<td><code>oc --context site-b get managedclusters</code></td>
+<td><a href="setup-how-the-lab-is-built.html">S.10</a> · <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">ACM 2.13</a> <strong>[verify: BL-D11]</strong></td>
+</tr>
+<tr>
+<td>ODF Multicluster Orchestrator and the DR hub operator (Ramen) on the hub, and the DR cluster operator on both sites</td>
+<td>site B / both</td>
+<td>§4.2</td>
+<td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide</a></td>
+</tr>
+<tr>
+<td>Submariner (the network tunnel Ceph mirrors over), the <code>MirrorPeer</code>, both <code>DRCluster</code>s</td>
+<td>both</td>
+<td>§4.2</td>
+<td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide: Regional-DR</a></td>
+</tr>
+<tr>
+<td>The <strong>15-minute</strong> <code>DRPolicy</code> (<code>sync_interval=15m</code>)</td>
+<td>site B</td>
+<td>§4.2</td>
+<td>§4.2</td>
+</tr>
+<tr>
+<td><code>ovedr-app</code> with <code>sql-client</code> and a Service per class VM (<code>&lt;VM&gt;-sql</code>), on <strong>both</strong> sites</td>
+<td>both</td>
+<td><code>oc --context site-b -n ovedr-app get deploy,svc</code></td>
+<td><a href="setup-how-the-lab-is-built.html">S.9</a></td>
+</tr>
+<tr>
+<td><strong>Your own VM</strong> (<code>$VM</code>, e.g. <code>win-pg-s03</code>) running on site A, on ODF storage (<code>ocs-storagecluster-ceph-rbd-virtualization</code>), at <strong>its own address <code>$VM_IP</code></strong> on the VLAN bridge (Demo 1's staged plan)</td>
+<td>site A</td>
+<td><code>where</code> → <code>site-a Running</code></td>
+<td><a href="setup-how-the-lab-is-built.html">S.11</a> · <a href="setup-how-the-lab-is-built.html">S.12</a></td>
+</tr>
+<tr>
+<td>Your Windows login (<code>.\&lt;WINUSER&gt;</code>) and the PostgreSQL toolkit (<code>marks</code>, <code>ovedr_*</code>) inside your VM</td>
+<td>your VM</td>
+<td><code>verify site-a</code></td>
+<td><a href="setup-how-the-lab-is-built.html">S.11</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What you do yourself:</strong> inspect every DR layer, inject and verify data at every stage, read replication
+status at three levels, and run the moves when you are the driver.</p>
+<blockquote>
+<p>⚠ <strong>Capacity, stated plainly.</strong> Each ODF cluster takes <strong>all 4</strong> scratch SSDs, one on each demosvr host. Today the
+lab has 4, so it can run <strong>one</strong> ODF site. Every other demo runs with site A on ODF and site B on NFS. <strong>Demo 4
+needs a booking with ODF on both sites</strong>, which becomes possible when the additional drives are installed. Until
+then, run this demo from the 📸 screenshots only.</p>
+<p><strong>One protection unit for the whole class.</strong> Each student's VM lives in that student's own namespace (their class
+ID), the instructor's in <code>ovedr-app</code>. The default is <strong>one DRPC protecting all of them</strong>: <code>ovedr-app</code> plus every
+student namespace <strong>[verify: a discovered-app DRPC with several protectedNamespaces]</strong>. Every Relocate or Failover moves <strong>every</strong> student's VM
+together, so 🧑‍🏫 the driver runs the DR actions, and <strong>each of you verifies your own VM</strong>. Per-VM protection (one
+DRPC per student VM, selecting that VM's disks by label) is possible but not built here <strong>[verify]</strong>.</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need the variables (<code>ME N A B VM</code>),
+the two contexts (<code>site-a</code>, <code>site-b</code>) and the helpers (<code>sql mark load verify alive where</code>).</p>
+</blockquote>
+<hr />
+<h2 id="40-point-the-helpers-at-your-vm">4.0 Point the helpers at your VM<a class="headerlink" href="#40-point-the-helpers-at-your-vm" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-0-point-helpers-at-vm -->
+<p><a href="../.images/04-4-0-point-helpers-at-vm.mp4"><img alt="🎬 Video: 4.0 Point the helpers at your VM. Watch it, then do the same in the console" src="../.images/04-4-0-point-helpers-at-vm.jpg" /></a>
+<sub>🎬 <em>4.0 Point the helpers at your VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-0-point-helpers-at-vm.mp4</code>).</em></sub></p>
+<p>Use <strong>your VM's own address</strong>, <code>$VM_IP</code>, for every connection test. Your VM sits on the VLAN bridge (<code>vmnet&lt;VLAN&gt;</code>),
+which exists with the same name on both sites, so after a Relocate or Failover it comes up with the <strong>same</strong> address on
+the other site. (Only a VM on the pod network gets a new pod IP per site: then refresh it with Lab 0 §0.6 after every
+move.) Your VM's Service (<code>$VM-sql</code>) also follows the VM between sites.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="nv">$VM_IP</span><span class="w">                                  </span><span class="c1"># or: export PGHOST=$VM-sql</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DRPC</span><span class="o">=</span>ovedr-app<span class="w">                                 </span><span class="c1"># the class's one DRPC (ovedr-app + every student namespace)</span>
+<span class="c1"># the DR state of the class's protected namespace, read from the hub (site B)</span>
+drpc<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">           </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{"phase="}{.status.phase}{"  progression="}{.status.progression}{"  lastSync="}{.status.lastGroupSyncTime}{"  dur="}{.status.lastGroupSyncDuration}{"  bytes="}{.status.lastGroupSyncBytes}{"\n"}'</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+<span class="c1"># Ceph's own view of mirroring, on one site (needs rsh into the tools pod: instructor screen if your role cannot)</span>
+rbdmirror<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>rsh<span class="w"> </span>deploy/rook-ceph-tools<span class="w"> </span><span class="se">\</span>
+<span class="w">                </span>rbd<span class="w"> </span>mirror<span class="w"> </span>pool<span class="w"> </span>status<span class="w"> </span>ocs-storagecluster-cephblockpool<span class="w"> </span>--verbose<span class="p">;</span><span class="w"> </span><span class="o">}</span>
+
+where<span class="p">;</span><span class="w"> </span>alive<span class="w"> </span>site-a
+mark<span class="w"> </span>site-a<span class="w"> </span>d4-start
+verify<span class="w"> </span>site-a
+</code></pre></div>
+<p>✍️ <strong>Row 4.0:</strong> your <code>d4-start</code> mark id and the <code>fingerprint</code>.</p>
+<hr />
+<h2 id="41-inside-the-vm-your-file">4.1 Inside the VM: your file<a class="headerlink" href="#41-inside-the-vm-your-file" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-1-inside-vm-file -->
+<p><a href="../.images/04-4-1-inside-vm-file.mp4"><img alt="🎬 Video: 4.1 Inside the VM: your file. Watch it, then do the same in the console" src="../.images/04-4-1-inside-vm-file.jpg" /></a>
+<sub>🎬 <em>4.1 Inside the VM: your file: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-1-inside-vm-file.mp4</code>).</em></sub></p>
+<p>In your VM's console on site A (<strong>Virtualization → VirtualMachines → <code>&lt;your VM&gt;</code> → Console</strong>), log in as <code>.\&lt;WINUSER&gt;</code>,
+then run:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d4-start on site A"</span>
+<span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="n">-Tail</span> <span class="n">3</span>
+</code></pre></div>
+<p>📸 <code>04-touch-start</code>: the last three lines of your file, on site A.</p>
+<hr />
+<h2 id="42-set-up-asynchronous-replication-between-the-clusters">4.2 Set up asynchronous replication between the clusters<a class="headerlink" href="#42-set-up-asynchronous-replication-between-the-clusters" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-2-set-up-asynchronous-replication-clusters -->
+<p><a href="../.images/04-4-2-set-up-asynchronous-replication-clusters.mp4"><img alt="🎬 Video: 4.2 Set up asynchronous replication between the clusters. Watch it, then do the same in the console" src="../.images/04-4-2-set-up-asynchronous-replication-clusters.jpg" /></a>
+<sub>🎬 <em>4.2 Set up asynchronous replication between the clusters: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-2-set-up-asynchronous-replication-clusters.mp4</code>).</em></sub></p>
+<p>Regional-DR is built in layers. The lab stages the lower ones (<code>dr-fabric</code>); you inspect each one and see what
+it is for.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Object (on the hub unless noted)</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cluster set</td>
+<td><code>ManagedClusterSet</code>, both <code>ManagedCluster</code>s</td>
+<td>ACM knows both sites</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>Submariner <code>Broker</code> + add-on on each cluster</td>
+<td>a tunnel between the clusters' networks, which carries Ceph's mirror traffic</td>
+</tr>
+<tr>
+<td>Storage peering</td>
+<td><code>MirrorPeer</code> (ODF Multicluster Orchestrator)</td>
+<td>turns on RBD mirroring between the two Ceph clusters and exchanges their keys and S3 stores</td>
+</tr>
+<tr>
+<td>DR clusters</td>
+<td><code>DRCluster</code> ×2 (created by the MirrorPeer)</td>
+<td>Ramen's view of each site and its S3 store</td>
+</tr>
+<tr>
+<td>Policy</td>
+<td><code>DRPolicy</code></td>
+<td><strong>which</strong> two clusters pair up, and <strong>how often</strong> to checkpoint</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                                   </span><span class="c1"># ocp-lzX, ocp-lzY (+ local-cluster): JOINED, AVAILABLE</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusteraddons<span class="w"> </span>-A<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'submariner|NAME'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>mirrorpeer<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,TYPE:.spec.type,PHASE:.status.phase
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drcluster<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,S3:.spec.s3ProfileName,VALIDATED:<span class="s1">'.status.conditions[?(@.type=="Validated")].status'</span>
+</code></pre></div>
+<p><strong>[verify]</strong> On ODF 4.19, check whether Submariner is deployed with <strong>Globalnet</strong> off (the clusters' pod and service
+CIDRs must not overlap; demo-openshift gives each cluster unique CIDRs) or on:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>-A<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.namespace}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span>
+</code></pre></div>
+<h3 id="driver-the-15-minute-drpolicy">🧑‍🏫 Driver: the 15-minute DRPolicy<a class="headerlink" href="#driver-the-15-minute-drpolicy" title="Permanent link">&para;</a></h3>
+<p>The user-facing promise of this demo is <strong>"a checkpoint every 15 minutes"</strong>. That is the <code>schedulingInterval</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">POLICY</span><span class="o">=</span><span class="nv">$A</span>-<span class="nv">$B</span>-15m
+cat<span class="w"> </span><span class="s">&lt;&lt;YAML | oc --context site-b apply -f -</span>
+<span class="s">apiVersion: ramendr.openshift.io/v1alpha1</span>
+<span class="s">kind: DRPolicy</span>
+<span class="s">metadata: { name: $POLICY }</span>
+<span class="s">spec:</span>
+<span class="s">  drClusters: [ $A, $B ]</span>
+<span class="s">  schedulingInterval: 15m</span>
+<span class="s">  replicationClassSelector: {}</span>
+<span class="s">  volumeSnapshotClassSelector: {}</span>
+<span class="s">YAML</span>
+</code></pre></div>
+<p><strong>[verify: dependency]</strong> The interval must be one the <code>MirrorPeer</code> offers (<code>spec.schedulingIntervals</code>). The lab's
+MirrorPeer offers <code>2m</code> and <code>5m</code> today, so <code>15m</code> has to be added to the MirrorPeer for this policy to validate.</p>
+<h3 id="check">Check<a class="headerlink" href="#check" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drpolicy<span class="w"> </span><span class="s2">"</span><span class="nv">$POLICY</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.schedulingInterval}{"  validated="}{.status.conditions[?(@.type=="Validated")].status}{"\n"}'</span>
+<span class="c1"># the per-interval replication classes the MirrorPeer created on each site</span>
+<span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"== </span><span class="nv">$s</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>volumereplicationclass<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+<p>✅ <code>15m  validated=True</code>. ✅ Each site has a <code>VolumeReplicationClass</code> whose <code>schedulingInterval</code> is <code>15m</code>
+<strong>[verify: class naming, e.g. <code>rbd-volumereplicationclass-…</code>]</strong>.</p>
+<p>📸 <code>04-drpolicy</code>: the DRPolicy validated at 15m.</p>
+<hr />
+<h2 id="43-protect-the-vm">4.3 Protect the VM<a class="headerlink" href="#43-protect-the-vm" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-3-protect-vm -->
+<p><a href="../.images/04-4-3-protect-vm.mp4"><img alt="🎬 Video: 4.3 Protect the VM. Watch it, then do the same in the console" src="../.images/04-4-3-protect-vm.jpg" /></a>
+<sub>🎬 <em>4.3 Protect the VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-3-protect-vm.mp4</code>).</em></sub></p>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d4-before-protect
+</code></pre></div>
+<h3 id="driver-enrol-the-vm">🧑‍🏫 Driver: enrol the VM<a class="headerlink" href="#driver-enrol-the-vm" title="Permanent link">&para;</a></h3>
+<p>The VMs were created by MTV, not by a GitOps application, so they are a <strong>discovered application</strong>. Protect
+<code>ovedr-app</code> (the instructor's VM and <code>sql-client</code>) <strong>and every student namespace</strong> (each student's VM, its disks and its
+Service), so a move carries everything the class uses.</p>
+<p>Console, site B (hub): <strong>All Clusters → Data Services → Disaster recovery → Protected applications → Enroll
+discovered application</strong> <strong>[verify: BL-T07]</strong>:
+- cluster <code>$A</code>
+- namespaces <code>ovedr-app</code> and every <code>student-NN-&lt;booking&gt;</code> namespace
+- policy <code>$POLICY</code>
+- resources: <strong>all in namespace</strong>
+- kube-object capture interval <code>15m</code></p>
+<p>That creates the <code>Placement</code> and the <code>DRPlacementControl</code> (DRPC) on the hub. As YAML, roughly <strong>[verify]</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ramendr.openshift.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DRPlacementControl</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-app</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-dr-ops</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">preferredCluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;A&gt;</span>
+<span class="w">  </span><span class="nt">drPolicyRef</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">&lt;A&gt;-&lt;B&gt;-15m</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">placementRef</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> kind</span><span class="p">:</span><span class="w"> </span><span class="nv">Placement</span><span class="p p-Indicator">,</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-app-placement</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-dr-ops</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">protectedNamespaces</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">ovedr-app</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">student-01-&lt;booking&gt;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">student-02-&lt;booking&gt;</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w">   </span><span class="c1"># one entry per student namespace [verify]</span>
+<span class="w">  </span><span class="nt">pvcSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="nt">kubeObjectProtection</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> captureInterval</span><span class="p">:</span><span class="w"> </span><span class="nv">15m</span><span class="p p-Indicator">,</span><span class="nt"> kubeObjectSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</code></pre></div>
+<h3 id="check-the-first-sync-is-a-full-copy">Check: the first sync is a FULL copy<a class="headerlink" href="#check-the-first-sync-is-a-full-copy" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w<span class="w">          </span><span class="c1"># Ctrl-C at Deployed / Protected</span>
+drpc
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>volumereplicationgroup<span class="w">                 </span><span class="c1"># one VRG, state Primary</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>volumereplicationgroup<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'</span>
+</code></pre></div>
+<p>✅ The VRG reports <code>DataReady=True</code>, <code>DataProtected=True</code> and <code>ClusterDataProtected=True</code> <strong>[verify: condition
+names on ODF 4.19]</strong>.
+✍️ <strong>Row 4.3:</strong> the first <code>lastGroupSyncBytes</code> and <code>lastGroupSyncDuration</code>. This is the <strong>only</strong> full copy in the
+demo. Compare it with the VM's disk usage (<code>oc --context site-a -n "$VMNS" get pvc</code>).</p>
+<p>📸 <code>04-protected</code>: the Protected applications page showing <code>ovedr-app</code> Healthy.</p>
+<hr />
+<h2 id="44-prove-replication-is-running-and-that-a-cycle-completed">4.4 Prove replication is running, and that a cycle completed<a class="headerlink" href="#44-prove-replication-is-running-and-that-a-cycle-completed" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-4-prove-replication-running-cycle-completed -->
+<p><a href="../.images/04-4-4-prove-replication-running-cycle-completed.mp4"><img alt="🎬 Video: 4.4 Prove replication is running, and that a cycle completed. Watch it, then do the same in the console" src="../.images/04-4-4-prove-replication-running-cycle-completed.jpg" /></a>
+<sub>🎬 <em>4.4 Prove replication is running, and that a cycle completed: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-4-prove-replication-running-cycle-completed.mp4</code>).</em></sub></p>
+<h3 id="what-running-looks-like-at-three-levels">What "running" looks like, at three levels<a class="headerlink" href="#what-running-looks-like-at-three-levels" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>drpc<span class="w">                                                           </span><span class="c1"># 1 · Ramen: the last group sync</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>volumereplication<span class="w">          </span><span class="c1"># 2 · CSI: one VolumeReplication per disk</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>volumereplication<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>PVC:.spec.dataSource.name,STATE:.status.state,LASTSYNC:.status.lastSyncTime
+rbdmirror<span class="w"> </span>site-a<span class="w">                                               </span><span class="c1"># 3 · Ceph: images up+stopped (primary), health OK</span>
+rbdmirror<span class="w"> </span>site-b<span class="w">                                               </span><span class="c1">#     images up+replaying (secondary)</span>
+</code></pre></div>
+<p>To see one image's mirror snapshots, which are the checkpoints themselves:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w">              </span><span class="c1"># your VM's three disks: pick one</span>
+<span class="nv">PVC</span><span class="o">=</span><span class="s1">'&lt;one of your VM pvcs&gt;'</span>
+<span class="nv">IMG</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>pv<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$PVC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.volumeName}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.csi.volumeAttributes.imageName}'</span><span class="k">)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>rsh<span class="w"> </span>deploy/rook-ceph-tools<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>rbd<span class="w"> </span>mirror<span class="w"> </span>image<span class="w"> </span>status<span class="w"> </span><span class="s2">"ocs-storagecluster-cephblockpool/</span><span class="nv">$IMG</span><span class="s2">"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>rsh<span class="w"> </span>deploy/rook-ceph-tools<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>rbd<span class="w"> </span>snap<span class="w"> </span>ls<span class="w"> </span>--all<span class="w"> </span><span class="s2">"ocs-storagecluster-cephblockpool/</span><span class="nv">$IMG</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>mirror
+</code></pre></div>
+<p>✅ Primary: <code>state: up+stopped</code>, with <code>description</code> showing the last mirror snapshot. Secondary: <code>up+replaying</code>.</p>
+<h3 id="inject-then-wait-for-one-complete-sync-that-contains-your-row">Inject, then wait for ONE complete sync that contains your row<a class="headerlink" href="#inject-then-wait-for-one-complete-sync-that-contains-your-row" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>load<span class="w"> </span>site-a<span class="w"> </span>d4-busy<span class="w"> </span><span class="m">200</span><span class="w">                          </span><span class="c1"># a burst: the database is busy</span>
+mark<span class="w"> </span>site-a<span class="w"> </span>d4-wait-for-sync<span class="w">                     </span><span class="c1"># the row that must reach site B</span>
+<span class="nv">T</span><span class="o">=</span><span class="k">$(</span>sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(ts) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">'"</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"my row's time: </span><span class="nv">$T</span><span class="s2">"</span>
+<span class="c1"># poll the hub until a group sync STARTED after your row's time (each sync is a crash-consistent snapshot)</span>
+<span class="k">until</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.lastGroupSyncTime}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="m">0</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-gt<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="nv">$T</span><span class="s2">"</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s1">'%s  waiting… '</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>+%T<span class="k">)</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>drpc<span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span>
+<span class="k">done</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"✅ a sync completed after your row"</span><span class="p">;</span><span class="w"> </span>drpc
+</code></pre></div>
+<blockquote>
+<p>⚠ The loop uses GNU <code>date -d</code>. On macOS, run it from the lab's Linux shell, or install <code>coreutils</code> and use <code>gdate</code>.</p>
+<p>💡 With a 15-minute interval this can take up to 15 minutes. That wait <strong>is</strong> the RPO you are buying. The
+instructor may use a 5-minute policy in a short session.</p>
+</blockquote>
+<p>✅ <code>lastGroupSyncTime</code> is later than your row, so your <code>d4-wait-for-sync</code> row is now on site B's disks.
+✍️ <strong>Row 4.4:</strong> a typical checkpoint's <code>bytes</code> and <code>dur</code>. Compare them with row 4.3: it should be a small fraction.</p>
+<p>📸 <code>04-sync-complete</code>: the <code>drpc</code> line after the loop ends.</p>
+<hr />
+<h2 id="45-snapshot-then-a-planned-failover-to-site-b">4.5 Snapshot, then a planned failover to site B<a class="headerlink" href="#45-snapshot-then-a-planned-failover-to-site-b" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-5-snapshot-planned-failover-site-b -->
+<p><a href="../.images/04-4-5-snapshot-planned-failover-site-b.mp4"><img alt="🎬 Video: 4.5 Snapshot, then a planned failover to site B. Watch it, then do the same in the console" src="../.images/04-4-5-snapshot-planned-failover-site-b.jpg" /></a>
+<sub>🎬 <em>4.5 Snapshot, then a planned failover to site B: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-5-snapshot-planned-failover-site-b.mp4</code>).</em></sub></p>
+<h3 id="a-snapshot-as-a-local-safety-net">A snapshot as a local safety net<a class="headerlink" href="#a-snapshot-as-a-local-safety-net" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt;YAML | oc --context site-a apply -f -</span>
+<span class="s">apiVersion: snapshot.kubevirt.io/v1beta1</span>
+<span class="s">kind: VirtualMachineSnapshot</span>
+<span class="s">metadata: { name: $VM-d4-pre-move, namespace: $VMNS }</span>
+<span class="s">spec:</span>
+<span class="s">  source: { apiGroup: kubevirt.io, kind: VirtualMachine, name: $VM }</span>
+<span class="s">YAML</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-d4-pre-move"</span><span class="w"> </span>-w<span class="w">        </span><span class="c1"># Ctrl-C at readyToUse=true</span>
+</code></pre></div>
+<p><strong>[verify]</strong> <code>snapshot.kubevirt.io/v1beta1</code> is the served version on OpenShift Virtualization 4.19 (<code>v1alpha1</code> on older
+releases).</p>
+<blockquote>
+<p>💡 <strong>A snapshot is not DR.</strong> It lives on the <strong>same</strong> Ceph cluster as the VM. It protects against a bad change
+(Demo 1's bonus round), not against losing the site. Replication is what protects the site.</p>
+</blockquote>
+<h3 id="relocate-vs-failover">Relocate vs Failover<a class="headerlink" href="#relocate-vs-failover" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Relocate</strong> (planned)</th>
+<th><strong>Failover</strong> (unplanned)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>When</td>
+<td>both sites healthy: maintenance, evacuation, a test</td>
+<td>the primary is gone or unreachable</td>
+</tr>
+<tr>
+<td>Order</td>
+<td>stop the VM on A → <strong>final sync</strong> → demote A → promote B → start on B</td>
+<td>promote B from the <strong>last completed</strong> sync → start on B</td>
+</tr>
+<tr>
+<td>Data loss</td>
+<td><strong>none</strong></td>
+<td>up to one interval (the RPO)</td>
+</tr>
+</tbody>
+</table>
+<p>A "clean migration" between sites is a <strong>Relocate</strong>. The bonus round does a real Failover.</p>
+<h3 id="driver-relocate-to-site-b">🧑‍🏫 Driver: Relocate to site B<a class="headerlink" href="#driver-relocate-to-site-b" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d4-before-relocate
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"</span><span class="nv">$B</span><span class="s2">\"}}"</span>
+</code></pre></div>
+<p>(Console: <em>Protected applications → <code>ovedr-app</code> → ⋮ → Relocate</em>.)</p>
+<h3 id="check-on-site-b-nothing-lost">Check: on site B, nothing lost<a class="headerlink" href="#check-on-site-b-nothing-lost" title="Permanent link">&para;</a></h3>
+<p>Your VM came up on site B with the same address (<code>$PGHOST</code>), so the helpers work unchanged:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w<span class="w">           </span><span class="c1"># Relocating → Relocated</span>
+where<span class="w">                                                                        </span><span class="c1"># site-b Running</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,vmi,pvc,svc,deploy<span class="w">                   </span><span class="c1"># everything came with it</span>
+alive<span class="w">  </span>site-b
+verify<span class="w"> </span>site-b
+sql<span class="w">    </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
+</code></pre></div>
+<p>✅ <code>d4-before-relocate</code> is present on site B, so a planned move loses nothing.
+✅ <code>chain_ok = t</code>. The <code>fingerprint</code> equals the one you would get on A at the moment it stopped.
+✍️ <strong>Row 4.5:</strong> Relocate duration (DRPC <code>lastGroupSyncDuration</code>, plus the heartbeat gap from <code>alive</code>) and rows lost (0).</p>
+<p>Your file, in the console on <strong>site B</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="n">-Tail</span> <span class="n">3</span>        <span class="c"># d4-start is there</span>
+<span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d4 on site B"</span>
+</code></pre></div>
+<p>📸 <code>04-on-site-b</code>: <code>where</code> showing site-b, and the file's tail.</p>
+<hr />
+<h2 id="46-reverse-replication-b-a-then-come-home-cleanly">4.6 Reverse replication B → A, then come home cleanly<a class="headerlink" href="#46-reverse-replication-b-a-then-come-home-cleanly" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-6-reverse-replication-b-come-home-cleanly -->
+<p><a href="../.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4"><img alt="🎬 Video: 4.6 Reverse replication B → A, then come home cleanly. Watch it, then do the same in the console" src="../.images/04-4-6-reverse-replication-b-come-home-cleanly.jpg" /></a>
+<sub>🎬 <em>4.6 Reverse replication B → A, then come home cleanly: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4</code>).</em></sub></p>
+<p>The VM now runs on B, and B is the <strong>primary</strong>. Before you move it again, check that protection has
+<strong>reversed</strong>: B replicates back to A, and A's images are the secondaries.</p>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4-on-b
+drpc
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'</span>
+rbdmirror<span class="w"> </span>site-b<span class="w">            </span><span class="c1"># B: up+stopped (primary)</span>
+rbdmirror<span class="w"> </span>site-a<span class="w">            </span><span class="c1"># A: up+replaying (secondary): the reverse direction is live</span>
+</code></pre></div>
+<p>✅ <code>PeerReady=True</code> and <code>Protected=True</code>. ✅ A's images are <code>up+replaying</code>.
+Wait for one sync after <code>d4-on-b</code>, using the same loop as §4.4, with <code>site-b</code> in place of <code>site-a</code> in the <code>sql</code> call.</p>
+<h3 id="driver-relocate-home-to-site-a">🧑‍🏫 Driver: Relocate home to site A<a class="headerlink" href="#driver-relocate-home-to-site-a" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4-before-home
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"</span><span class="nv">$A</span><span class="s2">\"}}"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w
+</code></pre></div>
+<h3 id="check-the-vm-is-home-and-the-data-made-the-full-round-trip">Check: the VM is home, and the data made the full round trip<a class="headerlink" href="#check-the-vm-is-home-and-the-data-made-the-full-round-trip" title="Permanent link">&para;</a></h3>
+<p>Same address again, now on site A:</p>
+<div class="highlight"><pre><span></span><code>where<span class="w">                                            </span><span class="c1"># site-a Running</span>
+alive<span class="w">  </span>site-a
+verify<span class="w"> </span>site-a
+sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, count(*), min(id), max(id) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' GROUP BY stage ORDER BY min(id);"</span>
+drpc<span class="w">                                             </span><span class="c1"># Relocated; protection A → B again</span>
+</code></pre></div>
+<p>✅ Every stage is present: <code>d4-start</code>, <code>d4-busy</code> (200 rows), <code>d4-wait-for-sync</code>, <code>d4-before-protect</code>,
+<code>d4-before-relocate</code>, <code>d4-on-b</code> and <code>d4-before-home</code>.
+✅ <code>chain_ok = t</code>.
+✍️ <strong>Row 4.6:</strong> the bytes of the return sync. It is a <strong>delta</strong> (what changed on B), not the whole disk.</p>
+<p>Console on site A:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="n">-Tail</span> <span class="n">4</span>        <span class="c"># both "site A" and "site B" lines</span>
+</code></pre></div>
+<p>📸 <code>04-home</code>: <code>verify site-a</code> with <code>chain_ok = t</code>, and the file's tail.</p>
+<hr />
+<h2 id="47-end-of-demo-validation">4.7 End-of-demo validation<a class="headerlink" href="#47-end-of-demo-validation" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-7-end-demo-validation -->
+<p><a href="../.images/04-4-7-end-demo-validation.mp4"><img alt="🎬 Video: 4.7 End-of-demo validation. Watch it, then do the same in the console" src="../.images/04-4-7-end-demo-validation.jpg" /></a>
+<sub>🎬 <em>4.7 End-of-demo validation: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-7-end-demo-validation.mp4</code>).</em></sub></p>
+<div class="highlight"><pre><span></span><code>alive<span class="w">  </span>site-a
+verify<span class="w"> </span>site-a
+sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify();"</span><span class="w">                 </span><span class="c1"># the whole class: every student's chain_ok</span>
+sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS outage FROM (</span>
+<span class="s2">                 SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
+<span class="s2">               WHERE gap &gt; interval '10 seconds' ORDER BY id DESC LIMIT 5;"</span><span class="w">   </span><span class="c1"># each move's outage (RTO)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Stage</th>
+<th>Bytes</th>
+<th>Duration</th>
+<th>Rows lost</th>
+<th>Your last mark id</th>
+<th><code>chain_ok</code></th>
+<th>Fingerprint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.0</td>
+<td>start</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.3</td>
+<td><strong>first sync (full)</strong></td>
+<td></td>
+<td></td>
+<td>—</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.4</td>
+<td>typical 15-min checkpoint</td>
+<td></td>
+<td></td>
+<td>—</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.5</td>
+<td>Relocate A → B</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.6</td>
+<td>Relocate B → A (home)</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The claim holds if</strong> rows 4.4, 4.5 and 4.6 are each a small fraction of row 4.3, and every planned move lost
+<strong>zero</strong> rows.</p>
+<p>🧑‍🏫 Optional cleanup: <code>oc --context site-a -n "$VMNS" delete vmsnapshot "$VM-d4-pre-move"</code>.</p>
+<hr />
+<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<p>Thank you for working through Demo 4. You protected live VMs across two clusters, proved that each checkpoint
+reached the DR site, and moved the whole application there and back with every row intact. To go further:</p>
+<ul>
+<li><strong>Lab S — how this lab was built:</strong> <a href="setup-how-the-lab-is-built.html">the shared pieces, from the CLI and in the console</a></li>
+<li><strong>ODF disaster recovery for OpenShift workloads (4.19):</strong> <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index</a></li>
+<li><strong>Red Hat OpenShift Data Foundation 4.19 documentation:</strong> <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19</a></li>
+<li><strong>Red Hat Advanced Cluster Management 2.13:</strong> <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13</a></li>
+<li><strong>OpenShift Virtualization (OpenShift 4.19):</strong> <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index</a></li>
+<li><strong>Training: DO316, Managing Virtual Machines with Red Hat OpenShift Virtualization:</strong> <a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization</a></li>
+<li><strong>Red Hat interactive labs:</strong> <a href="https://www.redhat.com/en/interactive-labs">https://www.redhat.com/en/interactive-labs</a></li>
+<li><strong>OpenShift Data Foundation:</strong> <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift-data-foundation">https://www.redhat.com/en/technologies/cloud-computing/openshift-data-foundation</a></li>
+</ul>
+<p>Stay for the bonus round if time allows. It shows what the 15-minute interval costs when the link fails without warning.</p>
+<hr />
+<h2 id="48-bonus-a-hostile-failover-with-a-broken-replication-link">4.8 BONUS: a hostile failover, with a broken replication link<a class="headerlink" href="#48-bonus-a-hostile-failover-with-a-broken-replication-link" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 04-4-8-bonus-hostile-failover-broken-replication-link -->
+<p><a href="../.images/04-4-8-bonus-hostile-failover-broken-replication-link.mp4"><img alt="🎬 Video: 4.8 BONUS: a hostile failover, with a broken replication link. Watch it, then do the same in the console" src="../.images/04-4-8-bonus-hostile-failover-broken-replication-link.jpg" /></a>
+<sub>🎬 <em>4.8 BONUS: a hostile failover, with a broken replication link: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-8-bonus-hostile-failover-broken-replication-link.mp4</code>).</em></sub></p>
+<p>Now the link fails, the business can't wait, and the class <strong>forces</strong> the VM onto site B from whatever the last
+completed sync holds. Then it repairs the link and <strong>forces the resync</strong> back.</p>
+<h3 id="how-to-break-the-link-options">How to break the link: options<a class="headerlink" href="#how-to-break-the-link-options" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What happens</th>
+<th>Realism</th>
+<th>Risk</th>
+<th>Recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. Cut the Submariner tunnel</strong> (recommended) 🧑‍🏫</td>
+<td>Ceph mirror traffic stops. <strong>Both clusters stay up</strong>, and ACM still talks to both</td>
+<td>"the WAN link died"</td>
+<td>low: one label on one node</td>
+<td>put the label back</td>
+</tr>
+<tr>
+<td>B. Power off all site-A nodes 🧑‍🏫 (<code>virsh destroy</code>, instructor guide §4.1)</td>
+<td>site A vanishes entirely</td>
+<td>"the site burned down"</td>
+<td>medium: Ceph on A restarts from a crash</td>
+<td><code>virsh start</code>; wait for Ceph <code>HEALTH_OK</code></td>
+</tr>
+<tr>
+<td>C. Scale down <code>rbd-mirror</code> on site B</td>
+<td>the secondary stops pulling</td>
+<td>narrow: a storage fault</td>
+<td>rook/ocs operators scale it back up unless they are paused too</td>
+<td>scale the operators back up</td>
+</tr>
+<tr>
+<td>D. Fence site A (<code>DRCluster spec.clusterFence: Fenced</code>)</td>
+<td><strong>Metro-DR only.</strong> Regional-DR does not fence <strong>[verify]</strong></td>
+<td>—</td>
+<td>—</td>
+<td>not used</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommended: option A.</strong> It matches "break the ODF sync link" exactly: replication fails while both sites
+still run, so the class sees a link failure rather than a site loss. It is reversed with one command. Option B is
+the scripted disaster in the classic M6 module.</p>
+<h3 id="step-1-inject-and-note-the-last-sync-that-got-through">Step 1: inject, and note the last sync that got through<a class="headerlink" href="#step-1-inject-and-note-the-last-sync-that-got-through" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d4h-before-break
+<span class="k">until</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.lastGroupSyncTime}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-gt<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(ts) FROM marks WHERE student='</span><span class="nv">$ME</span><span class="s2">'"</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>+%s<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>drpc<span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+drpc<span class="w">                       </span><span class="c1"># ✍️ lastSync = the last checkpoint that will reach B</span>
+sql<span class="w"> </span>site-a<span class="w"> </span>-Atc<span class="w"> </span><span class="s2">"SELECT max(id) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">'"</span><span class="w">   </span><span class="c1"># ✍️ your last SAFE id</span>
+</code></pre></div>
+<h3 id="step-2-break-the-link-option-a-verify">Step 2: 🧑‍🏫 break the link (option A) <strong>[verify]</strong><a class="headerlink" href="#step-2-break-the-link-option-a-verify" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># the gateway node(s) on site B carry the label submariner.io/gateway=true; removing it stops the tunnel</span>
+<span class="nv">GW</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-l<span class="w"> </span>submariner.io/gateway<span class="o">=</span><span class="nb">true</span><span class="w"> </span>-o<span class="w"> </span>name<span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$GW</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/ovedr-gw-site-b.txt
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>label<span class="w"> </span><span class="nv">$GW</span><span class="w"> </span>submariner.io/gateway-
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>submariner-operator<span class="w"> </span>get<span class="w"> </span>gateways<span class="w"> </span>-o<span class="w"> </span>wide<span class="w">      </span><span class="c1"># no active gateway / connection error</span>
+</code></pre></div>
+<h3 id="step-3-keep-writing-on-a-these-rows-will-not-reach-b">Step 3: keep writing on A. These rows will NOT reach B.<a class="headerlink" href="#step-3-keep-writing-on-a-these-rows-will-not-reach-b" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>mark<span class="w"> </span>site-a<span class="w"> </span><span class="s2">"d4h-after-break-</span><span class="nv">$n</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">20</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 4;"</span>
+</code></pre></div>
+<p>✍️ Write down these ids and the first 12 characters of each <code>sha</code>. They are the rows you are about to lose.</p>
+<div class="highlight"><pre><span></span><code><span class="c"># in your VM's console on site A</span>
+<span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d4h written AFTER the link broke"</span>
+</code></pre></div>
+<p>After one interval, the hub notices that syncs have stopped:</p>
+<div class="highlight"><pre><span></span><code>drpc<span class="w">                                                    </span><span class="c1"># lastSync stops advancing</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'</span>
+</code></pre></div>
+<h3 id="step-4-force-failover-to-site-b">Step 4: 🧑‍🏫 force Failover to site B<a class="headerlink" href="#step-4-force-failover-to-site-b" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Failover\",\"failoverCluster\":\"</span><span class="nv">$B</span><span class="s2">\"}}"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w<span class="w">        </span><span class="c1"># FailingOver → FailedOver</span>
+</code></pre></div>
+<p>ACM still reaches site A, so Ramen stops the VM there (it becomes the secondary) and starts it on B from the
+<strong>last completed sync</strong>.</p>
+<h3 id="step-5-measure-what-was-lost-the-rpo">Step 5: measure what was lost (the RPO)<a class="headerlink" href="#step-5-measure-what-was-lost-the-rpo" title="Permanent link">&para;</a></h3>
+<p>Same address, on site B:</p>
+<div class="highlight"><pre><span></span><code>where<span class="w">                                                   </span><span class="c1"># site-b Running</span>
+verify<span class="w"> </span>site-b
+sql<span class="w"> </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, left(sha,12) AS sha FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 4;"</span>
+</code></pre></div>
+<p>What you should see, and why:
+- The last row present is your <strong>last SAFE id</strong> from step 1. Every <code>d4h-after-break-*</code> row is <strong>missing</strong>.
+- <code>chain_ok</code> is still <strong><code>t</code></strong>. A chain detects rows lost, changed or reordered <strong>in the middle</strong>. Losing the
+  <strong>tail</strong> leaves a shorter chain that is still valid. That is why you wrote down your ids: your notes are the
+  evidence of what the failover cost.
+- Write a new mark on B. Its <code>id</code> may <strong>reuse</strong> one of the lost ids, because B's sequence continues from the
+  replicated state. Its <code>sha</code> differs from your note, so it is a different row with the same number.</p>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4h-on-b-after-failover
+sql<span class="w"> </span>site-b<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, stage, left(sha,12) FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 2;"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c"># console on site B: the "AFTER the link broke" line is gone, because the disk is from the last sync</span>
+<span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="n">-Tail</span> <span class="n">3</span>
+</code></pre></div>
+<p>✍️ <strong>Row 4.8a:</strong> rows lost (count of <code>d4h-after-break-*</code>), RPO (failover time minus the last <code>lastSync</code>), and the
+outage (heartbeat gap on B).</p>
+<p>📸 <code>04-hostile-lost-rows</code>: your noted ids beside B's <code>marks</code> tail.</p>
+<h3 id="step-6-restore-the-link-and-force-the-resync">Step 6: 🧑‍🏫 restore the link and force the resync<a class="headerlink" href="#step-6-restore-the-link-and-force-the-resync" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>label<span class="w"> </span><span class="k">$(</span>cat<span class="w"> </span>/tmp/ovedr-gw-site-b.txt<span class="k">)</span><span class="w"> </span>submariner.io/gateway<span class="o">=</span><span class="nb">true</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>submariner-operator<span class="w"> </span>get<span class="w"> </span>gateways<span class="w"> </span>-o<span class="w"> </span>wide<span class="w">       </span><span class="c1"># connected again</span>
+drpc<span class="w">                                                                  </span><span class="c1"># progression moves on</span>
+</code></pre></div>
+<p>If progression stops at <strong><code>WaitOnUserToCleanUp</code></strong>, the stale VM on site A must go before A can become the
+secondary. That is the instructor's cleanup, in instructor guide §4.3 <strong>[verify: BL-T09]</strong>.</p>
+<p>Then watch A's images become secondaries and <strong>catch up from the last common snapshot</strong>:</p>
+<div class="highlight"><pre><span></span><code>rbdmirror<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># A: syncing → up+replaying</span>
+rbdmirror<span class="w"> </span>site-b<span class="w">          </span><span class="c1"># B: up+stopped (primary)</span>
+</code></pre></div>
+<p><strong>[verify: BL-T09]</strong> If an image stays in <code>split-brain</code> or <code>error</code>, Ceph needs an explicit resync of that image on
+the <strong>old primary (A)</strong>. This copies the whole image, so use it only when Ramen does not recover by itself:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>rsh<span class="w"> </span>deploy/rook-ceph-tools<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>rbd<span class="w"> </span>mirror<span class="w"> </span>image<span class="w"> </span>resync<span class="w"> </span><span class="s2">"ocs-storagecluster-cephblockpool/&lt;image&gt;"</span>
+</code></pre></div>
+<p>✍️ <strong>Row 4.8b:</strong> resync bytes and duration. A <strong>delta</strong> (from the last common checkpoint) proves the DESIGN's
+claim. A <strong>full</strong> copy means the hostile path costs one full copy, and the guide says so honestly (DESIGN §6.4).</p>
+<h3 id="step-7-relocate-home-and-verify-the-history">Step 7: 🧑‍🏫 Relocate home, and verify the history<a class="headerlink" href="#step-7-relocate-home-and-verify-the-history" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-b<span class="w"> </span>d4h-before-home
+<span class="c1"># wait for one sync after that mark (§4.4 loop, site-b), then:</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>patch<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"</span><span class="nv">$A</span><span class="s2">\"}}"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-dr-ops<span class="w"> </span>get<span class="w"> </span>drpc<span class="w"> </span><span class="s2">"</span><span class="nv">$DRPC</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span>-w
+where
+verify<span class="w"> </span>site-a
+sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, stage, left(sha,12) AS sha FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' AND stage LIKE 'd4h%' ORDER BY id;"</span>
+</code></pre></div>
+<p>✅ Present: <code>d4h-before-break</code>, <code>d4h-on-b-after-failover</code> and <code>d4h-before-home</code>.
+✅ Missing: every <code>d4h-after-break-*</code>. These were written only on A after the link broke, then discarded when A
+was resynced from B. <strong>That is exactly the data the hostile failover cost.</strong>
+✅ <code>chain_ok = t</code> on A. The chain continues from the last safe row, through B, and home.</p>
+<table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Stage</th>
+<th>Bytes</th>
+<th>Duration</th>
+<th>Rows lost</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.8a</td>
+<td><strong>forced</strong> Failover A ✗ → B</td>
+<td>—</td>
+<td></td>
+<td></td>
+<td>RPO =</td>
+</tr>
+<tr>
+<td>4.8b</td>
+<td>resync after the link returns</td>
+<td></td>
+<td></td>
+<td>—</td>
+<td>delta or full?</td>
+</tr>
+<tr>
+<td>4.8c</td>
+<td>Relocate home</td>
+<td></td>
+<td></td>
+<td>0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>📸 <code>04-hostile-home</code>: the final <code>d4h%</code> query on site A.</p>
+<hr />
+<h2 id="glossary">Glossary<a class="headerlink" href="#glossary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Regional-DR</strong></td>
+<td>asynchronous replication between two clusters. RPO is greater than 0, at most one <code>schedulingInterval</code></td>
+</tr>
+<tr>
+<td><strong>MirrorPeer</strong></td>
+<td>ODF Multicluster Orchestrator's pairing of two Ceph clusters, which turns on RBD mirroring</td>
+</tr>
+<tr>
+<td><strong>DRPolicy</strong></td>
+<td>the two clusters, and the checkpoint interval (here 15m)</td>
+</tr>
+<tr>
+<td><strong>DRPC</strong></td>
+<td>DRPlacementControl: the DR state of one protected workload, and where you ask for Relocate or Failover</td>
+</tr>
+<tr>
+<td><strong>VRG</strong></td>
+<td>VolumeReplicationGroup: the per-cluster agent that makes the workload's disks primary or secondary</td>
+</tr>
+<tr>
+<td><strong>Relocate</strong></td>
+<td>planned move: final sync, zero loss</td>
+</tr>
+<tr>
+<td><strong>Failover</strong></td>
+<td>forced move from the last completed sync: loss up to one interval</td>
+</tr>
+<tr>
+<td><strong>RPO / RTO</strong></td>
+<td>how much data you can lose / how long you are down</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="03-ove-to-ove-cold.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 3: OpenShift → OpenShift">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Demo 3: OpenShift → OpenShift
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="04b-portworx-dr.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 4b: Portworx DR">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Demo 4b: Portworx DR
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Paragon Micro lab · generated from the class source; changes made here are overwritten
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2654 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)">
+      
+      
+      
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01-vmware-to-ove-cold.html">
+      
+      
+        <link rel="prev" href="00-access-and-tools.html">
+      
+      
+        <link rel="next" href="01b-vmware-to-both-sites.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Demo 1 — VMware to OpenShift Virtualization: cold migration - VMware to OpenShift Virtualization: student guides</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#demo-1-vmware-to-openshift-virtualization-cold-migration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VMware to OpenShift Virtualization: student guides
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Demo 1 — VMware to OpenShift Virtualization: cold migration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VMware to OpenShift Virtualization: student guides
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start here
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00-access-and-tools.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0: Access and tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Demo 1: VMware → OpenShift, cold
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="01-vmware-to-ove-cold.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1: VMware → OpenShift, cold
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      How the lab is set up for this demo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-login-recap-2-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 Login recap (2 min)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-inspect-the-vmware-vm-10-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 Inspect the VMware VM (10 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 Inspect the VMware VM (10 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-vcenter" class="md-nav__link">
+    <span class="md-ellipsis">
+      In vCenter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inside-windows-your-touch-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inside Windows (your touch file)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inject-your-database-row" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inject: your database row
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-review-the-openshift-side-15-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3 Review the OpenShift side (15 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 Review the OpenShift side (15 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-migration-toolkit-mtv-forklift" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Migration Toolkit (MTV / Forklift)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networking-from-vlan-backed-port-group-to-openshift-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Networking: from VLAN-backed port group to OpenShift bridge
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#templates-the-replatform-alternative" class="md-nav__link">
+    <span class="md-ellipsis">
+      Templates: the replatform alternative
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-link-openshift-to-vcenter-and-validate-the-link-10-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4 Link OpenShift to vCenter, and validate the link (10 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4 Link OpenShift to vCenter, and validate the link (10 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate-the-existing-link" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validate the existing link
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-create-your-own-provider-verify-bl-d09" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional: create your own provider [verify: BL-D09]
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-cold-migration-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.5 Cold migration (30 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.5 Cold migration (30 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inject-before-the-move" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inject before the move
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shut-your-vm-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shut your VM down
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-your-staged-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review your staged plan
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-it-yourself-learning-path-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build it yourself (learning path, optional)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-your-plan-says-cannot-start-critical-concerns" class="md-nav__link">
+    <span class="md-ellipsis">
+      If your plan says "Cannot start" (critical concerns)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#start-your-plan-your-task-the-last-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start your plan (your task: the last step)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Watch the pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-a-step-fails-read-the-logs-before-you-delete-anything" class="md-nav__link">
+    <span class="md-ellipsis">
+      If a step fails: read the logs before you delete anything
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#power-on-in-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Power on in OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-vm-keeps-its-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your VM keeps its address
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-database-now-lives-on-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      The database now lives on OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-file-read-on-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your file, read on OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-vmware-tools-out-virtio-and-the-qemu-guest-agent-in-10-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.6 VMware Tools out, virtio and the QEMU guest agent in (10 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.6 VMware Tools out, virtio and the QEMU guest agent in (10 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      From OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-inside-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      From inside Windows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-virtio-win-and-the-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update virtio-win and the agent
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-end-of-demo-prove-the-data-5-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.7 End of demo: prove the data (5 min)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-a-live-migration-between-nodes-15-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonus A: live migration between nodes (15 min)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-b-snapshot-destroy-the-database-restore-from-the-snapshots-disks-25-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonus B: snapshot, destroy the database, restore from the snapshot's disks (25 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bonus B: snapshot, destroy the database, restore from the snapshot's disks (25 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      Snapshot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-the-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete the database
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shut-postgresql-down-and-take-the-damaged-disks-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shut PostgreSQL down and take the damaged disks offline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create volumes from the snapshot's D: and L: and hot-plug them
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bring-the-restored-disks-online-as-d-and-l-start-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bring the restored disks online as D: and L:, start PostgreSQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-came-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      What came back
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-other-way-restore-the-whole-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      The other way: restore the whole VM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tidy-up-after-bonus-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tidy up after Bonus B
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-c-deploy-a-new-vm-from-a-red-hat-template-on-your-vlan-with-a-data-disk-20-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk (20 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk (20 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pick-the-template-then-customize" class="md-nav__link">
+    <span class="md-ellipsis">
+      1 · Pick the template, then Customize
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-put-the-nic-on-your-vlans-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      2 · Put the NIC on your VLAN's bridge
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-a-data-disk" class="md-nav__link">
+    <span class="md-ellipsis">
+      3 · Add a data disk
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-same-from-the-command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      The same from the command line
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-use-the-data-disk-and-prove-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      4 · Use the data disk, and prove it
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proof-table-demo-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proof table: Demo 1
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-vmware-to-both-sites.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: VMware → both clusters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 2: Warm migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 3: OpenShift → OpenShift
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-odf-regional-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4: ODF Regional-DR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04b-portworx-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4b: Portworx DR
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="setup-how-the-lab-is-built.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab S: how this lab was built
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab-diagram.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab diagram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      How the lab is set up for this demo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-login-recap-2-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 Login recap (2 min)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-inspect-the-vmware-vm-10-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 Inspect the VMware VM (10 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 Inspect the VMware VM (10 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-vcenter" class="md-nav__link">
+    <span class="md-ellipsis">
+      In vCenter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inside-windows-your-touch-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inside Windows (your touch file)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inject-your-database-row" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inject: your database row
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-review-the-openshift-side-15-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3 Review the OpenShift side (15 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3 Review the OpenShift side (15 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-migration-toolkit-mtv-forklift" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Migration Toolkit (MTV / Forklift)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networking-from-vlan-backed-port-group-to-openshift-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Networking: from VLAN-backed port group to OpenShift bridge
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#templates-the-replatform-alternative" class="md-nav__link">
+    <span class="md-ellipsis">
+      Templates: the replatform alternative
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-link-openshift-to-vcenter-and-validate-the-link-10-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4 Link OpenShift to vCenter, and validate the link (10 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4 Link OpenShift to vCenter, and validate the link (10 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate-the-existing-link" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validate the existing link
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-create-your-own-provider-verify-bl-d09" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional: create your own provider [verify: BL-D09]
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-cold-migration-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.5 Cold migration (30 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.5 Cold migration (30 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inject-before-the-move" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inject before the move
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shut-your-vm-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shut your VM down
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-your-staged-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review your staged plan
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-it-yourself-learning-path-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build it yourself (learning path, optional)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-your-plan-says-cannot-start-critical-concerns" class="md-nav__link">
+    <span class="md-ellipsis">
+      If your plan says "Cannot start" (critical concerns)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#start-your-plan-your-task-the-last-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      Start your plan (your task: the last step)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Watch the pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#if-a-step-fails-read-the-logs-before-you-delete-anything" class="md-nav__link">
+    <span class="md-ellipsis">
+      If a step fails: read the logs before you delete anything
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#power-on-in-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Power on in OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-vm-keeps-its-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your VM keeps its address
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-database-now-lives-on-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      The database now lives on OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-file-read-on-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your file, read on OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-vmware-tools-out-virtio-and-the-qemu-guest-agent-in-10-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.6 VMware Tools out, virtio and the QEMU guest agent in (10 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.6 VMware Tools out, virtio and the QEMU guest agent in (10 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-openshift" class="md-nav__link">
+    <span class="md-ellipsis">
+      From OpenShift
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-inside-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      From inside Windows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-virtio-win-and-the-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update virtio-win and the agent
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-end-of-demo-prove-the-data-5-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.7 End of demo: prove the data (5 min)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-a-live-migration-between-nodes-15-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonus A: live migration between nodes (15 min)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-b-snapshot-destroy-the-database-restore-from-the-snapshots-disks-25-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonus B: snapshot, destroy the database, restore from the snapshot's disks (25 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bonus B: snapshot, destroy the database, restore from the snapshot's disks (25 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      Snapshot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-the-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete the database
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shut-postgresql-down-and-take-the-damaged-disks-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shut PostgreSQL down and take the damaged disks offline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create volumes from the snapshot's D: and L: and hot-plug them
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bring-the-restored-disks-online-as-d-and-l-start-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bring the restored disks online as D: and L:, start PostgreSQL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-came-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      What came back
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-other-way-restore-the-whole-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      The other way: restore the whole VM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tidy-up-after-bonus-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tidy up after Bonus B
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-c-deploy-a-new-vm-from-a-red-hat-template-on-your-vlan-with-a-data-disk-20-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk (20 min)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk (20 min)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pick-the-template-then-customize" class="md-nav__link">
+    <span class="md-ellipsis">
+      1 · Pick the template, then Customize
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-put-the-nic-on-your-vlans-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      2 · Put the NIC on your VLAN's bridge
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-a-data-disk" class="md-nav__link">
+    <span class="md-ellipsis">
+      3 · Add a data disk
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-same-from-the-command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      The same from the command line
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-use-the-data-disk-and-prove-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      4 · Use the data disk, and prove it
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proof-table-demo-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proof table: Demo 1
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Version 0.4.3 · draft · 2026-10-06</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+</blockquote>
+<h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
+<p>You will take your own Windows Server + PostgreSQL VM off VMware vSphere and rehost it on OpenShift Virtualization
+with the Migration Toolkit for Virtualization (MTV). Along the way you will see how OpenShift reproduces what vSphere
+gave the VM: VLAN-backed port groups become Linux bridges and network attachments, datastores become storage
+classes, and VMware Tools gives way to virtio drivers and the QEMU guest agent. You will also see when to replatform
+from a Red Hat template instead of rehosting. At every stage you write data and then prove that it arrived intact.</p>
+<h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
+<p>The CI customization pre-built everything below (see the <a href="lab-diagram.html">lab diagram</a> and
+<a href="00-access-and-tools.html#how-the-lab-is-set-up-for-this-demo">Lab 0</a>). <strong>Every staged piece has a "how it was built"
+section in <a href="setup-how-the-lab-is-built.html">Lab S</a></strong>, with the CLI and console steps to build it yourself and links to the Red Hat docs.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>State when you start</th>
+<th>How it was built · Red Hat docs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Your VM</strong> <code>win-pg-s&lt;NN&gt;</code></td>
+<td>on <strong>vSphere</strong> <code>vcenter0&lt;N&gt;</code>, powered on, in <strong>your own folder <code>vms/students/&lt;class ID&gt;</code></strong>, at its own address <code>$VM_IP</code> (<code>.100+NN</code>) on port group <code>vm-network</code> (VLAN <code>22+N</code>). A full clone of the instructor's <code>win-pg-i01</code>: Windows Server 2022, VMware Tools, PostgreSQL 16 with WAL on <code>L:</code> (5 GB) and data on <code>D:</code> (10 GB), the heartbeat writer, the integrity toolkit, and your Windows login <code>.\student-NN</code> (a local administrator on <strong>your</strong> VM).</td>
+<td><a href="setup-how-the-lab-is-built.html">S.11</a></td>
+</tr>
+<tr>
+<td><strong>Site A</strong> (the target)</td>
+<td>OpenShift Virtualization (<code>ove: cnv</code>, from demo-openshift); NMState bridge <code>br&lt;VLAN&gt;</code> with NAD <code>vmnet&lt;VLAN&gt;</code>; storage on <strong>ODF</strong> (<code>ocs-storagecluster-ceph-rbd-virtualization</code>); ACM and cert-manager (base build, the same on both sites).</td>
+<td><a href="setup-how-the-lab-is-built.html">S.2</a> · <a href="setup-how-the-lab-is-built.html">S.3</a> · <a href="setup-how-the-lab-is-built.html">S.4</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index">NMState</a> [verify link] · <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">ODF</a></td>
+</tr>
+<tr>
+<td><strong>MTV</strong> on site A</td>
+<td>the operator, its <strong>Migration for Virtualization</strong> console menu, provider <code>ovedr-vcenter0&lt;N&gt;</code> linked to vCenter (least-privilege <code>ovedr-mtv@vsphere.local</code>), network maps <code>…-net</code> (pod) and <code>…-net-bridge</code> (your VLAN), storage map <code>…-storage</code> (datastore → ODF).</td>
+<td><a href="setup-how-the-lab-is-built.html">S.5</a> · <a href="setup-how-the-lab-is-built.html">S.6</a> · <a href="setup-how-the-lab-is-built.html">S.8</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Installing and using MTV</a> [verify link]</td>
+</tr>
+<tr>
+<td><strong>Your migration plan <code>d1-&lt;your VM&gt;</code></strong></td>
+<td><strong>staged, NOT started</strong>: cold, your VM → <strong>your own namespace</strong> (<code>$VMNS</code>, your class ID) on site A, the <strong>bridge</strong> network map (your VM keeps <code>$VM_IP</code>) and the storage map. It shows <strong>Ready</strong> in the console.</td>
+<td><a href="setup-how-the-lab-is-built.html">S.12</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Creating and running a migration plan</a> [verify link]</td>
+</tr>
+<tr>
+<td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID) on site A and site B, plus <code>ovedr-app</code></td>
+<td>in yours: <strong>admin</strong> rights for you, and <code>Service/&lt;your VM&gt;-sql</code> waiting for your VM to arrive; in <code>ovedr-app</code>: the shared <code>sql-client</code>.</td>
+<td><a href="setup-how-the-lab-is-built.html">S.9</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac">Using RBAC</a> [verify link]</td>
+</tr>
+<tr>
+<td><strong>Read access</strong> for students</td>
+<td>MTV objects in <code>openshift-mtv</code> (and the right to run plans and migrations), NNCPs, storage classes, ACM clusters.</td>
+<td><a href="setup-how-the-lab-is-built.html">S.9</a></td>
+</tr>
+<tr>
+<td><strong>Site B</strong></td>
+<td>the same operators, on <strong>NFS</strong> (<code>nfs-csi</code>); its own staged plan <code>d1b-&lt;your VM&gt;-to-&lt;B&gt;</code> waits for Demo 1b. Not used in this demo.</td>
+<td><a href="setup-how-the-lab-is-built.html">S.12</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>You do yourself:</strong> inspect the VM and the OpenShift side, optionally create your own provider, review your staged
+plan (and see how it would be built), shut down your VM, and, as the <strong>last step</strong>, start your plan. Then start the VM
+on OpenShift, swap VMware Tools for virtio and the guest agent, and prove your data. Your VM keeps its own address, so
+Lab 0 §0.6 is not needed.</p>
+<p><strong>Pattern at every stage:</strong> inject (<code>mark</code> + a line in your file) → change → read (<code>verify</code> + read the file).</p>
+<blockquote>
+<p><strong>Before you start:</strong> complete <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need <code>$ME</code>, <code>$N</code>, <code>$A</code>,
+<code>$B</code>, <code>$VM</code>, <code>$VC</code>, <code>$VM_IP</code> and <code>$WINUSER</code>, the <code>site-a</code> / <code>site-b</code> contexts, and the helpers <code>sql</code>, <code>mark</code>,
+<code>load</code>, <code>verify</code>, <code>alive</code> and <code>where</code>.</p>
+<p><strong>Your own VM.</strong> Every step below acts on <strong>your</strong> <code>$VM</code> (<code>win-pg-s&lt;NN&gt;</code>), so you drive your own migration from
+start to finish. 🧑‍🏫 marks the few steps only the instructor runs.</p>
+</blockquote>
+<hr />
+<h2 id="11-login-recap-2-min">1.1 Login recap (2 min)<a class="headerlink" href="#11-login-recap-2-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-1-login-recap -->
+<p><a href="../.images/01-1-1-login-recap.mp4"><img alt="🎬 Video: 1.1 Login recap. Watch it, then do the same in the console" src="../.images/01-1-1-login-recap.jpg" /></a>
+<sub>🎬 <em>1.1 Login recap: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-1-login-recap.mp4</code>).</em></sub></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">        </span><span class="c1"># both print $ME</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"vm=</span><span class="nv">$VM</span><span class="s2">  db-host=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$PGHOST_SITE_A</span><span class="si">}</span><span class="s2">"</span><span class="w">                  </span><span class="c1"># still the vSphere IP ($VM_IP) for now</span>
+alive<span class="w"> </span>site-a<span class="w">                                                      </span><span class="c1"># staleness &lt; 10 s</span>
+</code></pre></div>
+<p><strong>Check:</strong> ✅ both contexts answer as <code>$ME</code>, and the heartbeat is fresh. If not, go back to Lab 0.</p>
+<hr />
+<h2 id="12-inspect-the-vmware-vm-10-min">1.2 Inspect the VMware VM (10 min)<a class="headerlink" href="#12-inspect-the-vmware-vm-10-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-2-inspect-vmware-vm -->
+<p><a href="../.images/01-1-2-inspect-vmware-vm.mp4"><img alt="🎬 Video: 1.2 Inspect the VMware VM. Watch it, then do the same in the console" src="../.images/01-1-2-inspect-vmware-vm.jpg" /></a>
+<sub>🎬 <em>1.2 Inspect the VMware VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-2-inspect-vmware-vm.mp4</code>).</em></sub></p>
+<h3 id="in-vcenter">In vCenter<a class="headerlink" href="#in-vcenter" title="Permanent link">&para;</a></h3>
+<p>Open <strong>VMs and Templates → datacenter01 → vms → students → <code>&lt;your class ID&gt;</code> → your VM (<code>win-pg-s&lt;NN&gt;</code>)</strong>, then look at:</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>What to note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Summary → VM Hardware</strong></td>
+<td>4 vCPU, 8 GB, <strong>three</strong> hard disks: 60 GB (<code>C:</code>), 5 GB (<code>L:</code> = WAL), 10 GB (<code>D:</code> = data)</td>
+</tr>
+<tr>
+<td><strong>Summary → Guest OS</strong></td>
+<td><em>VMware Tools: Running, version …</em>. This is what OpenShift will replace (§1.6)</td>
+</tr>
+<tr>
+<td><strong>Summary → Network adapter</strong></td>
+<td>port group <code>vm-network</code>, adapter <code>e1000e</code>, IP <code>$VM_IP</code></td>
+</tr>
+<tr>
+<td><strong>Networking → Distributed port groups → <code>vm-network</code></strong></td>
+<td>the <strong>VLAN ID</strong> of the port group. Write it down, because §1.3 maps it to a bridge</td>
+</tr>
+</tbody>
+</table>
+<p>📸 <code>01-vcenter-vm-summary</code>: VM summary with the three disks and VMware Tools <em>Running</em>.
+📸 <code>01-vcenter-portgroup-vlan</code>: the port group's VLAN setting.</p>
+<p>✍️ The VLAN ID of <code>vm-network</code>: <strong><em>_</em></strong>_ (expected: <code>22 + N</code>, so <code>23</code> for <code>vcenter01</code>).</p>
+<h3 id="inside-windows-your-touch-file">Inside Windows (your touch file)<a class="headerlink" href="#inside-windows-your-touch-file" title="Permanent link">&para;</a></h3>
+<p>Launch the <strong>Web Console</strong> from vCenter, send <strong>Ctrl-Alt-Del</strong>, and log in as <code>.\&lt;WINUSER&gt;</code> (for example
+<code>.\student-03</code>). Open <strong>PowerShell</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$f</span> <span class="p">=</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
+<span class="nb">Add-Content</span> <span class="nv">$f</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1-before  on=vSphere  host=$env:COMPUTERNAME"</span>
+<span class="nb">Get-Content</span> <span class="nv">$f</span>
+<span class="nb">Get-Service</span> <span class="n">VMTools</span><span class="p">,</span> <span class="n">postgresql</span><span class="p">-</span><span class="n">16</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span>
+<span class="nb">Get-Volume</span> <span class="n">-DriveLetter</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">L</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">DriveLetter</span><span class="p">,</span> <span class="n">FileSystemLabel</span><span class="p">,</span> <span class="n">Size</span>
+</code></pre></div>
+<p>✅ <code>VMTools</code> is <em>Running</em>. <code>postgresql-16</code> is <em>Running</em>. <code>D:</code> is <code>pgdata</code> and <code>L:</code> is <code>pg_wal</code>.</p>
+<h3 id="inject-your-database-row">Inject: your database row<a class="headerlink" href="#inject-your-database-row" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w">   </span>site-a<span class="w"> </span>d1-before
+verify<span class="w"> </span>site-a
+</code></pre></div>
+<p>✍️ <strong>Row 1.1:</strong> the mark <code>id</code>, <code>chain_ok</code>, <code>fingerprint</code>.</p>
+<hr />
+<h2 id="13-review-the-openshift-side-15-min">1.3 Review the OpenShift side (15 min)<a class="headerlink" href="#13-review-the-openshift-side-15-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-3-review-openshift-side -->
+<p><a href="../.images/01-1-3-review-openshift-side.mp4"><img alt="🎬 Video: 1.3 Review the OpenShift side. Watch it, then do the same in the console" src="../.images/01-1-3-review-openshift-side.jpg" /></a>
+<sub>🎬 <em>1.3 Review the OpenShift side: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-3-review-openshift-side.mp4</code>).</em></sub></p>
+<p>Everything here is read-only. Run it on <strong>site A</strong> (the migration target), then repeat on <strong>site B</strong> if you are
+curious: both sites were built the same way.</p>
+<h3 id="the-migration-toolkit-mtv-forklift">The Migration Toolkit (MTV / Forklift)<a class="headerlink" href="#the-migration-toolkit-mtv-forklift" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>csv<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>mtv<span class="w">                       </span><span class="c1"># operator installed, Succeeded</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>forkliftcontroller<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w">                      </span><span class="c1"># the operator's instance</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w">                                    </span><span class="c1"># controller, inventory, UI plugin</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>providers<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w">                               </span><span class="c1"># host (this cluster) + ovedr-vcenter0N + ovedr-ocp-&lt;B&gt;</span>
+</code></pre></div>
+<p>Console: <strong>Migration for Virtualization → Overview</strong>, then <strong>Providers</strong>.</p>
+<p>📸 <code>01-mtv-overview</code>: the Migration overview page.</p>
+<blockquote>
+<p>If <code>get providers -n openshift-mtv</code> says <em>forbidden</em>, your role cannot read the MTV namespace. Use the console
+pages, which the instructor's screen also shows <strong>[verify: BL-D09, student view on openshift-mtv]</strong>.</p>
+</blockquote>
+<h3 id="networking-from-vlan-backed-port-group-to-openshift-bridge">Networking: from VLAN-backed port group to OpenShift bridge<a class="headerlink" href="#networking-from-vlan-backed-port-group-to-openshift-bridge" title="Permanent link">&para;</a></h3>
+<p>On vSphere, the VM sits on a <strong>port group</strong> tagged with a VLAN. On OpenShift, the same VLAN reaches a VM in
+three layers:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Object</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node</td>
+<td><code>NodeNetworkConfigurationPolicy</code> (NNCP) <code>br&lt;VLAN&gt;-policy</code></td>
+<td>builds Linux bridge <code>br&lt;VLAN&gt;</code> on every node, on top of the trunk NIC, tagged with VLAN <code>&lt;VLAN&gt;</code></td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td><code>NetworkAttachmentDefinition</code> (NAD) <code>vmnet&lt;VLAN&gt;</code> in <code>default</code></td>
+<td>lets a VM plug a second NIC into that bridge (Multus)</td>
+</tr>
+<tr>
+<td>Migration</td>
+<td><code>NetworkMap</code> <code>ovedr-vcenter0N-net-bridge</code></td>
+<td>tells MTV: port group <code>vm-network</code> → NAD <code>vmnet&lt;VLAN&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="nv">VLAN</span><span class="o">=</span><span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>nncp<span class="w">                                                      </span><span class="c1"># br&lt;VLAN&gt;-policy … Available</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>nncp<span class="w"> </span><span class="s2">"br</span><span class="nv">$VLAN</span><span class="s2">-policy"</span><span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">'/desiredState:/,/status:/p'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>nnce<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"br</span><span class="nv">$VLAN</span><span class="s2">"</span><span class="w">                                     </span><span class="c1"># one per node: SuccessfullyConfigured</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>default<span class="w"> </span>get<span class="w"> </span>net-attach-def<span class="w"> </span><span class="s2">"vmnet</span><span class="nv">$VLAN</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.config}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+</code></pre></div>
+<p>✅ The NNCP is <strong>Available</strong>, every node's enactment is <strong>SuccessfullyConfigured</strong>, and the NAD's <code>bridge</code> is
+<code>br&lt;VLAN&gt;</code>. That is the OpenShift twin of the vSphere port group.</p>
+<p>The two network maps MTV can use, and the storage map:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>networkmap,storagemap
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>networkmap<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-net"</span><span class="w">        </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>networkmap<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-net-bridge"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>storagemap<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-storage"</span><span class="w">    </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>storageclass<span class="w">                                              </span><span class="c1"># ODF's virtualization class (site A); site B: nfs-csi</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Map</th>
+<th>Source → destination</th>
+<th>When to choose it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>…-net</code></td>
+<td><code>vm-network</code> → <strong>pod network</strong></td>
+<td>the VM gets a cluster address. Clients reach it through <code>Service/$VM-sql</code>. <strong>This demo uses it.</strong></td>
+</tr>
+<tr>
+<td><code>…-net-bridge</code></td>
+<td><code>vm-network</code> → <strong><code>vmnet&lt;VLAN&gt;</code></strong></td>
+<td>the VM stays on its own VLAN and keeps its subnet. Needs the static IP carried over (§1.5, note)</td>
+</tr>
+<tr>
+<td><code>…-storage</code></td>
+<td>datastore <code>coresan01_data00</code> → <code>ocs-storagecluster-ceph-rbd-virtualization</code> on site A (ODF); <code>nfs-csi</code> on site B</td>
+<td>where each of the three disks lands. How it was built: <a href="setup-how-the-lab-is-built.html">Lab S §S.8</a></td>
+</tr>
+</tbody>
+</table>
+<p>📸 <code>01-nncp-available</code>: NNCP list with <code>Available</code>.
+📸 <code>01-networkmap-bridge</code>: the bridge network map in the console (<strong>Migration for Virtualization → Network maps</strong>).</p>
+<h3 id="templates-the-replatform-alternative">Templates: the <em>replatform</em> alternative<a class="headerlink" href="#templates-the-replatform-alternative" title="Permanent link">&para;</a></h3>
+<p>Migration is <strong>rehosting</strong>: the same Windows install, disks and data, now on KVM. <strong>Replatforming</strong> means building
+a <em>new</em> VM from a clean, vendor-maintained image, and then moving only the application and data into it.</p>
+<p>OpenShift Virtualization ships templates and <strong>boot sources</strong> for the replatform path:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>templates<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>-l<span class="w"> </span>template.kubevirt.io/type<span class="o">=</span>base<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,DISPLAY:<span class="s1">'.metadata.annotations.openshift\.io/display-name'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>datasources<span class="w">   </span>-n<span class="w"> </span>openshift-virtualization-os-images<span class="w">     </span><span class="c1"># rhel8, rhel9, centos-stream9, fedora …</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>dataimportcrons<span class="w"> </span>-n<span class="w"> </span>openshift-virtualization-os-images<span class="w">   </span><span class="c1"># keeps those images current, automatically</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>datasource<span class="w"> </span>rhel9<span class="w"> </span>-n<span class="w"> </span>openshift-virtualization-os-images<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}{"\n"}'</span><span class="w">          </span><span class="c1"># True: a RHEL 9 cloud image is ready to clone</span>
+</code></pre></div>
+<p>Console: <strong>Virtualization → Catalog → Template catalog</strong>. The templates with a ✓ <strong>Source available</strong> badge boot
+from a Red Hat cloud image in seconds. Windows templates show <em>no source</em>, because Red Hat ships no Windows image:
+you upload your own golden image.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Rehost (this demo)</th>
+<th>Replatform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What moves</td>
+<td>the whole VM: OS, disks, data</td>
+<td>data and application only</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>the existing Windows, now with virtio drivers</td>
+<td>a fresh image from a template (e.g. RHEL 9 + PostgreSQL)</td>
+</tr>
+<tr>
+<td>Effort</td>
+<td>low, minutes per VM</td>
+<td>higher, because the app must be reinstalled</td>
+</tr>
+<tr>
+<td>Result</td>
+<td>same machine, new hypervisor</td>
+<td>a clean, supported, cloud-native-ready VM</td>
+</tr>
+</tbody>
+</table>
+<p>📸 <code>01-template-catalog</code>: the template catalog with boot-source badges.</p>
+<hr />
+<h2 id="14-link-openshift-to-vcenter-and-validate-the-link-10-min">1.4 Link OpenShift to vCenter, and validate the link (10 min)<a class="headerlink" href="#14-link-openshift-to-vcenter-and-validate-the-link-10-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-4-link-openshift-vcenter-validate-link -->
+<p><a href="../.images/01-1-4-link-openshift-vcenter-validate-link.mp4"><img alt="🎬 Video: 1.4 Link OpenShift to vCenter, and validate the link. Watch it, then do the same in the console" src="../.images/01-1-4-link-openshift-vcenter-validate-link.jpg" /></a>
+<sub>🎬 <em>1.4 Link OpenShift to vCenter, and validate the link: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-4-link-openshift-vcenter-validate-link.mp4</code>).</em></sub></p>
+<p>The lab already created the link. A <strong>Provider</strong> of type <code>vsphere</code> named <code>ovedr-vcenter0&lt;N&gt;</code> logs in to vCenter as
+a least-privilege account (<code>ovedr-mtv@vsphere.local</code>) and pulls an <strong>inventory</strong> of every VM, network and datastore.</p>
+<h3 id="validate-the-existing-link">Validate the existing link<a class="headerlink" href="#validate-the-existing-link" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nv">P</span><span class="o">=</span>ovedr-vcenter0<span class="nv">$N</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"</span><span class="nv">$P</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status}  {.message}{"\n"}{end}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"</span><span class="nv">$P</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.url}{"\n"}'</span>
+</code></pre></div>
+<p>✅ <code>Ready=True</code>, <code>ConnectionTestSucceeded=True</code>, <code>InventoryCreated=True</code>, and the URL is
+<code>https://vcenter0&lt;N&gt;.demo.lab-paragonmicro.com/sdk</code>.</p>
+<p>Console: <strong>Migration for Virtualization → Providers → <code>ovedr-vcenter0&lt;N&gt;</code> → Virtual Machines</strong>. Find your VM
+(<code>win-pg-s&lt;NN&gt;</code>) and open its <strong>Concerns</strong> column. Typical concerns are <em>VMware Tools installed</em> or <em>static IP</em>. Read them now,
+because they explain §1.5 and §1.6.</p>
+<p>📸 <code>01-provider-ready</code>: the provider page with <em>Ready</em> and the VM inventory.</p>
+<h3 id="optional-create-your-own-provider-verify-bl-d09">Optional: create your own provider [verify: BL-D09]<a class="headerlink" href="#optional-create-your-own-provider-verify-bl-d09" title="Permanent link">&para;</a></h3>
+<p>This shows how the link is made. Use <strong>your own name</strong>, so that you never overwrite the class provider. The
+provider belongs in your own namespace <code>$VMNS</code>, where you are admin.</p>
+<p><strong>Console:</strong> <strong>Migration for Virtualization → Providers → Create Provider → vSphere</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td><code>ovedr-vcenter-&lt;WINUSER&gt;</code></td>
+</tr>
+<tr>
+<td>URL</td>
+<td><code>https://vcenter0&lt;N&gt;.demo.lab-paragonmicro.com/sdk</code></td>
+</tr>
+<tr>
+<td>Username / password</td>
+<td><code>&lt;ME&gt;@vsphere.local</code> / your class password</td>
+</tr>
+<tr>
+<td>CA certificate</td>
+<td>upload the chain from the command below, or tick <em>Skip certificate validation</em> (lab only)</td>
+</tr>
+<tr>
+<td>VDDK image</td>
+<td>leave empty (cold migration still works, just slower)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>YAML equivalent:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># vCenter's CA chain, taken from its TLS handshake</span>
+openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span><span class="s2">"</span><span class="nv">$VC</span><span class="s2">:443"</span><span class="w"> </span>-showcerts<span class="w"> </span>&lt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'/BEGIN CERT/,/END CERT/'</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/vc-chain.pem
+<span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s2">"class password: "</span><span class="w"> </span>PW<span class="p">;</span><span class="w"> </span><span class="nb">echo</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span><span class="s2">"ovedr-vcenter-</span><span class="nv">$WINUSER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">user</span><span class="o">=</span><span class="s2">"</span><span class="nv">$ME</span><span class="s2">@vsphere.local"</span><span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PW</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">url</span><span class="o">=</span><span class="s2">"https://</span><span class="nv">$VC</span><span class="s2">/sdk"</span><span class="w"> </span>--from-file<span class="o">=</span><span class="nv">cacert</span><span class="o">=</span>/tmp/vc-chain.pem<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">insecureSkipVerify</span><span class="o">=</span><span class="nb">false</span>
+<span class="nb">unset</span><span class="w"> </span>PW
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>label<span class="w"> </span>secret<span class="w"> </span><span class="s2">"ovedr-vcenter-</span><span class="nv">$WINUSER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">createdForProviderType</span><span class="o">=</span>vsphere<span class="w"> </span><span class="nv">createdForResourceType</span><span class="o">=</span>providers
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Provider</span>
+<span class="s">metadata: { name: ovedr-vcenter-$WINUSER, namespace: $VMNS }</span>
+<span class="s">spec:</span>
+<span class="s">  type: vsphere</span>
+<span class="s">  url: https://$VC/sdk</span>
+<span class="s">  secret: { name: ovedr-vcenter-$WINUSER, namespace: $VMNS }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter-</span><span class="nv">$WINUSER</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">     </span><span class="c1"># Ctrl-C at Ready</span>
+</code></pre></div>
+<p>✅ <code>Ready</code>. If it shows <code>ConnectionTestFailed</code>, read the message: <em>x509</em> means a CA problem, and <em>permission</em> means
+your vCenter role can log in but cannot read the whole inventory. Either is a useful lesson.
+Afterwards, clean up: <code>oc --context site-a -n "$VMNS" delete provider,secret "ovedr-vcenter-$WINUSER"</code>.</p>
+<hr />
+<h2 id="15-cold-migration-30-min">1.5 Cold migration (30 min)<a class="headerlink" href="#15-cold-migration-30-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-5-cold-migration -->
+<p><a href="../.images/01-1-5-cold-migration.mp4"><img alt="🎬 Video: 1.5 Cold migration. Watch it, then do the same in the console" src="../.images/01-1-5-cold-migration.jpg" /></a>
+<sub>🎬 <em>1.5 Cold migration: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-5-cold-migration.mp4</code>).</em></sub></p>
+<p>A <strong>cold</strong> migration copies the disks while the VM is <strong>off</strong>. It is simple and consistent. The outage is the whole
+copy plus the driver conversion.</p>
+<h3 id="inject-before-the-move">Inject before the move<a class="headerlink" href="#inject-before-the-move" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1-before-migration<span class="w"> </span><span class="s2">"on=vSphere"</span>
+verify<span class="w"> </span>site-a
+</code></pre></div>
+<p>In the Windows console:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1-before-migration  on=vSphere"</span>
+</code></pre></div>
+<p>✍️ <strong>Row 1.2:</strong> mark id and fingerprint, <strong>before</strong> the migration.</p>
+<h3 id="shut-your-vm-down">Shut your VM down<a class="headerlink" href="#shut-your-vm-down" title="Permanent link">&para;</a></h3>
+<p>In vCenter, choose <strong>your VM → Actions → Power → Shut Down Guest OS</strong>. (MTV can also power it off for you,
+but a clean guest shutdown flushes PostgreSQL first.)</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># the heartbeat goes stale once the guest is down</span>
+alive<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># staleness grows; then the query fails once Windows is off: expected</span>
+</code></pre></div>
+<h3 id="review-your-staged-plan">Review your staged plan<a class="headerlink" href="#review-your-staged-plan" title="Permanent link">&para;</a></h3>
+<p>The lab already created <strong>your</strong> plan, <code>d1-&lt;your VM&gt;</code>, and left it <strong>not started</strong>. Read it before you run it.</p>
+<p><strong>Console:</strong> site A → <strong>Migration for Virtualization → Migration plans → <code>d1-&lt;your VM&gt;</code></strong>: source provider, your VM,
+target namespace <strong>your</strong> namespace (<code>$VMNS</code>), the bridge network map, the storage map, type <strong>Cold</strong>, status <strong>Ready</strong>.</p>
+<p>📸 <code>01-staged-plan</code>: your plan's details page, <em>Ready</em>, with the Start button.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.warm}{"  "}{.spec.map.network.name}{"  "}{.spec.map.storage.name}{"  "}{.status.conditions[?(@.type=="Ready")].status}{"\n"}'</span>
+<span class="c1">#   false  ovedr-vcenter0&lt;N&gt;-net-bridge  ovedr-vcenter0&lt;N&gt;-storage  True</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>less<span class="w">                 </span><span class="c1"># the whole object</span>
+</code></pre></div>
+<p>How it was built, and why each field: <a href="setup-how-the-lab-is-built.html">Lab S §S.12</a> (the plan) and <a href="setup-how-the-lab-is-built.html">§S.8</a> (the maps). Red Hat:
+<a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Creating and running a migration plan</a> [verify link].</p>
+<h3 id="build-it-yourself-learning-path-optional">Build it yourself (learning path, optional)<a class="headerlink" href="#build-it-yourself-learning-path-optional" title="Permanent link">&para;</a></h3>
+<p>To build the plan by hand, give it a <strong>different name</strong> (e.g. <code>&lt;your class ID&gt;-cold-migration-plan</code>): your VM can be in only one running
+plan at a time, so start <strong>either</strong> the staged plan <strong>or</strong> yours, never both.</p>
+<p><strong>Console:</strong> site A → <strong>Migration for Virtualization → Migration plans → Create plan</strong>. The wizard has three parts:
+<strong>1 Basic setup</strong> (General · Virtual machines · Network map · Storage map · Migration type), <strong>2 Additional setup</strong>, and
+<strong>3 Review and create</strong>.</p>
+<p><strong>1 · Basic setup → General:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Plan name</td>
+<td><code>&lt;your class ID&gt;-cold-migration-plan</code> (e.g. <code>student-03-0024-006-cold-migration-plan</code>): unique, and not the staged <code>d1-&lt;your VM&gt;</code></td>
+</tr>
+<tr>
+<td>Plan project</td>
+<td><code>openshift-mtv</code> (where plans live)</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>e.g. <code>My VMware cold migration plan</code></td>
+</tr>
+<tr>
+<td>Source provider</td>
+<td><code>ovedr-vcenter0&lt;N&gt;</code></td>
+</tr>
+<tr>
+<td>Target provider</td>
+<td><code>host</code> (this cluster)</td>
+</tr>
+<tr>
+<td>Target project</td>
+<td><strong>your namespace</strong> (<code>$VMNS</code>, your class ID)</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Create migration plan: Basic setup, General" src="../.images/01-plan-create-general.png" />
+<em>The General step, filled in by the instructor (<code>instructor-01-0024-006</code>, project <code>openshift-mtv</code>, source <code>ovedr-vcenter01</code>,
+target <code>host</code>, target project <code>instructor-01-0024-006</code>). Use </em><em>your</em><em> class ID and namespace. Then </em><em>Next</em><em>.</em></p>
+<p><strong>The remaining steps:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Choose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual machines</td>
+<td><strong>your</strong> VM only (<code>win-pg-s&lt;NN&gt;</code>)</td>
+</tr>
+<tr>
+<td>Network map</td>
+<td><code>ovedr-vcenter0&lt;N&gt;-net-bridge</code> (<code>vm-network</code> → <strong>your VLAN's bridge</strong>: keeps your address)</td>
+</tr>
+<tr>
+<td>Storage map</td>
+<td><code>ovedr-vcenter0&lt;N&gt;-storage</code></td>
+</tr>
+<tr>
+<td>Migration type</td>
+<td><strong>Cold</strong></td>
+</tr>
+<tr>
+<td>Additional setup</td>
+<td>leave the defaults</td>
+</tr>
+<tr>
+<td>Review and create</td>
+<td>check every value, then <strong>Create plan</strong> (do not start it yet)</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Create migration plan: Basic setup, Virtual machines" src="../.images/01-plan-create-vms.png" />
+<em>The Virtual machines step. VMs are grouped by vCenter folder: the instructor's <code>win-pg-i01</code> sits in <code>ovedr</code>, each
+student's VM in their own folder (<code>student-01-0024-006</code>, …). Expand </em><em>your</em><em> folder and tick </em><em>only your</em><em> VM. The
+</em><em>Concerns</em><em> badge lists MTV's pre-migration findings for that VM (expand the row to read them); they are warnings, not
+blockers, for a cold migration.</em></p>
+<p>🎬 The rest of the wizard (network map, storage map, migration type, review) is short and follows the table above; a
+short screen recording of the whole wizard replaces per-step screenshots (BL-D15).</p>
+<h3 id="if-your-plan-says-cannot-start-critical-concerns">If your plan says "Cannot start" (critical concerns)<a class="headerlink" href="#if-your-plan-says-cannot-start-critical-concerns" title="Permanent link">&para;</a></h3>
+<p><img alt="A plan that cannot start: VMNetworksNotMapped and VMStorageNotMapped" src="../.images/01-plan-cannot-start.png" />
+<em>Two critical concerns block the start: the plan's maps don't cover your VM's network or its datastore. The two
+information concerns are fine for a cold migration.</em></p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>What it means</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>VMNetworksNotMapped</strong> (critical)</td>
+<td>Your VM's NIC is on a vSphere network (<code>vm-network</code>) that the plan's <strong>network map</strong> has no row for: usually because the wizard made a new, empty map</td>
+<td>Map <code>vm-network</code></td>
+</tr>
+<tr>
+<td><strong>VMStorageNotMapped</strong> (critical)</td>
+<td>Your VM's disks are on a datastore (<code>coresan01_data00</code>) that the plan's <strong>storage map</strong> has no row for</td>
+<td>Map <code>coresan01_data00</code></td>
+</tr>
+<tr>
+<td>VM snapshot detected (info)</td>
+<td>Your VM has a snapshot (the clone source <code>ovedr-golden</code> on <code>win-pg-i01</code>). MTV migrates the VM's <strong>current</strong> state</td>
+<td>Nothing to do</td>
+</tr>
+<tr>
+<td>Disk serial numbers may be truncated (info)</td>
+<td><code>disk.EnableUUID=TRUE</code>; SCSI serials are shortened on OpenShift</td>
+<td>Nothing to do (the guest finds its disks by size and label, not by serial)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fix in the console:</strong> open the plan → <strong>Mappings</strong> tab → <strong>Edit mappings</strong>:
+1. <strong>Network:</strong> source <code>vm-network</code> → target <strong>your VLAN's bridge</strong> <code>default/vmnet&lt;22+N&gt;</code> (keeps your address) or
+   <strong>Pod networking</strong>.
+2. <strong>Storage:</strong> source <code>coresan01_data00</code> → target this site's storage class (<code>nfs-csi</code>, or
+   <code>ocs-storagecluster-ceph-rbd-virtualization</code> on an ODF site).
+3. <strong>Save.</strong> The concerns clear within a minute, and the status changes from <em>Cannot start</em> to <em>Ready</em>.</p>
+<p>📸 <code>01-plan-edit-mappings</code>: the Mappings tab with both rows filled in.</p>
+<p>Or, simplest, <strong>use the class's maps</strong>, which already cover both: build the plan again and at the wizard's Network map
+and Storage map steps pick <strong>Use an existing map</strong>: <code>ovedr-vcenter0&lt;N&gt;-net-bridge</code> and <code>ovedr-vcenter0&lt;N&gt;-storage</code>.
+These are the maps your staged plan <code>d1-&lt;your VM&gt;</code> uses, and that plan is <em>Ready</em> (Lab S <a href="setup-how-the-lab-is-built.html">S.8</a>).</p>
+<p><strong>Fix from the command line:</strong> point the plan at the class's maps, then check the concerns are gone.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">PLAN</span><span class="o">=</span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">-cold-migration-plan"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>plan<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"map\":{</span>
+<span class="s2">  \"network\":{\"name\":\"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-net-bridge\",\"namespace\":\"openshift-mtv\"},</span>
+<span class="s2">  \"storage\":{\"name\":\"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-storage\",\"namespace\":\"openshift-mtv\"}}}}"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.category}{"\n"}{end}'</span><span class="w">   </span><span class="c1"># no Critical left; Ready=True</span>
+</code></pre></div>
+<p>What a map holds, side by side with the class's own (read-only for you):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>networkmap<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-net-bridge"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}{"\n"}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>storagemap<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">-storage"</span><span class="w">    </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}{"\n"}'</span>
+</code></pre></div>
+<p><strong>YAML equivalent</strong> (what the console creates; not started):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Plan</span>
+<span class="s">metadata: { name: $VMNS-cold-migration-plan, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  warm: false</span>
+<span class="s">  targetNamespace: $VMNS</span>
+<span class="s">  provider:</span>
+<span class="s">    source:      { name: ovedr-vcenter0$N, namespace: openshift-mtv }</span>
+<span class="s">    destination: { name: host,             namespace: openshift-mtv }</span>
+<span class="s">  map:</span>
+<span class="s">    network: { name: ovedr-vcenter0$N-net-bridge, namespace: openshift-mtv }</span>
+<span class="s">    storage: { name: ovedr-vcenter0$N-storage,    namespace: openshift-mtv }</span>
+<span class="s">  vms:</span>
+<span class="s">    - name: $VM                # your source VM on vSphere; on OpenShift it keeps the same name</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<blockquote>
+<p><strong>One VM, one address.</strong> Every class VM has its own static address, so the bridge map lets each one keep it on
+OpenShift: twenty students run twenty plans side by side without colliding. Choose the <strong>pod</strong> map (<code>…-net</code>)
+instead and the VM lands on the pod network, where its static address answers nothing: then follow Lab 0 §0.6.</p>
+</blockquote>
+<h3 id="start-your-plan-your-task-the-last-step">Start your plan (your task: the last step)<a class="headerlink" href="#start-your-plan-your-task-the-last-step" title="Permanent link">&para;</a></h3>
+<p><strong>Console:</strong> your plan → <strong>Start</strong> → confirm.</p>
+<p>📸 <code>01-plan-start</code>: the Start confirmation for <code>d1-&lt;your VM&gt;</code>.</p>
+<p><strong>CLI</strong> (what the Start button creates):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Migration</span>
+<span class="s">metadata: { name: d1-$VM-1, namespace: openshift-mtv }</span>
+<span class="s">spec: { plan: { name: d1-$VM, namespace: openshift-mtv } }</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<h3 id="watch-the-pipeline">Watch the pipeline<a class="headerlink" href="#watch-the-pipeline" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">                         </span><span class="c1"># Ready → Executing → Succeeded</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>migration<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">-1"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.vms[*].pipeline[*]}{.name}{"  "}{.phase}{"  "}{.progress.completed}/{.progress.total}{"\n"}{end}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc,dv<span class="w">                                       </span><span class="c1"># three volumes appear and fill</span>
+</code></pre></div>
+<p>The pipeline's phases, in order:</p>
+<ol>
+<li><strong>Initialize</strong> and <strong>PreflightInspection</strong></li>
+<li><strong>DiskTransfer</strong>: three disks, so three DataVolumes</li>
+<li><strong>ImageConversion</strong>: <code>virt-v2v</code> installs the virtio drivers and the QEMU guest agent, and removes VMware specifics</li>
+<li><strong>VirtualMachineCreation</strong></li>
+</ol>
+<p>Console: <strong>Plans → <code>d1-&lt;VM&gt;</code> → the VM row → expand</strong> shows the same, with progress bars.</p>
+<p>📸 <code>01-plan-pipeline</code>: the plan's per-VM pipeline mid-copy.</p>
+<p>✍️ <strong>Row 1.3:</strong> the migration's start and end times (outage = guest shutdown → first heartbeat on OpenShift).</p>
+<h3 id="if-a-step-fails-read-the-logs-before-you-delete-anything">If a step fails: read the logs before you delete anything<a class="headerlink" href="#if-a-step-fails-read-the-logs-before-you-delete-anything" title="Permanent link">&para;</a></h3>
+<p><img alt="A failed plan: ImageConversion, Guest conversion failed" src="../.images/01-plan-failed-imageconversion.png" />
+<em>A failed cold migration: ImageConversion (virt-v2v) failed, and the error says "See pod logs for details". There is no
+Cancel on a failed plan, only Delete, and </em><em>deleting the plan deletes its pods and their logs</em><em>, so read them first.</em></p>
+<p>The conversion runs in a <strong>pod in your target namespace</strong>, named <code>&lt;plan&gt;-&lt;vm id&gt;-&lt;suffix&gt;</code>. After a failure it stays
+there in status <em>Error</em>, with its full log.</p>
+<p><strong>Console:</strong> <strong>Workloads → Pods</strong>, project <strong>your namespace</strong> (<code>$VMNS</code>) → the pod named after your plan → <strong>Logs</strong>. Or
+from the plan: <strong>Virtual machines</strong> → expand your VM → <strong>Migration resources</strong> → the pod.</p>
+<p><strong>Command line:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nv">PLAN</span><span class="o">=</span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w">                                                                   </span><span class="c1"># or your own plan's name</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w">                          </span><span class="c1"># the conversion pod (Error)</span>
+<span class="nv">POD</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>logs<span class="w"> </span><span class="s2">"</span><span class="nv">$POD</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'virt-v2v: error|error:|HTTP'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq<span class="w"> </span>-c<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>logs<span class="w"> </span><span class="s2">"</span><span class="nv">$POD</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">.log"</span><span class="w">                        </span><span class="c1"># keep the whole log</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>migration<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>--arg<span class="w"> </span>p<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s1">'.items[] | select(.spec.plan.name == $p) | .status.vms[] | .pipeline[] | "\(.name): \(.phase) \(.error.reasons // [] | join("; "))"'</span>
+</code></pre></div>
+<p>Read the log <strong>bottom up</strong>: the last <code>virt-v2v: error:</code> line is the verdict, and the repeated lines above it are the
+cause. For example, <code>HTTP 404</code> on a <code>…-flat.vmdk</code> URL means MTV could not read the VM's disk from vCenter: the source
+VM's files moved or were deleted after the plan started. The instructor can collect everything for Red Hat support with
+MTV's must-gather: <code>oc adm must-gather --image=&lt;mtv-must-gather image for MTV 2.11&gt; -- /usr/bin/targeted --plan=$PLAN</code>
+<strong>[verify: image name and targeted flags, MTV 2.11]</strong>.</p>
+<p>When you're done reading: <strong>Actions → Archive</strong> keeps the plan's history and removes its running resources, while
+<strong>Delete</strong> removes everything. Then fix the cause and start a new plan.</p>
+<h3 id="power-on-in-openshift">Power on in OpenShift<a class="headerlink" href="#power-on-in-openshift" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.runStrategy}{"\n"}'</span>
+virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>start<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="o">||</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>patch<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s1">'{"spec":{"runStrategy":"Always"}}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">                                 </span><span class="c1"># Scheduling → Running</span>
+</code></pre></div>
+<p>(MTV starts the target if the source was running when the plan began. After a guest shutdown it may stay
+stopped, which is why this step exists <strong>[verify: target power state in this MTV release]</strong>.)</p>
+<h3 id="your-vm-keeps-its-address">Your VM keeps its address<a class="headerlink" href="#your-vm-keeps-its-address" title="Permanent link">&para;</a></h3>
+<p>The staged plan used the <strong>bridge</strong> map, so your VM's NIC is on the same VLAN with the same static address, and the
+helpers keep using <code>$VM_IP</code>. (Only if you built and ran a plan with the <strong>pod</strong> map: follow
+<a href="00-access-and-tools.html#06-optional-give-your-vm-a-pod-network-address-on-openshift">Lab 0 §0.6</a> with <code>CTX=site-a</code>.)</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w">         </span><span class="c1"># still your own address</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
+</code></pre></div>
+<h3 id="the-database-now-lives-on-openshift">The database now lives on OpenShift<a class="headerlink" href="#the-database-now-lives-on-openshift" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>where<span class="w">                                   </span><span class="c1"># site-a Running  node=…</span>
+alive<span class="w">  </span>site-a<span class="w">                           </span><span class="c1"># postgres_started is NEW (the VM rebooted); staleness &lt; 10 s again</span>
+verify<span class="w"> </span>site-a<span class="w">                           </span><span class="c1"># your d1-before and d1-before-migration rows are present, chain_ok = t</span>
+mark<span class="w">   </span>site-a<span class="w"> </span>d1-after-migration<span class="w"> </span><span class="s2">"on=OVE site-a"</span>
+sql<span class="w">    </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, date_trunc('second', gap) AS outage</span>
+<span class="s2">                  FROM (SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
+<span class="s2">                  WHERE gap &gt; interval '10 seconds' ORDER BY id DESC LIMIT 3;"</span>
+</code></pre></div>
+<p>✅ <code>chain_ok = t</code>, and your two earlier marks are present.
+✅ The newest heartbeat gap is the migration's outage.</p>
+<p>✍️ <strong>Row 1.4:</strong> the outage from the gap query, plus the mark id and fingerprint after the move.</p>
+<h3 id="your-file-read-on-openshift">Your file, read on OpenShift<a class="headerlink" href="#your-file-read-on-openshift" title="Permanent link">&para;</a></h3>
+<p>Console: <strong>Virtualization → VirtualMachines → your VM → Console</strong> (VNC). Send <strong>Ctrl-Alt-Del</strong> and log in as
+<code>.\&lt;WINUSER&gt;</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$f</span> <span class="p">=</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
+<span class="nb">Get-Content</span> <span class="nv">$f</span>                                                <span class="c"># lab0-hello … d1-before-migration: all there</span>
+<span class="nb">Add-Content</span> <span class="nv">$f</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1-after-migration  on=OVE"</span>
+</code></pre></div>
+<p>📸 <code>01-ove-console-touchfile</code>: the OpenShift VNC console showing your file.</p>
+<hr />
+<h2 id="16-vmware-tools-out-virtio-and-the-qemu-guest-agent-in-10-min">1.6 VMware Tools out, virtio and the QEMU guest agent in (10 min)<a class="headerlink" href="#16-vmware-tools-out-virtio-and-the-qemu-guest-agent-in-10-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-6-vmware-tools-out-virtio-qemu-guest -->
+<p><a href="../.images/01-1-6-vmware-tools-out-virtio-qemu-guest.mp4"><img alt="🎬 Video: 1.6 VMware Tools out, virtio and the QEMU guest agent in. Watch it, then do the same in the console" src="../.images/01-1-6-vmware-tools-out-virtio-qemu-guest.jpg" /></a>
+<sub>🎬 <em>1.6 VMware Tools out, virtio and the QEMU guest agent in: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-6-vmware-tools-out-virtio-qemu-guest.mp4</code>).</em></sub></p>
+<p>On vSphere, <strong>VMware Tools</strong> provided paravirtual drivers and the guest agent. On OpenShift, <strong>virtio-win</strong>
+drivers and the <strong>QEMU guest agent</strong> do that job. <code>virt-v2v</code> installed them during <em>ImageConversion</em>.</p>
+<h3 id="from-openshift">From OpenShift<a class="headerlink" href="#from-openshift" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'</span><span class="w">          </span><span class="c1"># AgentConnected=True</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.guestOSInfo}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.interfaces}'</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.<span class="w">   </span><span class="c1"># IPs reported by the agent</span>
+virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>guestosinfo<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'.guestAgentVersion, .os.prettyName'</span>
+</code></pre></div>
+<p>✅ <code>AgentConnected=True</code>, <code>guestOSInfo</code> names <em>Windows Server 2022</em>, and the agent reports the VM's IP.
+The console's VM <strong>Overview</strong> shows the same on its <em>Guest agent</em> tile.</p>
+<h3 id="from-inside-windows">From inside Windows<a class="headerlink" href="#from-inside-windows" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-Service</span> <span class="n">QEMU-GA</span><span class="p">,</span> <span class="n">VMTools</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span><span class="p">,</span> <span class="n">StartType</span>
+<span class="nb">Get-PnpDevice</span> <span class="n">-PresentOnly</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">FriendlyName</span> <span class="o">-match</span> <span class="s1">'VirtIO|Red Hat'</span> <span class="p">|</span>
+  <span class="nb">Format-Table</span> <span class="n">FriendlyName</span><span class="p">,</span> <span class="n">Status</span><span class="p">,</span> <span class="n">Class</span> <span class="n">-AutoSize</span>
+<span class="n">pnputil</span> <span class="p">/</span><span class="n">enum-drivers</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="n">-Context</span> <span class="n">0</span><span class="p">,</span><span class="n">5</span> <span class="s1">'vioscsi|viostor|netkvm|balloon'</span>
+<span class="nb">Get-ItemProperty</span> <span class="s1">'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'</span> <span class="p">|</span>
+  <span class="nb">Where-Object</span> <span class="n">DisplayName</span> <span class="o">-match</span> <span class="s1">'VMware Tools|Virtio|QEMU'</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">DisplayName</span><span class="p">,</span> <span class="n">DisplayVersion</span>
+</code></pre></div>
+<p>✅ <code>QEMU-GA</code> is <em>Running</em>. The disks and NIC use <strong>Red Hat VirtIO</strong> devices. <code>VMTools</code> is gone, or stopped and
+disabled.</p>
+<p>If VMware Tools is still installed, it does nothing on KVM, but remove it: <strong>Settings → Apps → VMware Tools →
+Uninstall</strong>, then reboot <strong>[verify: whether virt-v2v removed it in this build]</strong>.</p>
+<p>📸 <code>01-virtio-devices</code>: Device Manager showing <em>Red Hat VirtIO</em> storage and network.</p>
+<h3 id="update-virtio-win-and-the-agent">Update virtio-win and the agent<a class="headerlink" href="#update-virtio-win-and-the-agent" title="Permanent link">&para;</a></h3>
+<p>The replacement for "upgrade VMware Tools" is to mount the <strong>virtio-win</strong> media and run its installer.</p>
+<p>Console: <strong>VM → Configuration → Storage → Mount Windows drivers disk</strong> ✓, then <strong>Restart</strong> the VM. Or in YAML:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>patch<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>json<span class="w"> </span>-p<span class="w"> </span><span class="s1">'[</span>
+<span class="s1"> {"op":"add","path":"/spec/template/spec/domain/devices/disks/-",</span>
+<span class="s1">  "value":{"name":"virtio-win","cdrom":{"bus":"sata"}}},</span>
+<span class="s1"> {"op":"add","path":"/spec/template/spec/volumes/-",</span>
+<span class="s1">  "value":{"name":"virtio-win","containerDisk":{"image":"registry.redhat.io/container-native-virtualization/virtio-win-rhel9:v4.19"}}}]'</span>
+virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>restart<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span>
+</code></pre></div>
+<p><strong>[verify: the virtio-win image tag shipped with this cluster:
+<code>oc get cm -n openshift-cnv virtio-win -o yaml</code>.]</strong></p>
+<p>Then, in Windows (as Administrator), run the guest-tools installer from the new CD drive:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$cd</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Get-Volume</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DriveType</span> <span class="o">-eq</span> <span class="s1">'CD-ROM'</span> <span class="o">-and</span> <span class="p">(</span><span class="nb">Test-Path</span> <span class="s2">"</span><span class="p">$(</span><span class="nv">$_</span><span class="p">.</span><span class="n">DriveLetter</span><span class="p">)</span><span class="s2">:\virtio-win-guest-tools.exe"</span><span class="p">)</span> <span class="p">}).</span><span class="n">DriveLetter</span>
+<span class="nb">Start-Process</span> <span class="s2">"</span><span class="p">$(</span><span class="nv">$cd</span><span class="p">)</span><span class="s2">:\virtio-win-guest-tools.exe"</span> <span class="n">-ArgumentList</span> <span class="s1">'/install'</span><span class="p">,</span><span class="s1">'/passive'</span><span class="p">,</span><span class="s1">'/norestart'</span> <span class="n">-Wait</span>
+<span class="nb">Get-ItemProperty</span> <span class="s1">'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'</span> <span class="p">|</span>
+  <span class="nb">Where-Object</span> <span class="n">DisplayName</span> <span class="o">-match</span> <span class="s1">'Virtio|QEMU'</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">DisplayName</span><span class="p">,</span> <span class="n">DisplayVersion</span>
+<span class="nb">Get-Service</span> <span class="n">QEMU-GA</span>
+</code></pre></div>
+<p>✅ The versions changed (or matched already), and <code>QEMU-GA</code> is <em>Running</em>. Back on the CLI, <code>AgentConnected=True</code>.
+Remove the drivers disk again in the console (untick it) and restart.</p>
+<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-a<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>verify<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># the reboots cost heartbeat gaps, never rows</span>
+</code></pre></div>
+<hr />
+<h2 id="17-end-of-demo-prove-the-data-5-min">1.7 End of demo: prove the data (5 min)<a class="headerlink" href="#17-end-of-demo-prove-the-data-5-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-7-end-demo-prove-data -->
+<p><a href="../.images/01-1-7-end-demo-prove-data.mp4"><img alt="🎬 Video: 1.7 End of demo: prove the data. Watch it, then do the same in the console" src="../.images/01-1-7-end-demo-prove-data.jpg" /></a>
+<sub>🎬 <em>1.7 End of demo: prove the data: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-7-end-demo-prove-data.mp4</code>).</em></sub></p>
+<div class="highlight"><pre><span></span><code>mark<span class="w">   </span>site-a<span class="w"> </span>d1-end<span class="w"> </span><span class="s2">"demo 1 complete"</span>
+verify<span class="w"> </span>site-a
+sql<span class="w">    </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, id, ts FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id;"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
+</code></pre></div>
+<p>✅ Every stage you marked (<code>lab0-hello</code>, <code>d1-before</code>, <code>d1-before-migration</code>, <code>d1-after-migration</code>, <code>d1-end</code>) is
+present and in order, and <code>chain_ok = t</code>.
+✅ Your file holds every line you wrote, including the ones written on vSphere.</p>
+<p>📸 <code>01-final-verify</code>: <code>verify</code> output and the stage list.</p>
+<p>✍️ <strong>Row 1.5:</strong> the final fingerprint.</p>
+<hr />
+<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<p>Thank you for working through Demo 1. You moved a real Windows + PostgreSQL workload off VMware, kept every byte
+of its data, and saw how each vSphere building block (port group, datastore, VMware Tools) has an OpenShift
+counterpart. To keep learning:</p>
+<ul>
+<li><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a>: build the provider, maps and plan yourself (CLI + console)</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization documentation (4.19)</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/index">MTV: planning your migration (network and storage mapping)</a> [verify link]</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/managing-vms">OpenShift Virtualization: managing VMs (guest agent and VirtIO drivers)</a> [verify link]</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/live-migration">OpenShift Virtualization: live migration</a> [verify link]</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/backup-and-restore">OpenShift Virtualization: backup and restore (VM snapshots)</a> [verify link]</li>
+<li><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization">Red Hat OpenShift Virtualization (product overview)</a></li>
+<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)</a></li>
+<li><a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs (free, in the browser)</a></li>
+<li><a href="https://developers.redhat.com/products/openshift/overview">Red Hat Developer: OpenShift</a></li>
+<li><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization/migration-toolkit">Migration Toolkit for Virtualization (product page)</a> <strong>[verify: URL]</strong></li>
+</ul>
+<p>The bonus rounds below go further: moving a running VM between nodes, and recovering a destroyed database from a
+snapshot.</p>
+<hr />
+<h2 id="bonus-a-live-migration-between-nodes-15-min">Bonus A: live migration between nodes (15 min)<a class="headerlink" href="#bonus-a-live-migration-between-nodes-15-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-bonus-a-live-migration-nodes -->
+<p><a href="../.images/01-bonus-a-live-migration-nodes.mp4"><img alt="🎬 Video: Bonus A: live migration between nodes. Watch it, then do the same in the console" src="../.images/01-bonus-a-live-migration-nodes.jpg" /></a>
+<sub>🎬 <em>Bonus A: live migration between nodes: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-bonus-a-live-migration-nodes.mp4</code>).</em></sub></p>
+<p><strong>Goal:</strong> move the <em>running</em> VM from one OpenShift node to another, with no reboot and almost no gap.</p>
+<p>A live migration copies the VM's memory to another node while it runs, then switches over in milliseconds. It
+needs the disks to be reachable from <strong>both</strong> nodes at once, which means <strong>ReadWriteMany</strong> (RWX) storage:</p>
+<ul>
+<li><code>nfs-csi</code>: RWX filesystem ✅</li>
+<li>ODF's <code>ocs-storagecluster-ceph-rbd-virtualization</code>: RWX block ✅</li>
+</ul>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="LiveMigratable")].status}  {.status.conditions[?(@.type=="LiveMigratable")].message}{"\n"}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,MODES:.spec.accessModes,SC:.spec.storageClassName
+where<span class="w">                                                  </span><span class="c1"># ✍️ the node it is on now</span>
+mark<span class="w"> </span>site-a<span class="w"> </span>d1-bonusA-before
+</code></pre></div>
+<p>✅ <code>LiveMigratable=True</code>. If it is <code>False</code>, the message names the reason: usually a RWO disk or a mounted CD.</p>
+<p>Start the live migration:</p>
+<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>migrate<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: kubevirt.io/v1</span>
+<span class="s">kind: VirtualMachineInstanceMigration</span>
+<span class="s">metadata: { generateName: d1-live-, namespace: $VMNS }</span>
+<span class="s">spec: { vmiName: $VM }</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Console: <strong>VM → Actions → Migrate → Compute</strong> (the wording varies by version).</p>
+<p>Watch it:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                          </span><span class="c1"># Scheduling → … → Succeeded</span>
+where<span class="w">                                                                 </span><span class="c1"># a different node</span>
+alive<span class="w"> </span>site-a<span class="w">                                                          </span><span class="c1"># postgres_started UNCHANGED: no reboot</span>
+mark<span class="w">  </span>site-a<span class="w"> </span>d1-bonusA-after
+verify<span class="w"> </span>site-a
+sql<span class="w">   </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT max(gap) FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap</span>
+<span class="s2">                 FROM heartbeat WHERE ts &gt; now() - interval '10 minutes') g;"</span>
+</code></pre></div>
+<p>✅ New node, same <code>postgres_started</code>, and the largest gap is around the normal 5 s tick (a cold move costs minutes).
+✅ <code>chain_ok = t</code>.</p>
+<p>📸 <code>01-live-migration</code>: the VM's overview showing the node change, or the <code>vmim</code> watch.</p>
+<p>✍️ <strong>Row 1.A:</strong> from-node → to-node, the max gap, the fingerprint.</p>
+<hr />
+<h2 id="bonus-b-snapshot-destroy-the-database-restore-from-the-snapshots-disks-25-min">Bonus B: snapshot, destroy the database, restore from the snapshot's disks (25 min)<a class="headerlink" href="#bonus-b-snapshot-destroy-the-database-restore-from-the-snapshots-disks-25-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-bonus-b-snapshot-destroy-database-restore-snapshot-s -->
+<p><a href="../.images/01-bonus-b-snapshot-destroy-database-restore-snapshot-s.mp4"><img alt="🎬 Video: Bonus B: snapshot, destroy the database, restore from the snapshot's disks. Watch it, then do the same in the console" src="../.images/01-bonus-b-snapshot-destroy-database-restore-snapshot-s.jpg" /></a>
+<sub>🎬 <em>Bonus B: snapshot, destroy the database, restore from the snapshot's disks: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-bonus-b-snapshot-destroy-database-restore-snapshot-s.mp4</code>).</em></sub></p>
+<p><strong>Goal:</strong> take a VM snapshot, delete the database for real, then bring the data back by attaching the snapshot's
+disks and restarting PostgreSQL.</p>
+<blockquote>
+<p>⚠️ <strong>Data and WAL go together.</strong> PostgreSQL keeps its data on <code>D:</code> and its write-ahead log on <code>L:</code>. If you restore
+only <code>D:</code> and keep today's <code>L:</code>, PostgreSQL replays the newer WAL on start, including the <code>DROP DATABASE</code>, and you
+lose the database again. Restore <strong>both</strong> disks from the <strong>same</strong> snapshot. A VM snapshot with the guest agent
+freezes all disks at the same instant (VSS), so its <code>D:</code> and <code>L:</code> match.</p>
+</blockquote>
+<h3 id="snapshot">Snapshot<a class="headerlink" href="#snapshot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1-pre-snapshot<span class="w"> </span><span class="s2">"this row must come back"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: snapshot.kubevirt.io/v1beta1</span>
+<span class="s">kind: VirtualMachineSnapshot</span>
+<span class="s">metadata: { name: $VM-d1-snap, namespace: $VMNS }</span>
+<span class="s">spec:</span>
+<span class="s">  source: { apiGroup: kubevirt.io, kind: VirtualMachine, name: $VM }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-d1-snap"</span><span class="w"> </span>-w<span class="w">        </span><span class="c1"># Ctrl-C when READYTOUSE=true</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-d1-snap"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.indications}{"\n"}'</span><span class="w">                             </span><span class="c1"># ["Online","GuestAgent"]: frozen, consistent</span>
+</code></pre></div>
+<p>Console: <strong>VM → Snapshots → Take snapshot</strong>.</p>
+<p>Each storage option ships its own VolumeSnapshotClass (ODF's, or <code>nfs-csi-snapclass</code> on NFS;
+<a href="setup-how-the-lab-is-built.html">Lab S §S.4</a>); without a class the snapshot stays <em>not ready</em>. Red Hat:
+<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/backup-and-restore">Backing up and restoring VMs with snapshots</a> [verify link].</p>
+<p>📸 <code>01-snapshot-ready</code>: the Snapshots tab with the snapshot <em>Ready</em> and indications <em>Online, GuestAgent</em>.</p>
+<p>Now write a row <strong>after</strong> the snapshot. It exists only in the live database, so the restore must lose it:</p>
+<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>site-a<span class="w"> </span>d1-after-snapshot<span class="w"> </span><span class="s2">"this row must NOT come back"</span>
+</code></pre></div>
+<h3 id="delete-the-database">Delete the database<a class="headerlink" href="#delete-the-database" title="Permanent link">&para;</a></h3>
+<p>In your VM's console, in an <strong>elevated</strong> PowerShell (<em>Run as administrator</em>: on your own VM, your <code>.\student-NN</code>
+login is a local administrator <strong>[verify: BL-D10]</strong>), stop the heartbeat writer so that it doesn't recreate anything:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Disable-ScheduledTask</span> <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Stop-ScheduledTask</span>    <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span>
+</code></pre></div>
+<p>Then drop the database (the <code>bcdr</code> role owns it):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="nv">$PGHOST</span><span class="s2">"</span><span class="w"> </span>-U<span class="w"> </span>bcdr<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>-c<span class="w"> </span><span class="s1">'DROP DATABASE bcdr WITH (FORCE);'</span>
+</code></pre></div>
+<p>Confirm the damage:</p>
+<div class="highlight"><pre><span></span><code>verify<span class="w"> </span>site-a<span class="w">          </span><span class="c1"># FATAL: database "bcdr" does not exist. That is the disaster.</span>
+</code></pre></div>
+<p>📸 <code>01-database-gone</code>: the <code>does not exist</code> error.</p>
+<h3 id="shut-postgresql-down-and-take-the-damaged-disks-offline">Shut PostgreSQL down and take the damaged disks offline<a class="headerlink" href="#shut-postgresql-down-and-take-the-damaged-disks-offline" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">Stop-Service</span> <span class="n">postgresql</span><span class="p">-</span><span class="n">16</span>
+<span class="nv">$bad</span> <span class="p">=</span> <span class="k">foreach</span> <span class="p">(</span><span class="nv">$l</span> <span class="k">in</span> <span class="s1">'D'</span><span class="p">,</span><span class="s1">'L'</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Get-Partition</span> <span class="n">-DriveLetter</span> <span class="nv">$l</span> <span class="p">|</span> <span class="nb">Get-Disk</span> <span class="p">}</span>
+<span class="nv">$bad</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Number</span><span class="p">,</span> <span class="n">FriendlyName</span><span class="p">,</span> <span class="n">SerialNumber</span><span class="p">,</span> <span class="p">@{</span><span class="n">n</span><span class="p">=</span><span class="s1">'GB'</span><span class="p">;</span><span class="n">e</span><span class="p">={</span><span class="no">[math]</span><span class="p">::</span><span class="n">Round</span><span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">Size</span><span class="p">/</span><span class="n">1GB</span><span class="p">)}}</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$l</span> <span class="k">in</span> <span class="s1">'D'</span><span class="p">,</span><span class="s1">'L'</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Get-Partition</span> <span class="n">-DriveLetter</span> <span class="nv">$l</span> <span class="p">|</span> <span class="nb">Remove-PartitionAccessPath</span> <span class="n">-AccessPath</span> <span class="s2">"</span><span class="p">$(</span><span class="nv">$l</span><span class="p">)</span><span class="s2">:\"</span> <span class="p">}</span>
+<span class="nv">$bad</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span> <span class="nb">Set-Disk</span> <span class="n">-Number</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Number</span> <span class="n">-IsOffline</span> <span class="nv">$true</span> <span class="p">}</span>
+</code></pre></div>
+<h3 id="create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them">Create volumes from the snapshot's <code>D:</code> and <code>L:</code> and hot-plug them<a class="headerlink" href="#create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" title="Permanent link">&para;</a></h3>
+<p>The snapshot holds one <strong>VolumeSnapshot</strong> per disk. Pick the 10 Gi (<code>D:</code>) and 5 Gi (<code>L:</code>) ones:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">NS</span><span class="o">=</span><span class="nv">$VMNS</span><span class="p">;</span><span class="w"> </span><span class="nv">CTX</span><span class="o">=</span>site-a
+<span class="nv">CONTENT</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NS</span><span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-d1-snap"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.virtualMachineSnapshotContentName}'</span><span class="k">)</span>
+oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NS</span><span class="w"> </span>get<span class="w"> </span>vmsnapshotcontent<span class="w"> </span><span class="s2">"</span><span class="nv">$CONTENT</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .spec.volumeBackups[*]}{.volumeName}{"  "}{.persistentVolumeClaim.metadata.name}{"  "}{.persistentVolumeClaim.spec.resources.requests.storage}{"  "}{.volumeSnapshotName}{"\n"}{end}'</span>
+</code></pre></div>
+<p>For each of the two rows (10Gi and 5Gi), create a PVC <strong>from</strong> its VolumeSnapshot. It uses the same class, access
+mode, volume mode and size as the original:</p>
+<div class="highlight"><pre><span></span><code>restore_pvc<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w">   </span><span class="c1"># restore_pvc &lt;original pvc&gt; &lt;volumesnapshot&gt; &lt;new name&gt;</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NS</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>--arg<span class="w"> </span>s<span class="w"> </span><span class="s2">"</span><span class="nv">$2</span><span class="s2">"</span><span class="w"> </span>--arg<span class="w"> </span>n<span class="w"> </span><span class="s2">"</span><span class="nv">$3</span><span class="s2">"</span><span class="w"> </span><span class="s1">'{</span>
+<span class="s1">    apiVersion: "v1", kind: "PersistentVolumeClaim",</span>
+<span class="s1">    metadata: {name: $n, namespace: .metadata.namespace},</span>
+<span class="s1">    spec: {storageClassName: .spec.storageClassName, accessModes: .spec.accessModes,</span>
+<span class="s1">           volumeMode: .spec.volumeMode, resources: .spec.resources,</span>
+<span class="s1">           dataSource: {apiGroup: "snapshot.storage.k8s.io", kind: "VolumeSnapshot", name: $s}}}'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+<span class="o">}</span>
+<span class="c1"># fill these four from the snapshot table above: the 10Gi (D:, data) and 5Gi (L:, WAL) PVCs and their VolumeSnapshots</span>
+<span class="nv">DATA_PVC</span><span class="o">=</span><span class="s1">'&lt;10Gi pvc&gt;'</span><span class="p">;</span><span class="w"> </span><span class="nv">DATA_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
+<span class="nv">WAL_PVC</span><span class="o">=</span><span class="s1">'&lt;5Gi pvc&gt;'</span><span class="p">;</span><span class="w">   </span><span class="nv">WAL_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
+restore_pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA_PVC</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DATA_SNAP</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-restored-data"</span>
+restore_pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$WAL_PVC</span><span class="s2">"</span><span class="w">  </span><span class="s2">"</span><span class="nv">$WAL_SNAP</span><span class="s2">"</span><span class="w">  </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-restored-wal"</span>
+oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NS</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-restored-data"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-restored-wal"</span><span class="w"> </span>-w<span class="w">     </span><span class="c1"># Bound</span>
+</code></pre></div>
+<p>Hot-plug both into the running VM:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>v<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-restored-data"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-restored-wal"</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>virtctl<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NS</span><span class="w"> </span>addvolume<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--volume-name<span class="o">=</span><span class="s2">"</span><span class="nv">$v</span><span class="s2">"</span><span class="w"> </span>--serial<span class="o">=</span><span class="s2">"</span><span class="si">${</span><span class="nv">v</span><span class="p">##*-</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>--persist
+<span class="k">done</span>
+oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$CTX</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NS</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'</span>
+</code></pre></div>
+<p>✅ Both volumes show <code>Ready</code> (hot-plugged on the virtio-SCSI bus) <strong>[verify: hot-plug on this cluster, and the
+<code>vioscsi</code> driver in the guest]</strong>.</p>
+<h3 id="bring-the-restored-disks-online-as-d-and-l-start-postgresql">Bring the restored disks online as <code>D:</code> and <code>L:</code>, start PostgreSQL<a class="headerlink" href="#bring-the-restored-disks-online-as-d-and-l-start-postgresql" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">Update-HostStorageCache</span>
+<span class="nb">Get-Disk</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">IsOffline</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Number</span><span class="p">,</span> <span class="n">SerialNumber</span><span class="p">,</span> <span class="p">@{</span><span class="n">n</span><span class="p">=</span><span class="s1">'GB'</span><span class="p">;</span><span class="n">e</span><span class="p">={</span><span class="no">[math]</span><span class="p">::</span><span class="n">Round</span><span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">Size</span><span class="p">/</span><span class="n">1GB</span><span class="p">)}},</span> <span class="n">OperationalStatus</span>
+<span class="c"># the restored disks have serials "data" and "wal" (from --serial above); match on that, never on disk number</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$m</span> <span class="k">in</span> <span class="p">@(@{</span><span class="n">Serial</span><span class="p">=</span><span class="s1">'data'</span><span class="p">;</span> <span class="n">Letter</span><span class="p">=</span><span class="s1">'D'</span><span class="p">},</span> <span class="p">@{</span><span class="n">Serial</span><span class="p">=</span><span class="s1">'wal'</span><span class="p">;</span> <span class="n">Letter</span><span class="p">=</span><span class="s1">'L'</span><span class="p">}))</span> <span class="p">{</span>
+  <span class="nv">$d</span> <span class="p">=</span> <span class="nb">Get-Disk</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">SerialNumber</span> <span class="o">-eq</span> <span class="nv">$m</span><span class="p">.</span><span class="n">Serial</span> <span class="p">}</span>
+  <span class="nb">Set-Disk</span> <span class="n">-Number</span> <span class="nv">$d</span><span class="p">.</span><span class="n">Number</span> <span class="n">-IsOffline</span>   <span class="nv">$false</span>
+  <span class="nb">Set-Disk</span> <span class="n">-Number</span> <span class="nv">$d</span><span class="p">.</span><span class="n">Number</span> <span class="n">-IsReadOnly</span>  <span class="nv">$false</span>
+  <span class="nb">Get-Partition</span> <span class="n">-DiskNumber</span> <span class="nv">$d</span><span class="p">.</span><span class="n">Number</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="nb">Type </span><span class="o">-eq</span> <span class="s1">'Basic'</span> <span class="p">|</span> <span class="nb">Set-Partition</span> <span class="n">-NewDriveLetter</span> <span class="nv">$m</span><span class="p">.</span><span class="n">Letter</span>
+<span class="p">}</span>
+<span class="nb">Get-Volume</span> <span class="n">-DriveLetter</span> <span class="n">D</span><span class="p">,</span> <span class="n">L</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">DriveLetter</span><span class="p">,</span> <span class="n">FileSystemLabel</span><span class="p">,</span> <span class="n">Size</span><span class="p">,</span> <span class="n">HealthStatus</span>
+<span class="nb">Start-Service</span> <span class="n">postgresql</span><span class="p">-</span><span class="n">16</span>
+<span class="nb">Enable-ScheduledTask</span> <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Start-ScheduledTask</span>  <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span>
+</code></pre></div>
+<p>(The restored disks are copies of the originals, so Windows may first report a <em>signature collision</em>. Bringing the
+copy online while the originals are offline gives it a new signature. That is expected.)</p>
+<p>📸 <code>01-disks-restored</code>: Disk Management, with the restored disks online as <code>D:</code> (<code>pgdata</code>) and <code>L:</code> (<code>pg_wal</code>) and
+the originals offline.</p>
+<h3 id="what-came-back">What came back<a class="headerlink" href="#what-came-back" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>verify<span class="w"> </span>site-a
+sql<span class="w"> </span>site-a<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage, id, ts FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' ORDER BY id DESC LIMIT 5;"</span>
+alive<span class="w">  </span>site-a
+mark<span class="w">   </span>site-a<span class="w"> </span>d1-bonusB-restored
+</code></pre></div>
+<p>✅ The database exists again, <code>chain_ok = t</code>, and your newest row is <strong><code>d1-pre-snapshot</code></strong>.
+✅ <code>d1-after-snapshot</code> is <strong>gone</strong>. It was written after the snapshot, so it was never in it. This is the
+<strong>recovery point</strong>: a restore returns you to the moment of the snapshot, not to the moment of the disaster.</p>
+<p>✍️ <strong>Row 1.B:</strong> the snapshot time, the last surviving mark, and the time the database was back.</p>
+<h3 id="the-other-way-restore-the-whole-vm">The other way: restore the whole VM<a class="headerlink" href="#the-other-way-restore-the-whole-vm" title="Permanent link">&para;</a></h3>
+<p>Swapping disks by hand teaches what a restore really is. In production you would restore the whole VM:</p>
+<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>stop<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: snapshot.kubevirt.io/v1beta1</span>
+<span class="s">kind: VirtualMachineRestore</span>
+<span class="s">metadata: { name: $VM-d1-restore, namespace: $VMNS }</span>
+<span class="s">spec:</span>
+<span class="s">  target: { apiGroup: kubevirt.io, kind: VirtualMachine, name: $VM }</span>
+<span class="s">  virtualMachineSnapshotName: $VM-d1-snap</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmrestore<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-d1-restore"</span><span class="w"> </span>-w<span class="w">     </span><span class="c1"># COMPLETE=true</span>
+virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>start<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span>
+</code></pre></div>
+<p>That brings <strong>every</strong> disk, <code>C:</code> included, back to the snapshot in one step, at the cost of a VM restart.</p>
+<h3 id="tidy-up-after-bonus-b">Tidy up after Bonus B<a class="headerlink" href="#tidy-up-after-bonus-b" title="Permanent link">&para;</a></h3>
+<p>The VM now carries two extra (restored) disks, and its original <code>D:</code> and <code>L:</code> are offline. Before the next demo,
+either restore the whole VM (above), or stop the VM and remove the old volumes in <strong>Configuration → Storage</strong>
+<strong>[verify: BL-D11, a clean "post-bonus" state for demos 2-4]</strong>.</p>
+<hr />
+<h2 id="bonus-c-deploy-a-new-vm-from-a-red-hat-template-on-your-vlan-with-a-data-disk-20-min">Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk (20 min)<a class="headerlink" href="#bonus-c-deploy-a-new-vm-from-a-red-hat-template-on-your-vlan-with-a-data-disk-20-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-bonus-c-deploy-new-vm-red-hat-template -->
+<p><a href="../.images/01-bonus-c-deploy-new-vm-red-hat-template.mp4"><img alt="🎬 Video: Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk. Watch it, then do the same in the console" src="../.images/01-bonus-c-deploy-new-vm-red-hat-template.jpg" /></a>
+<sub>🎬 <em>Bonus C: deploy a new VM from a Red Hat template, on your VLAN, with a data disk: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-bonus-c-deploy-new-vm-red-hat-template.mp4</code>).</em></sub></p>
+<p>Section 1.3 showed the <strong>replatform</strong> path: rather than moving an old VM, build a new one from a Red Hat-supplied
+template and boot source, then move the application onto it. Here you do that: a CentOS Stream 9 server in your
+namespace, attached to your VLAN's bridge (like your migrated VM), plus a data disk. Red Hat:
+<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/creating-a-virtual-machine">Creating VMs from templates</a> [verify link] ·
+<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking">Networking for VMs</a> [verify link] ·
+<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/storage">Storage for VMs</a> [verify link].</p>
+<h3 id="1-pick-the-template-then-customize">1 · Pick the template, then Customize<a class="headerlink" href="#1-pick-the-template-then-customize" title="Permanent link">&para;</a></h3>
+<p>Console, site A, <strong>project = your namespace</strong> (<code>$VMNS</code>, top of the page) → <strong>Virtualization → Catalog → Template catalog</strong>
+→ <strong>CentOS Stream 9 VM</strong> (<code>centos-stream9-server-small</code>, ✓ Source available).</p>
+<p><img alt="Template quick create: CentOS Stream 9" src="../.images/01-template-quick-create.png" />
+<em>The template's quick-create panel. Name it <code>&lt;your class ID&gt;-centos9</code>. ⚠ Check </em><em>Project</em><em> says your namespace, not
+<code>default</code> (switch the project at the top of the page first). Click </em><em>Customize VirtualMachine</em><em>, not Quick create, so you
+can change the network and add a disk.</em></p>
+<h3 id="2-put-the-nic-on-your-vlans-bridge">2 · Put the NIC on your VLAN's bridge<a class="headerlink" href="#2-put-the-nic-on-your-vlans-bridge" title="Permanent link">&para;</a></h3>
+<p><strong>Customize → Network interfaces → <code>default</code> → ⋮ Edit.</strong> Change <strong>Network</strong> from <em>Pod networking</em> to your VLAN's bridge
+<strong><code>vmnet&lt;22+N&gt;</code></strong> (e.g. <code>vmnet23</code> for lz1), keep <strong>Model: virtio</strong>, <strong>Save</strong>.</p>
+<p><img alt="Edit network interface: Network vmnet23" src="../.images/01-template-nic-bridge.png" />
+<em>The template's NIC moved from the pod network to the VLAN bridge <code>vmnet23</code>: the VM is now on the same layer-2 network
+as the vSphere VMs and your migrated VM.</em></p>
+<blockquote>
+<p>⚠️ <strong>No DHCP on the lab VLANs</strong> (BL-D12). On the bridge your VM needs a <strong>static address</strong>. Set it in <strong>Customize →
+Scripts → Cloud-init → Network data</strong> (or the YAML below): <code>10.101.&lt;22+N&gt;.&lt;150+NN&gt;/24</code>, gateway <code>10.101.&lt;22+N&gt;.1</code>,
+DNS <code>10.101.6.201, 10.101.6.202</code>. Use <strong>your</strong> <code>NN</code> so no two students collide.</p>
+</blockquote>
+<h3 id="3-add-a-data-disk">3 · Add a data disk<a class="headerlink" href="#3-add-a-data-disk" title="Permanent link">&para;</a></h3>
+<p><strong>Customize → Disks → Add disk → Empty disk (blank)</strong>: name <code>&lt;your class ID&gt;-centos9-data</code>, <strong>10 GiB</strong>, Type <strong>Disk</strong>,
+Interface <strong>VirtIO</strong>, StorageClass this site's class (<code>nfs-csi</code>, or <code>ocs-storagecluster-ceph-rbd-virtualization</code> on an
+ODF site). <strong>Save</strong>.</p>
+<p><img alt="Add disk: 10 GiB data disk" src="../.images/01-template-add-disk.png" />
+<em>The Add disk dialog. On <code>nfs-csi</code>, choose </em><em>Volume Mode: Filesystem</em><em> (marked </em>Highly recommended<em>) and </em><em>Access Mode:
+Shared access (RWX)</em><em>, so the VM can live-migrate (Bonus A); the dialog's defaults (Block, RWO) are flagged
+</em>Not recommended<em> for this class. On ODF, Block + RWX is the recommended pair.</em></p>
+<p>Then <strong>Create VirtualMachine</strong>. It boots in under a minute (the boot source is already on the cluster).</p>
+<h3 id="the-same-from-the-command-line">The same from the command line<a class="headerlink" href="#the-same-from-the-command-line" title="Permanent link">&para;</a></h3>
+<p>Everything in steps 1-3 is one VirtualMachine manifest:
+<strong><a href="../examples/centos9-vm-from-template.yaml"><code>class/examples/centos9-vm-from-template.yaml</code></a></strong>. It was exported from
+the console after the steps above, with the cluster-generated fields and the password removed. Each part is commented
+with the console step it replaces: the root disk cloned from Red Hat's boot source, the blank data disk, the NIC on
+your VLAN's bridge, and cloud-init for your login key and static address.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">NAME</span><span class="o">=</span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">-centos9"</span><span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span><span class="w"> </span><span class="nv">SC</span><span class="o">=</span>nfs-csi<span class="w">       </span><span class="c1"># SC: ocs-storagecluster-ceph-rbd-virtualization on an ODF site</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">VIP</span><span class="o">=</span><span class="s2">"10.101.</span><span class="nv">$VLAN</span><span class="s2">.</span><span class="k">$((</span><span class="m">150</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">10#</span><span class="si">${</span><span class="nv">WINUSER</span><span class="p">#student-</span><span class="si">}</span><span class="k">))</span><span class="s2">"</span><span class="w">   </span><span class="c1"># your static address on the VLAN (no lab DHCP)</span>
+<span class="o">[</span><span class="w"> </span>-f<span class="w"> </span>~/.ssh/id_ed25519.pub<span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-N<span class="w"> </span><span class="s1">''</span><span class="w"> </span>-f<span class="w"> </span>~/.ssh/id_ed25519
+<span class="nb">export</span><span class="w"> </span><span class="nv">SSH_PUBKEY</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>cat<span class="w"> </span>~/.ssh/id_ed25519.pub<span class="k">)</span><span class="s2">"</span>
+envsubst<span class="w"> </span>&lt;<span class="w"> </span>class/examples/centos9-vm-from-template.yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,dv<span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">-data"</span><span class="w">                   </span><span class="c1"># DataVolumes clone/create, then the VM runs</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span>vmi/<span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}'</span><span class="o">=</span>Running<span class="w"> </span>--timeout<span class="o">=</span>10m
+ssh<span class="w"> </span>centos@<span class="s2">"</span><span class="nv">$VIP</span><span class="s2">"</span><span class="w"> </span><span class="s1">'lsblk; ip -4 addr show eth0'</span><span class="w">                                </span><span class="c1"># your key, your address</span>
+</code></pre></div>
+<h3 id="4-use-the-data-disk-and-prove-it">4 · Use the data disk, and prove it<a class="headerlink" href="#4-use-the-data-disk-and-prove-it" title="Permanent link">&para;</a></h3>
+<p>Log in: <code>ssh centos@$VIP</code> if you used the YAML, or the <strong>Console</strong> tab (the user and password the template generated
+are on the VM's <strong>Overview → Details</strong>):</p>
+<div class="highlight"><pre><span></span><code>lsblk<span class="w">                                   </span><span class="c1"># the 10 GiB disk with no partitions is your data disk (vdc from the YAML, vdb from the console)</span>
+<span class="nv">DATA</span><span class="o">=</span>/dev/vdc<span class="w">                           </span><span class="c1"># ← the one lsblk showed</span>
+sudo<span class="w"> </span>mkfs.xfs<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA</span><span class="s2">"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/data<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>mount<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA</span><span class="s2">"</span><span class="w"> </span>/data
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-Is<span class="k">)</span><span class="s2"> bonus-c </span><span class="k">$(</span>hostname<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/data/hello.txt
+ip<span class="w"> </span>-4<span class="w"> </span>addr<span class="w"> </span>show<span class="w">                         </span><span class="c1"># your static address on the VLAN</span>
+ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">10</span>.101.&lt;<span class="m">22</span>+N&gt;.1<span class="w">               </span><span class="c1"># the VLAN gateway answers: you are on the bridge, not the pod network</span>
+</code></pre></div>
+<p>The replatform story: the new server reaches the old one (your migrated Windows VM) directly on the same VLAN. In the
+CentOS VM:</p>
+<div class="highlight"><pre><span></span><code>timeout<span class="w"> </span><span class="m">3</span><span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">'&lt;/dev/tcp/&lt;your VM_IP&gt;/5432'</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"PostgreSQL on the migrated VM: reachable from the new VM"</span>
+</code></pre></div>
+<p>📸 <code>01-template-vm-running</code>: the new VM's Overview, Running, with its VLAN address.</p>
+<p>✍️ <strong>Row 1.C:</strong> the new VM's name, its VLAN address, and that it reached your migrated VM's PostgreSQL port.</p>
+<hr />
+<h2 id="proof-table-demo-1">Proof table: Demo 1<a class="headerlink" href="#proof-table-demo-1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Stage</th>
+<th>Mark id</th>
+<th><code>chain_ok</code></th>
+<th>Fingerprint</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1</td>
+<td>d1-before</td>
+<td></td>
+<td></td>
+<td></td>
+<td>VLAN of <code>vm-network</code>:</td>
+</tr>
+<tr>
+<td>1.2</td>
+<td>d1-before-migration</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1.3</td>
+<td>migration</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>start → end:</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>d1-after-migration</td>
+<td></td>
+<td></td>
+<td></td>
+<td>outage (gap):</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>d1-end</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1.A</td>
+<td>d1-bonusA-after</td>
+<td></td>
+<td></td>
+<td></td>
+<td>node → node, max gap:</td>
+</tr>
+<tr>
+<td>1.B</td>
+<td>d1-bonusB-restored</td>
+<td></td>
+<td></td>
+<td></td>
+<td>last surviving mark:</td>
+</tr>
+<tr>
+<td>1.C</td>
+<td>Bonus C: VM from a template</td>
+<td></td>
+<td></td>
+<td></td>
+<td>new VM address:</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="00-access-and-tools.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Lab 0: Access and tools">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Lab 0: Access and tools
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="01b-vmware-to-both-sites.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1b: VMware → both clusters">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Demo 1b: VMware → both clusters
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Paragon Micro lab · generated from the class source; changes made here are overwritten
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+    
+  </body>
+</html>
