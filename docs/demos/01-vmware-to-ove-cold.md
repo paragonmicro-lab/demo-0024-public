@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inspect · link · migrate · swap the guest tools · prove the data · bonus: live migration and snapshot restore"
-version: 0.6.0
+version: 0.6.1
 date: 2026-10-12
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 0.6.0 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
+> **Version 0.6.1 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
