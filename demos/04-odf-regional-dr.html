@@ -271,6 +271,26 @@
   
   
     <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
         
   
@@ -1180,7 +1200,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1269,12 +1289,14 @@ ID), the instructor's in <code>ovedr-app</code>. The default is <strong>one DRPC
 student namespace <strong>[verify: a discovered-app DRPC with several protectedNamespaces]</strong>. Every Relocate or Failover moves <strong>every</strong> student's VM
 together, so 🧑‍🏫 the driver runs the DR actions, and <strong>each of you verifies your own VM</strong>. Per-VM protection (one
 DRPC per student VM, selecting that VM's disks by label) is possible but not built here <strong>[verify]</strong>.</p>
-<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need the variables (<code>ME N A B VM</code>),
-the two contexts (<code>site-a</code>, <code>site-b</code>) and the helpers (<code>sql mark load verify alive where</code>).</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>, then sign your class terminal in on both sites and to your
+database (<a href="toolkit.html">Toolkit T.1-T.2</a>: <code>oclogin</code> for site A and site B, then <code>dblogin</code>). It already holds the
+variables (<code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$WINUSER</code>) and the commands (<code>sql</code>, <code>mark</code>, <code>load</code>, <code>verify</code>,
+<code>alive</code>, <code>where</code>).</p>
 <p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
 terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
-<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
-knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+<code>sql-client</code> → Terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> (Toolkit T.1-T.2) stay signed in while the pod runs.
 Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
@@ -1286,7 +1308,7 @@ console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Consol
 <sub>🎬 <em>4.0 Point the helpers at your VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-0-point-helpers-at-vm.mp4</code>).</em></sub></p>
 <p>Use <strong>your VM's own address</strong>, <code>$VM_IP</code>, for every connection test. Your VM sits on the VLAN bridge (<code>vmnet&lt;VLAN&gt;</code>),
 which exists with the same name on both sites, so after a Relocate or Failover it comes up with the <strong>same</strong> address on
-the other site. (Only a VM on the pod network gets a new pod IP per site: then refresh it with Lab 0 §0.6 after every
+the other site. (Only a VM on the pod network gets a new pod IP per site: then refresh it with Toolkit T.4 after every
 move.) Your VM's Service (<code>$VM-sql</code>) also follows the VM between sites.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="nv">$VM_IP</span><span class="w">                                  </span><span class="c1"># or: export PGHOST=$VM-sql</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">DRPC</span><span class="o">=</span>ovedr-app<span class="w">                                 </span><span class="c1"># the class's one DRPC (ovedr-app + every student namespace)</span>

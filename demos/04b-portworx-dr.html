@@ -271,6 +271,26 @@
   
   
     <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
         
   
@@ -683,7 +703,7 @@
 
 <h1 id="demo-4b-portworx-asynchronous-dr">Demo 4b: Portworx asynchronous DR<a class="headerlink" href="#demo-4b-portworx-asynchronous-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.1.0 · framework · 2026-10-12</strong> · class/demos/04b-portworx-dr.md</p>
+<p><strong>Version 0.1.1 · framework · 2026-10-12</strong> · class/demos/04b-portworx-dr.md</p>
 <p>🚧 <strong>Framework: to be completed when Portworx is offered on the lab clusters.</strong> This guide has the shape of the
 demo and the stages it will have, but not its final commands. Every stage lists what still needs to be written
 (<strong>TODO</strong>). The few command shapes kept here are unproven <strong>[verify]</strong>. For a class today, use
@@ -702,15 +722,18 @@ compare how Portworx and ODF each run the same disaster-recovery story.</p>
 <li><strong>TODO:</strong> an S3 object store reachable from both sites, for the ClusterPair.</li>
 <li><strong>TODO:</strong> a Portworx StorageClass for VM disks, and the MTV storage map pointing at it.</li>
 <li><strong>TODO:</strong> <code>ovedr-app</code>, <code>sql-client</code> and a Service per student VM on both sites, as in Demo 4.</li>
-<li><strong>TODO:</strong> each student's VM (<code>$VM</code>) running on site A on Portworx volumes, with its own address (<a href="00-access-and-tools.html">Lab 0 §0.6</a>).</li>
+<li><strong>TODO:</strong> each student's VM (<code>$VM</code>) running on site A on Portworx volumes, with its own address (<a href="toolkit.html">Toolkit T.4</a>).</li>
 <li>See the <a href="lab-diagram.html">lab diagram</a>.</li>
 </ul>
 <blockquote>
-<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a> in this terminal (variables, contexts, helpers).</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>, then sign your class terminal in on both sites and to your
+database (<a href="toolkit.html">Toolkit T.1-T.2</a>: <code>oclogin</code> for site A and site B, then <code>dblogin</code>). It already holds the
+variables (<code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$WINUSER</code>) and the commands (<code>sql</code>, <code>mark</code>, <code>load</code>, <code>verify</code>,
+<code>alive</code>, <code>where</code>).</p>
 <p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
 terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
-<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
-knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+<code>sql-client</code> → Terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> (Toolkit T.1-T.2) stay signed in while the pod runs.
 Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
@@ -776,7 +799,7 @@ storkctl<span class="w"> </span>--context<span class="w"> </span>site-a<span cla
 storkctl<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>activate<span class="w"> </span>migration<span class="w"> </span>-n<span class="w"> </span>ovedr-app
 </code></pre></div>
 <ul>
-<li>Checks on site B: refresh your address (Lab 0 §0.6), then <code>verify</code> with <code>chain_ok = t</code>, and read the touch file.</li>
+<li>Checks on site B: refresh your address (Toolkit T.4), then <code>verify</code> with <code>chain_ok = t</code>, and read the touch file.</li>
 </ul>
 <hr />
 <h2 id="4b4-reverse-replication-b-a-then-come-home">4b.4 Reverse replication B → A, then come home<a class="headerlink" href="#4b4-reverse-replication-b-a-then-come-home" title="Permanent link">&para;</a></h2>

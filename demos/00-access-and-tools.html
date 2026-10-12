@@ -16,7 +16,7 @@
         <link rel="prev" href="../index.html">
       
       
-        <link rel="next" href="01-vmware-to-ove-cold.html">
+        <link rel="next" href="toolkit.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Lab 0 — Access and tools (do this first, every session) - VMware to OpenShift Virtualization: student guides</title>
+        <title>Lab 0 — Access and tools (5 minutes) - VMware to OpenShift Virtualization: student guides</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lab 0 — Access and tools (do this first, every session)
+              Lab 0 — Access and tools (5 minutes)
             
           </span>
         </div>
@@ -297,82 +297,46 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-you-will-learn" class="md-nav__link">
+  <a href="#01-sign-in-to-vcenter-and-note-your-vms-address" class="md-nav__link">
     <span class="md-ellipsis">
-      What you will learn
+      0.1 Sign in to vCenter, and note your VM's address
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+  <a href="#02-sign-in-to-both-openshift-consoles" class="md-nav__link">
     <span class="md-ellipsis">
-      How the lab is set up for this demo
+      0.2 Sign in to both OpenShift consoles
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#00-your-login" class="md-nav__link">
+  <a href="#03-open-a-command-line" class="md-nav__link">
     <span class="md-ellipsis">
-      0.0 Your login
+      0.3 Open a command line
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#01-your-booking-card" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.1 Your booking card
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#02-log-in-to-vcenter" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.2 Log in to vCenter
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#03-log-in-to-both-openshift-clusters" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.3 Log in to both OpenShift clusters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.3 Log in to both OpenShift clusters">
+    <nav class="md-nav" aria-label="0.3 Open a command line">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#web-console-both-sites" class="md-nav__link">
+  <a href="#option-1-oc-on-your-own-computer-outside-this-class" class="md-nav__link">
     <span class="md-ellipsis">
-      Web console (both sites)
+      Option 1: oc on your own computer (outside this class)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#your-browser-terminal" class="md-nav__link">
+  <a href="#option-2-a-command-line-inside-openshift-the-class-way" class="md-nav__link">
     <span class="md-ellipsis">
-      Your browser terminal
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sign-your-terminals-oc-in-for-both-sites" class="md-nav__link">
-    <span class="md-ellipsis">
-      Sign your terminal's oc in, for both sites
+      Option 2: a command line inside OpenShift (the class way)
     </span>
   </a>
   
@@ -384,135 +348,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#04-log-in-to-your-windows-vm" class="md-nav__link">
+  <a href="#04-test-the-cluster-then-your-vms-database" class="md-nav__link">
     <span class="md-ellipsis">
-      0.4 Log in to your Windows VM
+      0.4 Test: the cluster, then your VM's database
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="0.4 Log in to your Windows VM">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-file-in-the-vm" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your file in the VM
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#05-the-data-integrity-toolkit" class="md-nav__link">
+  <a href="#done" class="md-nav__link">
     <span class="md-ellipsis">
-      0.5 The data-integrity toolkit
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.5 The data-integrity toolkit">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-class-commands-already-in-your-terminal" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your class commands (already in your terminal)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#try-it-now" class="md-nav__link">
-    <span class="md-ellipsis">
-      Try it now
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#06-optional-give-your-vm-a-pod-network-address-on-openshift" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.6 (Optional) Give your VM a pod-network address on OpenShift
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.6 (Optional) Give your VM a pod-network address on OpenShift">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-stop-the-vm" class="md-nav__link">
-    <span class="md-ellipsis">
-      1. Stop the VM
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-see-the-migrated-interfaces" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. See the migrated interface(s)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-set-the-migrated-nics-link-down-and-add-a-pod-network-nic" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Set the migrated NIC's link down, and add a pod-network NIC
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-start-the-vm-and-confirm-dhcp-inside-windows" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Start the VM and confirm DHCP inside Windows
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-read-your-vms-address-and-use-it-for-every-test" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Read your VM's address, and use it for every test
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-connection-test" class="md-nav__link">
-    <span class="md-ellipsis">
-      6. Connection test
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#proof-table-carry-it-through-every-demo" class="md-nav__link">
-    <span class="md-ellipsis">
-      Proof table (carry it through every demo)
+      Done
     </span>
   </a>
   
@@ -531,6 +378,26 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -729,82 +596,46 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-you-will-learn" class="md-nav__link">
+  <a href="#01-sign-in-to-vcenter-and-note-your-vms-address" class="md-nav__link">
     <span class="md-ellipsis">
-      What you will learn
+      0.1 Sign in to vCenter, and note your VM's address
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+  <a href="#02-sign-in-to-both-openshift-consoles" class="md-nav__link">
     <span class="md-ellipsis">
-      How the lab is set up for this demo
+      0.2 Sign in to both OpenShift consoles
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#00-your-login" class="md-nav__link">
+  <a href="#03-open-a-command-line" class="md-nav__link">
     <span class="md-ellipsis">
-      0.0 Your login
+      0.3 Open a command line
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#01-your-booking-card" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.1 Your booking card
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#02-log-in-to-vcenter" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.2 Log in to vCenter
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#03-log-in-to-both-openshift-clusters" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.3 Log in to both OpenShift clusters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.3 Log in to both OpenShift clusters">
+    <nav class="md-nav" aria-label="0.3 Open a command line">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#web-console-both-sites" class="md-nav__link">
+  <a href="#option-1-oc-on-your-own-computer-outside-this-class" class="md-nav__link">
     <span class="md-ellipsis">
-      Web console (both sites)
+      Option 1: oc on your own computer (outside this class)
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#your-browser-terminal" class="md-nav__link">
+  <a href="#option-2-a-command-line-inside-openshift-the-class-way" class="md-nav__link">
     <span class="md-ellipsis">
-      Your browser terminal
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sign-your-terminals-oc-in-for-both-sites" class="md-nav__link">
-    <span class="md-ellipsis">
-      Sign your terminal's oc in, for both sites
+      Option 2: a command line inside OpenShift (the class way)
     </span>
   </a>
   
@@ -816,135 +647,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#04-log-in-to-your-windows-vm" class="md-nav__link">
+  <a href="#04-test-the-cluster-then-your-vms-database" class="md-nav__link">
     <span class="md-ellipsis">
-      0.4 Log in to your Windows VM
+      0.4 Test: the cluster, then your VM's database
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="0.4 Log in to your Windows VM">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-file-in-the-vm" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your file in the VM
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#05-the-data-integrity-toolkit" class="md-nav__link">
+  <a href="#done" class="md-nav__link">
     <span class="md-ellipsis">
-      0.5 The data-integrity toolkit
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.5 The data-integrity toolkit">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-class-commands-already-in-your-terminal" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your class commands (already in your terminal)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#try-it-now" class="md-nav__link">
-    <span class="md-ellipsis">
-      Try it now
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#06-optional-give-your-vm-a-pod-network-address-on-openshift" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.6 (Optional) Give your VM a pod-network address on OpenShift
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.6 (Optional) Give your VM a pod-network address on OpenShift">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-stop-the-vm" class="md-nav__link">
-    <span class="md-ellipsis">
-      1. Stop the VM
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-see-the-migrated-interfaces" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. See the migrated interface(s)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-set-the-migrated-nics-link-down-and-add-a-pod-network-nic" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Set the migrated NIC's link down, and add a pod-network NIC
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-start-the-vm-and-confirm-dhcp-inside-windows" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Start the VM and confirm DHCP inside Windows
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-read-your-vms-address-and-use-it-for-every-test" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Read your VM's address, and use it for every test
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-connection-test" class="md-nav__link">
-    <span class="md-ellipsis">
-      6. Connection test
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#proof-table-carry-it-through-every-demo" class="md-nav__link">
-    <span class="md-ellipsis">
-      Proof table (carry it through every demo)
+      Done
     </span>
   </a>
   
@@ -976,497 +690,110 @@
 
 <h1 id="lab-0-access-and-tools">Lab 0: Access and tools<a class="headerlink" href="#lab-0-access-and-tools" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.1 · draft · 2026-10-12</strong> · class/demos/00-access-and-tools.md</p>
+<p><strong>Version 1.0.0 · draft · 2026-10-12</strong> · class/demos/00-access-and-tools.md</p>
 </blockquote>
-<h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
-<p>You will sign in to all three platforms of the lab (vSphere and two OpenShift clusters) with one class identity
-and one password, and open your <strong>browser terminal</strong>: a shell in the OpenShift console, already set up for you, so
-you install nothing on your computer. You will find <strong>your own</strong>
-Windows Server + PostgreSQL VM and leave your first mark in it: a line in a file on its disk, and a hash-chained row
-in its database. Every later demo repeats that pattern (inject, change, verify), so by the end of this lab you can
-prove, with one command, that none of your data was lost, changed or reordered.</p>
-<h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
-<p>The CI customization built all of this before you arrived (see the <a href="lab-diagram.html">lab diagram</a>). Each row points
-at the section of <strong><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a></strong> that shows how to build it yourself, from the CLI and in
-the console, with links to the Red Hat documentation.</p>
+<p><strong>About 5 minutes.</strong> You sign in to the lab in your browser, open a command line, and prove you can reach the cluster
+and your own VM's database. One recording covers the whole lab: watch it, then do the same with the steps below.</p>
+<!-- 🎬 video slot 00-access-and-tools -->
+<p><a href="../.images/00-access-and-tools.mp4"><img alt="🎬 Video: Lab 0: Access and tools. Watch it, then do the same in the console" src="../.images/00-access-and-tools.jpg" /></a>
+<sub>🎬 <em>Lab 0: Access and tools: a recording of the whole lab, done in the browser (placeholder until recorded: <code>class/.images/00-access-and-tools.mp4</code>).</em></sub></p>
+<p><strong>You need</strong> your class ID and password from the instructor (one login for everything), and your booking's three
+addresses. The instructor gives you <code>N</code>, <code>A</code> and <code>B</code>; the examples below use <code>1</code>, <code>ocp-lz1</code> and <code>ocp-lz2</code>.</p>
 <table>
 <thead>
 <tr>
-<th>Where</th>
-<th>What is pre-built and installed</th>
-<th>How it was built</th>
+<th>Open in a browser tab</th>
+<th>Address</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>vSphere</strong> <code>vcenter0&lt;N&gt;</code> (demo-vmware)</td>
-<td>Nested ESXi cluster with the shared NFS datastore <code>coresan01_data00</code>, and port group <code>vm-network</code> on VLAN <code>22+N</code>. The instructor's VM <strong><code>win-pg-i01</code></strong> (folder <code>vms/ovedr</code>, address <code>.62</code>), plus <strong>your own full clone <code>win-pg-s&lt;NN&gt;</code></strong> in <strong>your own vCenter folder <code>vms/students/&lt;your class ID&gt;</code></strong> (address <code>.100+NN</code>). Each runs Windows Server 2022 with PostgreSQL 16: WAL on <strong><code>L:</code> (5 GB)</strong>, data on <strong><code>D:</code> (10 GB)</strong>, the 5-second heartbeat writer, and the data-integrity toolkit. Each has a Windows login for every class account. You can power <strong>your</strong> VM on and off, open its console, Edit Settings (CBT in Demo 2) and snapshot it, at your own pace.</td>
-<td><a href="setup-how-the-lab-is-built.html">S.11</a> · <a href="https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-vm-administration/GUID-55238059-912E-411F-A0E9-A7A536972A91.html">vSphere VM administration</a> [verify link]</td>
+<td>vCenter</td>
+<td><code>https://vcenter0&lt;N&gt;.demo.lab-paragonmicro.com/ui</code></td>
 </tr>
 <tr>
-<td><strong>Site A</strong> and <strong>site B</strong> (demo-openshift, <code>ove: cnv</code>)</td>
-<td><strong>The same operators on both clusters:</strong> OpenShift Virtualization, NMState bridges <code>br&lt;VLAN&gt;</code> with NADs <code>vmnet&lt;VLAN&gt;</code> (one per lab VLAN), <strong>ACM</strong> and <strong>cert-manager</strong>. <strong>Storage differs, for now:</strong> site A runs <strong>ODF</strong> (<code>ocs-storagecluster-ceph-rbd-virtualization</code>, on the lab's 4 scratch SSDs) and site B runs <strong>NFS</strong> (<code>nfs-csi</code>): the SSDs fit one ODF cluster today.</td>
-<td><a href="setup-how-the-lab-is-built.html">S.2</a> · <a href="setup-how-the-lab-is-built.html">S.3</a> · <a href="setup-how-the-lab-is-built.html">S.4</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index">NMState</a> [verify link] · <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">ODF</a></td>
-</tr>
-<tr>
-<td><strong>Site A</strong> and <strong>site B</strong> (this demo's customization)</td>
-<td><strong>MTV</strong> on both tooled sites, with its <strong>Migration for Virtualization</strong> console menu, the vSphere and peer-cluster providers and the network and storage maps. <strong>A migration plan for every class VM, staged but not started</strong>: <code>d1-&lt;vm&gt;</code> on site A and <code>d1b-&lt;vm&gt;-to-&lt;B&gt;</code> on site B. <strong>Your own namespace on both sites</strong> (your class ID, you are admin there) where your VM lands, with your <code>Service/&lt;VM&gt;-sql</code>; <strong>your browser terminal</strong>, pod <code>sql-client</code> in your namespace on both sites (<code>psql</code>, the class commands, <code>oc</code>,</td>
-<td></td>
-</tr>
-<tr>
-<td><code>virtctl</code> and <code>jq</code>, preset with your VM and logins); the class namespace <strong><code>ovedr-app</code></strong>. The instructor has their own namespace (the instructor VM lands there) and is cluster-admin. Read access for students to the migration objects, bridges, storage classes and ACM clusters, and the right to run their own plans.</td>
-<td><a href="setup-how-the-lab-is-built.html">S.5</a>-<a href="setup-how-the-lab-is-built.html">S.10</a> · <a href="setup-how-the-lab-is-built.html">S.12</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11</a></td>
-<td></td>
-</tr>
-<tr>
-<td><strong>Accounts</strong> (core-web + core-sso)</td>
-<td>One roster. <code>$ME</code> signs in with <strong>SSO (Entra)</strong> on vCenter and on both OpenShift consoles (one browser sign-in carries across all three), and your browser terminal's <code>oc</code> uses a token from the console, and in Windows (<code>.\student-NN</code>).</td>
-<td><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index">Authentication and authorization</a></td>
-</tr>
-</tbody>
-</table>
-<p><strong>You do yourself:</strong> sign in everywhere, open your browser terminal and sign it in, open your VM's console, and write
-your first file line and first database mark. <strong>Everything happens in your web browser:</strong> nothing to install.</p>
-<blockquote>
-<p><strong>How to read these guides</strong>
-- <code>$ME</code> is your class ID, for example <code>student-03-0024-005</code>. <strong>One password</strong> works everywhere: vCenter, both
-  OpenShift clusters, and the Windows VM.
-- <strong>Each student has their own VM</strong> (<code>win-pg-s&lt;NN&gt;</code>, in your own vCenter folder). You run every step yourself. 🧑‍🏫 marks the few steps only
-  the <strong>instructor</strong> runs (shared infrastructure, or the instructor's demo VM <code>win-pg-i01</code>).
-- ✍️ marks a value to write in your <strong>proof table</strong> (end of each guide).
-- 📸 marks a screenshot slot. The instructor fills these in for the handout.
-- <strong>[verify]</strong> marks a command still being proven in lab testing. If one fails, tell the instructor rather than
-  improvising.</p>
-</blockquote>
-<hr />
-<h2 id="00-your-login">0.0 Your login<a class="headerlink" href="#00-your-login" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-0-credentials-save-them-never-share-them -->
-<p><a href="../.images/00-0-0-credentials-save-them-never-share-them.mp4"><img alt="🎬 Video: 0.0 Your login. Watch it, then do the same in the console" src="../.images/00-0-0-credentials-save-them-never-share-them.jpg" /></a>
-<sub>🎬 <em>0.0 Your login: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-0-credentials-save-them-never-share-them.mp4</code>).</em></sub></p>
-<p>The instructor gives you your <strong>class ID</strong> (<code>$ME</code>) and <strong>password</strong>. That one username and password open everything:</p>
-<table>
-<thead>
-<tr>
-<th>Resource</th>
-<th>Sign in as</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>vSphere Client (vCenter) and both OpenShift consoles</td>
-<td>your class ID, with <strong>SSO (Entra)</strong></td>
-</tr>
-<tr>
-<td>Your Windows VM</td>
-<td><code>.\student-NN</code></td>
-</tr>
-<tr>
-<td>Your VM's PostgreSQL database</td>
-<td><code>student_NN</code></td>
-</tr>
-</tbody>
-</table>
-<p>The next steps open each one in a browser tab and show your access: about 5 minutes.</p>
-<h2 id="01-your-booking-card">0.1 Your booking card<a class="headerlink" href="#01-your-booking-card" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-1-booking-card -->
-<p><a href="../.images/00-0-1-booking-card.mp4"><img alt="🎬 Video: 0.1 Your booking card. Watch it, then do the same in the console" src="../.images/00-0-1-booking-card.jpg" /></a>
-<sub>🎬 <em>0.1 Your booking card: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-1-booking-card.mp4</code>).</em></sub></p>
-<p>The instructor gives you a card with four values. Fill them in here. Every command below uses them.</p>
-<blockquote>
-<p>⚠️ <strong>The landing zones change from booking to booking.</strong> The scheduler picks whichever zones are free, so your
-vSphere zone can be <code>lz1</code>, <code>lz2</code> or <code>lz3</code>, and your two clusters any two of <code>ocp-lz1</code>, <code>ocp-lz2</code>, <code>ocp-lz3</code>, in any
-order (for example vSphere <code>lz2</code> with site A <code>ocp-lz3</code> and site B <code>ocp-lz1</code>). The examples in these guides use
-<code>lz1</code> / <code>ocp-lz1</code> / <code>ocp-lz2</code>. <strong>Always use the values on your own card</strong>, never the examples.</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>Value</th>
-<th>Example</th>
-<th>Yours</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ME</code>: your class ID</td>
-<td><code>student-03-0024-005</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>N</code>: vSphere landing zone number</td>
-<td><code>1</code> (→ <code>vcenter01</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>A</code>: site A cluster</td>
-<td><code>ocp-lz1</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>B</code>: site B cluster</td>
-<td><code>ocp-lz2</code></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>Your VM name and its vSphere address follow from your ID:</p>
-<table>
-<thead>
-<tr>
-<th>You are</th>
-<th>VM (<code>$VM</code>)</th>
-<th>Address on vSphere (<code>$VM_IP</code>)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>student-NN-…</code></td>
-<td><code>win-pg-sNN</code> (e.g. <code>student-03</code> → <code>win-pg-s03</code>)</td>
-<td><code>10.101.&lt;22+N&gt;.&lt;100+NN&gt;</code> (e.g. <code>10.101.23.103</code>)</td>
-</tr>
-<tr>
-<td>the instructor</td>
-<td><code>win-pg-i01</code> (the instructor's VM, in <code>vms/ovedr</code>)</td>
-<td><code>10.101.&lt;22+N&gt;.62</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>[verify: BL-D10, per-student clones and their address plan]</strong></p>
-<p><strong>You don't type these in.</strong> Your browser terminal (§0.3) already holds all of them, and your VM's name and address,
-as <code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$VMNS</code>, <code>$WINUSER</code>, <code>$VC</code> and <code>$DOMAIN</code>. Type <code>ovedr</code> there to see
-them. Check that they match your card.</p>
-<p><strong>Your namespace, <code>$VMNS</code>.</strong> On <strong>both</strong> OpenShift clusters you have your own namespace (project), named exactly your
-class ID in lower case, for example <code>student-03-0024-005</code>. It matches your vCenter folder. You are <strong>admin</strong> there:
-full rights, scoped to that namespace only. Your migration plans land your VM there, and your VM's SQL Service
-(<code>$VM-sql</code>) lives there, and so does <strong>your browser terminal</strong>, pod <code>sql-client</code> (§0.3). Instructors get their own namespace too (their class ID, where <code>win-pg-i01</code> lands), are admin in every student
-namespace, and are <strong>cluster-admin</strong> on both clusters, so they can help with any student, storage or operator issue.</p>
-<hr />
-<h2 id="02-log-in-to-vcenter">0.2 Log in to vCenter<a class="headerlink" href="#02-log-in-to-vcenter" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-2-login-vcenter -->
-<p><a href="../.images/00-0-2-login-vcenter.mp4"><img alt="🎬 Video: 0.2 Log in to vCenter. Watch it, then do the same in the console" src="../.images/00-0-2-login-vcenter.jpg" /></a>
-<sub>🎬 <em>0.2 Log in to vCenter: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-2-login-vcenter.mp4</code>).</em></sub></p>
-<ol>
-<li>Open <code>https://vcenter0&lt;N&gt;.demo.lab-paragonmicro.com/ui</code> and choose <strong>Launch vSphere Client</strong>.</li>
-<li>Choose the <strong>SSO / Entra</strong> sign-in and use your class account. If you already signed in to an OpenShift console in
-   this browser, it carries over.</li>
-<li>Go to <strong>VMs and Templates → datacenter01 → vms → students → <code>&lt;your class ID&gt;</code></strong> and find <strong>your VM</strong>
-   (<code>win-pg-s&lt;NN&gt;</code>). The instructor's <code>win-pg-i01</code> is in <strong>vms → ovedr</strong>.</li>
-</ol>
-<p>📸 <code>00-vcenter-login</code>: the vSphere Client, with your <code>students/&lt;class ID&gt;</code> folder expanded and your VM selected.</p>
-<p><strong>Check:</strong> ✅ you can see your VM, powered on, with three disks (60 GB, 5 GB and 10 GB).</p>
-<hr />
-<h2 id="03-log-in-to-both-openshift-clusters">0.3 Log in to both OpenShift clusters<a class="headerlink" href="#03-log-in-to-both-openshift-clusters" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-3-login-both-openshift-clusters -->
-<p><a href="../.images/00-0-3-login-both-openshift-clusters.mp4"><img alt="🎬 Video: 0.3 Log in to both OpenShift clusters. Watch it, then do the same in the console" src="../.images/00-0-3-login-both-openshift-clusters.jpg" /></a>
-<sub>🎬 <em>0.3 Log in to both OpenShift clusters: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-3-login-both-openshift-clusters.mp4</code>).</em></sub></p>
-<h3 id="web-console-both-sites">Web console (both sites)<a class="headerlink" href="#web-console-both-sites" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Site</th>
-<th>Console</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Site A</td>
+<td>Site A console</td>
 <td><code>https://console-openshift-console.apps.&lt;A&gt;.demo.lab-paragonmicro.com</code></td>
 </tr>
 <tr>
-<td>Site B</td>
+<td>Site B console</td>
 <td><code>https://console-openshift-console.apps.&lt;B&gt;.demo.lab-paragonmicro.com</code></td>
 </tr>
 </tbody>
 </table>
-<p>On the login page choose <strong>Entra (SSO)</strong> and sign in with your class account. Use SSO every time: it is how the
-class signs in, and it puts the same identity and group (<code>demo-students</code>) on both clusters. If SSO is down, tell the
-instructor.</p>
-<p>📸 <code>00-ocp-login</code>: the login page's identity-provider choice, with <strong>Entra (SSO)</strong> highlighted.</p>
-<h3 id="your-browser-terminal">Your browser terminal<a class="headerlink" href="#your-browser-terminal" title="Permanent link">&para;</a></h3>
-<p>Every command in these guides runs in <strong>your browser terminal</strong>: a shell inside your own pod, <code>sql-client</code>, opened
-from the OpenShift console. <strong>Nothing is installed on your computer.</strong> It has <code>psql</code>, the class commands (§0.5), <code>oc</code>,
-<code>virtctl</code> and <code>jq</code>, and it already knows who you are and where your VM is. You have one on each site; use the one on
-site A unless a guide says otherwise.</p>
-<ol>
-<li>In the <strong>site A</strong> console, open your project: <strong>Home → Projects → <code>&lt;your class ID&gt;</code></strong> (or pick it in the
-   <strong>Project</strong> list at the top of any page).</li>
-<li>Go to <strong>Workloads → Pods</strong>, open the pod <strong><code>sql-client-…</code></strong>, and choose the <strong>Terminal</strong> tab.</li>
-<li>Type <code>ovedr</code> and press Enter. It shows your class ID, your VM and its address, which site this terminal is on,
-   and what is signed in yet.</li>
-</ol>
-<blockquote>
-<p>📋 <strong>Copy and paste.</strong> The Terminal tab is a normal browser terminal:
-- <strong>Paste</strong> a command from these guides with <strong>right-click → Paste</strong>, or <strong>Ctrl+Shift+V</strong> (Windows/Linux) /
-  <strong>⌘V</strong> (Mac). The copy button on each command block in the class site copies it for you.
-- <strong>Copy</strong> output by selecting it with the mouse, then <strong>right-click → Copy</strong> (or <strong>Ctrl+Shift+C</strong> / <strong>⌘C</strong>). Plain
-  <strong>Ctrl+C</strong> stops the running command, as in any terminal.
-- Paste one block at a time and wait for the prompt. Most class commands are one short line you can also type.</p>
-<p><strong>[verify: paste and copy shortcuts in the 4.19 console terminal, per browser]</strong></p>
-<p>💡 The terminal <strong>keeps your sign-ins while the pod runs</strong>, even if you close the tab or the browser. If the pod is
-ever restarted, run <code>dblogin</code> and <code>oclogin</code> again. Leaving a long command running? Keep its tab open.</p>
-</blockquote>
-<h3 id="sign-your-terminals-oc-in-for-both-sites">Sign your terminal's <code>oc</code> in, for both sites<a class="headerlink" href="#sign-your-terminals-oc-in-for-both-sites" title="Permanent link">&para;</a></h3>
-<p>With SSO, <code>oc</code> signs in with a <strong>token</strong> from the console, never a password. Do this once per site, in the <strong>same</strong>
-terminal:</p>
-<ol>
-<li>In the <strong>site A</strong> console, open your name (top right) → <strong>Copy login command</strong> → <strong>Display Token</strong>. Copy the line
-   that starts with <code>oc login --token=…</code>.</li>
-<li>In your terminal, type <code>oclogin</code> and a space, paste the line, and press Enter.</li>
-<li>Repeat in the <strong>site B</strong> console: copy its login command and paste it after <code>oclogin</code> in the <strong>same</strong> terminal.</li>
-</ol>
-<div class="highlight"><pre><span></span><code>oclogin<span class="w"> </span>oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span>sha256~…<span class="w"> </span>--server<span class="o">=</span>https://api.ocp-lz1.demo.lab-paragonmicro.com:6443<span class="w">   </span><span class="c1"># ✓ site-a: signed in as …</span>
-oclogin<span class="w"> </span>oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span>sha256~…<span class="w"> </span>--server<span class="o">=</span>https://api.ocp-lz2.demo.lab-paragonmicro.com:6443<span class="w">   </span><span class="c1"># ✓ site-b: signed in as …</span>
-</code></pre></div>
-<p><code>oclogin</code> names each sign-in after its site, so every later command says which cluster it talks to
-(<code>--context site-a</code> / <code>--context site-b</code>), and it sets your namespace as the default. Tokens last 24 hours: if <code>oc</code>
-says <em>Unauthorized</em>, repeat the step for that site.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">   </span><span class="c1"># both print your class ID</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># yours, on site A …</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>project<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># … and on site B</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>auth<span class="w"> </span>can-i<span class="w"> </span><span class="s1">'*'</span><span class="w"> </span><span class="s1">'*'</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">          </span><span class="c1"># yes: admin in your own namespace</span>
-</code></pre></div>
-<p><strong>Check:</strong> ✅ you are signed in on vCenter and both consoles as yourself, your browser terminal is open, and <code>oc whoami</code>
-prints your class ID on both sites.</p>
 <hr />
-<h2 id="04-log-in-to-your-windows-vm">0.4 Log in to your Windows VM<a class="headerlink" href="#04-log-in-to-your-windows-vm" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-4-login-windows-vm -->
-<p><a href="../.images/00-0-4-login-windows-vm.mp4"><img alt="🎬 Video: 0.4 Log in to your Windows VM. Watch it, then do the same in the console" src="../.images/00-0-4-login-windows-vm.jpg" /></a>
-<sub>🎬 <em>0.4 Log in to your Windows VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-4-login-windows-vm.mp4</code>).</em></sub></p>
-<p>Your VM runs Windows Server 2022 with PostgreSQL 16. The WAL (write-ahead log) is on <strong><code>L:</code></strong> (5 GB) and the data is
-on <strong><code>D:</code></strong> (10 GB).</p>
+<h2 id="01-sign-in-to-vcenter-and-note-your-vms-address">0.1 Sign in to vCenter, and note your VM's address<a class="headerlink" href="#01-sign-in-to-vcenter-and-note-your-vms-address" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open the vCenter tab, choose <strong>Launch vSphere Client</strong>, then the <strong>SSO / Entra</strong> sign-in with your class account.</li>
+<li>Go to <strong>VMs and Templates → datacenter01 → vms → students → <code>&lt;your class ID&gt;</code></strong> and select your VM,
+   <strong><code>win-pg-s&lt;NN&gt;</code></strong> (for example <code>student-03</code> → <code>win-pg-s03</code>).</li>
+<li>On its <strong>Summary</strong> tab, find <strong>IP Addresses</strong>. ✍️ <strong>Write it down:</strong> this is your VM's address (for example
+   <code>10.101.23.103</code>). You use it in step 0.4, and your VM keeps it after every move.</li>
+</ol>
+<p>✅ Your VM is powered on, with three disks (60 GB, 5 GB and 10 GB).</p>
+<hr />
+<h2 id="02-sign-in-to-both-openshift-consoles">0.2 Sign in to both OpenShift consoles<a class="headerlink" href="#02-sign-in-to-both-openshift-consoles" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open the <strong>site A</strong> console tab and choose <strong>Entra (SSO)</strong>. Your vCenter sign-in carries over.</li>
+<li>Do the same in the <strong>site B</strong> console tab.</li>
+<li>In each, <strong>Home → Projects</strong> shows your own project, named your class ID. You are admin there.</li>
+</ol>
+<hr />
+<h2 id="03-open-a-command-line">0.3 Open a command line<a class="headerlink" href="#03-open-a-command-line" title="Permanent link">&para;</a></h2>
+<p>The command line is <code>oc</code>, signed in <strong>as you</strong> with a token you copy from the console:</p>
+<ol>
+<li>In the <strong>site A</strong> console, open your name (top right) → <strong>Copy login command</strong> → <strong>Display Token</strong>.</li>
+<li>Copy the line that starts with <code>oc login --token=… --server=…</code>.</li>
+</ol>
+<p>You can run it in either of two places.</p>
+<h3 id="option-1-oc-on-your-own-computer-outside-this-class">Option 1: <code>oc</code> on your own computer (outside this class)<a class="headerlink" href="#option-1-oc-on-your-own-computer-outside-this-class" title="Permanent link">&para;</a></h3>
+<p>If your company allows it, install the <code>oc</code> client yourself: <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc#cli-getting-started">Getting started with the OpenShift
+CLI</a>
+(the console's <strong>? → Command Line Tools</strong> has the download). <strong>Installing it is outside this class's scope:</strong> the
+class needs only your browser. Paste the copied line into your terminal and press Enter.</p>
+<h3 id="option-2-a-command-line-inside-openshift-the-class-way">Option 2: a command line inside OpenShift (the class way)<a class="headerlink" href="#option-2-a-command-line-inside-openshift-the-class-way" title="Permanent link">&para;</a></h3>
+<p>Nothing to install. Use one of:</p>
 <ul>
-<li><strong>While it is on vSphere:</strong> in vCenter, select your VM and choose <strong>Launch Web Console</strong>.</li>
-<li><strong>Once it is on OpenShift:</strong> in the console, go to <strong>Virtualization → VirtualMachines → your VM → Console</strong>.</li>
+<li><strong>The console's Web Terminal:</strong> the <strong><code>&gt;_</code></strong> icon at the top right of the console opens a terminal already signed
+  in as you. Every lab cluster includes it. If you don't see <code>&gt;_</code>, use your class terminal.
+  <strong>[verify: <code>&gt;_</code> for a student account on a booking]</strong></li>
+<li><strong>Your class terminal:</strong> in your project, <strong>Workloads → Pods → <code>sql-client-…</code> → Terminal</strong>. It has <code>oc</code> and
+  <code>psql</code> ready. Sign its <code>oc</code> in: type <code>oclogin</code> and a space, paste the copied line, and press Enter.</li>
 </ul>
-<p>Send <strong>Ctrl-Alt-Del</strong> from the console toolbar, then log in as <strong><code>.\&lt;WINUSER&gt;</code></strong> (for example <code>.\student-03</code>)
-with your class password <strong>[verify: BL-D08, student Windows accounts]</strong>.</p>
-<h3 id="your-file-in-the-vm">Your file in the VM<a class="headerlink" href="#your-file-in-the-vm" title="Permanent link">&para;</a></h3>
-<p>Open <strong>PowerShell</strong> in the VM and leave your mark on disk, not just in the database:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">$f</span> <span class="p">=</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
-<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="p">(</span><span class="nb">Split-Path</span> <span class="nv">$f</span><span class="p">)</span> <span class="p">|</span> <span class="nb">Out-Null</span>
-<span class="nb">Add-Content</span> <span class="nv">$f</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  lab0-hello"</span>
-<span class="nb">Get-Content</span> <span class="nv">$f</span>
-</code></pre></div>
-<p>Every demo adds a line to this file at each stage. Its last step reads the file back on the target platform.</p>
-<p>📸 <code>00-windows-touch</code>: PowerShell showing <code>Get-Content</code> of your file.</p>
-<hr />
-<h2 id="05-the-data-integrity-toolkit">0.5 The data-integrity toolkit<a class="headerlink" href="#05-the-data-integrity-toolkit" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-5-data-integrity-toolkit -->
-<p><a href="../.images/00-0-5-data-integrity-toolkit.mp4"><img alt="🎬 Video: 0.5 The data-integrity toolkit. Watch it, then do the same in the console" src="../.images/00-0-5-data-integrity-toolkit.jpg" /></a>
-<sub>🎬 <em>0.5 The data-integrity toolkit: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-5-data-integrity-toolkit.mp4</code>).</em></sub></p>
-<p>The database <code>bcdr</code> has two tables you will use:</p>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>Written by</th>
-<th>What it proves</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>heartbeat</code></td>
-<td>a writer in the VM, every 5 s</td>
-<td>the VM is alive. Gaps in it are outages.</td>
-</tr>
-<tr>
-<td><code>marks</code></td>
-<td><strong>you</strong>, at every stage</td>
-<td>your data survived every move, unchanged and in order</td>
-</tr>
-</tbody>
-</table>
-<p>Each of your <code>marks</code> rows carries a SHA-256 hash of the previous row. If a row is lost, changed or reordered,
-<code>ovedr_verify</code> reports <code>chain_ok = f</code> and names the first broken row.</p>
-<h3 id="your-class-commands-already-in-your-terminal">Your class commands (already in your terminal)<a class="headerlink" href="#your-class-commands-already-in-your-terminal" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>What it does</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>dblogin</code></td>
-<td>sign in to <strong>your VM's</strong> database as you (<code>student_NN</code>), with your class password. Once per pod</td>
-</tr>
-<tr>
-<td><code>mark &lt;label&gt; [note]</code></td>
-<td><strong>inject</strong> one hash-chained row; note its <code>id</code>. Example: <code>mark d1-before</code></td>
-</tr>
-<tr>
-<td><code>load &lt;label&gt; [rows]</code></td>
-<td>inject a burst of rows (default 100)</td>
-</tr>
-<tr>
-<td><code>verify</code></td>
-<td><strong>read and prove</strong> your rows: <code>chain_ok = t</code>, and the fingerprint of all marks</td>
-</tr>
-<tr>
-<td><code>alive</code></td>
-<td>is your VM writing? <code>staleness</code> under 10 s = yes</td>
-</tr>
-<tr>
-<td><code>sql [psql options]</code></td>
-<td><code>psql</code> to your VM's database, e.g. <code>sql -c "SELECT count(*) FROM marks"</code></td>
-</tr>
-<tr>
-<td><code>where</code></td>
-<td>which site and node runs your VM right now</td>
-</tr>
-<tr>
-<td><code>ovedr</code></td>
-<td>who and where you are, and what is signed in</td>
-</tr>
-</tbody>
-</table>
-<p>They talk to your VM at its own address, <code>$VM_IP</code>, which it keeps on vSphere, site A and site B (the staged plans
-use a bridge network map). So they work from either site's terminal, before and after every move. If you ever move
-your VM onto the pod network yourself, §0.6 shows how to point them at its new address (<code>export PGHOST=…</code>).</p>
-<div class="highlight"><pre><span></span><code>dblogin<span class="w">                          </span><span class="c1"># Password for student_NN: your class password (it is not shown as you type)</span>
-</code></pre></div>
 <blockquote>
-<p><code>ovedr_checksum</code> fingerprints <strong>every</strong> mark in your VM's database. On your own VM that is your rows only. On the
-instructor's <code>win-pg-i01</code> it covers everyone who marked it.</p>
-</blockquote>
-<h3 id="try-it-now">Try it now<a class="headerlink" href="#try-it-now" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>alive<span class="w">                            </span><span class="c1"># staleness under 10 s: your VM is writing</span>
-mark<span class="w"> </span>lab0-hello<span class="w">                  </span><span class="c1"># your first row: note its id and sha</span>
-verify<span class="w">                           </span><span class="c1"># chain_ok = t, marks = 1</span>
-</code></pre></div>
-<p>📸 <code>00-verify</code>: the <code>verify</code> output with <code>chain_ok = t</code>.</p>
-<p>✍️ <strong>Proof table, row 0:</strong> your first mark's <code>id</code>, and the <code>fingerprint</code> from <code>ovedr_checksum</code>.</p>
-<blockquote>
-<p>💡 <strong>Why a hash chain?</strong> A count can't tell you that row 7 was replaced, or that rows 7 and 8 swapped places.
-A chain can. A migration or a failover that loses, rewrites or reorders even one of your rows shows up here
-as <code>chain_ok = f</code>.</p>
+<p>📋 <strong>Copy and paste:</strong> paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V, ⌘V on a Mac); copy by selecting the text,
+then <strong>right-click → Copy</strong>. <strong>[verify: per browser]</strong></p>
 </blockquote>
 <hr />
-<h2 id="06-optional-give-your-vm-a-pod-network-address-on-openshift">0.6 (Optional) Give your VM a pod-network address on OpenShift<a class="headerlink" href="#06-optional-give-your-vm-a-pod-network-address-on-openshift" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 00-0-6-optional-give-vm-pod-network-address -->
-<p><a href="../.images/00-0-6-optional-give-vm-pod-network-address.mp4"><img alt="🎬 Video: 0.6 (Optional) Give your VM a pod-network address on OpenShift. Watch it, then do the same in the console" src="../.images/00-0-6-optional-give-vm-pod-network-address.jpg" /></a>
-<sub>🎬 <em>0.6 (Optional) Give your VM a pod-network address on OpenShift: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/00-0-6-optional-give-vm-pod-network-address.mp4</code>).</em></sub></p>
-<p><strong>You usually skip this.</strong> Every class VM has its <strong>own</strong> static address (instructor <code>.62</code>, students <code>.100+NN</code>), and
-the staged migration plans use the <strong>bridge</strong> network map (<code>ovedr-vcenter0&lt;N&gt;-net-bridge</code>), which puts the migrated
-NIC on the <strong>same VLAN</strong>. So after a move your VM answers at the same <code>$VM_IP</code> as before, and every helper keeps
-working.</p>
-<p><strong>Do this step only when your VM landed on the pod network:</strong> a plan you built yourself with the pod map
-(<code>ovedr-vcenter0&lt;N&gt;-net</code>), or a site without the bridge. A Windows static address on a pod-network NIC answers nothing,
-so you swap it for a pod NIC that gets its address by DHCP, and then test over that address.</p>
-<blockquote>
-<p>ℹ️ <strong>Demo-only, not a production pattern.</strong> Swapping the NIC is a lab workaround for a VM that landed on the pod
-network. In a real migration the VM keeps its own NIC, MAC and address (a bridge map onto the same VLAN, as the staged
-plans do, or a planned re-IP), and nobody swaps NICs. Proper per-VM addressing (DHCP on the lab VLANs) is on the
-backlog (BL-D12). Background: <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking">Virtual machine networking</a> [verify link].</p>
-</blockquote>
-<p><code>CTX</code> is the site your VM is now on (<code>site-a</code> after demos 1-2, <code>site-b</code> after demo 3).</p>
-<h3 id="1-stop-the-vm">1. Stop the VM<a class="headerlink" href="#1-stop-the-vm" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="nv">CTX</span><span class="o">=</span>site-a
-virtctl<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>stop<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="o">||</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>patch<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s1">'{"spec":{"runStrategy":"Halted"}}'</span>
-oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">            </span><span class="c1"># Ctrl-C at Stopped</span>
+<h2 id="04-test-the-cluster-then-your-vms-database">0.4 Test: the cluster, then your VM's database<a class="headerlink" href="#04-test-the-cluster-then-your-vms-database" title="Permanent link">&para;</a></h2>
+<p><strong>The cluster:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>whoami<span class="w">            </span><span class="c1"># your class ID</span>
+oc<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">         </span><span class="c1"># the cluster's nodes, all Ready</span>
 </code></pre></div>
-<h3 id="2-see-the-migrated-interfaces">2. See the migrated interface(s)<a class="headerlink" href="#2-see-the-migrated-interfaces" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.spec.template.spec.domain.devices.interfaces as $i | .spec.template.spec.networks as $n</span>
-<span class="s1">           | range(0; $i|length) as $k | "\($k)  \($i[$k].name)  mac=\($i[$k].macAddress // "-")  net=\($n | map(select(.name == $i[$k].name))[0] | (.pod // .multus) | tostring)"'</span>
+<p><strong>Your VM's database</strong>, PostgreSQL inside your Windows VM, as <code>student_NN</code> (your number, with an underscore) at the
+address you wrote down in 0.1. In <strong>your class terminal</strong>, <code>psql</code> is already there:</p>
+<div class="highlight"><pre><span></span><code>psql<span class="w"> </span>-h<span class="w"> </span>&lt;your<span class="w"> </span>VM<span class="w"> </span>address&gt;<span class="w"> </span>-U<span class="w"> </span>student_NN<span class="w"> </span>-d<span class="w"> </span>bcdr
 </code></pre></div>
-<p>✍️ The index (<code>0</code>, <code>1</code>, …) of the migrated NIC: ____</p>
-<h3 id="3-set-the-migrated-nics-link-down-and-add-a-pod-network-nic">3. Set the migrated NIC's link down, and add a pod-network NIC<a class="headerlink" href="#3-set-the-migrated-nics-link-down-and-add-a-pod-network-nic" title="Permanent link">&para;</a></h3>
-<p><strong>Console:</strong> <strong>VM → Configuration → Network → ⋮ on the migrated NIC → Set link down</strong> (or <em>Delete</em>), then
-<strong>Add network interface</strong>: network <strong>Pod networking</strong>, type <strong>Masquerade</strong>.</p>
-<p><strong>CLI:</strong></p>
-<div class="highlight"><pre><span></span><code><span class="nv">IDX</span><span class="o">=</span><span class="m">0</span><span class="w">                                    </span><span class="c1"># ← the index you wrote down</span>
-oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>patch<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>json<span class="w"> </span>-p<span class="w"> </span><span class="s2">"[</span>
-<span class="s2"> {\"op\":\"add\",\"path\":\"/spec/template/spec/domain/devices/interfaces/</span><span class="nv">$IDX</span><span class="s2">/state\",\"value\":\"down\"},</span>
-<span class="s2"> {\"op\":\"add\",\"path\":\"/spec/template/spec/domain/devices/interfaces/-\",</span>
-<span class="s2">  \"value\":{\"name\":\"default\",\"masquerade\":{},\"model\":\"virtio\"}},</span>
-<span class="s2"> {\"op\":\"add\",\"path\":\"/spec/template/spec/networks/-\",</span>
-<span class="s2">  \"value\":{\"name\":\"default\",\"pod\":{}}}]"</span>
+<p>From <code>oc</code> anywhere else (your computer, or the Web Terminal), run the same <code>psql</code> inside your class terminal:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>&lt;your<span class="w"> </span>class<span class="w"> </span>ID&gt;<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span>&lt;your<span class="w"> </span>VM<span class="w"> </span>address&gt;<span class="w"> </span>-U<span class="w"> </span>student_NN<span class="w"> </span>-d<span class="w"> </span>bcdr
 </code></pre></div>
-<p><strong>[verify: interface <code>state: down</code> (link state) on OpenShift Virtualization 4.19]</strong>. If your cluster rejects
-<code>state</code>, remove the migrated NIC instead:
-<code>oc --context "$CTX" -n "$VMNS" patch vm "$VM" --type json -p "[{\"op\":\"remove\",\"path\":\"/spec/template/spec/domain/devices/interfaces/$IDX\"}]"</code>,
-then remove the matching entry under <code>/spec/template/spec/networks/</code> the same way.</p>
-<blockquote>
-<p>If the migrated NIC is already named <code>default</code> on the pod network (the <code>…-net</code> map), it is the same kind of NIC
-and is already unique per VM. Skip step 3 and go to step 4.</p>
-</blockquote>
-<h3 id="4-start-the-vm-and-confirm-dhcp-inside-windows">4. Start the VM and confirm DHCP inside Windows<a class="headerlink" href="#4-start-the-vm-and-confirm-dhcp-inside-windows" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>start<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="o">||</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>patch<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s1">'{"spec":{"runStrategy":"Always"}}'</span>
-oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">           </span><span class="c1"># Ctrl-C at Running</span>
+<p>Enter your class password. At the <code>bcdr=&gt;</code> prompt:</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">current_user</span><span class="p">,</span><span class="w"> </span><span class="n">inet_server_addr</span><span class="p">()</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">vm_address</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">();</span><span class="w">   </span><span class="c1">-- student_NN, your VM's address</span>
+<span class="err">\</span><span class="n">q</span>
 </code></pre></div>
-<p>In the VM console (<code>.\&lt;WINUSER&gt;</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Get-NetAdapter</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span><span class="p">,</span> <span class="n">MacAddress</span><span class="p">,</span> <span class="n">LinkSpeed</span>
-<span class="n">ipconfig</span> <span class="p">/</span><span class="n">all</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="s1">'Description|Physical|DHCP Enabled|IPv4|Default Gateway'</span>
-</code></pre></div>
-<p>✅ The new adapter shows <strong>DHCP Enabled: Yes</strong>, and an address from OpenShift's masquerade network (the guest
-side is <code>10.0.2.2</code> <strong>[verify]</strong>).</p>
-<blockquote>
-<p>The old static IP was configured on the <em>old</em> adapter, so the new adapter starts clean on DHCP. If Windows has
-pinned the static IP to the new adapter, reset it:
-<code>Set-NetIPInterface -InterfaceAlias '&lt;new adapter&gt;' -Dhcp Enabled; ipconfig /renew</code>.</p>
-</blockquote>
-<h3 id="5-read-your-vms-address-and-use-it-for-every-test">5. Read your VM's address, and use it for every test<a class="headerlink" href="#5-read-your-vms-address-and-use-it-for-every-test" title="Permanent link">&para;</a></h3>
-<p>The guest's address is private to the VM. From outside, your VM is reached at its <strong>pod IP</strong>:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span><span class="s2">"</span><span class="nv">$CTX</span><span class="s2">"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.interfaces[?(@.name=="default")].ipAddress}'</span><span class="k">)</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="nv">$PGHOST</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># your VM's own address on $CTX</span>
-</code></pre></div>
-<p>The alternative is your VM's <strong>Service</strong>, <code>Service/$VM-sql</code>. It selects <code>vm.kubevirt.io/name=$VM</code> on port 5432, so
-it follows your VM whatever its IP: <code>export PGHOST=$VM-sql</code>.</p>
-<h3 id="6-connection-test">6. Connection test<a class="headerlink" href="#6-connection-test" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="nv">$PGHOST</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span><span class="w">          </span><span class="c1"># accepting connections</span>
-alive
-mark<span class="w"> </span>own-address<span class="w"> </span><span class="s2">"ip=</span><span class="nv">$PGHOST</span><span class="s2">"</span>
-verify
-</code></pre></div>
-<p>✅ <code>pg_isready</code> answers <em>accepting connections</em>, the heartbeat is fresh, and <code>chain_ok = t</code>.</p>
-<blockquote>
-<p>Windows has no SSH server by default, so the PostgreSQL connection above <strong>is</strong> the connection test. To work inside
-Windows, use the VM's <strong>Console</strong> tab in the OpenShift console.</p>
-</blockquote>
-<p>📸 <code>00-own-address</code>: <code>ipconfig</code> on the new adapter beside the <code>PGHOST</code> echo.</p>
+<p>✅ <code>oc get nodes</code> lists the nodes, and PostgreSQL answers as <code>student_NN</code> from your VM's address.</p>
 <hr />
-<h2 id="proof-table-carry-it-through-every-demo">Proof table (carry it through every demo)<a class="headerlink" href="#proof-table-carry-it-through-every-demo" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Row</th>
-<th>Stage</th>
-<th>Your last mark id</th>
-<th><code>chain_ok</code></th>
-<th>Fingerprint</th>
-<th>Notes (outage, bytes, time)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>lab0-hello</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<hr />
+<h2 id="done">Done<a class="headerlink" href="#done" title="Permanent link">&para;</a></h2>
+<p>You are signed in to vCenter and both OpenShift clusters, you have a command line, and you reached your own VM's
+database. <strong>Go back to the <a href="../index.html">Student Guide</a></strong> and continue with the next module, Demo 1.</p>
+<p>Every demo uses the class commands that write and prove your data (<code>mark</code>, <code>verify</code>, <code>alive</code>): they are in the
+<a href="toolkit.html">Toolkit</a>, which each demo points to when you need it.</p>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
-<p>Thank you for setting up your lab. The hardest part of every later demo, knowing for certain that your data
-survived, is now one command. To go deeper on the platform you'll use today:</p>
 <ul>
-<li><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a>: every pre-built piece, from the CLI and in the console</li>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization documentation (4.19)</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc">OpenShift CLI (<code>oc</code>)</a></li>
 <li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index">OpenShift authentication and authorization (4.19)</a></li>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc">OpenShift CLI (<code>oc</code>)</a>, the CLI your browser terminal runs [verify link]</li>
-<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></li>
-<li><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization">Red Hat OpenShift Virtualization (product overview)</a></li>
-<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization documentation (4.19)</a></li>
 <li><a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs (free, in the browser)</a></li>
-<li><a href="https://developers.redhat.com/products/openshift/overview">Red Hat Developer: OpenShift</a></li>
 </ul>
 
 
@@ -1523,13 +850,13 @@ survived, is now one command. To go deeper on the platform you'll use today:</p>
         
         
           
-          <a href="01-vmware-to-ove-cold.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1: VMware → OpenShift, cold">
+          <a href="toolkit.html" class="md-footer__link md-footer__link--next" aria-label="Next: Toolkit: your terminal and data">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Demo 1: VMware → OpenShift, cold
+                Toolkit: your terminal and data
               </div>
             </div>
             <div class="md-footer__button md-icon">

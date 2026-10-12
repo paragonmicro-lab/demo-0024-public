@@ -271,6 +271,26 @@
   
   
     <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
         
   
@@ -952,7 +972,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -993,7 +1013,7 @@ ask you to do the <strong>last step</strong> yourself (start your migration). Th
 </tr>
 </tbody>
 </table>
-<p>Picture: <a href="lab-diagram.html">lab diagram</a>. Every command below uses the Lab 0 variables (<code>$A</code>, <code>$B</code>, <code>$N</code>, <code>$VM</code>, <code>$DOMAIN</code>)
+<p>Picture: <a href="lab-diagram.html">lab diagram</a>. Every command below uses your class terminal's variables (<code>$A</code>, <code>$B</code>, <code>$N</code>, <code>$VM</code>, <code>$DOMAIN</code>; <a href="toolkit.html">Toolkit T.1</a>)
 and the contexts <code>site-a</code> / <code>site-b</code>. Most "do it yourself" steps need <strong>cluster-admin</strong>. In class you only <strong>read</strong>
 these objects; the instructor (or a cluster you own) can run the build steps.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span><span class="w">                 </span><span class="c1"># the vSphere zone's VLAN: also the bridge your migrated VM can join</span>
@@ -1536,7 +1556,7 @@ and VMware guest operations:
   heartbeat, the toolkit, logins, the address, WinRM).
 - On the shared datastore every VM's folder carries its zone (<code>ovedr-&lt;zone&gt;-&lt;name&gt;</code>), so classes on different zones never collide.</p>
 <p><strong>Check:</strong></p>
-<div class="highlight"><pre><span></span><code>alive<span class="w"> </span>site-a<span class="p">;</span><span class="w"> </span>verify<span class="w"> </span>site-a<span class="w">                                  </span><span class="c1"># Lab 0 helpers: your VM answers and your chain is intact</span>
+<div class="highlight"><pre><span></span><code>alive<span class="p">;</span><span class="w"> </span>verify<span class="w">                                                </span><span class="c1"># toolkit commands: your VM answers and your chain is intact</span>
 </code></pre></div>
 <p>In vCenter: <strong>VMs and Templates → datacenter01 → vm → vms → students → <your ID> → <code>win-pg-s&lt;NN&gt;</code></strong> → Summary,
 Configure → Hardware (three disks). 📸 <code>S-vm-in-student-folder</code> · 📸 <code>S-vm-disks</code></p>

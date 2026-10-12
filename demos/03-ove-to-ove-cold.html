@@ -271,6 +271,26 @@
   
   
     <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
         
   
@@ -1096,7 +1116,7 @@
 
 <h1 id="demo-3-ove-ove-cold-migration">Demo 3: OVE → OVE cold migration<a class="headerlink" href="#demo-3-ove-ove-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/03-ove-to-ove-cold.md</p>
+<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/03-ove-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In this demo you move your VM between two OpenShift clusters: from site A to site B. You will see how Advanced
@@ -1164,14 +1184,16 @@ and <a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</
 yet.</p>
 <p><strong>What you do yourself:</strong> review ACM and the MTV objects, stop your VM, build and start your plan on site B (this
 one is not staged: you build it, then the last step is to start it), and verify. Your VM keeps its own address on
-site B too, so Lab 0 §0.6 is not needed.</p>
+site B too, so Toolkit T.4 is not needed.</p>
 <blockquote>
-<p><strong>Before you start:</strong> complete <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need <code>$ME</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>,
-both contexts (<code>site-a</code>, <code>site-b</code>) and the helpers (<code>sql</code>, <code>mark</code>, <code>verify</code>, <code>alive</code>, <code>where</code>).</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>, then sign your class terminal in on both sites and to your
+database (<a href="toolkit.html">Toolkit T.1-T.2</a>: <code>oclogin</code> for site A and site B, then <code>dblogin</code>). It already holds the
+variables (<code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$WINUSER</code>) and the commands (<code>sql</code>, <code>mark</code>, <code>load</code>, <code>verify</code>,
+<code>alive</code>, <code>where</code>).</p>
 <p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
 terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
-<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
-knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+<code>sql-client</code> → Terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> (Toolkit T.1-T.2) stay signed in while the pod runs.
 Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
@@ -1189,7 +1211,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 </code></pre></div>
 <h3 id="your-vms-address-on-site-a">Your VM's address on site A<a class="headerlink" href="#your-vms-address-on-site-a" title="Permanent link">&para;</a></h3>
 <p>The staged plan put your VM on the VLAN bridge, so it still answers at <strong>its own <code>$VM_IP</code></strong>. (Only if you moved it
-with the pod map in Demo 1 and followed Lab 0 §0.6: keep that <code>PGHOST</code>.)</p>
+with the pod map in Demo 1 and followed Toolkit T.4: keep that <code>PGHOST</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span>
 alive<span class="w">                                          </span><span class="c1"># staleness &lt; 10 s</span>
 verify<span class="w">                                         </span><span class="c1"># chain_ok = t, carried over from demos 1/2</span>
@@ -1500,7 +1522,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <h3 id="your-vms-address-on-site-b">Your VM's address on site B<a class="headerlink" href="#your-vms-address-on-site-b" title="Permanent link">&para;</a></h3>
 <p>The OVE → OVE network map sends each VLAN NAD on site A to the <strong>same-named NAD</strong> on site B, so your VM's NIC stays on
 your VLAN's bridge with <strong>the same static address <code>$VM_IP</code></strong>. (Only a VM that was on the pod network gets a new pod IP
-on site B: then re-read it as in Lab 0 §0.6, step 5, with <code>CTX=site-b</code>.)</p>
+on site B: then re-read it as in Toolkit T.4, step 5, with <code>CTX=site-b</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nv">CTX</span><span class="o">=</span>site-b
 <span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span>
 pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
@@ -1528,7 +1550,7 @@ verify
 <h3 id="your-file-on-the-new-cluster">Your file, on the new cluster<a class="headerlink" href="#your-file-on-the-new-cluster" title="Permanent link">&para;</a></h3>
 <p>Site B console: <strong>Virtualization → VirtualMachines → <code>&lt;VM&gt;</code> → Console</strong>, log in as <code>.\&lt;WINUSER&gt;</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d3-after on site B"</span>
-<span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>          <span class="c"># lab0 … d3-before … d3-after: every line present</span>
+<span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>          <span class="c"># d1 … d3-before … d3-after: every line present</span>
 </code></pre></div>
 <p>📸 <code>03-after-site-b</code> — the site B console, with your file showing the <code>d3-before</code> and <code>d3-after</code> lines.</p>
 <p>✅ Every line you wrote on vSphere (Demo 1) and on site A is still there, on site B, on a different storage platform.</p>

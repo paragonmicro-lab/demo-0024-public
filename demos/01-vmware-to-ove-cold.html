@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01-vmware-to-ove-cold.html">
       
       
-        <link rel="prev" href="00-access-and-tools.html">
+        <link rel="prev" href="toolkit.html">
       
       
         <link rel="next" href="01b-vmware-to-both-sites.html">
@@ -268,6 +268,26 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -335,9 +355,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-login-recap-2-min" class="md-nav__link">
+  <a href="#11-sign-your-class-terminal-in-2-min" class="md-nav__link">
     <span class="md-ellipsis">
-      1.1 Login recap (2 min)
+      1.1 Sign your class terminal in (2 min)
     </span>
   </a>
   
@@ -1008,9 +1028,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-login-recap-2-min" class="md-nav__link">
+  <a href="#11-sign-your-class-terminal-in-2-min" class="md-nav__link">
     <span class="md-ellipsis">
-      1.1 Login recap (2 min)
+      1.1 Sign your class terminal in (2 min)
     </span>
   </a>
   
@@ -1498,7 +1518,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 0.6.0 · draft · 2026-10-12</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will take your own Windows Server + PostgreSQL VM off VMware vSphere and rehost it on OpenShift Virtualization
@@ -1508,7 +1528,7 @@ classes, and VMware Tools gives way to virtio drivers and the QEMU guest agent. 
 from a Red Hat template instead of rehosting. At every stage you write data and then prove that it arrived intact.</p>
 <h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
 <p>The CI customization pre-built everything below (see the <a href="lab-diagram.html">lab diagram</a> and
-<a href="00-access-and-tools.html#how-the-lab-is-set-up-for-this-demo">Lab 0</a>). <strong>Every staged piece has a "how it was built"
+<a href="toolkit.html">Toolkit</a>). <strong>Every staged piece has a "how it was built"
 section in <a href="setup-how-the-lab-is-built.html">Lab S</a></strong>, with the CLI and console steps to build it yourself and links to the Red Hat docs.</p>
 <table>
 <thead>
@@ -1541,7 +1561,7 @@ section in <a href="setup-how-the-lab-is-built.html">Lab S</a></strong>, with th
 </tr>
 <tr>
 <td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID) on site A and site B, plus <code>ovedr-app</code></td>
-<td>in yours: <strong>admin</strong> rights for you, <code>Service/&lt;your VM&gt;-sql</code> waiting for your VM to arrive, and your browser terminal <code>sql-client</code> (Lab 0 §0.3).</td>
+<td>in yours: <strong>admin</strong> rights for you, <code>Service/&lt;your VM&gt;-sql</code> waiting for your VM to arrive, and your browser terminal <code>sql-client</code> (Toolkit T.1).</td>
 <td><a href="setup-how-the-lab-is-built.html">S.9</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac">Using RBAC</a> [verify link]</td>
 </tr>
 <tr>
@@ -1559,32 +1579,36 @@ section in <a href="setup-how-the-lab-is-built.html">Lab S</a></strong>, with th
 <p><strong>You do yourself:</strong> inspect the VM and the OpenShift side, optionally create your own provider, review your staged
 plan (and see how it would be built), shut down your VM, and, as the <strong>last step</strong>, start your plan. Then start the VM
 on OpenShift, swap VMware Tools for virtio and the guest agent, and prove your data. Your VM keeps its own address, so
-Lab 0 §0.6 is not needed.</p>
+Toolkit T.4 is not needed.</p>
 <p><strong>Pattern at every stage:</strong> inject (<code>mark</code> + a line in your file) → change → read (<code>verify</code> + read the file).</p>
 <blockquote>
-<p><strong>Before you start:</strong> complete <a href="00-access-and-tools.html">Lab 0</a> in this terminal. You need <code>$ME</code>, <code>$N</code>, <code>$A</code>,
-<code>$B</code>, <code>$VM</code>, <code>$VC</code>, <code>$VM_IP</code> and <code>$WINUSER</code>, the <code>site-a</code> / <code>site-b</code> contexts, and the helpers <code>sql</code>, <code>mark</code>,
-<code>load</code>, <code>verify</code>, <code>alive</code> and <code>where</code>.</p>
-<p><strong>Your own VM.</strong> Every step below acts on <strong>your</strong> <code>$VM</code> (<code>win-pg-s&lt;NN&gt;</code>), so you drive your own migration from
-start to finish. 🧑‍🏫 marks the few steps only the instructor runs.</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>, then sign your class terminal in on both sites and to your
+database (<a href="toolkit.html">Toolkit T.1-T.2</a>: <code>oclogin</code> for site A and site B, then <code>dblogin</code>). It already holds the
+variables (<code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$WINUSER</code>) and the commands (<code>sql</code>, <code>mark</code>, <code>load</code>, <code>verify</code>,
+<code>alive</code>, <code>where</code>).</p>
 <p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
 terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
-<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
-knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+<code>sql-client</code> → Terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> (Toolkit T.1-T.2) stay signed in while the pod runs.
 Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
 <hr />
-<h2 id="11-login-recap-2-min">1.1 Login recap (2 min)<a class="headerlink" href="#11-login-recap-2-min" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 01-1-1-login-recap -->
-<p><a href="../.images/01-1-1-login-recap.mp4"><img alt="🎬 Video: 1.1 Login recap. Watch it, then do the same in the console" src="../.images/01-1-1-login-recap.jpg" /></a>
-<sub>🎬 <em>1.1 Login recap: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-1-login-recap.mp4</code>).</em></sub></p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">        </span><span class="c1"># both print $ME</span>
+<h2 id="11-sign-your-class-terminal-in-2-min">1.1 Sign your class terminal in (2 min)<a class="headerlink" href="#11-sign-your-class-terminal-in-2-min" title="Permanent link">&para;</a></h2>
+<!-- 🎬 video slot 01-1-1-sign-class-terminal -->
+<p><a href="../.images/01-1-1-sign-class-terminal.mp4"><img alt="🎬 Video: 1.1 Sign your class terminal in. Watch it, then do the same in the console" src="../.images/01-1-1-sign-class-terminal.jpg" /></a>
+<sub>🎬 <em>1.1 Sign your class terminal in: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/01-1-1-sign-class-terminal.mp4</code>).</em></sub></p>
+<p>In your class terminal (site A console → your project → <strong>Workloads → Pods → <code>sql-client</code> → Terminal</strong>), sign in once
+per site with each console's <strong>Copy login command</strong>, and once to your VM's database (<a href="toolkit.html">Toolkit T.1-T.2</a>):</p>
+<div class="highlight"><pre><span></span><code>oclogin<span class="w"> </span>&lt;paste<span class="w"> </span>the<span class="w"> </span>site<span class="w"> </span>A<span class="w"> </span>login<span class="w"> </span>command&gt;<span class="w">                          </span><span class="c1"># ✓ site-a</span>
+oclogin<span class="w"> </span>&lt;paste<span class="w"> </span>the<span class="w"> </span>site<span class="w"> </span>B<span class="w"> </span>login<span class="w"> </span>command&gt;<span class="w">                          </span><span class="c1"># ✓ site-b</span>
+dblogin<span class="w">                                                           </span><span class="c1"># your class password</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>whoami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>whoami<span class="w">          </span><span class="c1"># both print $ME</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">"vm=</span><span class="nv">$VM</span><span class="s2">  db-host=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w">                          </span><span class="c1"># still the vSphere IP ($VM_IP) for now</span>
 alive<span class="w">                                                             </span><span class="c1"># staleness &lt; 10 s</span>
 </code></pre></div>
-<p><strong>Check:</strong> ✅ both contexts answer as <code>$ME</code>, and the heartbeat is fresh. If not, go back to Lab 0.</p>
+<p><strong>Check:</strong> ✅ both contexts answer as <code>$ME</code>, and the heartbeat is fresh. If not, see <a href="toolkit.html">Toolkit T.1-T.2</a>.</p>
 <hr />
 <h2 id="12-inspect-the-vmware-vm-10-min">1.2 Inspect the VMware VM (10 min)<a class="headerlink" href="#12-inspect-the-vmware-vm-10-min" title="Permanent link">&para;</a></h2>
 <!-- 🎬 video slot 01-1-2-inspect-vmware-vm -->
@@ -2049,7 +2073,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <blockquote>
 <p><strong>One VM, one address.</strong> Every class VM has its own static address, so the bridge map lets each one keep it on
 OpenShift: twenty students run twenty plans side by side without colliding. Choose the <strong>pod</strong> map (<code>…-net</code>)
-instead and the VM lands on the pod network, where its static address answers nothing: then follow Lab 0 §0.6.</p>
+instead and the VM lands on the pod network, where its static address answers nothing: then follow Toolkit T.4.</p>
 </blockquote>
 <h3 id="start-your-plan-your-task-the-last-step">Start your plan (your task: the last step)<a class="headerlink" href="#start-your-plan-your-task-the-last-step" title="Permanent link">&para;</a></h3>
 <p><strong>Console:</strong> your plan → <strong>Start</strong> → confirm.</p>
@@ -2113,7 +2137,7 @@ stopped, which is why this step exists <strong>[verify: target power state in th
 <h3 id="your-vm-keeps-its-address">Your VM keeps its address<a class="headerlink" href="#your-vm-keeps-its-address" title="Permanent link">&para;</a></h3>
 <p>The staged plan used the <strong>bridge</strong> map, so your VM's NIC is on the same VLAN with the same static address, and the
 helpers keep using <code>$VM_IP</code>. (Only if you built and ran a plan with the <strong>pod</strong> map: follow
-<a href="00-access-and-tools.html#06-optional-give-your-vm-a-pod-network-address-on-openshift">Lab 0 §0.6</a> with <code>CTX=site-a</code>.)</p>
+<a href="toolkit.html#t4-optional-give-your-vm-a-pod-network-address-on-openshift">Toolkit T.4</a> with <code>CTX=site-a</code>.)</p>
 <div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"PGHOST=</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w">         </span><span class="c1"># still your own address</span>
 pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
 </code></pre></div>
@@ -2133,7 +2157,7 @@ sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id
 <p>Console: <strong>Virtualization → VirtualMachines → your VM → Console</strong> (VNC). Send <strong>Ctrl-Alt-Del</strong> and log in as
 <code>.\&lt;WINUSER&gt;</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$f</span> <span class="p">=</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
-<span class="nb">Get-Content</span> <span class="nv">$f</span>                                                <span class="c"># lab0-hello … d1-before-migration: all there</span>
+<span class="nb">Get-Content</span> <span class="nv">$f</span>                                                <span class="c"># d1-before … d1-before-migration: all there</span>
 <span class="nb">Add-Content</span> <span class="nv">$f</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1-after-migration  on=OVE"</span>
 </code></pre></div>
 <p>📸 <code>01-ove-console-touchfile</code>: the OpenShift VNC console showing your file.</p>
@@ -2200,7 +2224,7 @@ sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT st
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>
 </code></pre></div>
-<p>✅ Every stage you marked (<code>lab0-hello</code>, <code>d1-before</code>, <code>d1-before-migration</code>, <code>d1-after-migration</code>, <code>d1-end</code>) is
+<p>✅ Every stage you marked (<code>d1-before</code>, <code>d1-before-migration</code>, <code>d1-after-migration</code>, <code>d1-end</code>) is
 present and in order, and <code>chain_ok = t</code>.
 ✅ Your file holds every line you wrote, including the ones written on vSphere.</p>
 <p>📸 <code>01-final-verify</code>: <code>verify</code> output and the stage list.</p>
@@ -2594,7 +2618,7 @@ CentOS VM:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="00-access-and-tools.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Lab 0: Access and tools">
+          <a href="toolkit.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Toolkit: your terminal and data">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2604,7 +2628,7 @@ CentOS VM:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Lab 0: Access and tools
+                Toolkit: your terminal and data
               </div>
             </div>
           </a>

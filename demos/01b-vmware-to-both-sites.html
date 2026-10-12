@@ -271,6 +271,26 @@
   
   
     <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
         
   
@@ -430,9 +450,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#proof-table-continues-lab-0-and-demo-1" class="md-nav__link">
+  <a href="#proof-table-continues-demo-1" class="md-nav__link">
     <span class="md-ellipsis">
-      Proof table (continues Lab 0 and Demo 1)
+      Proof table (continues Demo 1)
     </span>
   </a>
   
@@ -693,9 +713,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#proof-table-continues-lab-0-and-demo-1" class="md-nav__link">
+  <a href="#proof-table-continues-demo-1" class="md-nav__link">
     <span class="md-ellipsis">
-      Proof table (continues Lab 0 and Demo 1)
+      Proof table (continues Demo 1)
     </span>
   </a>
   
@@ -718,7 +738,7 @@
 
 <h1 id="demo-1b-vmware-to-both-openshift-clusters">Demo 1b: VMware to both OpenShift clusters<a class="headerlink" href="#demo-1b-vmware-to-both-openshift-clusters" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.0 · draft · 2026-10-12</strong> · class/demos/01b-vmware-to-both-sites.md</p>
+<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/01b-vmware-to-both-sites.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You migrate one VMware VM to <strong>two</strong> different OpenShift clusters, first site A and then site B, using the
@@ -785,14 +805,14 @@ the OpenShift guest agent. <strong>CI runs exactly these command-line steps</str
 </table>
 <p>Picture: <a href="lab-diagram.html">lab diagram</a>. <strong>The rule for this demo:</strong> only <strong>one copy</strong> of your VM may run on the VLAN at a
 time. The bridge map keeps the VM's own address, so a second running copy would collide. Stop each copy before the next move.
-Because every copy keeps <code>$VM_IP</code>, the helpers work unchanged on both sites, and Lab 0 §0.6 is not needed.</p>
+Because every copy keeps <code>$VM_IP</code>, the helpers work unchanged on both sites, and Toolkit T.4 is not needed.</p>
 <blockquote>
 <p><strong>Already ran Demo 1?</strong> Then your VM is already on site A (named <code>$VM</code> in your namespace <code>$VMNS</code>). Skip 1b.2, stop that copy
 (one copy on the VLAN), power the vSphere original back on, and go straight to 1b.3.</p>
 <p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
 terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
-<code>sql-client</code> → Terminal</strong> (<a href="00-access-and-tools.html">Lab 0 §0.3</a>). Nothing is installed on your computer. It already
-knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> from Lab 0 stay signed in while the pod runs.
+<code>sql-client</code> → Terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>). Nothing is installed on your computer. It already
+knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> (Toolkit T.1-T.2) stay signed in while the pod runs.
 Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
@@ -955,7 +975,7 @@ and from the console, and proved each copy kept every row of your data. More:</p
 <li><a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs</a></li>
 </ul>
 <hr />
-<h2 id="proof-table-continues-lab-0-and-demo-1">Proof table (continues Lab 0 and Demo 1)<a class="headerlink" href="#proof-table-continues-lab-0-and-demo-1" title="Permanent link">&para;</a></h2>
+<h2 id="proof-table-continues-demo-1">Proof table (continues Demo 1)<a class="headerlink" href="#proof-table-continues-demo-1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
