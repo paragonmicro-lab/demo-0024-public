@@ -1,13 +1,13 @@
 ---
 title: "Lab 0 — Access and tools (do this first, every session)"
 subtitle: "One identity on vCenter and both OpenShift clusters · your own VM · the data-integrity toolkit every demo uses"
-version: 0.5.0
+version: 0.5.1
 date: 2026-10-12
 ---
 
 # Lab 0: Access and tools
 
-> **Version 0.5.0 · draft · 2026-10-12** · class/demos/00-access-and-tools.md
+> **Version 0.5.1 · draft · 2026-10-12** · class/demos/00-access-and-tools.md
 
 ## What you will learn
 
@@ -47,24 +47,21 @@ your first file line and first database mark. **Everything happens in your web b
 
 ---
 
-## 0.0 Your credentials: save them, never share them
+## 0.0 Your login
 
 <!-- 🎬 video slot 00-0-0-credentials-save-them-never-share-them -->
-[![🎬 Video: 0.0 Your credentials: save them, never share them. Watch it, then do the same in the console](../.images/00-0-0-credentials-save-them-never-share-them.jpg)](../.images/00-0-0-credentials-save-them-never-share-them.mp4)
-<sub>🎬 *0.0 Your credentials: save them, never share them: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/00-0-0-credentials-save-them-never-share-them.mp4`).*</sub>
+[![🎬 Video: 0.0 Your login. Watch it, then do the same in the console](../.images/00-0-0-credentials-save-them-never-share-them.jpg)](../.images/00-0-0-credentials-save-them-never-share-them.mp4)
+<sub>🎬 *0.0 Your login: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/00-0-0-credentials-save-them-never-share-them.mp4`).*</sub>
 
-You receive your class account by email when the booking is approved. It holds your **class ID** (`$ME`), your
-**password**, and the **booking card** values (§0.1).
+The instructor gives you your **class ID** (`$ME`) and **password**. That one username and password open everything:
 
-- **Save them** in a password manager, or the secure note your company uses, **before class starts**. You will
-  need the password for SSO and for your Windows VM and its database (one password for both).
-- **Never share them**, not with a classmate, in chat, in a screenshot, or on a shared screen. Every action in the
-  lab is recorded against your ID. If someone else uses it, their mistakes become yours.
-- **Tokens are credentials too.** The `oc login --token=…` line from "Copy login command" logs in as you. Don't
-  paste it anywhere but your own terminal.
-- **They expire with the booking.** When the class ends, the account and every environment are removed. Nothing
-  from this lab is reusable afterwards.
-- **Lost or exposed?** Tell the instructor straight away. They can reset it for this booking.
+| Resource | Sign in as |
+|---|---|
+| vSphere Client (vCenter) and both OpenShift consoles | your class ID, with **SSO (Entra)** |
+| Your Windows VM | `.\student-NN` |
+| Your VM's PostgreSQL database | `student_NN` |
+
+The next steps open each one in a browser tab and show your access: about 5 minutes.
 
 ## 0.1 Your booking card
 
