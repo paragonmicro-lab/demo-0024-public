@@ -1593,9 +1593,10 @@ oc<span class="w"> </span>patch<span class="w"> </span>console.operator<span cla
   (MTV's disk copy), and the peer cluster's <code>api-int</code> 6443 and ingress 443.
 - On each tooled site, Secret + <strong><code>Provider/ovedr-vcenter0&lt;N&gt;</code></strong> (type <code>vsphere</code>, url <code>https://vcenter0&lt;N&gt;…/sdk</code>). It
   carries <code>user</code>, <code>password</code>, <code>url</code> and <strong><code>cacert</code></strong>: the certificate chain vCenter serves, so TLS is verified, never skipped.
-- <strong>VDDK:</strong> if the repo variable <code>MTV_VDDK_IMAGE</code> is set, the provider gets <code>settings.vddkInitImage</code>. Without it,
-  migrations are <strong>cold only</strong> and slower. Warm migration (Demo 2) needs it. Why the customer must supply it, and how to
-  build it: <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15</a>.</p>
+- <strong>VDDK:</strong> the step before (<code>vddk</code>) copies the lab's saved VDDK image into the cluster's registry, and the provider
+  gets <code>settings.vddkInitImage</code> pointing at it. Without it, migrations are <strong>cold only</strong> and slower. Warm migration
+  (Demo 2) needs it. Why the customer must supply it, and how to build it:
+  <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15</a>.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'</span>
@@ -2272,7 +2273,9 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>start-build<span class="w"> </span>vddk<span class="w"> </span>--from-dir<span class="o">=</span>.<span class="w"> </span>--follow<span class="w">   </span><span class="c1"># the directory with the Containerfile and the unpacked kit</span>
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>istag<span class="w"> </span>vddk:latest<span class="w">                    </span><span class="c1"># image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest</span>
 </code></pre></div>
-<p><strong>[verify: the image-pull grant the migration pods need to read <code>openshift-mtv/vddk</code> from the target namespaces]</strong></p>
+<p>MTV's migration pods run in the <strong>target</strong> namespace, so let every service account pull from <code>openshift-mtv</code>:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>policy<span class="w"> </span>add-role-to-group<span class="w"> </span>system:image-puller<span class="w"> </span>system:serviceaccounts
+</code></pre></div>
 <ol>
 <li>Point the vSphere provider at it. <strong>Console:</strong> Migration for Virtualization → Providers → your vSphere provider →
    <strong>VDDK init image</strong> → edit. <strong>CLI:</strong></li>
@@ -2280,10 +2283,25 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-p<span class="w"> </span><span class="s1">'{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'</span>
 </code></pre></div>
-<p><strong>How this lab does it (BL-B27, being built):</strong> the operator downloads the kit once into private, CI-readable storage
-(never git). When MTV is installed on a cluster, the build above runs <strong>inside that cluster</strong> into its own registry, and
-the provider is pointed at it. So every booking gets VDDK, nothing is redistributed, and the licensed file never leaves
-the lab's private storage. Until then the warm plans show <code>VDDKInitImageUnavailable</code> (Demo 2 §2.5).</p>
+<p><strong>How this lab does it</strong> (<code>automation/customize/vddk.sh</code>, job <code>vddk</code>, after MTV is installed):</p>
+<ol>
+<li><strong>Once per VDDK version, the operator</strong> downloads the kit with the lab's Broadcom account and runs
+   <code>automation/tools/vddk_image.sh &lt;kit&gt;</code>. It builds the image above and saves it in the lab's <strong>private</strong> registry
+   (never git, never public: the script refuses to finish if the image can be read without credentials). The image
+   holds the unpacked kit, so it is also the lab's only stored copy of the download.</li>
+<li><strong>Every booking, on each cluster that runs MTV:</strong> a Docker <code>BuildConfig</code> whose <code>Containerfile</code> is just
+   <code>FROM &lt;the saved image&gt;</code> copies it into the cluster's own registry as <code>openshift-mtv/vddk:&lt;version&gt;</code>, with a
+   short-lived read-only pull credential that is deleted when the build ends. Then the <code>image-puller</code> grant above.</li>
+<li><strong>The vSphere provider</strong> gets <code>vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:&lt;version&gt;</code>,
+   and the run's readiness table shows Demo 2 ready.</li>
+</ol>
+<p>So nothing is redistributed, the licensed file leaves the lab's private storage only into the lab's own clusters, and a
+booking never waits on a download. If no saved image exists yet, the <code>vddk</code> job warns, Demo 2 shows <strong>blocked</strong> and
+the warm plans show <code>VDDKInitImageUnavailable</code> (Demo 2 §2.5); the cold class runs as normal.</p>
+<p><strong>Where Broadcom keeps it:</strong> VDDK moved to Broadcom's developer portal
+(<a href="https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest">developer.broadcom.com → SDKs → VMware Virtual Disk Development Kit</a>),
+behind a Broadcom sign-in. Older VMware download links no longer work. Use a VDDK version your vSphere release and your
+MTV release both support (Red Hat's MTV prerequisites list them).</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.settings.vddkInitImage}{"\n"}'</span><span class="w">   </span><span class="c1"># the image</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .items[*]}{.metadata.name}{"  "}{.status.conditions[?(@.type=="VDDKInitImageUnavailable")].status}{"\n"}{end}'</span><span class="w">   </span><span class="c1"># empty: no plan lacks it</span>
