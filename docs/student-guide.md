@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.7.1
+version: 0.8.0
 date: 2026-10-12
 ---
 
 # Student Guide
 
-> **Version 0.7.1 · draft · 2026-10-12** · class/student-guide.md
+> **Version 0.8.0 · draft · 2026-10-12** · class/student-guide.md
 
 ## What you will learn
 
@@ -62,16 +62,25 @@ knows your own (type `ovedr`).
 
 Every stage follows one rhythm: **inject** your own data → **change** something → **verify** it all arrived intact.
 
+**Core: the migration class.** Everyone does these, in order.
+
 | # | Guide | You will | Time | Bonus (optional) |
 |---|---|---|---|---|
-| 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open your browser terminal | 5 min | §0.6 a pod-network address for your VM (15 min) |
-| S | [Lab S: how this lab was built](demos/setup-how-the-lab-is-built.md) | every staged piece, with the commands, the console path and the Red Hat docs | read alongside | — |
-| 1 | [VMware → OpenShift, cold](demos/01-vmware-to-ove-cold.md) | inspect your VM and the OpenShift side; start your staged plan; swap VMware Tools for virtio | 80 min | A: live migration (15 min) · B: snapshot and restore (25 min) |
-| 1b | [VMware → both clusters](demos/01b-vmware-to-both-sites.md) | a plan to site A from the terminal; your staged plan to site B in the console | 40 min | — |
-| 2 | [VMware → OpenShift, warm](demos/02-vmware-to-ove-warm.md) | enable CBT, pre-copy while the VM runs, cut over in moments | 60 min | §2.8 live migration (15 min) |
-| 3 | [OpenShift → OpenShift](demos/03-ove-to-ove-cold.md) | link the clusters in ACM; move your VM to the other cluster, storage and all | 45 min | — |
-| 4 | [ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
-| 4b | [Portworx DR](demos/04b-portworx-dr.md) | *when Portworx is offered* | — | — |
+| 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open a command line | 5 min | — |
+| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | inspect your VM and the OpenShift side; start your staged plan; swap VMware Tools for virtio | 80 min | A: live migration (15 min) · B: snapshot and restore (25 min) |
+| 2 | [Warm migration](demos/02-vmware-to-ove-warm.md) | enable CBT, pre-copy while the VM runs, cut over in moments | 60 min | §2.8 live migration (15 min) |
+
+**Go deeper**, when your instructor offers it:
+
+| Group | Guide | You will | Time | Bonus (optional) |
+|---|---|---|---|---|
+| Storage | [Demo 4: ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
+| Backup | [Demo 5: OADP backup and restore](demos/05-oadp-vm-backup.md) | back up your namespace, delete your VM, restore it, prove the data | 30 min | *framework: when OADP is staged* |
+| More | [Demo 1b: VMware → both clusters](demos/01b-vmware-to-both-sites.md) | a plan to site A from the terminal; your staged plan to site B in the console | 40 min | — |
+| More | [Demo 3: OpenShift → OpenShift](demos/03-ove-to-ove-cold.md) | link the clusters in ACM; move your VM to the other cluster, storage and all | 45 min | — |
+
+Reference: [Toolkit](demos/toolkit.md) (your terminal, the data commands, the proof table) · [Lab S](demos/setup-how-the-lab-is-built.md)
+(how every staged piece was built, with the commands and the Red Hat docs) · [Lab diagram](demos/lab-diagram.md).
 
 Times are estimates until the class has been timed. Demo 1 starts your **proof table** ([Toolkit](demos/toolkit.md)); each demo adds rows (your last
 mark, `chain_ok`, the fingerprint, and each move's outage, bytes and time), and by the end it is your evidence.

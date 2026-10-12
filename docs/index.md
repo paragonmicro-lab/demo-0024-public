@@ -1,7 +1,7 @@
 ---
 title: "Start here — VMware to OpenShift Virtualization"
 subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
-version: 1.1.0
+version: 1.2.0
 date: 2026-10-12
 ---
 
@@ -47,7 +47,7 @@ The [student guide](student-guide.md) explains how the class works and lists the
 
 - Sign in once and reach vCenter and two OpenShift clusters with the same account
 - Migrate **your own** Windows + PostgreSQL VM from vSphere to OpenShift Virtualization, cold and warm
-- Move it again: to the second cluster, and between clusters
+- Go deeper if your class does: disaster recovery, backup and restore, moving between clusters
 - Prove with your own data that nothing was lost, changed or reordered on any move
 - Bonus rounds for early finishers: live migration, snapshot restore, a hostile disaster-recovery failover
 
@@ -64,16 +64,18 @@ The [student guide](student-guide.md) explains how the class works and lists the
 
 ## The day
 
+**The core class** (the migration from VMware):
+
 | Block | Time |
 |---|---|
 | Welcome, and Kubernetes in a few ideas (this page) | 20 min |
-| Lab 0 · Demo 1 | 1 h 25 |
+| Lab 0 · Demo 1 (cold migration) | 1 h 25 |
 | *Break* | 15 min |
-| Demo 1b · Demo 3 | 1 h 25 |
-| *Lunch* | 45 min |
-| Demo 2 (warm) | 1 h |
-| Demo 4 (disaster recovery) and bonus rounds | 1 h 30 |
+| Demo 2 (warm migration) | 1 h |
 | Wrap-up: your proof table, questions | 15 min |
+
+**Going deeper**, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), Backup
+(Demo 5, OADP, 30 min), and more demos (moving between clusters, 1 h 25), each with bonus rounds for early finishers.
 
 Times are estimates until the class has been timed. The demos and their bonus rounds, each with its time, are in the
 [Student Guide](student-guide.md#the-demos-in-order).
@@ -127,4 +129,4 @@ migrated VM keeps its address.
 
 ---
 
-> **Version 1.1.0 · draft · 2026-10-12** · class/welcome.md
+> **Version 1.2.0 · draft · 2026-10-12** · class/welcome.md

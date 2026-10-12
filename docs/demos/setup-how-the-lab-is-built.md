@@ -181,7 +181,7 @@ YAML
 ## S.4 Storage: whatever the booking chose, and snapshot classes
 
 **Storage is not this demo's choice.** demo-openshift deploys each cluster's storage from its `storage` option (`na` = NFS,
-`odf`, and later Portworx, SAN and others) and marks the class VMs belong on. CI's customize only **reads** that class
+`odf`; other storage providers such as Portworx are forks of this class, BL-D25) and marks the class VMs belong on. CI's customize only **reads** that class
 (the `storageclass.kubevirt.io/is-default-virt-class` one, else the cluster default) and proves a test claim binds before
 any VM lands there. The demos work the same on any of them: they are about migration and BCDR.
 
