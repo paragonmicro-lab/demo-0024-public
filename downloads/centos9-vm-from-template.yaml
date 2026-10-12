@@ -8,7 +8,7 @@
 #   export VIP="10.101.$VLAN.$((150 + 10#${WINUSER#student-}))"   # a static address on that VLAN (no lab DHCP)
 #   export SC=nfs-csi                                 # or ocs-storagecluster-ceph-rbd-virtualization on an ODF site
 #   read -rsp 'Password for user centos: ' CENTOS_PASSWORD; echo; export CENTOS_PASSWORD   # typed, never in a file
-#   curl -sSf https://paragonmicro-lab.github.io/demo-0024-public/examples/centos9-vm-from-template.yaml \
+#   curl -sSf https://paragonmicro-lab.github.io/demo-0024-public/downloads/centos9-vm-from-template.yaml \
 #     | envsubst | oc --context site-a -n "$VMNS" apply -f -
 #   Log in on the VM's Console tab as centos with that password (the class works in the browser: no ssh client).
 #

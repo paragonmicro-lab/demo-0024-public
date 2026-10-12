@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01-vmware-to-ove-cold.html">
       
       
-        <link rel="prev" href="toolkit.html">
+        <link rel="prev" href="00-access-and-tools.html">
       
       
         <link rel="next" href="01b-vmware-to-both-sites.html">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Demo 1 — VMware to OpenShift Virtualization: cold migration - VMware to OpenShift Virtualization: student guides</title>
+        <title>Demo 1 — VMware to OpenShift Virtualization: cold migration - VMware to OpenShift Virtualization: student guide</title>
       
     
     
@@ -50,6 +50,10 @@
       
     
     
+      <link rel="stylesheet" href="../brand/class.css">
+    
+      <link rel="stylesheet" href="../brand/paragon.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -67,7 +71,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -92,7 +96,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guide" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guide" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -106,7 +110,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            VMware to OpenShift Virtualization: student guides
+            VMware to OpenShift Virtualization: student guide
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -125,7 +129,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
@@ -135,7 +139,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
@@ -213,13 +217,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="VMware to OpenShift Virtualization: student guides" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guides" data-md-component="logo">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guide" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guide" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    VMware to OpenShift Virtualization: student guides
+    VMware to OpenShift Virtualization: student guide
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -235,7 +239,7 @@
         
   
   <span class="md-ellipsis">
-    Welcome
+    Start here
   </span>
   
 
@@ -268,6 +272,48 @@
       
   
   
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Labs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Labs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
   
   
     <li class="md-nav__item">
@@ -283,29 +329,10 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="toolkit.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Toolkit: your terminal and data
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
+              
+            
+              
+                
   
   
     
@@ -855,9 +882,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -875,9 +903,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -895,9 +924,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -915,9 +945,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -935,9 +966,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -962,9 +994,118 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../downloads.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Downloads
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get help
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
   
@@ -982,9 +1123,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -999,6 +1141,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2489,7 +2639,7 @@ Shared access (RWX)</em><em>, so the VM can live-migrate (Bonus A); the dialog's
 <p>Then <strong>Create VirtualMachine</strong>. It boots in under a minute (the boot source is already on the cluster).</p>
 <h3 id="the-same-from-the-command-line">The same from the command line<a class="headerlink" href="#the-same-from-the-command-line" title="Permanent link">&para;</a></h3>
 <p>Everything in steps 1-3 is one VirtualMachine manifest:
-<strong><a href="../examples/centos9-vm-from-template.yaml"><code>class/examples/centos9-vm-from-template.yaml</code></a></strong>. It was exported from
+<strong><a href="../downloads/centos9-vm-from-template.yaml"><code>centos9-vm-from-template.yaml</code></a></strong> (also on the <a href="../downloads.html">Downloads</a> page). It was exported from
 the console after the steps above, with the cluster-generated fields and the password removed. Each part is commented
 with the console step it replaces: the root disk cloned from Red Hat's boot source, the blank data disk, the NIC on
 your VLAN's bridge, and cloud-init for the <code>centos</code> login and your static address. In your browser terminal, it is
@@ -2498,7 +2648,7 @@ values in place of each <code>${…}</code>).</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">NAME</span><span class="o">=</span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">-centos9"</span><span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="k">$((</span><span class="m">22</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">N</span><span class="k">))</span><span class="w"> </span><span class="nv">SC</span><span class="o">=</span>nfs-csi<span class="w">       </span><span class="c1"># SC: ocs-storagecluster-ceph-rbd-virtualization on an ODF site</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">VIP</span><span class="o">=</span><span class="s2">"10.101.</span><span class="nv">$VLAN</span><span class="s2">.</span><span class="k">$((</span><span class="m">150</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">10#</span><span class="si">${</span><span class="nv">WINUSER</span><span class="p">#student-</span><span class="si">}</span><span class="k">))</span><span class="s2">"</span><span class="w">   </span><span class="c1"># your static address on the VLAN (no lab DHCP)</span>
 <span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Password for user centos: '</span><span class="w"> </span>CENTOS_PASSWORD<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span><span class="nb">export</span><span class="w"> </span>CENTOS_PASSWORD<span class="w">   </span><span class="c1"># typed, never in a file</span>
-curl<span class="w"> </span>-sSf<span class="w"> </span>https://paragonmicro-lab.github.io/demo-0024-public/examples/centos9-vm-from-template.yaml<span class="w"> </span><span class="se">\</span>
+curl<span class="w"> </span>-sSf<span class="w"> </span>https://paragonmicro-lab.github.io/demo-0024-public/downloads/centos9-vm-from-template.yaml<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span><span class="p">|</span><span class="w"> </span>envsubst<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,dv<span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$NAME</span><span class="s2">-data"</span><span class="w">                   </span><span class="c1"># DataVolumes clone/create, then the VM runs</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span>vmi/<span class="s2">"</span><span class="nv">$NAME</span><span class="s2">"</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}'</span><span class="o">=</span>Running<span class="w"> </span>--timeout<span class="o">=</span>10m
@@ -2638,7 +2788,7 @@ CentOS VM:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="toolkit.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Toolkit: your terminal and data">
+          <a href="00-access-and-tools.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Lab 0: Access and tools">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2648,7 +2798,7 @@ CentOS VM:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Toolkit: your terminal and data
+                Lab 0: Access and tools
               </div>
             </div>
           </a>

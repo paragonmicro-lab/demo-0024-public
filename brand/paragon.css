@@ -1,0 +1,56 @@
+/* The Paragon Micro LAB LOOK (core-web docs/class-sites.md): colour scheme + fonts, the DEFAULT on every class site, including
+   a demo that cannot show Paragon logos (the colours are not a mark). Loaded after class.css. Change it here in core-web's kit,
+   not per class. Tokens: core-web docs/brand-alignment-plan.md. A demo that must deviate replaces this file and says why. */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap");
+
+:root {
+  --pm-cornerstone: #072b31;   /* primary anchor */
+  --pm-prussian: #00203f;
+  --pm-ink: #092029;
+  --pm-orange: #ff8200;        /* Vision Orange: accents and calls to action, sparingly */
+  --pm-orange-hover: #e0740a;
+  --pm-destination: #b9d9eb;
+  --pm-white: #f8f7f2;
+  --pm-grid-a: #101820;
+  --pm-grid-b: #30555e;
+}
+
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: var(--pm-cornerstone);
+  --md-primary-fg-color--light: var(--pm-grid-b);
+  --md-primary-fg-color--dark: var(--pm-ink);
+  --md-primary-bg-color: var(--pm-white);
+}
+[data-md-color-accent="custom"] {
+  --md-accent-fg-color: var(--pm-orange);
+  --md-accent-fg-color--transparent: rgba(255, 130, 0, 0.1);
+}
+[data-md-color-scheme="default"] { --md-default-bg-color: #ffffff; }
+[data-md-color-scheme="slate"][data-md-color-primary="custom"] {
+  --md-default-bg-color: #0c1a20;
+  --md-typeset-a-color: var(--pm-destination);
+}
+
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-header__title, .pm-hero h1 {
+  font-family: "Poppins", "Roboto", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.md-typeset a { color: var(--md-typeset-a-color, var(--pm-cornerstone)); }
+.md-typeset a:hover { color: var(--pm-orange); }
+
+/* The header carries the dark-teal logomark: render it white on the brand bar. */
+.md-header__button.md-logo img { filter: brightness(0) invert(1); height: 1.6rem; }
+
+
+/* Recolour the required layout (class.css) to the brand. */
+:root {
+  --pm-hero-a: var(--pm-grid-a);
+  --pm-hero-b: var(--pm-cornerstone);
+  --pm-hero-c: var(--pm-grid-b);
+  --pm-hero-fg: var(--pm-white);
+  --pm-accent: var(--pm-orange);
+  --pm-accent-hover: var(--pm-orange-hover);
+  --pm-bar: var(--pm-cornerstone);
+  --pm-bar-fg: var(--pm-white);
+}
