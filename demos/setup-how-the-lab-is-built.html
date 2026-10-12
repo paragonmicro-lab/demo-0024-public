@@ -976,6 +976,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.15 VDDK: the one piece the customer supplies (Broadcom licence)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
@@ -1258,6 +1267,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence" class="md-nav__link">
+    <span class="md-ellipsis">
+      S.15 VDDK: the one piece the customer supplies (Broadcom licence)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
@@ -1283,7 +1301,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1576,7 +1594,8 @@ oc<span class="w"> </span>patch<span class="w"> </span>console.operator<span cla
 - On each tooled site, Secret + <strong><code>Provider/ovedr-vcenter0&lt;N&gt;</code></strong> (type <code>vsphere</code>, url <code>https://vcenter0&lt;N&gt;…/sdk</code>). It
   carries <code>user</code>, <code>password</code>, <code>url</code> and <strong><code>cacert</code></strong>: the certificate chain vCenter serves, so TLS is verified, never skipped.
 - <strong>VDDK:</strong> if the repo variable <code>MTV_VDDK_IMAGE</code> is set, the provider gets <code>settings.vddkInitImage</code>. Without it,
-  migrations are <strong>cold only</strong> and slower. Warm migration (Demo 2) needs it.</p>
+  migrations are <strong>cold only</strong> and slower. Warm migration (Demo 2) needs it. Why the customer must supply it, and how to
+  build it: <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15</a>.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'</span>
@@ -2223,6 +2242,56 @@ Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_dat
 </tr>
 </tbody>
 </table>
+<h2 id="s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15 VDDK: the one piece the customer supplies (Broadcom licence)<a class="headerlink" href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence" title="Permanent link">&para;</a></h2>
+<p><strong>What it is.</strong> The VMware <strong>Virtual Disk Development Kit (VDDK)</strong> is VMware's library for reading a VM's disks
+straight from ESXi. MTV uses it to copy disks, and for a <strong>warm</strong> migration to copy only the blocks that changed since
+the last pass (VMware's Changed Block Tracking, Demo 2). <strong>Warm migration needs it</strong>; a cold migration works without it,
+only slower <strong>[verify: MTV 2.11 cold path without VDDK]</strong>.</p>
+<p><strong>Why you supply it.</strong> VDDK is Broadcom's software, and its licence does <strong>not</strong> allow Red Hat, Paragon Micro or anyone
+else to redistribute it. So OpenShift doesn't ship it, and neither does this lab's code: <strong>each customer downloads VDDK
+themselves</strong> from Broadcom's developer portal with their own account, accepts the licence, builds a small container
+image from it, and keeps that image in <strong>their own private registry</strong>. Never put the tarball or the image in git or a
+public registry. In a real migration project this is one of the first prerequisites to arrange.</p>
+<p><strong>How to build it</strong> (Red Hat's procedure):</p>
+<ol>
+<li>Download <strong>VDDK 8.0.x for Linux</strong> (<code>VMware-vix-disklib-&lt;version&gt;.x86_64.tar.gz</code>) from Broadcom's developer portal.</li>
+<li>Unpack it next to this <code>Containerfile</code>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/ubi-minimal</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">1001</span>
+<span class="k">COPY</span><span class="w"> </span>vmware-vix-disklib-distrib<span class="w"> </span>/vmware-vix-disklib-distrib
+<span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">"cp"</span><span class="p">,</span><span class="w"> </span><span class="s2">"-r"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/vmware-vix-disklib-distrib"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/opt"</span><span class="p">]</span>
+</code></pre></div>
+<ol>
+<li>Build and push it to a <strong>private</strong> registry. On OpenShift, the cluster's own registry works, with no tool on your
+   laptop:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-xzf<span class="w"> </span>VMware-vix-disklib-*.x86_64.tar.gz<span class="w">                  </span><span class="c1"># → vmware-vix-disklib-distrib/</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>new-build<span class="w"> </span>--name<span class="w"> </span>vddk<span class="w"> </span>--binary<span class="w"> </span>--strategy<span class="w"> </span>docker
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>start-build<span class="w"> </span>vddk<span class="w"> </span>--from-dir<span class="o">=</span>.<span class="w"> </span>--follow<span class="w">   </span><span class="c1"># the directory with the Containerfile and the unpacked kit</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>istag<span class="w"> </span>vddk:latest<span class="w">                    </span><span class="c1"># image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest</span>
+</code></pre></div>
+<p><strong>[verify: the image-pull grant the migration pods need to read <code>openshift-mtv/vddk</code> from the target namespaces]</strong></p>
+<ol>
+<li>Point the vSphere provider at it. <strong>Console:</strong> Migration for Virtualization → Providers → your vSphere provider →
+   <strong>VDDK init image</strong> → edit. <strong>CLI:</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s1">'{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'</span>
+</code></pre></div>
+<p><strong>How this lab does it (BL-B27, being built):</strong> the operator downloads the kit once into private, CI-readable storage
+(never git). When MTV is installed on a cluster, the build above runs <strong>inside that cluster</strong> into its own registry, and
+the provider is pointed at it. So every booking gets VDDK, nothing is redistributed, and the licensed file never leaves
+the lab's private storage. Until then the warm plans show <code>VDDKInitImageUnavailable</code> (Demo 2 §2.5).</p>
+<p><strong>Check:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.settings.vddkInitImage}{"\n"}'</span><span class="w">   </span><span class="c1"># the image</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .items[*]}{.metadata.name}{"  "}{.status.conditions[?(@.type=="VDDKInitImageUnavailable")].status}{"\n"}{end}'</span><span class="w">   </span><span class="c1"># empty: no plan lacks it</span>
+</code></pre></div>
+<p><strong>Red Hat docs:</strong>
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#creating-vddk-image_mtv">Creating a VDDK image</a> [verify link]
+- <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Warm migration</a> [verify link]</p>
+<hr />
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <p>Thank you for looking under the hood. Everything your demos rely on is listed here, and you could rebuild each piece
 yourself. To go further:</p>
