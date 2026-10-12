@@ -1,13 +1,13 @@
 ---
 title: "Demo 3 — OpenShift to OpenShift, cold, with storage migration"
 subtitle: "Link the clusters in ACM · move a stopped VM from site A to site B with MTV · prove every row arrived"
-version: 0.4.1
+version: 0.5.0
 date: 2026-10-12
 ---
 
 # Demo 3: OVE → OVE cold migration
 
-> **Version 0.4.1 · draft · 2026-10-12** · class/demos/03-ove-to-ove-cold.md
+> **Version 0.5.0 · draft · 2026-10-12** · class/demos/03-ove-to-ove-cold.md
 
 ## What you will learn
 
@@ -440,6 +440,15 @@ sql -c "SELECT id, ts, date_trunc('second', gap) AS gap
 ```bash
 mark d3-after "running on $B, storage $(oc --context site-b -n "$VMNS" get pvc -o json | jq -r --arg vm "$VM" '[.items[] | select(.metadata.name | contains($vm)) | .spec.storageClassName][0]')"
 verify
+```
+
+### The guest tools came along
+
+An OVE → OVE move keeps the VM on KVM, so nothing is converted: the virtio drivers and the QEMU guest agent from
+Demo 1 simply run on site B.
+
+```bash
+tools                                  # qemu_ga Running, virtio drivers, vmtools not Running, as on site A
 ```
 
 ### Your file, on the new cluster

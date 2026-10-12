@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inspect · link · migrate · swap the guest tools · prove the data · bonus: live migration and snapshot restore"
-version: 0.6.1
+version: 0.7.0
 date: 2026-10-12
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 0.6.1 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
+> **Version 0.7.0 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -547,6 +547,20 @@ oc --context site-a -n "$VMNS" get vmi "$VM" -w                                 
 (MTV starts the target if the source was running when the plan began. After a guest shutdown it may stay
 stopped, which is why this step exists **[verify: target power state in this MTV release]**.)
 
+### ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
+
+Every migration off vSphere must swap the guest's tools: `virt-v2v` installs the **virtio** drivers and the **QEMU guest
+agent**, and VMware Tools must no longer run. Your VM reports its own guest tools at every boot (its heartbeat writer):
+
+```bash
+tools                                  # platform = not VMware · vmtools = Stopped or absent · qemu_ga = Running · virtio = netkvm,vioscsi…
+oc --context site-a -n "$VMNS" get vmi "$VM" -o jsonpath='{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'   # True
+```
+
+✅ `qemu_ga` is **Running**, `virtio` lists the network (`netkvm`) and disk (`vioscsi`/`viostor`) drivers, and `vmtools` is
+**not** Running. In the console, the VM's **Overview** shows the *Guest agent* as connected. If `vmtools` still runs, remove
+it ([Demo 1 §1.6](01-vmware-to-ove-cold.md)).
+
 ### Your VM keeps its address
 
 The staged plan used the **bridge** map, so your VM's NIC is on the same VLAN with the same static address, and the
@@ -602,6 +616,7 @@ drivers and the **QEMU guest agent** do that job. `virt-v2v` installed them duri
 ### From OpenShift
 
 ```bash
+tools                                                                                # the guest's own report (§1.5's check)
 oc --context site-a -n "$VMNS" get vmi "$VM" \
   -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'          # AgentConnected=True
 oc --context site-a -n "$VMNS" get vmi "$VM" -o jsonpath='{.status.guestOSInfo}' | jq .

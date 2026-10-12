@@ -1,13 +1,13 @@
 ---
 title: "Toolkit — your class terminal, your data and your VM (used by every demo)"
 subtitle: "The browser terminal on both sites · the data-integrity commands · your file in the VM · the optional pod-network address · the proof table"
-version: 0.1.0
+version: 0.2.0
 date: 2026-10-12
 ---
 
 # Toolkit: your class terminal, your data and your VM
 
-> **Version 0.1.0 · draft · 2026-10-12** · class/demos/toolkit.md
+> **Version 0.2.0 · draft · 2026-10-12** · class/demos/toolkit.md
 
 The reference every demo uses. [Lab 0](00-access-and-tools.md) signs you in and opens a command line; this page has
 the rest: your class terminal on both sites, the commands that write and prove your data, your file in the VM, and
@@ -132,6 +132,7 @@ Each of your `marks` rows carries a SHA-256 hash of the previous row. If a row i
 | `alive` | is your VM writing? `staleness` under 10 s = yes |
 | `sql [psql options]` | `psql` to your VM's database, e.g. `sql -c "SELECT count(*) FROM marks"` |
 | `where` | which site and node runs your VM right now |
+| `tools` | after a migration: VMware Tools out, the virtio drivers and the QEMU guest agent in (your VM's own report) |
 | `ovedr` | who and where you are, and what is signed in |
 
 They talk to your VM at its own address, `$VM_IP`, which it keeps on vSphere, site A and site B (the staged plans

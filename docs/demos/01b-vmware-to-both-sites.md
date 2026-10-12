@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — VMware to BOTH OpenShift clusters (CLI and console)"
 subtitle: "The same cold migration to site A, then to site B · every command on the command line · every screen in the console"
-version: 0.4.1
+version: 0.5.0
 date: 2026-10-12
 ---
 
 # Demo 1b: VMware to both OpenShift clusters
 
-> **Version 0.4.1 · draft · 2026-10-12** · class/demos/01b-vmware-to-both-sites.md
+> **Version 0.5.0 · draft · 2026-10-12** · class/demos/01b-vmware-to-both-sites.md
 
 ## What you will learn
 
@@ -133,6 +133,7 @@ oc --context $CTX -n "$VMNS" get vmi $VM \
 alive                                  # heartbeat live again (staleness < 10 s), postgres_started is new
 verify                                 # chain_ok = t, your d1b-before row is there
 sql -Atc "SELECT fingerprint FROM ovedr_checksum()"            # = $FP: every mark arrived, unchanged
+tools                                  # VMware Tools out: qemu_ga Running, virtio drivers, vmtools not Running
 mark d1b-after-site-a
 ```
 
@@ -209,8 +210,12 @@ oc --context $CTX -n "$VMNS" wait vmi/$VM --for=jsonpath='{.status.phase}'=Runni
 alive
 verify                                 # d1b-before is there; d1b-after-site-a is NOT (that row lives only in the site A copy)
 sql -Atc "SELECT fingerprint FROM ovedr_checksum()"            # = $FP again
+tools                                  # the same swap on site B's copy
 mark d1b-after-site-b
 ```
+
+✅ On both sites `tools` shows `qemu_ga` **Running**, the virtio drivers, and `vmtools` **not** Running: each copy was
+converted from VMware Tools to virtio + the QEMU guest agent ([Demo 1 §1.6](01-vmware-to-ove-cold.md)).
 
 > 💡 **Why is `d1b-after-site-a` missing on B?** Both migrations copied the VM **from vSphere**, and the site A copy
 > added that row after its own move. Two migrations of one source give two independent copies. To carry site A's

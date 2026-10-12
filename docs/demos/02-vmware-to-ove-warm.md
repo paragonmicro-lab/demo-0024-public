@@ -1,13 +1,13 @@
 ---
 title: "Demo 2 — Warm migration: VMware to OpenShift Virtualization with minimal downtime"
 subtitle: "Changed Block Tracking · pre-copy while the VM runs · a short cutover · prove every row arrived"
-version: 0.5.1
+version: 0.6.0
 date: 2026-10-12
 ---
 
 # Demo 2: Warm migration, vSphere → OVE
 
-> **Version 0.5.1 · draft · 2026-10-12** · class/demos/02-vmware-to-ove-warm.md
+> **Version 0.6.0 · draft · 2026-10-12** · class/demos/02-vmware-to-ove-warm.md
 
 ## What you will learn
 
@@ -486,6 +486,20 @@ The **first** gap after `$CUTOVER_AT` is the cutover. Compare the cutover gap wi
 
 📸 `02-outage-sql` — the gap query result next to Demo 1's.
 
+### ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
+
+Every migration off vSphere must swap the guest's tools: `virt-v2v` installs the **virtio** drivers and the **QEMU guest
+agent**, and VMware Tools must no longer run. Your VM reports its own guest tools at every boot (its heartbeat writer):
+
+```bash
+tools                                  # platform = not VMware · vmtools = Stopped or absent · qemu_ga = Running · virtio = netkvm,vioscsi…
+oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'   # True
+```
+
+✅ `qemu_ga` is **Running**, `virtio` lists the network (`netkvm`) and disk (`vioscsi`/`viostor`) drivers, and `vmtools` is
+**not** Running. In the console, the VM's **Overview** shows the *Guest agent* as connected. If `vmtools` still runs, remove
+it ([Demo 1 §1.6](01-vmware-to-ove-cold.md)).
+
 ### Check: your file came across too
 
 Console, site A → **Virtualization → VirtualMachines → `<TARGET>` → Console**. Log in as `.\<WINUSER>`:
@@ -493,7 +507,7 @@ Console, site A → **Virtualization → VirtualMachines → `<TARGET>` → Cons
 ```powershell
 Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"          # d1 … d2-before-cutover, all there
 Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2-on-ove"
-Get-Service | Where-Object Name -match 'qemu-ga|vmtools' | Format-Table Name, Status   # guest agent vs VMware Tools [verify]
+Get-Service QEMU-GA, VMTools -ErrorAction SilentlyContinue | Format-Table Name, Status   # QEMU-GA Running; VMTools gone or stopped
 ```
 
 📸 `02-ove-console-file` — the OVE VNC console showing your file's lines.

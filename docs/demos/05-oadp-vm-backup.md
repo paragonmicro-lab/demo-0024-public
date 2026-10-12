@@ -1,18 +1,18 @@
 ---
 title: "Demo 5 (bonus) — Back up and restore your VM with OADP"
 subtitle: "OpenShift API for Data Protection: back up your namespace (VM, disks, Service), lose it, restore it, prove the data"
-version: 0.1.0
+version: 0.2.0
 status: framework
 date: 2026-10-12
 ---
 
 # Demo 5 (bonus): Back up and restore your VM with OADP
 
-> **Version 0.1.0 · framework · 2026-10-12** · class/demos/05-oadp-vm-backup.md
+> **Version 0.2.0 · framework · 2026-10-12** · class/demos/05-oadp-vm-backup.md
 
-> 🚧 **Bonus, framework: to be completed once OADP is staged on the lab clusters (BL-D24).** This guide has the shape
-> of the demo and its stages. The commands are unproven **[verify]** until a booking has run them. Ask your instructor
-> whether your lab has OADP before you start.
+> 🚧 **Bonus, framework.** OADP is now built by the lab when a class books it (option `backup: oadp`, the default for this
+> class). The commands below are unproven **[verify]** until a booking has run them. Ask your instructor whether your
+> lab has OADP before you start.
 
 ## What you will learn
 
@@ -26,8 +26,8 @@ restored VM holds exactly the data it had at backup time.
 
 | Where | What is pre-built (planned) | How it is built |
 |---|---|---|
-| Site A | the **OADP operator** in `openshift-adp`, a `DataProtectionApplication` with the `kubevirt`, `csi` and `openshift` plugins and the **Data Mover** (disk snapshots copied to object storage) | [OADP](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index) [verify link] |
-| Site A | a **backup location**: an S3 bucket on the cluster (ODF's Multicloud Object Gateway, or a lab object store) | [Backup locations](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index) [verify link] |
+| Both sites (demo-openshift, `backup: oadp`) | the **OADP operator** (1.5) in `openshift-adp`, a `DataProtectionApplication` with the `openshift`, `aws`, `kubevirt` and `csi` plugins, the node agent and the **Data Mover** (disk snapshots copied off the cluster), and **non-admin backups**: you back up and restore your **own namespace** yourself | [OADP](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index) [verify link] |
+| Both sites | a **backup location** on the lab's object store (MinIO, outside the clusters), one bucket per cluster and a folder per booking: backups outlive the cluster | [Backup locations](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index) [verify link] |
 | You | your VM running on site A (after [Demo 1](01-vmware-to-ove-cold.md)), in your namespace | — |
 
 **You do yourself:** inject data, request a backup of your namespace, delete your VM, restore it, and verify.
@@ -50,7 +50,7 @@ agent freezes it first: PostgreSQL recovers from that like from a power cut, and
 
 ```bash
 oc --context site-a -n "$VMNS" get vm,dv,pvc,svc               # what your backup will contain
-oc --context site-a get backupstoragelocations -n openshift-adp # the backup location is Available [verify: student read access]
+oc --context site-a -n "$VMNS" get nonadminbackupstoragelocations 2>/dev/null || echo "(the class's location is the default one)"   # [verify]
 ```
 
 ---
@@ -81,28 +81,27 @@ Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d5
 [![🎬 Video: 5.3 Back up your namespace. Watch it, then do the same in the console](../.images/05-5-3-back-up-namespace.jpg)](../.images/05-5-3-back-up-namespace.mp4)
 <sub>🎬 *5.3 Back up your namespace: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-3-back-up-namespace.mp4`).*</sub>
 
-**[verify: who may create the `Backup`.** OADP's `Backup` lives in `openshift-adp`, where students have no rights.
-Either 🧑‍🏫 the instructor creates it for you, or OADP's self-service `NonAdminBackup` in your own namespace is enabled
-for the class (BL-D24).**]**
+You create a **`NonAdminBackup`** in your own namespace; OADP turns it into a backup of that namespace only.
+**[verify: the NonAdminBackup fields and the student rights on OADP 1.5 (demo-openshift reports what the operator
+grants)]**
 
 ```bash
-# 🧑‍🏫 or self-service: a backup of YOUR namespace, disks moved to object storage
-oc --context site-a apply -f - <<EOF
-apiVersion: velero.io/v1
-kind: Backup
-metadata: { name: $VMNS-d5, namespace: openshift-adp }
+oc --context site-a -n "$VMNS" apply -f - <<EOF
+apiVersion: oadp.openshift.io/v1alpha1
+kind: NonAdminBackup
+metadata: { name: d5 }
 spec:
-  includedNamespaces: [ $VMNS ]
-  snapshotMoveData: true          # the Data Mover: the disk data leaves the cluster's storage
-  ttl: 24h0m0s
+  backupSpec:
+    snapshotMoveData: true        # the Data Mover: your disks' data leaves the cluster's storage
+    ttl: 24h0m0s
 EOF
-oc --context site-a -n openshift-adp get backup "$VMNS-d5" -w      # Ctrl-C at Completed
+oc --context site-a -n "$VMNS" get nonadminbackup d5 -w            # Ctrl-C when its phase is Created and the backup Completed
 mark d5-after-backup               # this row is NOT in the backup: it must be gone after the restore
 ```
 
-**Console:** **Operators → Installed Operators → OADP → Backup → Create Backup**.
+**Console:** your project → **Operators → Installed Operators → OADP → NonAdminBackup → Create**.
 
-✍️ **Row 5.3:** the backup's duration (`status.startTimestamp` → `completionTimestamp`) and its size.
+✍️ **Row 5.3:** the backup's duration and size (`oc -n "$VMNS" get nonadminbackup d5 -o yaml`, under `status`).
 
 ---
 
@@ -127,16 +126,15 @@ alive                                                              # fails: that
 <sub>🎬 *5.5 Restore, and prove the data: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-5-restore-prove-data.mp4`).*</sub>
 
 ```bash
-# 🧑‍🏫 or self-service (NonAdminRestore) [verify]
-oc --context site-a apply -f - <<EOF
-apiVersion: velero.io/v1
-kind: Restore
-metadata: { name: $VMNS-d5, namespace: openshift-adp }
+oc --context site-a -n "$VMNS" apply -f - <<EOF
+apiVersion: oadp.openshift.io/v1alpha1
+kind: NonAdminRestore
+metadata: { name: d5 }
 spec:
-  backupName: $VMNS-d5
-  includedNamespaces: [ $VMNS ]
+  restoreSpec:
+    backupName: d5                # your NonAdminBackup   [verify]
 EOF
-oc --context site-a -n openshift-adp get restore "$VMNS-d5" -w     # Ctrl-C at Completed
+oc --context site-a -n "$VMNS" get nonadminrestore d5 -w           # Ctrl-C when the restore Completed
 oc --context site-a -n "$VMNS" get vm "$VM" -w                      # Running again
 until alive >/dev/null 2>&1; do sleep 10; done; alive              # Windows booted, PostgreSQL recovered
 verify                                                             # chain_ok = t
