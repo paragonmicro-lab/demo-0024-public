@@ -1020,7 +1020,7 @@ Then **Create VirtualMachine**. It boots in under a minute (the boot source is a
 ### The same from the command line
 
 Everything in steps 1-3 is one VirtualMachine manifest:
-**[`class/examples/centos9-vm-from-template.yaml`](../examples/centos9-vm-from-template.yaml)**. It was exported from
+**[`centos9-vm-from-template.yaml`](../downloads/centos9-vm-from-template.yaml)** (also on the [Downloads](../downloads.md) page). It was exported from
 the console after the steps above, with the cluster-generated fields and the password removed. Each part is commented
 with the console step it replaces: the root disk cloned from Red Hat's boot source, the blank data disk, the NIC on
 your VLAN's bridge, and cloud-init for the `centos` login and your static address. In your browser terminal, it is
@@ -1031,7 +1031,7 @@ values in place of each `${…}`).
 export NAME="$VMNS-centos9" VLAN=$((22 + N)) SC=nfs-csi       # SC: ocs-storagecluster-ceph-rbd-virtualization on an ODF site
 export VIP="10.101.$VLAN.$((150 + 10#${WINUSER#student-}))"   # your static address on the VLAN (no lab DHCP)
 read -rsp 'Password for user centos: ' CENTOS_PASSWORD; echo; export CENTOS_PASSWORD   # typed, never in a file
-curl -sSf https://paragonmicro-lab.github.io/demo-0024-public/examples/centos9-vm-from-template.yaml \
+curl -sSf https://paragonmicro-lab.github.io/demo-0024-public/downloads/centos9-vm-from-template.yaml \
   | envsubst | oc --context site-a -n "$VMNS" apply -f -
 oc --context site-a -n "$VMNS" get vm,dv "$NAME" "$NAME-data"                   # DataVolumes clone/create, then the VM runs
 oc --context site-a -n "$VMNS" wait vmi/"$NAME" --for=jsonpath='{.status.phase}'=Running --timeout=10m

@@ -1,6 +1,6 @@
 # The public class site (BL-D14). class_site.py copies this next to the assembled docs/ and builds it with
 # `mkdocs build --strict`: a broken link or a page missing from nav fails the publish.
-site_name: "VMware to OpenShift Virtualization: student guides"
+site_name: "VMware to OpenShift Virtualization: student guide"
 site_description: "Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)"
 site_url: !ENV [CLASS_SITE_URL, ""]
 docs_dir: docs
@@ -11,6 +11,10 @@ copyright: "Paragon Micro lab · generated from the class source; changes made h
 
 theme:
   name: material
+  # no Paragon logo/favicon: demo-0024 is not a Paragon-branded class (operator, 2026-10-12); the lab look stays
+  font:
+    text: Roboto
+    code: Roboto Mono
   features:
     - content.code.copy            # a copy button on every command block
     - navigation.sections
@@ -21,12 +25,18 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: blue grey
+      primary: custom                  # colours from brand/paragon.css (the lab look)
+      accent: custom
       toggle: { icon: material/weather-night, name: Dark mode }
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: blue grey
+      primary: custom
+      accent: custom
       toggle: { icon: material/weather-sunny, name: Light mode }
+
+extra_css:
+  - brand/class.css                    # the layout (Start here splash, step cards): core-web docs/class-site-kit
+  - brand/paragon.css                  # the lab look (colours + fonts): the default on every class site, not a logo
 
 markdown_extensions:
   - admonition
@@ -46,20 +56,26 @@ validation:
     not_found: warn                # --strict turns these into failures
     anchors: info                  # GitHub-style anchors (emoji, punctuation) differ from MkDocs' slugs: reported, not fatal
 
-# A Paragon-branded class gets the Paragon class banner (class/site/paragon-banner.md) on the welcome page.
+# A Paragon-branded class gets the Paragon class banner (class/site/paragon-banner.md) under the Start here hero.
 extra:
   paragon_branded: false
 
+# The lab-standard ORDER (core-web docs/class-sites.md): Start here → Student guide → Labs (in teaching order) →
+# Downloads → Get help → Reference.
 nav:
-  - Welcome: index.md
-  - Student guide: student-guide.md
-  - "Lab 0: Access and tools": demos/00-access-and-tools.md
-  - "Toolkit: your terminal and data": demos/toolkit.md
-  - "Demo 1: VMware → OpenShift, cold": demos/01-vmware-to-ove-cold.md
-  - "Demo 1b: VMware → both clusters": demos/01b-vmware-to-both-sites.md
-  - "Demo 2: Warm migration": demos/02-vmware-to-ove-warm.md
-  - "Demo 3: OpenShift → OpenShift": demos/03-ove-to-ove-cold.md
-  - "Demo 4: ODF Regional-DR": demos/04-odf-regional-dr.md
-  - "Demo 4b: Portworx DR": demos/04b-portworx-dr.md
-  - "Lab S: how this lab was built": demos/setup-how-the-lab-is-built.md
-  - "Lab diagram": demos/lab-diagram.md
+  - "Start here": index.md
+  - "Student guide": student-guide.md
+  - "Labs":
+      - "Lab 0: Access and tools": demos/00-access-and-tools.md
+      - "Demo 1: VMware → OpenShift, cold": demos/01-vmware-to-ove-cold.md
+      - "Demo 1b: VMware → both clusters": demos/01b-vmware-to-both-sites.md
+      - "Demo 2: Warm migration": demos/02-vmware-to-ove-warm.md
+      - "Demo 3: OpenShift → OpenShift": demos/03-ove-to-ove-cold.md
+      - "Demo 4: ODF Regional-DR": demos/04-odf-regional-dr.md
+      - "Demo 4b: Portworx DR": demos/04b-portworx-dr.md
+  - "Downloads": downloads.md
+  - "Get help": help.md
+  - "Reference":
+      - "Toolkit: your terminal and data": demos/toolkit.md
+      - "Lab S: how this lab was built": demos/setup-how-the-lab-is-built.md
+      - "Lab diagram": demos/lab-diagram.md

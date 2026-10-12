@@ -1,0 +1,48 @@
+/* Class site LAYOUT: required on every class site, branded or not (core-web docs/class-sites.md). Neutral fallback colours
+   only; paragon.css (the default lab look) loaded AFTER this one recolours it. Do not edit per class. */
+:root {
+  --pm-hero-a: #1f2933;        /* hero gradient, neutral */
+  --pm-hero-b: #3e4c59;
+  --pm-hero-c: #52606d;
+  --pm-hero-fg: #ffffff;
+  --pm-accent: #2563eb;        /* buttons, step-card rule */
+  --pm-accent-hover: #1d4ed8;
+  --pm-bar: #1f2933;           /* header bar */
+  --pm-bar-fg: #ffffff;
+}
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: var(--pm-bar);
+  --md-primary-fg-color--light: var(--pm-hero-c);
+  --md-primary-fg-color--dark: var(--pm-hero-a);
+  --md-primary-bg-color: var(--pm-bar-fg);
+}
+[data-md-color-accent="custom"] { --md-accent-fg-color: var(--pm-accent); }
+/* ── Start here: the Paragon welcome splash (index.md) ─────────────────────────────────────────────────────── */
+.pm-hero {
+  margin: -0.8rem 0 1.6rem;
+  padding: 2.2rem 2rem 2rem;
+  border-radius: 10px;
+  color: var(--pm-hero-fg);
+  background: linear-gradient(135deg, var(--pm-hero-a) 0%, var(--pm-hero-b) 45%, var(--pm-hero-c) 100%);
+  border-bottom: 4px solid var(--pm-accent);
+}
+.pm-hero img.pm-wordmark { height: 3.2rem; margin-bottom: 1.2rem; }
+.pm-hero h1 { color: var(--pm-hero-fg) !important; margin: 0 0 0.4rem; font-size: 2rem; }
+.pm-hero p { margin: 0.3rem 0; font-size: 0.95rem; opacity: 0.92; }
+.pm-hero .pm-kicker { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.7rem; color: var(--pm-accent); opacity: 1; }
+.md-typeset .pm-hero .md-button { margin-top: 1rem; }
+.md-typeset .md-button--primary {
+  background-color: var(--pm-accent); border-color: var(--pm-accent); color: #fff;
+}
+.md-typeset .md-button--primary:hover { background-color: var(--pm-accent-hover); border-color: var(--pm-accent-hover); }
+.md-typeset .pm-hero .md-button:not(.md-button--primary) { color: var(--pm-hero-fg); border-color: rgba(255, 255, 255, 0.6); }
+
+/* The three numbered "start here" steps as cards. */
+.pm-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.8rem; margin: 1rem 0 1.4rem; }
+.pm-steps > div {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-top: 3px solid var(--pm-accent);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}
+.pm-steps > div > p:first-child { font-family: "Poppins", sans-serif; font-weight: 600; margin-top: 0; }

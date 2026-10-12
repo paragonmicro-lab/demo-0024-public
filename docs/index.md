@@ -1,29 +1,47 @@
 ---
-title: "Welcome — VMware to OpenShift Virtualization"
+title: "Start here — VMware to OpenShift Virtualization"
 subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
-version: 1.0.0
+version: 1.1.0
 date: 2026-10-12
 ---
 
-# Welcome
+<div class="pm-hero" markdown>
+<p class="pm-kicker">Student guide</p>
 
-> **Version 1.0.0 · draft · 2026-10-12** · class/welcome.md
+# VMware to OpenShift Virtualization
 
-## Thank you for joining us
+<p>Welcome, and thank you for joining us. Today you move a real Windows + PostgreSQL VM from VMware onto OpenShift
+Virtualization, between two clusters and through a disaster-recovery failover, and prove with your own data that nothing
+was lost. Everything happens in your web browser: this site is all you need.</p>
 
-Today you take a real Windows Server + PostgreSQL VM off VMware vSphere and onto Red Hat OpenShift Virtualization. You
-move it between two OpenShift clusters and protect it with disaster recovery. At every step you prove, with your own
-data, that nothing was lost. Everything happens in your web browser, and this site is all you need.
-
-> 🙋 **Stuck, or something not working?** Ask your **instructor**. They can reset your login, catch you up, or show
-> any step on the big screen. Don't lose time on your own: stuck for 5 minutes means ask.
+[Begin: Lab 0](demos/00-access-and-tools.md){ .md-button .md-button--primary }
+[Read the student guide](student-guide.md){ .md-button }
+</div>
 
 ## Start here
 
-1. **Get your login from your instructor.** One username and password open everything: vCenter, both OpenShift
-   clusters, your Windows VM and its database.
-2. **Read the [Student Guide](student-guide.md):** how the class works, and the demos in order with their times.
-3. **Do [Lab 0](demos/00-access-and-tools.md)** (5 minutes): sign in, open a command line, reach your VM's database.
+<div class="pm-steps" markdown>
+<div markdown>
+**1 · Get your login**
+
+Your instructor gives you one username and password. It opens everything: vCenter, both OpenShift clusters, your
+Windows VM and its database.
+</div>
+<div markdown>
+**2 · Read the student guide**
+
+The [student guide](student-guide.md) explains how the class works and lists the demos in order, with their times.
+</div>
+<div markdown>
+**3 · Do Lab 0**
+
+[Lab 0](demos/00-access-and-tools.md) takes about 5 minutes: sign in, open a command line, reach your VM's database.
+</div>
+</div>
+
+!!! tip "Stuck, or something not working? Ask your instructor."
+    They can reset your login, catch you up, or show any step on the big screen. Stuck for five minutes means ask. See
+    [Get help](help.md) for everything else.
 
 ## What you will do today
 
@@ -106,3 +124,7 @@ migrated VM keeps its address.
 | *(no equivalent)* | MTV: plans that move VMs into the cluster |
 
 **Ready? Open the [Student Guide](student-guide.md), then [Lab 0](demos/00-access-and-tools.md).**
+
+---
+
+> **Version 1.1.0 · draft · 2026-10-12** · class/welcome.md
