@@ -1,14 +1,14 @@
 ---
 title: "Demo 5 (bonus) — Back up and restore your VM with OADP"
 subtitle: "OpenShift API for Data Protection: back up your namespace (VM, disks, Service), lose it, restore it, prove the data"
-version: 0.2.0
+version: 0.2.1
 status: framework
 date: 2026-10-12
 ---
 
 # Demo 5 (bonus): Back up and restore your VM with OADP
 
-> **Version 0.2.0 · framework · 2026-10-12** · class/demos/05-oadp-vm-backup.md
+> **Version 0.2.1 · framework · 2026-10-12** · class/demos/05-oadp-vm-backup.md
 
 > 🚧 **Bonus, framework.** OADP is now built by the lab when a class books it (option `backup: oadp`, the default for this
 > class). The commands below are unproven **[verify]** until a booking has run them. Ask your instructor whether your
@@ -50,10 +50,14 @@ agent freezes it first: PostgreSQL recovers from that like from a power cut, and
 
 ```bash
 oc --context site-a -n "$VMNS" get vm,dv,pvc,svc               # what your backup will contain
-oc --context site-a -n "$VMNS" get nonadminbackupstoragelocations 2>/dev/null || echo "(the class's location is the default one)"   # [verify]
+oc --context site-a -n "$VMNS" get nonadminbackupstoragelocations.oadp.openshift.io 2>/dev/null || echo "(the class's location is the default one)"   # [verify]
 ```
 
 ---
+
+> 💡 **Use full resource names here.** On these clusters `oc get backup` finds ODF's database-backup type and
+> `oc get restore` finds ACM's, not OADP's. Several operators define a "backup" or "restore". Always write the full name,
+> for example `nonadminbackups.oadp.openshift.io` or `backups.velero.io`.
 
 ## 5.2 Inject before the backup
 
@@ -95,13 +99,13 @@ spec:
     snapshotMoveData: true        # the Data Mover: your disks' data leaves the cluster's storage
     ttl: 24h0m0s
 EOF
-oc --context site-a -n "$VMNS" get nonadminbackup d5 -w            # Ctrl-C when its phase is Created and the backup Completed
+oc --context site-a -n "$VMNS" get nonadminbackups.oadp.openshift.io d5 -w            # Ctrl-C when its phase is Created and the backup Completed
 mark d5-after-backup               # this row is NOT in the backup: it must be gone after the restore
 ```
 
 **Console:** your project → **Operators → Installed Operators → OADP → NonAdminBackup → Create**.
 
-✍️ **Row 5.3:** the backup's duration and size (`oc -n "$VMNS" get nonadminbackup d5 -o yaml`, under `status`).
+✍️ **Row 5.3:** the backup's duration and size (`oc -n "$VMNS" get nonadminbackups.oadp.openshift.io d5 -o yaml`, under `status`).
 
 ---
 
@@ -134,7 +138,7 @@ spec:
   restoreSpec:
     backupName: d5                # your NonAdminBackup   [verify]
 EOF
-oc --context site-a -n "$VMNS" get nonadminrestore d5 -w           # Ctrl-C when the restore Completed
+oc --context site-a -n "$VMNS" get nonadminrestores.oadp.openshift.io d5 -w           # Ctrl-C when the restore Completed
 oc --context site-a -n "$VMNS" get vm "$VM" -w                      # Running again
 until alive >/dev/null 2>&1; do sleep 10; done; alive              # Windows booted, PostgreSQL recovered
 verify                                                             # chain_ok = t
