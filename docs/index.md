@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · your credentials · the demos in order"
-version: 0.5.1
+version: 0.6.0
 date: 2026-10-12
 ---
 
 # Student Guide
 
-> **Version 0.5.1 · draft · 2026-10-12** · class/student-guide.md
+> **Version 0.6.0 · draft · 2026-10-12** · class/student-guide.md
 
 ## What you will learn
 
@@ -18,6 +18,12 @@ step you write your own data into the VM's database and then prove that none of 
 You leave knowing what each tool does, and with the evidence that it worked.
 
 This guide is the **map**. The commands are in the demo guides it points to.
+
+> 🌐 **All you need is a web browser.** You install nothing and need no access to the lab's network from your computer.
+> You work in three browser pages: the **vSphere Client**, the **site A** and **site B** OpenShift consoles, plus this
+> class site. Every command runs in **your browser terminal**, a shell in your own pod in the OpenShift console (Lab 0
+> §0.3), with `psql`, `oc`, `virtctl` and the class commands ready. Copy a command here with its copy button, and
+> paste it there with **right-click → Paste**.
 
 ---
 
@@ -50,8 +56,8 @@ fail it over yourself.
 **You get your own OpenShift namespace.** On **both** clusters you have a namespace (project) named exactly your
 class ID in lower case, for example `student-03-0024-005`, the same name as your vCenter folder. You are **admin**
 there: full rights, but only in that namespace. Your migration plans move your VM into it, and your VM's database
-Service (`<your VM>-sql`) lives there. The shared `sql-client` the helpers use sits in the class namespace `ovedr-app`,
-which is also where the instructor's VM lands. Lab 0 sets it up as `$VMNS`.
+Service (`<your VM>-sql`) lives there, and so does **your browser terminal** (pod `sql-client`), where you run every
+command. Lab 0 sets it up as `$VMNS`.
 
 **Everything is staged; you do the last step.** The lab pre-builds every customization a demo needs: the migration
 operator and its connection to vCenter, the network and storage maps, the class namespace, and **a migration plan for
@@ -84,8 +90,8 @@ the OpenShift console's **Copy login command**. The Windows VM is the one except
 > or you see "unauthorized" even after signing in. The browser has cached your old, expired sign-in.
 > Open a **private / incognito window** (Chrome/Edge: `Ctrl+Shift+N`, Firefox: `Ctrl+Shift+P`, Safari:
 > `Cmd+Shift+N`) and sign in there with SSO again. If that works, carry on in the private window, or clear the
-> site's cookies in your normal window. Your work is not lost: the VM, your data and your CLI contexts live on
-> the clusters, not in the browser.
+> site's cookies in your normal window. Your work is not lost: the VM, your data and your browser terminal's sign-ins
+> live on the clusters, not in the browser.
 
 Full steps: [Lab 0 §0.0-0.4](demos/00-access-and-tools.md).
 
@@ -112,8 +118,8 @@ Your VM has **one password for both**: your class password.
    SELECT * FROM ovedr_verify('<your class ID>');      -- chain_ok = t
    ```
 
-From your terminal, the Lab 0 helpers (`mark`, `verify`, `alive`) reach the same database through the class
-`sql-client`, so you do not need to sign in to PostgreSQL there.
+From your browser terminal, the class commands (`mark`, `verify`, `alive`) reach the same database as your own
+PostgreSQL login: run `dblogin` once (Lab 0 §0.5).
 
 ---
 
@@ -126,7 +132,7 @@ that it all arrived intact.
 
 | # | Guide | You will | Time | Bonus (optional, for early finishers) |
 |---|---|---|---|---|
-| 0 | [Access and tools](demos/00-access-and-tools.md) | sign in everywhere, set up your terminal, write and verify your first row | 20 min | §0.6 a pod-network address for your VM (15 min) |
+| 0 | [Access and tools](demos/00-access-and-tools.md) | sign in everywhere, open your browser terminal, write and verify your first row | 20 min | §0.6 a pod-network address for your VM (15 min) |
 | S | [Lab S — how this lab was built (CLI + console), read alongside each demo](demos/setup-how-the-lab-is-built.md) | every staged piece (operators, bridges, storage, MTV providers and maps, the class namespace, your VM, the staged plans, the healthcheck), each with the commands, the console path and the Red Hat docs | read alongside | — |
 | 1 | [VMware → OpenShift, cold](demos/01-vmware-to-ove-cold.md) | inspect your VM, review MTV, networking (VLAN → bridge) and templates; link OpenShift to vCenter; review your staged plan and start it; swap VMware Tools for virtio and the guest agent | 80 min | A: live migration between nodes (15 min) · B: snapshot, drop the database, restore the disks (25 min) |
 | 1b | [VMware → both clusters](demos/01b-vmware-to-both-sites.md) | build a plan to site A from the command line; review and start your staged plan to site B in the console | 40 min | — |

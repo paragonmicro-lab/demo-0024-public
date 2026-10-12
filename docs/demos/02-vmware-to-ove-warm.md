@@ -1,13 +1,13 @@
 ---
 title: "Demo 2 — Warm migration: VMware to OpenShift Virtualization with minimal downtime"
 subtitle: "Changed Block Tracking · pre-copy while the VM runs · a short cutover · prove every row arrived"
-version: 0.4.1
-date: 2026-10-06
+version: 0.5.0
+date: 2026-10-12
 ---
 
 # Demo 2: Warm migration, vSphere → OVE
 
-> **Version 0.4.1 · draft · 2026-10-06** · class/demos/02-vmware-to-ove-warm.md
+> **Version 0.5.0 · draft · 2026-10-12** · class/demos/02-vmware-to-ove-warm.md
 
 ## What you will learn
 
@@ -35,7 +35,7 @@ connect, and **[Lab S — how this lab was built](setup-how-the-lab-is-built.md)
 | **VDDK image** on that provider | site A | **prerequisite for warm migration** (repo variable `MTV_VDDK_IMAGE`). Without it, MTV can only migrate cold. The `demo-prep` readiness table says whether this booking has it. [S.6](setup-how-the-lab-is-built.md) · [Creating a VDDK image](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link] |
 | **Pre-copy interval** shortened to 5 min | both tooled sites | the MTV default is 60 min between rounds, too slow for a class. [S.10](setup-how-the-lab-is-built.md) |
 | Staged **cold** plans `d1-<VM>` / `d1b-<VM>-to-<B>` | both sites | for Demos 1 and 1b. Demo 2's **warm** plan is the one **you** build here. [S.12](setup-how-the-lab-is-built.md) |
-| **Your namespace** `$VMNS` (your class ID, you are **admin**) with your `Service/<VM>-sql`; `ovedr-app` with the shared `sql-client` | both clusters | your VM lands in your namespace. [S.9](setup-how-the-lab-is-built.md) |
+| **Your namespace** `$VMNS` (your class ID, you are **admin**) with your `Service/<VM>-sql` and your browser terminal `sql-client` | both clusters | your VM lands in your namespace. [S.9](setup-how-the-lab-is-built.md) |
 | Student rights | both clusters | read MTV objects, bridges, storage classes; **create and run your own plans and migrations**. [S.9](setup-how-the-lab-is-built.md) |
 | **Your own VM**, `win-pg-s<NN>` | vSphere `vcenter0<N>`, in your folder `vms/students/<class ID>` | a full clone of `win-pg-i01` at its own address `.100+NN`: Windows Server 2022 + PostgreSQL 16 (WAL on `L:`, data on `D:`), heartbeat writer, the `marks` toolkit, your Windows login. You can power it, open its console and Edit Settings yourself. [S.11](setup-how-the-lab-is-built.md) |
 
@@ -53,6 +53,14 @@ address on OpenShift, so Lab 0 §0.6 is not needed.
 > **Before you start:** do [Lab 0](00-access-and-tools.md) in this terminal. You need `site-a` / `site-b`
 > contexts, the variables (`ME`, `N`, `A`, `B`, `VM`, `VM_IP`, `WINUSER`) and the helpers (`sql`, `mark`, `load`,
 > `verify`, `alive`, `where`).
+
+> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
+> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
+> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
+> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
+> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
 ---
 
@@ -97,13 +105,13 @@ oc --context site-a -n openshift-mtv patch forkliftcontroller forklift-controlle
 
 ### Check: your VM is up and writing on vSphere
 
-Your VM still runs on vSphere, so the site-A `sql-client` reaches it at your own address, `$VM_IP`:
+Your VM still runs on vSphere, and your browser terminal reaches it at its own address, `$VM_IP`:
 
 ```bash
-unset PGHOST                    # sql() falls back to $PGHOST_SITE_A = $VM_IP
-alive  site-a                   # staleness < 10 s
-mark   site-a d2-start          # ✍️ note the id
-verify site-a                   # chain_ok = t
+export PGHOST=$VM_IP            # your VM's own address (the terminal's default)
+alive                           # staleness < 10 s
+mark d2-start                   # ✍️ note the id
+verify                          # chain_ok = t
 ```
 
 📸 `02-start-alive` — `alive` and `verify` output, with the VM on vSphere.
@@ -145,7 +153,7 @@ It takes effect at the next power-on, so turn it on while the VM is **off**.
 ### Leave a mark, then shut your VM down cleanly
 
 ```bash
-mark site-a d2-before-cbt
+mark d2-before-cbt
 ```
 
 In your VM's web console (vCenter → `<VM>` → **Launch Web Console**, log in as `.\<WINUSER>`), in PowerShell:
@@ -237,10 +245,10 @@ When a VM powers on with CBT enabled, vSphere creates a **change-tracking file**
 Wait for the database to come back, then prove nothing was lost across the shutdown:
 
 ```bash
-until alive site-a 2>/dev/null | grep -q 'beats'; do sleep 10; done
-alive  site-a                        # postgres_started is new: the VM rebooted
-mark   site-a d2-cbt-on
-verify site-a                        # chain_ok = t — the reboot lost nothing
+until alive 2>/dev/null | grep -q 'beats'; do sleep 10; done
+alive                                # postgres_started is new: the VM rebooted
+mark d2-cbt-on
+verify                               # chain_ok = t — the reboot lost nothing
 ```
 
 ✍️ **Row 2.1:** CBT on (yes/no), the number of `-ctk.vmdk` files, and your `d2-cbt-on` id.
@@ -266,10 +274,10 @@ Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2
 A burst now, then a small burst every minute in the background, so each pre-copy round has new blocks to ship:
 
 ```bash
-load site-a d2-precopy 500                                     # 500 hash-chained rows, right now
-( for i in $(seq 1 30); do load site-a "d2-precopy-$i" 50 >/dev/null 2>&1; sleep 60; done ) &
+load d2-precopy 500                                            # 500 hash-chained rows, right now
+( for i in $(seq 1 30); do load "d2-precopy-$i" 50 >/dev/null 2>&1; sleep 60; done ) &
 export LOADER=$!                                               # stop it before cutover (2.6)
-verify site-a
+verify
 ```
 
 ✍️ **Row 2.2:** your `marks` count after the 500-row burst.
@@ -369,8 +377,8 @@ watch -n 30 "oc --context site-a -n openshift-mtv get migration $PLAN -o jsonpat
 While pre-copies run:
 
 ```bash
-alive site-a                      # STILL writing: the VM is up during pre-copy
-mark  site-a d2-during-precopy
+alive                             # STILL writing: the VM is up during pre-copy
+mark d2-during-precopy
 oc --context site-a -n "$VMNS" get pvc | grep "$TARGET"      # three PVCs filling for your VM
 ```
 
@@ -397,7 +405,7 @@ Let at least **two** pre-copies complete, then stop the background load and leav
 
 ```bash
 kill "$LOADER" 2>/dev/null; wait "$LOADER" 2>/dev/null
-mark site-a d2-before-cutover           # ✍️ note this id: it must survive the cutover
+mark d2-before-cutover                  # ✍️ note this id: it must survive the cutover
 export CUTOVER_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ); echo "cutover requested at $CUTOVER_AT"
 ```
 
@@ -443,17 +451,17 @@ with `CTX=site-a` and `VM=$TARGET`.)
 ```bash
 VM=$TARGET where                                   # site-a Running, and the node it landed on
 oc --context site-a -n "$VMNS" get vm,vmi "$TARGET"
-oc --context site-a -n ovedr-app exec deploy/sql-client -- pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
+pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
 ```
 
 ### Check: every row arrived, in order, unaltered
 
 ```bash
-until alive site-a 2>/dev/null | grep -q beats; do sleep 10; done    # Windows boot + PostgreSQL start
-alive  site-a                    # writing again, postgres_started = after cutover
-verify site-a                    # chain_ok = t; last_stage = d2-before-cutover (or later)
-mark   site-a d2-after-cutover
-verify site-a
+until alive 2>/dev/null | grep -q beats; do sleep 10; done           # Windows boot + PostgreSQL start
+alive                            # writing again, postgres_started = after cutover
+verify                           # chain_ok = t; last_stage = d2-before-cutover (or later)
+mark d2-after-cutover
+verify
 ```
 
 ✅ `chain_ok = t`. Every row from `d2-start`, the 500-row burst, every background round and `d2-before-cutover`
@@ -466,7 +474,7 @@ pre-copy didn't lose the tail, because the cutover copied it.
 The heartbeat writer runs every 5 s, so the outage is the gap in it around the cutover:
 
 ```bash
-sql site-a -c "
+sql -c "
 SELECT ts AS resumed_at, date_trunc('second', gap) AS outage
 FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g
 WHERE gap > interval '10 seconds' AND ts > timestamptz '$CUTOVER_AT' - interval '5 minutes'
@@ -535,7 +543,7 @@ with RWX block. If it says `False`, read the message (usually the access mode) a
 ### Inject, migrate, verify
 
 ```bash
-mark site-a d2-before-livemig
+mark d2-before-livemig
 oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.nodeName}{"\n"}'     # ✍️ node before
 export LM_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 ```
@@ -562,9 +570,9 @@ Watch it, then prove the data. A live migration keeps the VM's address: on the b
 ```bash
 oc --context site-a -n "$VMNS" get vmim -w                         # Ctrl-C at Succeeded
 oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.nodeName}{"  "}{.status.migrationState.endTimestamp}{"\n"}'
-mark   site-a d2-after-livemig
-verify site-a                                                        # chain_ok = t
-sql site-a -c "
+mark d2-after-livemig
+verify                                                               # chain_ok = t
+sql -c "
 SELECT max(gap) AS worst_gap FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap
 FROM heartbeat WHERE ts > timestamptz '$LM_AT' - interval '1 minute') g;"   # ≈ 5 s: no outage
 ```

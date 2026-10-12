@@ -1,12 +1,12 @@
 ---
 title: "Lab diagram — demo-0024 (VMware → OpenShift Virtualization, OVE ⇄ OVE, ODF DR)"
-version: 0.3.0
-date: 2026-10-06
+version: 0.3.1
+date: 2026-10-12
 ---
 
 # Lab diagram
 
-> **Version 0.3.0 · draft · 2026-10-06** · class/demos/lab-diagram.md
+> **Version 0.3.1 · draft · 2026-10-12** · class/demos/lab-diagram.md
 
 One booking reserves **three environments** together: a vSphere landing zone (`lzN`) and two OpenShift clusters
 (`ocp-lzX` = **site A**, `ocp-lzY` = **site B**). They all run as VMs on the same four physical hosts
@@ -19,7 +19,7 @@ booking to booking. How each piece was built, from the CLI and in the console: [
 
 ```mermaid
 flowchart TB
-  STU(["👩‍🎓 Students: browser + oc / virtctl<br/>one identity (SSO), one password everywhere"])
+  STU(["👩‍🎓 Students: a web browser only<br/>(vSphere Client, both consoles, their browser terminal)<br/>one identity (SSO), one password everywhere"])
 
   subgraph VS["① vSphere · lzN · VLAN 22+N"]
     direction LR
@@ -35,7 +35,7 @@ flowchart TB
     A1["OpenShift Virtualization · ACM · cert-manager<br/>bridge → NAD vmnet(22+N)"]
     A2["MTV + console menu<br/>providers ovedr-vcenter0N · ovedr-ocp-lzY<br/>staged plans d1-&lt;vm&gt; (not started)"]
     A3[("ODF (4 scratch SSDs)<br/>ceph-rbd-virtualization")]
-    A4["one namespace per student (admin)<br/>+ ovedr-app · sql-client"]
+    A4["one namespace per student (admin)<br/>with their browser terminal sql-client<br/>+ ovedr-app"]
     A1 --- A2 --- A3 --- A4
   end
 
@@ -44,7 +44,7 @@ flowchart TB
     B1["OpenShift Virtualization · ACM · cert-manager<br/>the same bridges / NADs"]
     B2["MTV + console menu<br/>providers ovedr-vcenter0N · ovedr-ocp-lzX<br/>staged plans d1b-&lt;vm&gt;-to-lzY (not started)"]
     B3[("NFS · nfs-csi<br/>(ODF when more SSDs land)")]
-    B4["one namespace per student (admin)<br/>+ ovedr-app · sql-client"]
+    B4["one namespace per student (admin)<br/>with their browser terminal sql-client<br/>+ ovedr-app"]
     B1 --- B2 --- B3 --- B4
   end
 

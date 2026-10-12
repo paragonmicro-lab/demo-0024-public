@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.3.4
-date: 2026-10-06
+version: 0.4.0
+date: 2026-10-12
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.3.4 · draft · 2026-10-06** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.4.0 · draft · 2026-10-12** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -493,6 +493,8 @@ YAML
     SSO, their UPN.
   - The instructors' group `demo-instructors` is `admin` there too (`ovedr-instructors-admin`).
   - Their VM's Service **`<vm>-sql`** (selector `vm.kubevirt.io/name: <vm>`, port 5432).
+  - **Their browser terminal**, Deployment **`sql-client`** + ConfigMap **`ovedr-tools`** (see *The browser terminal*
+    below). Instructors get one in their own namespace too, pointed at `win-pg-i01`.
 - **Instructors:** their own namespace (their class ID; the instructor VM `win-pg-i01` lands in the first instructor's), and
   **cluster-admin** on both clusters (`ClusterRoleBinding/ovedr-instructor-cluster-admin-*`, one per identity), so they can
   help with any student, storage or operator issue. CLI: `oc adm policy add-cluster-role-to-user cluster-admin <user>`; console:
@@ -500,8 +502,9 @@ YAML
 - The class namespace **`ovedr-app`**: the shared `sql-client`. It holds RoleBinding
   `ovedr-students-edit` (ClusterRole `edit`, group `demo-students`), the instructor VM's Service `win-pg-i01-sql`, Secret
   **`bcdr-db`** (the `bcdr` database password, from the vault), and Deployment **`sql-client`**
-  (`registry.redhat.io/rhel9/postgresql-16`) that the whole class uses for `psql`. With the bridge map every VM keeps its
-  own address, so `sql-client` reaches any student's VM by IP from here.
+  (`registry.redhat.io/rhel9/postgresql-16`), the instructor's tool as the database owner (`bcdr`): the healthcheck
+  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1 Bonus B). Students
+  never need it.
 - ClusterRole + ClusterRoleBinding **`ovedr-class-read`**: students may read NNCPs and node network states, storage
   classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.
 
@@ -511,10 +514,10 @@ YAML
 for s in site-a site-b; do
   oc --context $s get project "$VMNS"                                     # your namespace exists on both sites
   oc --context $s -n "$VMNS" get rolebinding,svc                          # your admin binding(s) and your VM's Service
-  oc --context $s -n ovedr-app get deploy/sql-client
+  oc --context $s -n "$VMNS" get deploy/sql-client cm/ovedr-tools           # your browser terminal and its commands
 done
 oc --context site-a auth can-i '*' '*' -n "$VMNS"                         # yes: admin in your own namespace
-oc --context site-a auth can-i create pods -n ovedr-app                    # yes (edit in the class namespace)
+oc --context site-a auth can-i create pods/exec -n "$VMNS"                  # yes: the console's Terminal tab needs it
 oc --context site-a auth can-i list nodenetworkconfigurationpolicies      # yes (class read)
 ```
 
@@ -546,6 +549,46 @@ oc -n my-app set env deployment/sql-client --from=secret/bcdr-db
    student, role **admin**; add the group `demo-instructors` as **admin**. 📸 `S-project-access`
 3. **Networking → Services → Create Service** in that project (selector `vm.kubevirt.io/name`). 📸 `S-service`
 4. In `ovedr-app`: **Workloads → Secrets → Create** and **Workloads → Deployments → Create** for `sql-client`.
+
+### The browser terminal (one per student and instructor, both sites)
+
+The class runs **entirely in the browser** (operator, 2026-10-12): students are external, may not install anything on
+their computers, and have no network path to the lab. So every command runs in a pod of their own, opened from the
+console's **Terminal** tab (the console's `exec`, which `admin` in their namespace allows).
+
+**What CI built**, in every student's and instructor's namespace (`ansible/roles/class_namespace`):
+- ConfigMap **`ovedr-tools`**: the class commands (`dblogin`, `mark`, `load`, `verify`, `alive`, `sql`, `oclogin`,
+  `where`, `ovedr`), mounted at `/opt/ovedr/bin` (mode 0755). Source: `ansible/roles/class_namespace/files/ovedr-tools/`.
+- Deployment **`sql-client`** (`rhel9/postgresql-16`, `sleep infinity`), with:
+  - init containers that copy **`oc`** from the cluster's own `openshift/cli` image, fetch **`virtctl`** from
+    OpenShift Virtualization's in-cluster download service, and fetch **`jq`** (pinned, checksum-verified);
+  - its environment preset per person: `ME`, `VM`, `VM_IP`, `VMNS`, `WINUSER`, `N`, `A`, `B`, `VC`, `SITE`, and
+    `PGHOST` (the VM's own address), `PGUSER` (`student_NN`), `PGDATABASE=bcdr`;
+  - **no password** anywhere: `dblogin` asks for the student's class password once and keeps it in the pod
+    (`~/.pgpass`, 0600); `oclogin` takes the token from the console's **Copy login command**, so `oc` and `virtctl`
+    act **as the student**. The pod has no service-account token (`automountServiceAccountToken: false`).
+- A change to the commands rolls the pod (annotation `ovedr/tools-sha`). The healthcheck drives student-01's terminal
+  on both sites, as the student: `dblogin`, `alive`, `verify`, and `oc`/`virtctl`/`jq` present.
+
+**Check:**
+
+```bash
+oc --context site-a -n "$VMNS" get deploy/sql-client -o jsonpath='{.status.availableReplicas}{"\n"}'   # 1
+ovedr                                                                    # in the Terminal: who, where, what is signed in
+```
+
+**Do it yourself (CLI):** the same idea for any namespace (here without the class commands):
+
+```bash
+oc -n "$NS" create deployment toolbox --image=registry.redhat.io/rhel9/postgresql-16 -- sleep infinity
+oc -n "$NS" set env deployment/toolbox PGHOST=<VM address> PGUSER=<login> PGDATABASE=bcdr
+```
+
+**Console:** **Workloads → Pods → `sql-client-…` → Terminal**. 📸 `S-browser-terminal`
+
+**Red Hat docs:**
+- [Accessing a pod's terminal from the web console](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/building_applications/odc-viewing-application-composition-using-topology-view) [verify link]
+- [Logging in to the OpenShift CLI with a web console token](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc#cli-logging-in-web_cli-developer-commands) [verify link]
 
 **Red Hat docs:**
 - [Working with projects](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/building_applications/projects) [verify link]

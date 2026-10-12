@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — VMware to BOTH OpenShift clusters (CLI and console)"
 subtitle: "The same cold migration to site A, then to site B · every command on the command line · every screen in the console"
-version: 0.3.0
-date: 2026-10-06
+version: 0.4.0
+date: 2026-10-12
 ---
 
 # Demo 1b: VMware to both OpenShift clusters
 
-> **Version 0.3.0 · draft · 2026-10-06** · class/demos/01b-vmware-to-both-sites.md
+> **Version 0.4.0 · draft · 2026-10-12** · class/demos/01b-vmware-to-both-sites.md
 
 ## What you will learn
 
@@ -24,12 +24,12 @@ Each row points at the [Lab S](setup-how-the-lab-is-built.md) section that shows
 
 | Prepared by CI | Where | Check | How it was built · docs |
 |---|---|---|---|
-| Your VM `win-pg-s<NN>` on vSphere, in your folder `vms/students/<class ID>`, at its own address `10.101.<22+N>.<100+NN>`, PostgreSQL WAL on `L:` and data on `D:`, validated | vSphere `lzN` | `alive site-a` (Lab 0) | [S.11](setup-how-the-lab-is-built.md) |
+| Your VM `win-pg-s<NN>` on vSphere, in your folder `vms/students/<class ID>`, at its own address `10.101.<22+N>.<100+NN>`, PostgreSQL WAL on `L:` and data on `D:`, validated | vSphere `lzN` | `alive` (Lab 0) | [S.11](setup-how-the-lab-is-built.md) |
 | MTV on **both** sites (`migration_tools=both`), with its console menu and provider `ovedr-vcenter0<N>` Ready | site A and site B | `oc --context site-a -n openshift-mtv get provider` | [S.5](setup-how-the-lab-is-built.md) · [S.6](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) |
 | Network maps `ovedr-vcenter0<N>-net` (pod) and `…-net-bridge` (the VM's VLAN, NAD `vmnet<22+N>`) | both sites | `oc -n openshift-mtv get networkmap` | [S.3](setup-how-the-lab-is-built.md) · [S.8](setup-how-the-lab-is-built.md) |
 | Storage map `ovedr-vcenter0<N>-storage`: datastore → **ODF** (`ocs-storagecluster-ceph-rbd-virtualization`) on site A, **NFS** (`nfs-csi`) on site B | both sites | `oc -n openshift-mtv get storagemap` | [S.4](setup-how-the-lab-is-built.md) · [S.8](setup-how-the-lab-is-built.md) |
 | **Staged plans, not started:** `d1-<your VM>` on site A (Demo 1) and **`d1b-<your VM>-to-<B>` on site B (this demo)** | both sites | `oc -n openshift-mtv get plan -l ovedr/vm=$VM` | [S.12](setup-how-the-lab-is-built.md) |
-| Your namespace `$VMNS` (admin) with your `win-pg-s<NN>-sql` Service; the shared `sql-client` in `ovedr-app` | both sites | `oc -n "$VMNS" get svc` · `oc -n ovedr-app get deploy/sql-client` | [S.9](setup-how-the-lab-is-built.md) |
+| Your namespace `$VMNS` (admin) with your `win-pg-s<NN>-sql` Service and your browser terminal `sql-client` | both sites | `oc -n "$VMNS" get svc,deploy` | [S.9](setup-how-the-lab-is-built.md) |
 | You can create and run Plans and Migrations, but not change providers, maps or secrets | `openshift-mtv` | `oc auth can-i create plans.forklift.konveyor.io -n openshift-mtv` | [S.9](setup-how-the-lab-is-built.md) |
 
 Picture: [lab diagram](lab-diagram.md). **The rule for this demo:** only **one copy** of your VM may run on the VLAN at a
@@ -38,6 +38,14 @@ Because every copy keeps `$VM_IP`, the helpers work unchanged on both sites, and
 
 > **Already ran Demo 1?** Then your VM is already on site A (named `$VM` in your namespace `$VMNS`). Skip 1b.2, stop that copy
 > (one copy on the VLAN), power the vSphere original back on, and go straight to 1b.3.
+
+> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
+> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
+> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
+> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
+> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
 ---
 
@@ -48,9 +56,9 @@ Because every copy keeps `$VM_IP`, the helpers work unchanged on both sites, and
 <sub>🎬 *1b.1 Inject before you move: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/01b-1b-1-inject-before-move.mp4`).*</sub>
 
 ```bash
-mark site-a d1b-before                 # your row, over the network, to the VM still on vSphere
-verify site-a                          # chain_ok = t
-export FP=$(sql site-a -Atc "SELECT fingerprint FROM ovedr_checksum()"); echo "fingerprint before: $FP"
+mark d1b-before                        # your row, over the network, to the VM still on vSphere
+verify                                 # chain_ok = t
+export FP=$(sql -Atc "SELECT fingerprint FROM ovedr_checksum()"); echo "fingerprint before: $FP"
 ```
 
 In the VM (vCenter → your VM → **Launch Web Console**, as `.\student-NN`):
@@ -122,10 +130,10 @@ oc --context $CTX -n "$VMNS" get vmi $VM \
 ### Check on site A
 
 ```bash
-alive site-a                           # heartbeat live again (staleness < 10 s), postgres_started is new
-verify site-a                          # chain_ok = t, your d1b-before row is there
-sql site-a -Atc "SELECT fingerprint FROM ovedr_checksum()"     # = $FP: every mark arrived, unchanged
-mark site-a d1b-after-site-a
+alive                                  # heartbeat live again (staleness < 10 s), postgres_started is new
+verify                                 # chain_ok = t, your d1b-before row is there
+sql -Atc "SELECT fingerprint FROM ovedr_checksum()"            # = $FP: every mark arrived, unchanged
+mark d1b-after-site-a
 ```
 
 In the VM (**Virtualization → VirtualMachines → your VM → Console**): read the file back, then add a line:
@@ -198,10 +206,10 @@ oc --context $CTX -n "$VMNS" wait vmi/$VM --for=jsonpath='{.status.phase}'=Runni
 ### Check on site B
 
 ```bash
-alive site-b
-verify site-b                          # d1b-before is there; d1b-after-site-a is NOT (that row lives only in the site A copy)
-sql site-b -Atc "SELECT fingerprint FROM ovedr_checksum()"     # = $FP again
-mark site-b d1b-after-site-b
+alive
+verify                                 # d1b-before is there; d1b-after-site-a is NOT (that row lives only in the site A copy)
+sql -Atc "SELECT fingerprint FROM ovedr_checksum()"            # = $FP again
+mark d1b-after-site-b
 ```
 
 > 💡 **Why is `d1b-after-site-a` missing on B?** Both migrations copied the VM **from vSphere**, and the site A copy

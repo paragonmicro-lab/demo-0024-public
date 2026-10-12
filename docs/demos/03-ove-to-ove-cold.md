@@ -1,13 +1,13 @@
 ---
 title: "Demo 3 — OpenShift to OpenShift, cold, with storage migration"
 subtitle: "Link the clusters in ACM · move a stopped VM from site A to site B with MTV · prove every row arrived"
-version: 0.3.0
-date: 2026-10-06
+version: 0.4.0
+date: 2026-10-12
 ---
 
 # Demo 3: OVE → OVE cold migration
 
-> **Version 0.3.0 · draft · 2026-10-06** · class/demos/03-ove-to-ove-cold.md
+> **Version 0.4.0 · draft · 2026-10-12** · class/demos/03-ove-to-ove-cold.md
 
 ## What you will learn
 
@@ -32,7 +32,7 @@ and [Lab S — how this lab was built](setup-how-the-lab-is-built.md) for the CL
 | NMState bridges + VLAN NADs (`vmnet<VLAN>`) | both clusters | same-named NADs on both sites, so VLAN networks map across. [S.3](setup-how-the-lab-is-built.md) |
 | Storage | site A **ODF** (`ocs-storagecluster-ceph-rbd-virtualization`), site B **NFS** (`nfs-csi`): one ODF site today (SSD limit), so this move is **ODF → NFS** | [S.4](setup-how-the-lab-is-built.md) · [ODF 4.19](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) |
 | MTV on both tooled sites, with its console menu | site B (needs `migration_tools=both`) | provider `ovedr-ocp-<A-slot>` (type `openshift`, reads site A over `api-int` with site A's CA), plus its network map and storage map, **Ready**. [S.5](setup-how-the-lab-is-built.md) · [S.7](setup-how-the-lab-is-built.md) · [S.8](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) |
-| **Your namespace** `$VMNS` (your class ID, you are **admin**) with your `Service/<VM>-sql`; `ovedr-app` with the shared `sql-client` | **both** clusters | your VM lands in your namespace on each site; you may create and run your own plans. [S.9](setup-how-the-lab-is-built.md) |
+| **Your namespace** `$VMNS` (your class ID, you are **admin**) with your `Service/<VM>-sql` and your browser terminal `sql-client` | **both** clusters | your VM lands in your namespace on each site; you may create and run your own plans. [S.9](setup-how-the-lab-is-built.md) |
 | Student read access | both clusters | MTV objects in `openshift-mtv`, managed clusters on the hub, bridges, storage classes. [S.9](setup-how-the-lab-is-built.md) |
 | **Your own VM**, `win-pg-s<NN>` | **running on site A** | the end state of Demo 1 (staged plan `d1-<VM>`), still at **its own address `$VM_IP`** on the VLAN bridge. [S.11](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) |
 
@@ -45,6 +45,14 @@ site B too, so Lab 0 §0.6 is not needed.
 
 > **Before you start:** complete [Lab 0](00-access-and-tools.md) in this terminal. You need `$ME`, `$A`, `$B`, `$VM`,
 > both contexts (`site-a`, `site-b`) and the helpers (`sql`, `mark`, `verify`, `alive`, `where`).
+
+> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
+> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
+> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
+> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
+> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
 ---
 
@@ -70,15 +78,15 @@ with the pod map in Demo 1 and followed Lab 0 §0.6: keep that `PGHOST`.)
 
 ```bash
 echo "PGHOST=${PGHOST:-$VM_IP}"
-alive  site-a                                  # staleness < 10 s
-verify site-a                                  # chain_ok = t, carried over from demos 1/2
+alive                                          # staleness < 10 s
+verify                                         # chain_ok = t, carried over from demos 1/2
 ```
 
 ### Inject: before the move
 
 ```bash
-mark site-a d3-before "on $A, about to move to $B"
-verify site-a                                  # ✍️ note marks, last id, fingerprint
+mark d3-before "on $A, about to move to $B"
+verify                                         # ✍️ note marks, last id, fingerprint
 ```
 
 In your VM (site A console: **Virtualization → VirtualMachines → `<VM>` → Console**, log in as `.\<WINUSER>`), add a
@@ -256,16 +264,16 @@ oc --context site-b get storageclass
 <sub>🎬 *3.4 Check the destination namespace on site B: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-4-check-destination-namespace-site-b.mp4`).*</sub>
 
 Your VM lands in **your own namespace** (`$VMNS`) on site B. CI built the same things there as on site A: your
-namespace with you as admin, your Service `<VM>-sql` in it, and the shared `sql-client` pod in `ovedr-app` that selects each VM by name ([Lab S §S.9](setup-how-the-lab-is-built.md)).
+namespace with you as admin, your Service `<VM>-sql` in it (it selects your VM by name), and your site-B browser terminal `sql-client` ([Lab S §S.9](setup-how-the-lab-is-built.md)).
 
 ```bash
 oc --context site-b get ns "$VMNS"                                        # your namespace, on site B too
-oc --context site-b -n ovedr-app get deploy/sql-client
+oc --context site-b -n "$VMNS" get deploy/sql-client                      # your browser terminal on site B
 oc --context site-b -n "$VMNS" get svc "$VM-sql" -o jsonpath='{.spec.selector}{"\n"}'   # vm.kubevirt.io/name=<VM>
 oc --context site-b -n "$VMNS" get vm "$VM" 2>/dev/null || echo "no $VM on site B yet"   # expected
 ```
 
-✅ `ovedr-app` exists on site B, with `sql-client` ready, `<VM>-sql` waiting, and no copy of your VM yet.
+✅ Your namespace exists on site B, with your `sql-client` ready, `<VM>-sql` waiting, and no copy of your VM yet.
 
 ---
 
@@ -280,7 +288,7 @@ oc --context site-b -n "$VMNS" get vm "$VM" 2>/dev/null || echo "no $VM on site 
 A cold migration copies **stopped** disks. Stop your VM cleanly first. Windows shuts down and PostgreSQL flushes.
 
 ```bash
-mark site-a d3-last-before-stop "final row on $A"            # your last row on site A
+mark d3-last-before-stop "final row on $A"                   # your last row on site A
 virtctl --context site-a -n "$VMNS" stop "$VM" 2>/dev/null \
   || oc --context site-a -n "$VMNS" patch vm "$VM" --type merge -p '{"spec":{"runStrategy":"Halted"}}'
 oc --context site-a -n "$VMNS" get vm "$VM" -w            # STATUS → Stopped (Ctrl-C)
@@ -397,7 +405,7 @@ on site B: then re-read it as in Lab 0 §0.6, step 5, with `CTX=site-b`.)
 ```bash
 CTX=site-b
 echo "PGHOST=${PGHOST:-$VM_IP}"
-oc --context site-b -n ovedr-app exec deploy/sql-client -- pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
+pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
 ```
 
 ### Read and verify: your data
@@ -405,9 +413,9 @@ oc --context site-b -n ovedr-app exec deploy/sql-client -- pg_isready -h "${PGHO
 Run the helpers against **site B** now:
 
 ```bash
-alive  site-b                                  # beats resume; postgres_started = the boot on site B
-verify site-b                                  # chain_ok = t, marks = row 3.0 + 2 (d3-before, d3-last-before-stop)
-sql    site-b -c "SELECT id, ts, stage, left(sha,12) FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 5;"
+alive                                          # beats resume; postgres_started = the boot on site B
+verify                                         # chain_ok = t, marks = row 3.0 + 2 (d3-before, d3-last-before-stop)
+sql -c "SELECT id, ts, stage, left(sha,12) FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 5;"
 ```
 
 ✅ `d3-before` and `d3-last-before-stop` are both there, and `chain_ok = t`.
@@ -417,7 +425,7 @@ marks are in its database.
 ### The outage, measured by the heartbeat
 
 ```bash
-sql site-b -c "SELECT id, ts, date_trunc('second', gap) AS gap
+sql -c "SELECT id, ts, date_trunc('second', gap) AS gap
                FROM (SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g
                WHERE gap > interval '10 seconds' AND ts > timestamptz '$STOPPED_AT' - interval '1 minute'
                ORDER BY id;"
@@ -428,8 +436,8 @@ sql site-b -c "SELECT id, ts, date_trunc('second', gap) AS gap
 ### Inject: after the move
 
 ```bash
-mark   site-b d3-after "running on $B, storage $(oc --context site-b -n "$VMNS" get pvc -o json | jq -r --arg vm "$VM" '[.items[] | select(.metadata.name | contains($vm)) | .spec.storageClassName][0]')"
-verify site-b
+mark d3-after "running on $B, storage $(oc --context site-b -n "$VMNS" get pvc -o json | jq -r --arg vm "$VM" '[.items[] | select(.metadata.name | contains($vm)) | .spec.storageClassName][0]')"
+verify
 ```
 
 ### Your file, on the new cluster

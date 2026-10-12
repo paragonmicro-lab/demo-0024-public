@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.3.1
-date: 2026-10-06
+version: 0.4.0
+date: 2026-10-12
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.3.1 · draft · 2026-10-06** · class/demos/04-odf-regional-dr.md
+> **Version 0.4.0 · draft · 2026-10-12** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -34,9 +34,9 @@ console steps behind the shared pieces.
 | ODF Multicluster Orchestrator and the DR hub operator (Ramen) on the hub, and the DR cluster operator on both sites | site B / both | §4.2 | [ODF DR guide](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
 | Submariner (the network tunnel Ceph mirrors over), the `MirrorPeer`, both `DRCluster`s | both | §4.2 | [ODF DR guide: Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
 | The **15-minute** `DRPolicy` (`sync_interval=15m`) | site B | §4.2 | §4.2 |
-| `ovedr-app` with `sql-client` and a Service per class VM (`<VM>-sql`), on **both** sites | both | `oc --context site-b -n ovedr-app get deploy,svc` | [S.9](setup-how-the-lab-is-built.md) |
+| Your namespace with your browser terminal `sql-client` and your VM's Service (`<VM>-sql`); `ovedr-app` with the instructor's, on **both** sites | both | `oc --context site-b -n "$VMNS" get deploy,svc` | [S.9](setup-how-the-lab-is-built.md) |
 | **Your own VM** (`$VM`, e.g. `win-pg-s03`) running on site A, on ODF storage (`ocs-storagecluster-ceph-rbd-virtualization`), at **its own address `$VM_IP`** on the VLAN bridge (Demo 1's staged plan) | site A | `where` → `site-a Running` | [S.11](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) |
-| Your Windows login (`.\<WINUSER>`) and the PostgreSQL toolkit (`marks`, `ovedr_*`) inside your VM | your VM | `verify site-a` | [S.11](setup-how-the-lab-is-built.md) |
+| Your Windows login (`.\<WINUSER>`) and the PostgreSQL toolkit (`marks`, `ovedr_*`) inside your VM | your VM | `verify` | [S.11](setup-how-the-lab-is-built.md) |
 
 **What you do yourself:** inspect every DR layer, inject and verify data at every stage, read replication
 status at three levels, and run the moves when you are the driver.
@@ -54,6 +54,14 @@ status at three levels, and run the moves when you are the driver.
 
 > **Before you start:** do [Lab 0](00-access-and-tools.md) in this terminal. You need the variables (`ME N A B VM`),
 > the two contexts (`site-a`, `site-b`) and the helpers (`sql mark load verify alive where`).
+
+> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
+> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
+> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
+> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
+> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
 ---
 
@@ -78,9 +86,9 @@ drpc() { oc --context site-b -n openshift-dr-ops get drpc "$DRPC" \
 rbdmirror() { oc --context "$1" -n openshift-storage rsh deploy/rook-ceph-tools \
                 rbd mirror pool status ocs-storagecluster-cephblockpool --verbose; }
 
-where; alive site-a
-mark site-a d4-start
-verify site-a
+where; alive
+mark d4-start
+verify
 ```
 
 ✍️ **Row 4.0:** your `d4-start` mark id and the `fingerprint`.
@@ -182,7 +190,7 @@ for s in site-a site-b; do echo "== $s"; oc --context $s get volumereplicationcl
 <sub>🎬 *4.3 Protect the VM: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-3-protect-vm.mp4`).*</sub>
 
 ```bash
-mark site-a d4-before-protect
+mark d4-before-protect
 ```
 
 ### 🧑‍🏫 Driver: enrol the VM
@@ -268,9 +276,9 @@ oc --context site-a -n openshift-storage rsh deploy/rook-ceph-tools \
 ### Inject, then wait for ONE complete sync that contains your row
 
 ```bash
-load site-a d4-busy 200                          # a burst: the database is busy
-mark site-a d4-wait-for-sync                     # the row that must reach site B
-T=$(sql site-a -Atc "SELECT max(ts) FROM marks WHERE student = '$ME'")
+load d4-busy 200                                 # a burst: the database is busy
+mark d4-wait-for-sync                            # the row that must reach site B
+T=$(sql -Atc "SELECT max(ts) FROM marks WHERE student = '$ME'")
 echo "my row's time: $T"
 # poll the hub until a group sync STARTED after your row's time (each sync is a crash-consistent snapshot)
 until [ "$(date -d "$(oc --context site-b -n openshift-dr-ops get drpc "$DRPC" -o jsonpath='{.status.lastGroupSyncTime}')" +%s 2>/dev/null || echo 0)" \
@@ -280,7 +288,7 @@ done
 echo "✅ a sync completed after your row"; drpc
 ```
 
-> ⚠ The loop uses GNU `date -d`. On macOS, run it from the lab's Linux shell, or install `coreutils` and use `gdate`.
+> The loop uses GNU `date -d`, which your browser terminal (Linux) has.
 >
 > 💡 With a 15-minute interval this can take up to 15 minutes. That wait **is** the RPO you are buying. The
 > instructor may use a 5-minute policy in a short session.
@@ -330,7 +338,7 @@ A "clean migration" between sites is a **Relocate**. The bonus round does a real
 ### 🧑‍🏫 Driver: Relocate to site B
 
 ```bash
-mark site-a d4-before-relocate
+mark d4-before-relocate
 oc --context site-b -n openshift-dr-ops patch drpc "$DRPC" --type merge \
   -p "{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"$B\"}}"
 ```
@@ -345,9 +353,9 @@ Your VM came up on site B with the same address (`$PGHOST`), so the helpers work
 oc --context site-b -n openshift-dr-ops get drpc "$DRPC" -o wide -w           # Relocating → Relocated
 where                                                                        # site-b Running
 oc --context site-b -n "$VMNS" get vm,vmi,pvc,svc,deploy                   # everything came with it
-alive  site-b
-verify site-b
-sql    site-b -c "SELECT id, ts, stage FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 5;"
+alive
+verify
+sql -c "SELECT id, ts, stage FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 5;"
 ```
 
 ✅ `d4-before-relocate` is present on site B, so a planned move loses nothing.
@@ -375,7 +383,7 @@ The VM now runs on B, and B is the **primary**. Before you move it again, check 
 **reversed**: B replicates back to A, and A's images are the secondaries.
 
 ```bash
-mark site-b d4-on-b
+mark d4-on-b
 drpc
 oc --context site-b -n openshift-dr-ops get drpc "$DRPC" \
   -o jsonpath='{range .status.conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'
@@ -389,7 +397,7 @@ Wait for one sync after `d4-on-b`, using the same loop as §4.4, with `site-b` i
 ### 🧑‍🏫 Driver: Relocate home to site A
 
 ```bash
-mark site-b d4-before-home
+mark d4-before-home
 oc --context site-b -n openshift-dr-ops patch drpc "$DRPC" --type merge \
   -p "{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"$A\"}}"
 oc --context site-b -n openshift-dr-ops get drpc "$DRPC" -o wide -w
@@ -401,9 +409,9 @@ Same address again, now on site A:
 
 ```bash
 where                                            # site-a Running
-alive  site-a
-verify site-a
-sql site-a -c "SELECT stage, count(*), min(id), max(id) FROM marks WHERE student = '$ME' GROUP BY stage ORDER BY min(id);"
+alive
+verify
+sql -c "SELECT stage, count(*), min(id), max(id) FROM marks WHERE student = '$ME' GROUP BY stage ORDER BY min(id);"
 drpc                                             # Relocated; protection A → B again
 ```
 
@@ -418,7 +426,7 @@ Console on site A:
 Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" -Tail 4        # both "site A" and "site B" lines
 ```
 
-📸 `04-home`: `verify site-a` with `chain_ok = t`, and the file's tail.
+📸 `04-home`: `verify` with `chain_ok = t`, and the file's tail.
 
 ---
 
@@ -429,10 +437,10 @@ Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" -Tail 4        # both "sit
 <sub>🎬 *4.7 End-of-demo validation: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-7-end-demo-validation.mp4`).*</sub>
 
 ```bash
-alive  site-a
-verify site-a
-sql site-a -c "SELECT * FROM ovedr_verify();"                 # the whole class: every student's chain_ok
-sql site-a -c "SELECT id, ts, date_trunc('second', gap) AS outage FROM (
+alive
+verify
+sql -c "SELECT * FROM ovedr_verify();"                        # the whole class: every student's chain_ok
+sql -c "SELECT id, ts, date_trunc('second', gap) AS outage FROM (
                  SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g
                WHERE gap > interval '10 seconds' ORDER BY id DESC LIMIT 5;"   # each move's outage (RTO)
 ```
@@ -495,11 +503,11 @@ the scripted disaster in the classic M6 module.
 ### Step 1: inject, and note the last sync that got through
 
 ```bash
-mark site-a d4h-before-break
+mark d4h-before-break
 until [ "$(date -d "$(oc --context site-b -n openshift-dr-ops get drpc "$DRPC" -o jsonpath='{.status.lastGroupSyncTime}')" +%s)" \
-        -gt "$(date -d "$(sql site-a -Atc "SELECT max(ts) FROM marks WHERE student='$ME'")" +%s)" ]; do drpc; sleep 60; done
+        -gt "$(date -d "$(sql -Atc "SELECT max(ts) FROM marks WHERE student='$ME'")" +%s)" ]; do drpc; sleep 60; done
 drpc                       # ✍️ lastSync = the last checkpoint that will reach B
-sql site-a -Atc "SELECT max(id) FROM marks WHERE student = '$ME'"   # ✍️ your last SAFE id
+sql -Atc "SELECT max(id) FROM marks WHERE student = '$ME'"          # ✍️ your last SAFE id
 ```
 
 ### Step 2: 🧑‍🏫 break the link (option A) **[verify]**
@@ -515,8 +523,8 @@ oc --context site-b -n submariner-operator get gateways -o wide      # no active
 ### Step 3: keep writing on A. These rows will NOT reach B.
 
 ```bash
-for n in 1 2 3; do mark site-a "d4h-after-break-$n"; sleep 20; done
-sql site-a -c "SELECT id, ts, stage FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 4;"
+for n in 1 2 3; do mark "d4h-after-break-$n"; sleep 20; done
+sql -c "SELECT id, ts, stage FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 4;"
 ```
 
 ✍️ Write down these ids and the first 12 characters of each `sha`. They are the rows you are about to lose.
@@ -551,8 +559,8 @@ Same address, on site B:
 
 ```bash
 where                                                   # site-b Running
-verify site-b
-sql site-b -c "SELECT id, ts, stage, left(sha,12) AS sha FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 4;"
+verify
+sql -c "SELECT id, ts, stage, left(sha,12) AS sha FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 4;"
 ```
 
 What you should see, and why:
@@ -564,8 +572,8 @@ What you should see, and why:
   replicated state. Its `sha` differs from your note, so it is a different row with the same number.
 
 ```bash
-mark site-b d4h-on-b-after-failover
-sql site-b -c "SELECT id, stage, left(sha,12) FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 2;"
+mark d4h-on-b-after-failover
+sql -c "SELECT id, stage, left(sha,12) FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 2;"
 ```
 
 ```powershell
@@ -610,14 +618,14 @@ claim. A **full** copy means the hostile path costs one full copy, and the guide
 ### Step 7: 🧑‍🏫 Relocate home, and verify the history
 
 ```bash
-mark site-b d4h-before-home
+mark d4h-before-home
 # wait for one sync after that mark (§4.4 loop, site-b), then:
 oc --context site-b -n openshift-dr-ops patch drpc "$DRPC" --type merge \
   -p "{\"spec\":{\"action\":\"Relocate\",\"preferredCluster\":\"$A\"}}"
 oc --context site-b -n openshift-dr-ops get drpc "$DRPC" -o wide -w
 where
-verify site-a
-sql site-a -c "SELECT id, stage, left(sha,12) AS sha FROM marks WHERE student = '$ME' AND stage LIKE 'd4h%' ORDER BY id;"
+verify
+sql -c "SELECT id, stage, left(sha,12) AS sha FROM marks WHERE student = '$ME' AND stage LIKE 'd4h%' ORDER BY id;"
 ```
 
 ✅ Present: `d4h-before-break`, `d4h-on-b-after-failover` and `d4h-before-home`.

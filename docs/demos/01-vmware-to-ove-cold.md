@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inspect · link · migrate · swap the guest tools · prove the data · bonus: live migration and snapshot restore"
-version: 0.4.3
-date: 2026-10-06
+version: 0.5.0
+date: 2026-10-12
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 0.4.3 · draft · 2026-10-06** · class/demos/01-vmware-to-ove-cold.md
+> **Version 0.5.0 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -29,7 +29,7 @@ section in [Lab S](setup-how-the-lab-is-built.md)**, with the CLI and console st
 | **Site A** (the target) | OpenShift Virtualization (`ove: cnv`, from demo-openshift); NMState bridge `br<VLAN>` with NAD `vmnet<VLAN>`; storage on **ODF** (`ocs-storagecluster-ceph-rbd-virtualization`); ACM and cert-manager (base build, the same on both sites). | [S.2](setup-how-the-lab-is-built.md) · [S.3](setup-how-the-lab-is-built.md) · [S.4](setup-how-the-lab-is-built.md) · [OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index) · [NMState](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index) [verify link] · [ODF](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) |
 | **MTV** on site A | the operator, its **Migration for Virtualization** console menu, provider `ovedr-vcenter0<N>` linked to vCenter (least-privilege `ovedr-mtv@vsphere.local`), network maps `…-net` (pod) and `…-net-bridge` (your VLAN), storage map `…-storage` (datastore → ODF). | [S.5](setup-how-the-lab-is-built.md) · [S.6](setup-how-the-lab-is-built.md) · [S.8](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) · [Installing and using MTV](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link] |
 | **Your migration plan `d1-<your VM>`** | **staged, NOT started**: cold, your VM → **your own namespace** (`$VMNS`, your class ID) on site A, the **bridge** network map (your VM keeps `$VM_IP`) and the storage map. It shows **Ready** in the console. | [S.12](setup-how-the-lab-is-built.md) · [Creating and running a migration plan](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link] |
-| **Your namespace** `$VMNS` (your class ID) on site A and site B, plus `ovedr-app` | in yours: **admin** rights for you, and `Service/<your VM>-sql` waiting for your VM to arrive; in `ovedr-app`: the shared `sql-client`. | [S.9](setup-how-the-lab-is-built.md) · [Using RBAC](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac) [verify link] |
+| **Your namespace** `$VMNS` (your class ID) on site A and site B, plus `ovedr-app` | in yours: **admin** rights for you, `Service/<your VM>-sql` waiting for your VM to arrive, and your browser terminal `sql-client` (Lab 0 §0.3). | [S.9](setup-how-the-lab-is-built.md) · [Using RBAC](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac) [verify link] |
 | **Read access** for students | MTV objects in `openshift-mtv` (and the right to run plans and migrations), NNCPs, storage classes, ACM clusters. | [S.9](setup-how-the-lab-is-built.md) |
 | **Site B** | the same operators, on **NFS** (`nfs-csi`); its own staged plan `d1b-<your VM>-to-<B>` waits for Demo 1b. Not used in this demo. | [S.12](setup-how-the-lab-is-built.md) |
 
@@ -47,6 +47,14 @@ Lab 0 §0.6 is not needed.
 > **Your own VM.** Every step below acts on **your** `$VM` (`win-pg-s<NN>`), so you drive your own migration from
 > start to finish. 🧑‍🏫 marks the few steps only the instructor runs.
 
+> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
+> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
+> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
+> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
+> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
+
 ---
 
 ## 1.1 Login recap (2 min)
@@ -57,8 +65,8 @@ Lab 0 §0.6 is not needed.
 
 ```bash
 oc --context site-a whoami && oc --context site-b whoami        # both print $ME
-echo "vm=$VM  db-host=${PGHOST:-$PGHOST_SITE_A}"                  # still the vSphere IP ($VM_IP) for now
-alive site-a                                                      # staleness < 10 s
+echo "vm=$VM  db-host=${PGHOST:-$VM_IP}"                          # still the vSphere IP ($VM_IP) for now
+alive                                                             # staleness < 10 s
 ```
 
 **Check:** ✅ both contexts answer as `$ME`, and the heartbeat is fresh. If not, go back to Lab 0.
@@ -105,8 +113,8 @@ Get-Volume -DriveLetter C, D, L | Format-Table DriveLetter, FileSystemLabel, Siz
 ### Inject: your database row
 
 ```bash
-mark   site-a d1-before
-verify site-a
+mark d1-before
+verify
 ```
 
 ✍️ **Row 1.1:** the mark `id`, `chain_ok`, `fingerprint`.
@@ -296,8 +304,8 @@ copy plus the driver conversion.
 ### Inject before the move
 
 ```bash
-mark site-a d1-before-migration "on=vSphere"
-verify site-a
+mark d1-before-migration "on=vSphere"
+verify
 ```
 
 In the Windows console:
@@ -315,7 +323,7 @@ but a clean guest shutdown flushes PostgreSQL first.)
 
 ```bash
 # the heartbeat goes stale once the guest is down
-alive site-a          # staleness grows; then the query fails once Windows is off: expected
+alive                 # staleness grows; then the query fails once Windows is off: expected
 ```
 
 ### Review your staged plan
@@ -543,17 +551,17 @@ helpers keep using `$VM_IP`. (Only if you built and ran a plan with the **pod** 
 
 ```bash
 echo "PGHOST=${PGHOST:-$VM_IP}"         # still your own address
-oc --context site-a -n ovedr-app exec deploy/sql-client -- pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
+pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
 ```
 
 ### The database now lives on OpenShift
 
 ```bash
 where                                   # site-a Running  node=…
-alive  site-a                           # postgres_started is NEW (the VM rebooted); staleness < 10 s again
-verify site-a                           # your d1-before and d1-before-migration rows are present, chain_ok = t
-mark   site-a d1-after-migration "on=OVE site-a"
-sql    site-a -c "SELECT id, ts, date_trunc('second', gap) AS outage
+alive                                   # postgres_started is NEW (the VM rebooted); staleness < 10 s again
+verify                                  # your d1-before and d1-before-migration rows are present, chain_ok = t
+mark d1-after-migration "on=OVE site-a"
+sql -c "SELECT id, ts, date_trunc('second', gap) AS outage
                   FROM (SELECT id, ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g
                   WHERE gap > interval '10 seconds' ORDER BY id DESC LIMIT 3;"
 ```
@@ -651,7 +659,7 @@ Get-Service QEMU-GA
 Remove the drivers disk again in the console (untick it) and restart.
 
 ```bash
-alive site-a && verify site-a          # the reboots cost heartbeat gaps, never rows
+alive && verify                        # the reboots cost heartbeat gaps, never rows
 ```
 
 ---
@@ -663,9 +671,9 @@ alive site-a && verify site-a          # the reboots cost heartbeat gaps, never 
 <sub>🎬 *1.7 End of demo: prove the data: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/01-1-7-end-demo-prove-data.mp4`).*</sub>
 
 ```bash
-mark   site-a d1-end "demo 1 complete"
-verify site-a
-sql    site-a -c "SELECT stage, id, ts FROM marks WHERE student = '$ME' ORDER BY id;"
+mark d1-end "demo 1 complete"
+verify
+sql -c "SELECT stage, id, ts FROM marks WHERE student = '$ME' ORDER BY id;"
 ```
 
 ```powershell
@@ -725,7 +733,7 @@ oc --context site-a -n "$VMNS" get vmi "$VM" \
   -o jsonpath='{.status.conditions[?(@.type=="LiveMigratable")].status}  {.status.conditions[?(@.type=="LiveMigratable")].message}{"\n"}'
 oc --context site-a -n "$VMNS" get pvc -o custom-columns=NAME:.metadata.name,MODES:.spec.accessModes,SC:.spec.storageClassName
 where                                                  # ✍️ the node it is on now
-mark site-a d1-bonusA-before
+mark d1-bonusA-before
 ```
 
 ✅ `LiveMigratable=True`. If it is `False`, the message names the reason: usually a RWO disk or a mounted CD.
@@ -748,10 +756,10 @@ Watch it:
 ```bash
 oc --context site-a -n "$VMNS" get vmim -w                          # Scheduling → … → Succeeded
 where                                                                 # a different node
-alive site-a                                                          # postgres_started UNCHANGED: no reboot
-mark  site-a d1-bonusA-after
-verify site-a
-sql   site-a -c "SELECT max(gap) FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap
+alive                                                                 # postgres_started UNCHANGED: no reboot
+mark d1-bonusA-after
+verify
+sql -c "SELECT max(gap) FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap
                  FROM heartbeat WHERE ts > now() - interval '10 minutes') g;"
 ```
 
@@ -781,7 +789,7 @@ disks and restarting PostgreSQL.
 ### Snapshot
 
 ```bash
-mark site-a d1-pre-snapshot "this row must come back"
+mark d1-pre-snapshot "this row must come back"
 oc --context site-a apply -f - <<EOF
 apiVersion: snapshot.kubevirt.io/v1beta1
 kind: VirtualMachineSnapshot
@@ -805,7 +813,7 @@ Each storage option ships its own VolumeSnapshotClass (ODF's, or `nfs-csi-snapcl
 Now write a row **after** the snapshot. It exists only in the live database, so the restore must lose it:
 
 ```bash
-mark site-a d1-after-snapshot "this row must NOT come back"
+mark d1-after-snapshot "this row must NOT come back"
 ```
 
 ### Delete the database
@@ -818,17 +826,19 @@ Disable-ScheduledTask -TaskName bcdr-heartbeat | Out-Null
 Stop-ScheduledTask    -TaskName bcdr-heartbeat
 ```
 
-Then drop the database (the `bcdr` role owns it):
+Then drop the database. The `bcdr` role owns it, and its password is the instructor's, so **🧑‍🏫 ask your
+instructor** to run this from their browser terminal, with **your** VM's address:
 
 ```bash
+# 🧑‍🏫 instructor (cluster-admin), in their browser terminal: the class pod holds the bcdr owner's password
 oc --context site-a -n ovedr-app exec -i deploy/sql-client -- \
-  psql -h "$PGHOST" -U bcdr -d postgres -c 'DROP DATABASE bcdr WITH (FORCE);'
+  psql -h <student VM_IP> -U bcdr -d postgres -c 'DROP DATABASE bcdr WITH (FORCE);'
 ```
 
 Confirm the damage:
 
 ```bash
-verify site-a          # FATAL: database "bcdr" does not exist. That is the disaster.
+verify                 # FATAL: database "bcdr" does not exist. That is the disaster.
 ```
 
 📸 `01-database-gone`: the `does not exist` error.
@@ -914,10 +924,10 @@ the originals offline.
 ### What came back
 
 ```bash
-verify site-a
-sql site-a -c "SELECT stage, id, ts FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 5;"
-alive  site-a
-mark   site-a d1-bonusB-restored
+verify
+sql -c "SELECT stage, id, ts FROM marks WHERE student = '$ME' ORDER BY id DESC LIMIT 5;"
+alive
+mark d1-bonusB-restored
 ```
 
 ✅ The database exists again, `chain_ok = t`, and your newest row is **`d1-pre-snapshot`**.
@@ -1009,23 +1019,25 @@ Everything in steps 1-3 is one VirtualMachine manifest:
 **[`class/examples/centos9-vm-from-template.yaml`](../examples/centos9-vm-from-template.yaml)**. It was exported from
 the console after the steps above, with the cluster-generated fields and the password removed. Each part is commented
 with the console step it replaces: the root disk cloned from Red Hat's boot source, the blank data disk, the NIC on
-your VLAN's bridge, and cloud-init for your login key and static address.
+your VLAN's bridge, and cloud-init for the `centos` login and your static address. In your browser terminal, it is
+fetched from the class site, filled in and applied (or paste it into **+ → Import YAML** in the console, with your
+values in place of each `${…}`).
 
 ```bash
 export NAME="$VMNS-centos9" VLAN=$((22 + N)) SC=nfs-csi       # SC: ocs-storagecluster-ceph-rbd-virtualization on an ODF site
 export VIP="10.101.$VLAN.$((150 + 10#${WINUSER#student-}))"   # your static address on the VLAN (no lab DHCP)
-[ -f ~/.ssh/id_ed25519.pub ] || ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
-export SSH_PUBKEY="$(cat ~/.ssh/id_ed25519.pub)"
-envsubst < class/examples/centos9-vm-from-template.yaml | oc --context site-a -n "$VMNS" apply -f -
+read -rsp 'Password for user centos: ' CENTOS_PASSWORD; echo; export CENTOS_PASSWORD   # typed, never in a file
+curl -sSf https://paragonmicro-lab.github.io/demo-0024-public/examples/centos9-vm-from-template.yaml \
+  | envsubst | oc --context site-a -n "$VMNS" apply -f -
 oc --context site-a -n "$VMNS" get vm,dv "$NAME" "$NAME-data"                   # DataVolumes clone/create, then the VM runs
 oc --context site-a -n "$VMNS" wait vmi/"$NAME" --for=jsonpath='{.status.phase}'=Running --timeout=10m
-ssh centos@"$VIP" 'lsblk; ip -4 addr show eth0'                                # your key, your address
+oc --context site-a -n "$VMNS" get vmi "$NAME" -o jsonpath='{.status.interfaces[0].ipAddresses}{"\n"}'   # your address
 ```
 
 ### 4 · Use the data disk, and prove it
 
-Log in: `ssh centos@$VIP` if you used the YAML, or the **Console** tab (the user and password the template generated
-are on the VM's **Overview → Details**):
+Log in on the VM's **Console** tab: as `centos` with the password you typed if you used the YAML, or with the user and
+password the template generated (on the VM's **Overview → Details**) if you used the console:
 
 ```bash
 lsblk                                   # the 10 GiB disk with no partitions is your data disk (vdc from the YAML, vdb from the console)

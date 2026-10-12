@@ -2,13 +2,15 @@
 # Exported from the console (instructor, 0024-006, 2026-10-06), then stripped of everything the cluster generates
 # (uid, resourceVersion, timestamps, managedFields, MAC address, firmware serial) and of the password it held.
 #
-# Fill in and apply (envsubst is in gettext):
+# Fill in and apply, in your browser terminal (Lab 0 §0.3: it has envsubst, curl and oc):
 #   export NAME="$VMNS-centos9"                       # e.g. student-03-0024-006-centos9
 #   export VLAN=$((22 + N))                           # your vSphere zone's VLAN: lz1 → 23
 #   export VIP="10.101.$VLAN.$((150 + 10#${WINUSER#student-}))"   # a static address on that VLAN (no lab DHCP)
 #   export SC=nfs-csi                                 # or ocs-storagecluster-ceph-rbd-virtualization on an ODF site
-#   export SSH_PUBKEY="$(cat ~/.ssh/id_ed25519.pub)"  # log in with your key (no password in a file)
-#   envsubst < class/examples/centos9-vm-from-template.yaml | oc --context site-a -n "$VMNS" apply -f -
+#   read -rsp 'Password for user centos: ' CENTOS_PASSWORD; echo; export CENTOS_PASSWORD   # typed, never in a file
+#   curl -sSf https://paragonmicro-lab.github.io/demo-0024-public/examples/centos9-vm-from-template.yaml \
+#     | envsubst | oc --context site-a -n "$VMNS" apply -f -
+#   Log in on the VM's Console tab as centos with that password (the class works in the browser: no ssh client).
 #
 # What each part does (console step in brackets):
 #   dataVolumeTemplates[0]  root disk cloned from Red Hat's centos-stream9 boot source   [the template's disk source]
@@ -91,8 +93,8 @@ spec:
             userData: |-
               #cloud-config
               user: centos
-              ssh_authorized_keys:
-                - ${SSH_PUBKEY}
+              password: ${CENTOS_PASSWORD}
+              chpasswd: { expire: false }
             networkData: |-
               version: 2
               ethernets:

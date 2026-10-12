@@ -1,14 +1,14 @@
 ---
 title: "Demo 4b — Portworx DR: asynchronous replication, failover and clean failback"
 subtitle: "The Demo 4 BCDR story on Portworx PX-DR instead of ODF · bonus: a hostile link break"
-version: 0.0.1
+version: 0.1.0
 status: framework
-date: 2026-10-05
+date: 2026-10-12
 ---
 
 # Demo 4b: Portworx asynchronous DR
 
-> **Version 0.0.1 · framework · 2026-10-05** · class/demos/04b-portworx-dr.md
+> **Version 0.1.0 · framework · 2026-10-12** · class/demos/04b-portworx-dr.md
 
 > 🚧 **Framework: to be completed when Portworx is offered on the lab clusters.** This guide has the shape of the
 > demo and the stages it will have, but not its final commands. Every stage lists what still needs to be written
@@ -35,6 +35,14 @@ The CI customization will have to pre-build the following. None of it exists yet
 - See the [lab diagram](lab-diagram.md).
 
 > **Before you start:** do [Lab 0](00-access-and-tools.md) in this terminal (variables, contexts, helpers).
+
+> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
+> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
+> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
+> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
+> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
 ---
 
@@ -93,7 +101,7 @@ spec:
 
 **TODO**
 - Status reads: the MigrationSchedule status, each Migration's stage and bytes, and `pxctl` volume status (the jsonpaths are **[verify]**).
-- A poll loop like Demo 4's: `mark site-a d4b-wait-for-sync`, then poll until the last successful migration started after the mark's `ts`.
+- A poll loop like Demo 4's: `mark d4b-wait-for-sync`, then poll until the last successful migration started after the mark's `ts`.
 - 📸 `04b-cycle-complete`.
 
 ---
@@ -118,7 +126,7 @@ storkctl --context site-a suspend migrationschedule ovedr-a-to-b -n ovedr-app
 storkctl --context site-b activate migration -n ovedr-app
 ```
 
-- Checks on site B: refresh your address (Lab 0 §0.6), then `verify site-b` with `chain_ok = t`, and read the touch file.
+- Checks on site B: refresh your address (Lab 0 §0.6), then `verify` with `chain_ok = t`, and read the touch file.
 
 ---
 

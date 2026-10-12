@@ -1,18 +1,19 @@
 ---
 title: "Lab 0 — Access and tools (do this first, every session)"
 subtitle: "One identity on vCenter and both OpenShift clusters · your own VM · the data-integrity toolkit every demo uses"
-version: 0.4.0
-date: 2026-10-06
+version: 0.5.0
+date: 2026-10-12
 ---
 
 # Lab 0: Access and tools
 
-> **Version 0.4.0 · draft · 2026-10-06** · class/demos/00-access-and-tools.md
+> **Version 0.5.0 · draft · 2026-10-12** · class/demos/00-access-and-tools.md
 
 ## What you will learn
 
 You will sign in to all three platforms of the lab (vSphere and two OpenShift clusters) with one class identity
-and one password, and set up a terminal that always says which cluster it is talking to. You will find **your own**
+and one password, and open your **browser terminal**: a shell in the OpenShift console, already set up for you, so
+you install nothing on your computer. You will find **your own**
 Windows Server + PostgreSQL VM and leave your first mark in it: a line in a file on its disk, and a hash-chained row
 in its database. Every later demo repeats that pattern (inject, change, verify), so by the end of this lab you can
 prove, with one command, that none of your data was lost, changed or reordered.
@@ -27,11 +28,12 @@ the console, with links to the Red Hat documentation.
 |---|---|---|
 | **vSphere** `vcenter0<N>` (demo-vmware) | Nested ESXi cluster with the shared NFS datastore `coresan01_data00`, and port group `vm-network` on VLAN `22+N`. The instructor's VM **`win-pg-i01`** (folder `vms/ovedr`, address `.62`), plus **your own full clone `win-pg-s<NN>`** in **your own vCenter folder `vms/students/<your class ID>`** (address `.100+NN`). Each runs Windows Server 2022 with PostgreSQL 16: WAL on **`L:` (5 GB)**, data on **`D:` (10 GB)**, the 5-second heartbeat writer, and the data-integrity toolkit. Each has a Windows login for every class account. You can power **your** VM on and off, open its console, Edit Settings (CBT in Demo 2) and snapshot it, at your own pace. | [S.11](setup-how-the-lab-is-built.md) · [vSphere VM administration](https://docs.vmware.com/en/VMware-vSphere/8.0/vsphere-vm-administration/GUID-55238059-912E-411F-A0E9-A7A536972A91.html) [verify link] |
 | **Site A** and **site B** (demo-openshift, `ove: cnv`) | **The same operators on both clusters:** OpenShift Virtualization, NMState bridges `br<VLAN>` with NADs `vmnet<VLAN>` (one per lab VLAN), **ACM** and **cert-manager**. **Storage differs, for now:** site A runs **ODF** (`ocs-storagecluster-ceph-rbd-virtualization`, on the lab's 4 scratch SSDs) and site B runs **NFS** (`nfs-csi`): the SSDs fit one ODF cluster today. | [S.2](setup-how-the-lab-is-built.md) · [S.3](setup-how-the-lab-is-built.md) · [S.4](setup-how-the-lab-is-built.md) · [OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index) · [NMState](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index) [verify link] · [ODF](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) |
-| **Site A** and **site B** (this demo's customization) | **MTV** on both tooled sites, with its **Migration for Virtualization** console menu, the vSphere and peer-cluster providers and the network and storage maps. **A migration plan for every class VM, staged but not started**: `d1-<vm>` on site A and `d1b-<vm>-to-<B>` on site B. **Your own namespace on both sites** (your class ID, you are admin there) where your VM lands, with your `Service/<VM>-sql`; the class namespace **`ovedr-app`** with the shared `sql-client` pod. The instructor has their own namespace (the instructor VM lands there) and is cluster-admin. Read access for students to the migration objects, bridges, storage classes and ACM clusters, and the right to run their own plans. | [S.5](setup-how-the-lab-is-built.md)-[S.10](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) |
-| **Accounts** (core-web + core-sso) | One roster. `$ME` signs in with **SSO (Entra)** on vCenter and on both OpenShift consoles (one browser sign-in carries across all three), and the CLIs use a console token, and in Windows (`.\student-NN`). | [Authentication and authorization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index) |
+| **Site A** and **site B** (this demo's customization) | **MTV** on both tooled sites, with its **Migration for Virtualization** console menu, the vSphere and peer-cluster providers and the network and storage maps. **A migration plan for every class VM, staged but not started**: `d1-<vm>` on site A and `d1b-<vm>-to-<B>` on site B. **Your own namespace on both sites** (your class ID, you are admin there) where your VM lands, with your `Service/<VM>-sql`; **your browser terminal**, pod `sql-client` in your namespace on both sites (`psql`, the class commands, `oc`,
+`virtctl` and `jq`, preset with your VM and logins); the class namespace **`ovedr-app`**. The instructor has their own namespace (the instructor VM lands there) and is cluster-admin. Read access for students to the migration objects, bridges, storage classes and ACM clusters, and the right to run their own plans. | [S.5](setup-how-the-lab-is-built.md)-[S.10](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) |
+| **Accounts** (core-web + core-sso) | One roster. `$ME` signs in with **SSO (Entra)** on vCenter and on both OpenShift consoles (one browser sign-in carries across all three), and your browser terminal's `oc` uses a token from the console, and in Windows (`.\student-NN`). | [Authentication and authorization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index) |
 
-**You do yourself:** sign in everywhere, set up the CLI contexts and helpers, open your VM's console, and write your
-first file line and first database mark.
+**You do yourself:** sign in everywhere, open your browser terminal and sign it in, open your VM's console, and write
+your first file line and first database mark. **Everything happens in your web browser:** nothing to install.
 
 > **How to read these guides**
 > - `$ME` is your class ID, for example `student-03-0024-005`. **One password** works everywhere: vCenter, both
@@ -93,35 +95,15 @@ Your VM name and its vSphere address follow from your ID:
 
 **[verify: BL-D10, per-student clones and their address plan]**
 
-```bash
-# ── paste once per terminal, with YOUR values ────────────────────────────────────────────────
-export ME=student-03-0024-005
-export N=1 A=ocp-lz1 B=ocp-lz2
-export DOMAIN=demo.lab-paragonmicro.com
-export VC=vcenter0$N.$DOMAIN
-export WINUSER=${ME%-*-*}                    # your Windows login: student-03 (Windows caps names at 20 characters)
-case "$WINUSER" in
-  student-*) NN=${WINUSER#student-}                          # 03
-             export VM=win-pg-s$NN                           # your own VM
-             export VM_IP=10.101.$((22 + N)).$((100 + 10#$NN))    # its address while it still runs on vSphere
-             export VMNS=$(printf '%s' "$ME" | tr '[:upper:]' '[:lower:]') ;;   # YOUR namespace on both clusters
-  *)         export VM=win-pg-i01 VM_IP=10.101.$((22 + N)).62 VMNS=$(printf '%s' "$ME" | tr '[:upper:]' '[:lower:]') ;;   # the instructor's VM and namespace
-esac
-echo "me=$ME  vcenter=$VC  site-a=$A  site-b=$B  vm=$VM ($VM_IP)  namespace=$VMNS  windows=.\\$WINUSER"
-```
+**You don't type these in.** Your browser terminal (§0.3) already holds all of them, and your VM's name and address,
+as `$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$VMNS`, `$WINUSER`, `$VC` and `$DOMAIN`. Type `ovedr` there to see
+them. Check that they match your card.
 
 **Your namespace, `$VMNS`.** On **both** OpenShift clusters you have your own namespace (project), named exactly your
 class ID in lower case, for example `student-03-0024-005`. It matches your vCenter folder. You are **admin** there:
 full rights, scoped to that namespace only. Your migration plans land your VM there, and your VM's SQL Service
-(`$VM-sql`) lives there. The shared `sql-client` pod that the helpers below use stays in the class namespace
-`ovedr-app`. Instructors get their own namespace too (their class ID, where `win-pg-i01` lands), are admin in every student
+(`$VM-sql`) lives there, and so does **your browser terminal**, pod `sql-client` (§0.3). Instructors get their own namespace too (their class ID, where `win-pg-i01` lands), are admin in every student
 namespace, and are **cluster-admin** on both clusters, so they can help with any student, storage or operator issue.
-
-```bash
-oc --context site-a get project "$VMNS"                    # yours, on site A …
-oc --context site-b get project "$VMNS"                    # … and on site B
-oc --context site-a auth can-i '*' '*' -n "$VMNS"          # yes: admin in your own namespace
-```
 
 ---
 
@@ -162,26 +144,59 @@ instructor.
 
 📸 `00-ocp-login`: the login page's identity-provider choice, with **Entra (SSO)** highlighted.
 
-### CLI: two named contexts
+### Your browser terminal
 
-With SSO, the CLI logs in with a **token** from the console, not a password:
+Every command in these guides runs in **your browser terminal**: a shell inside your own pod, `sql-client`, opened
+from the OpenShift console. **Nothing is installed on your computer.** It has `psql`, the class commands (§0.5), `oc`,
+`virtctl` and `jq`, and it already knows who you are and where your VM is. You have one on each site; use the one on
+site A unless a guide says otherwise.
 
-1. In the site A console, open your name (top right) → **Copy login command** → **Display Token**.
-2. Copy the `oc login --token=… --server=…` line and run it. Then do the same on site B.
+1. In the **site A** console, open your project: **Home → Projects → `<your class ID>`** (or pick it in the
+   **Project** list at the top of any page).
+2. Go to **Workloads → Pods**, open the pod **`sql-client-…`**, and choose the **Terminal** tab.
+3. Type `ovedr` and press Enter. It shows your class ID, your VM and its address, which site this terminal is on,
+   and what is signed in yet.
 
-Every later command names the site it talks to (`--context site-a` / `--context site-b`), so you never run a
-step against the wrong cluster.
+> 📋 **Copy and paste.** The Terminal tab is a normal browser terminal:
+> - **Paste** a command from these guides with **right-click → Paste**, or **Ctrl+Shift+V** (Windows/Linux) /
+>   **⌘V** (Mac). The copy button on each command block in the class site copies it for you.
+> - **Copy** output by selecting it with the mouse, then **right-click → Copy** (or **Ctrl+Shift+C** / **⌘C**). Plain
+>   **Ctrl+C** stops the running command, as in any terminal.
+> - Paste one block at a time and wait for the prompt. Most class commands are one short line you can also type.
+>
+> **[verify: paste and copy shortcuts in the 4.19 console terminal, per browser]**
+
+> 💡 The terminal **keeps your sign-ins while the pod runs**, even if you close the tab or the browser. If the pod is
+> ever restarted, run `dblogin` and `oclogin` again. Leaving a long command running? Keep its tab open.
+
+### Sign your terminal's `oc` in, for both sites
+
+With SSO, `oc` signs in with a **token** from the console, never a password. Do this once per site, in the **same**
+terminal:
+
+1. In the **site A** console, open your name (top right) → **Copy login command** → **Display Token**. Copy the line
+   that starts with `oc login --token=…`.
+2. In your terminal, type `oclogin` and a space, paste the line, and press Enter.
+3. Repeat in the **site B** console: copy its login command and paste it after `oclogin` in the **same** terminal.
 
 ```bash
-oc login --token='<site A token>' --server="https://api.$A.$DOMAIN:6443"     # from "Copy login command" on site A
-oc config rename-context "$(oc config current-context)" site-a
-oc login --token='<site B token>' --server="https://api.$B.$DOMAIN:6443"     # from "Copy login command" on site B
-oc config rename-context "$(oc config current-context)" site-b
-oc config get-contexts
-oc --context site-a whoami && oc --context site-b whoami      # both print $ME
+oclogin oc login --token=sha256~… --server=https://api.ocp-lz1.demo.lab-paragonmicro.com:6443   # ✓ site-a: signed in as …
+oclogin oc login --token=sha256~… --server=https://api.ocp-lz2.demo.lab-paragonmicro.com:6443   # ✓ site-b: signed in as …
 ```
 
-**Check:** ✅ you are signed in on vCenter, site A and site B as yourself (`oc whoami` prints your class ID).
+`oclogin` names each sign-in after its site, so every later command says which cluster it talks to
+(`--context site-a` / `--context site-b`), and it sets your namespace as the default. Tokens last 24 hours: if `oc`
+says *Unauthorized*, repeat the step for that site.
+
+```bash
+oc --context site-a whoami && oc --context site-b whoami   # both print your class ID
+oc --context site-a get project "$VMNS"                    # yours, on site A …
+oc --context site-b get project "$VMNS"                    # … and on site B
+oc --context site-a auth can-i '*' '*' -n "$VMNS"          # yes: admin in your own namespace
+```
+
+**Check:** ✅ you are signed in on vCenter and both consoles as yourself, your browser terminal is open, and `oc whoami`
+prints your class ID on both sites.
 
 ---
 
@@ -233,25 +248,25 @@ The database `bcdr` has two tables you will use:
 Each of your `marks` rows carries a SHA-256 hash of the previous row. If a row is lost, changed or reordered,
 `ovedr_verify` reports `chain_ok = f` and names the first broken row.
 
-### Helpers (paste once per terminal)
+### Your class commands (already in your terminal)
+
+| Command | What it does |
+|---|---|
+| `dblogin` | sign in to **your VM's** database as you (`student_NN`), with your class password. Once per pod |
+| `mark <label> [note]` | **inject** one hash-chained row; note its `id`. Example: `mark d1-before` |
+| `load <label> [rows]` | inject a burst of rows (default 100) |
+| `verify` | **read and prove** your rows: `chain_ok = t`, and the fingerprint of all marks |
+| `alive` | is your VM writing? `staleness` under 10 s = yes |
+| `sql [psql options]` | `psql` to your VM's database, e.g. `sql -c "SELECT count(*) FROM marks"` |
+| `where` | which site and node runs your VM right now |
+| `ovedr` | who and where you are, and what is signed in |
+
+They talk to your VM at its own address, `$VM_IP`, which it keeps on vSphere, site A and site B (the staged plans
+use a bridge network map). So they work from either site's terminal, before and after every move. If you ever move
+your VM onto the pod network yourself, §0.6 shows how to point them at its new address (`export PGHOST=…`).
 
 ```bash
-# where is the database? Your VM keeps its OWN address ($VM_IP) on vSphere AND after a move: the staged plans map
-# its NIC onto the same VLAN (bridge map). Only a plan that uses the POD network needs §0.6 and a new PGHOST.
-export PGHOST_SITE_A=$VM_IP
-sql()    { local ctx=$1; shift
-           oc --context "$ctx" -n ovedr-app exec -i deploy/sql-client -- \
-             psql -h "${PGHOST:-$PGHOST_SITE_A}" -U bcdr -d bcdr -v ON_ERROR_STOP=1 "$@"; }
-mark()   { sql "$1" -c "SELECT * FROM ovedr_mark('$ME', '$2', '${3:-}');"; }            # inject one row
-load()   { sql "$1" -c "SELECT * FROM ovedr_load('$ME', '$2', ${3:-100});"; }           # inject a burst
-verify() { sql "$1" -c "SELECT * FROM ovedr_verify('$ME');" \
-                   -c "SELECT * FROM ovedr_checksum();"; }                             # read + prove
-alive()  { sql "$1" -c "SELECT count(*) AS beats, max(ts) AS last_beat,
-                        date_trunc('second', clock_timestamp() - max(ts)) AS staleness,
-                        pg_postmaster_start_time() AS postgres_started FROM heartbeat;"; }
-where()  { for s in site-a site-b; do printf '%-7s ' "$s"
-             oc --context $s -n "$VMNS" get vmi "$VM" \
-               -o jsonpath='{.status.phase}{"  node="}{.status.nodeName}{"\n"}' 2>/dev/null || echo "-"; done; }
+dblogin                          # Password for student_NN: your class password (it is not shown as you type)
 ```
 
 > `ovedr_checksum` fingerprints **every** mark in your VM's database. On your own VM that is your rows only. On the
@@ -260,9 +275,9 @@ where()  { for s in site-a site-b; do printf '%-7s ' "$s"
 ### Try it now
 
 ```bash
-alive  site-a                    # staleness under 10 s: your VM is writing
-mark   site-a lab0-hello         # your first row: note its id and sha
-verify site-a                    # chain_ok = t, marks = 1
+alive                            # staleness under 10 s: your VM is writing
+mark lab0-hello                  # your first row: note its id and sha
+verify                           # chain_ok = t, marks = 1
 ```
 
 📸 `00-verify`: the `verify` output with `chain_ok = t`.
@@ -379,17 +394,16 @@ it follows your VM whatever its IP: `export PGHOST=$VM-sql`.
 ### 6. Connection test
 
 ```bash
-oc --context "$CTX" -n ovedr-app exec deploy/sql-client -- pg_isready -h "$PGHOST" -p 5432   # accepting connections
-alive  "$CTX"
-mark   "$CTX" own-address "ip=$PGHOST"
-verify "$CTX"
+pg_isready -h "$PGHOST" -p 5432          # accepting connections
+alive
+mark own-address "ip=$PGHOST"
+verify
 ```
 
 ✅ `pg_isready` answers *accepting connections*, the heartbeat is fresh, and `chain_ok = t`.
 
-> Windows has no SSH server by default, so the PostgreSQL connection above **is** the connection test. If your
-> instructor enables RDP, the same address works: `virtctl --context "$CTX" -n "$VMNS" port-forward "vm/$VM" 3389`,
-> then RDP to `localhost:3389` as `.\<WINUSER>` **[verify]**.
+> Windows has no SSH server by default, so the PostgreSQL connection above **is** the connection test. To work inside
+> Windows, use the VM's **Console** tab in the OpenShift console.
 
 📸 `00-own-address`: `ipconfig` on the new adapter beside the `PGHOST` echo.
 
@@ -411,7 +425,7 @@ survived, is now one command. To go deeper on the platform you'll use today:
 - [Lab S — how this lab was built](setup-how-the-lab-is-built.md): every pre-built piece, from the CLI and in the console
 - [OpenShift Virtualization documentation (4.19)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index)
 - [OpenShift authentication and authorization (4.19)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/index)
-- [OpenShift CLI (`oc`)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc) [verify link]
+- [OpenShift CLI (`oc`)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc), the CLI your browser terminal runs [verify link]
 - [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11)
 - [Red Hat OpenShift Virtualization (product overview)](https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization)
 - [DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)](https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization)
