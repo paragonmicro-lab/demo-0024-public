@@ -55,6 +55,8 @@ validation:
   links:
     not_found: warn                # --strict turns these into failures
     anchors: info                  # GitHub-style anchors (emoji, punctuation) differ from MkDocs' slugs: reported, not fatal
+  nav:
+    omitted_files: warn            # a published page missing from nav: --strict fails it (core-web kit parity)
 
 # A Paragon-branded class gets the Paragon class banner (class/site/paragon-banner.md) under the Start here hero.
 extra:
