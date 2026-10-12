@@ -2,7 +2,7 @@
 # Exported from the console (instructor, 0024-006, 2026-10-06), then stripped of everything the cluster generates
 # (uid, resourceVersion, timestamps, managedFields, MAC address, firmware serial) and of the password it held.
 #
-# Fill in and apply, in your browser terminal (Lab 0 §0.3: it has envsubst, curl and oc):
+# Fill in and apply, in your browser terminal (Toolkit T.1: it has envsubst, curl and oc):
 #   export NAME="$VMNS-centos9"                       # e.g. student-03-0024-006-centos9
 #   export VLAN=$((22 + N))                           # your vSphere zone's VLAN: lz1 → 23
 #   export VIP="10.101.$VLAN.$((150 + 10#${WINUSER#student-}))"   # a static address on that VLAN (no lab DHCP)

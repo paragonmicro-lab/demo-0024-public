@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inspect · link · migrate · swap the guest tools · prove the data · bonus: live migration and snapshot restore"
-version: 0.5.0
+version: 0.6.0
 date: 2026-10-12
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 0.5.0 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
+> **Version 0.6.0 · draft · 2026-10-12** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -20,7 +20,7 @@ from a Red Hat template instead of rehosting. At every stage you write data and 
 ## How the lab is set up for this demo
 
 The CI customization pre-built everything below (see the [lab diagram](lab-diagram.md) and
-[Lab 0](00-access-and-tools.md#how-the-lab-is-set-up-for-this-demo)). **Every staged piece has a "how it was built"
+[Toolkit](toolkit.md)). **Every staged piece has a "how it was built"
 section in [Lab S](setup-how-the-lab-is-built.md)**, with the CLI and console steps to build it yourself and links to the Red Hat docs.
 
 | Component | State when you start | How it was built · Red Hat docs |
@@ -29,47 +29,51 @@ section in [Lab S](setup-how-the-lab-is-built.md)**, with the CLI and console st
 | **Site A** (the target) | OpenShift Virtualization (`ove: cnv`, from demo-openshift); NMState bridge `br<VLAN>` with NAD `vmnet<VLAN>`; storage on **ODF** (`ocs-storagecluster-ceph-rbd-virtualization`); ACM and cert-manager (base build, the same on both sites). | [S.2](setup-how-the-lab-is-built.md) · [S.3](setup-how-the-lab-is-built.md) · [S.4](setup-how-the-lab-is-built.md) · [OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index) · [NMState](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index) [verify link] · [ODF](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) |
 | **MTV** on site A | the operator, its **Migration for Virtualization** console menu, provider `ovedr-vcenter0<N>` linked to vCenter (least-privilege `ovedr-mtv@vsphere.local`), network maps `…-net` (pod) and `…-net-bridge` (your VLAN), storage map `…-storage` (datastore → ODF). | [S.5](setup-how-the-lab-is-built.md) · [S.6](setup-how-the-lab-is-built.md) · [S.8](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) · [Installing and using MTV](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link] |
 | **Your migration plan `d1-<your VM>`** | **staged, NOT started**: cold, your VM → **your own namespace** (`$VMNS`, your class ID) on site A, the **bridge** network map (your VM keeps `$VM_IP`) and the storage map. It shows **Ready** in the console. | [S.12](setup-how-the-lab-is-built.md) · [Creating and running a migration plan](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link] |
-| **Your namespace** `$VMNS` (your class ID) on site A and site B, plus `ovedr-app` | in yours: **admin** rights for you, `Service/<your VM>-sql` waiting for your VM to arrive, and your browser terminal `sql-client` (Lab 0 §0.3). | [S.9](setup-how-the-lab-is-built.md) · [Using RBAC](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac) [verify link] |
+| **Your namespace** `$VMNS` (your class ID) on site A and site B, plus `ovedr-app` | in yours: **admin** rights for you, `Service/<your VM>-sql` waiting for your VM to arrive, and your browser terminal `sql-client` (Toolkit T.1). | [S.9](setup-how-the-lab-is-built.md) · [Using RBAC](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac) [verify link] |
 | **Read access** for students | MTV objects in `openshift-mtv` (and the right to run plans and migrations), NNCPs, storage classes, ACM clusters. | [S.9](setup-how-the-lab-is-built.md) |
 | **Site B** | the same operators, on **NFS** (`nfs-csi`); its own staged plan `d1b-<your VM>-to-<B>` waits for Demo 1b. Not used in this demo. | [S.12](setup-how-the-lab-is-built.md) |
 
 **You do yourself:** inspect the VM and the OpenShift side, optionally create your own provider, review your staged
 plan (and see how it would be built), shut down your VM, and, as the **last step**, start your plan. Then start the VM
 on OpenShift, swap VMware Tools for virtio and the guest agent, and prove your data. Your VM keeps its own address, so
-Lab 0 §0.6 is not needed.
+Toolkit T.4 is not needed.
 
 **Pattern at every stage:** inject (`mark` + a line in your file) → change → read (`verify` + read the file).
 
-> **Before you start:** complete [Lab 0](00-access-and-tools.md) in this terminal. You need `$ME`, `$N`, `$A`,
-> `$B`, `$VM`, `$VC`, `$VM_IP` and `$WINUSER`, the `site-a` / `site-b` contexts, and the helpers `sql`, `mark`,
-> `load`, `verify`, `alive` and `where`.
->
-> **Your own VM.** Every step below acts on **your** `$VM` (`win-pg-s<NN>`), so you drive your own migration from
-> start to finish. 🧑‍🏫 marks the few steps only the instructor runs.
+> **Before you start:** do [Lab 0](00-access-and-tools.md), then sign your class terminal in on both sites and to your
+> database ([Toolkit T.1-T.2](toolkit.md): `oclogin` for site A and site B, then `dblogin`). It already holds the
+> variables (`$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$WINUSER`) and the commands (`sql`, `mark`, `load`, `verify`,
+> `alive`, `where`).
 
 > 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
 > terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
 > Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
 ---
 
-## 1.1 Login recap (2 min)
+## 1.1 Sign your class terminal in (2 min)
 
-<!-- 🎬 video slot 01-1-1-login-recap -->
-[![🎬 Video: 1.1 Login recap. Watch it, then do the same in the console](../.images/01-1-1-login-recap.jpg)](../.images/01-1-1-login-recap.mp4)
-<sub>🎬 *1.1 Login recap: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/01-1-1-login-recap.mp4`).*</sub>
+<!-- 🎬 video slot 01-1-1-sign-class-terminal -->
+[![🎬 Video: 1.1 Sign your class terminal in. Watch it, then do the same in the console](../.images/01-1-1-sign-class-terminal.jpg)](../.images/01-1-1-sign-class-terminal.mp4)
+<sub>🎬 *1.1 Sign your class terminal in: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/01-1-1-sign-class-terminal.mp4`).*</sub>
+
+In your class terminal (site A console → your project → **Workloads → Pods → `sql-client` → Terminal**), sign in once
+per site with each console's **Copy login command**, and once to your VM's database ([Toolkit T.1-T.2](toolkit.md)):
 
 ```bash
-oc --context site-a whoami && oc --context site-b whoami        # both print $ME
+oclogin <paste the site A login command>                          # ✓ site-a
+oclogin <paste the site B login command>                          # ✓ site-b
+dblogin                                                           # your class password
+oc --context site-a whoami && oc --context site-b whoami          # both print $ME
 echo "vm=$VM  db-host=${PGHOST:-$VM_IP}"                          # still the vSphere IP ($VM_IP) for now
 alive                                                             # staleness < 10 s
 ```
 
-**Check:** ✅ both contexts answer as `$ME`, and the heartbeat is fresh. If not, go back to Lab 0.
+**Check:** ✅ both contexts answer as `$ME`, and the heartbeat is fresh. If not, see [Toolkit T.1-T.2](toolkit.md).
 
 ---
 
@@ -456,7 +460,7 @@ EOF
 
 > **One VM, one address.** Every class VM has its own static address, so the bridge map lets each one keep it on
 > OpenShift: twenty students run twenty plans side by side without colliding. Choose the **pod** map (`…-net`)
-> instead and the VM lands on the pod network, where its static address answers nothing: then follow Lab 0 §0.6.
+> instead and the VM lands on the pod network, where its static address answers nothing: then follow Toolkit T.4.
 
 ### Start your plan (your task: the last step)
 
@@ -547,7 +551,7 @@ stopped, which is why this step exists **[verify: target power state in this MTV
 
 The staged plan used the **bridge** map, so your VM's NIC is on the same VLAN with the same static address, and the
 helpers keep using `$VM_IP`. (Only if you built and ran a plan with the **pod** map: follow
-[Lab 0 §0.6](00-access-and-tools.md#06-optional-give-your-vm-a-pod-network-address-on-openshift) with `CTX=site-a`.)
+[Toolkit T.4](toolkit.md#t4-optional-give-your-vm-a-pod-network-address-on-openshift) with `CTX=site-a`.)
 
 ```bash
 echo "PGHOST=${PGHOST:-$VM_IP}"         # still your own address
@@ -578,7 +582,7 @@ Console: **Virtualization → VirtualMachines → your VM → Console** (VNC). S
 
 ```powershell
 $f = "C:\Users\Public\ovedr\$env:USERNAME.txt"
-Get-Content $f                                                # lab0-hello … d1-before-migration: all there
+Get-Content $f                                                # d1-before … d1-before-migration: all there
 Add-Content $f "$(Get-Date -Format o)  d1-after-migration  on=OVE"
 ```
 
@@ -680,7 +684,7 @@ sql -c "SELECT stage, id, ts FROM marks WHERE student = '$ME' ORDER BY id;"
 Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"
 ```
 
-✅ Every stage you marked (`lab0-hello`, `d1-before`, `d1-before-migration`, `d1-after-migration`, `d1-end`) is
+✅ Every stage you marked (`d1-before`, `d1-before-migration`, `d1-after-migration`, `d1-end`) is
 present and in order, and `chain_ok = t`.
 ✅ Your file holds every line you wrote, including the ones written on vSphere.
 

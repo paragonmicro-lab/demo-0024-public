@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.4.0
+version: 0.4.1
 date: 2026-10-12
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.4.0 · draft · 2026-10-12** · class/demos/04-odf-regional-dr.md
+> **Version 0.4.1 · draft · 2026-10-12** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -52,13 +52,15 @@ status at three levels, and run the moves when you are the driver.
 > together, so 🧑‍🏫 the driver runs the DR actions, and **each of you verifies your own VM**. Per-VM protection (one
 > DRPC per student VM, selecting that VM's disks by label) is possible but not built here **[verify]**.
 
-> **Before you start:** do [Lab 0](00-access-and-tools.md) in this terminal. You need the variables (`ME N A B VM`),
-> the two contexts (`site-a`, `site-b`) and the helpers (`sql mark load verify alive where`).
+> **Before you start:** do [Lab 0](00-access-and-tools.md), then sign your class terminal in on both sites and to your
+> database ([Toolkit T.1-T.2](toolkit.md): `oclogin` for site A and site B, then `dblogin`). It already holds the
+> variables (`$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$WINUSER`) and the commands (`sql`, `mark`, `load`, `verify`,
+> `alive`, `where`).
 
 > 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
 > terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
 > Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
@@ -73,7 +75,7 @@ status at three levels, and run the moves when you are the driver.
 
 Use **your VM's own address**, `$VM_IP`, for every connection test. Your VM sits on the VLAN bridge (`vmnet<VLAN>`),
 which exists with the same name on both sites, so after a Relocate or Failover it comes up with the **same** address on
-the other site. (Only a VM on the pod network gets a new pod IP per site: then refresh it with Lab 0 §0.6 after every
+the other site. (Only a VM on the pod network gets a new pod IP per site: then refresh it with Toolkit T.4 after every
 move.) Your VM's Service (`$VM-sql`) also follows the VM between sites.
 
 ```bash

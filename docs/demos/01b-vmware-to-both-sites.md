@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — VMware to BOTH OpenShift clusters (CLI and console)"
 subtitle: "The same cold migration to site A, then to site B · every command on the command line · every screen in the console"
-version: 0.4.0
+version: 0.4.1
 date: 2026-10-12
 ---
 
 # Demo 1b: VMware to both OpenShift clusters
 
-> **Version 0.4.0 · draft · 2026-10-12** · class/demos/01b-vmware-to-both-sites.md
+> **Version 0.4.1 · draft · 2026-10-12** · class/demos/01b-vmware-to-both-sites.md
 
 ## What you will learn
 
@@ -34,15 +34,15 @@ Each row points at the [Lab S](setup-how-the-lab-is-built.md) section that shows
 
 Picture: [lab diagram](lab-diagram.md). **The rule for this demo:** only **one copy** of your VM may run on the VLAN at a
 time. The bridge map keeps the VM's own address, so a second running copy would collide. Stop each copy before the next move.
-Because every copy keeps `$VM_IP`, the helpers work unchanged on both sites, and Lab 0 §0.6 is not needed.
+Because every copy keeps `$VM_IP`, the helpers work unchanged on both sites, and Toolkit T.4 is not needed.
 
 > **Already ran Demo 1?** Then your VM is already on site A (named `$VM` in your namespace `$VMNS`). Skip 1b.2, stop that copy
 > (one copy on the VLAN), power the vSphere original back on, and go straight to 1b.3.
 
 > 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
 > terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
 > Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
@@ -255,7 +255,7 @@ and from the console, and proved each copy kept every row of your data. More:
 
 ---
 
-## Proof table (continues Lab 0 and Demo 1)
+## Proof table (continues Demo 1)
 
 | Row | Stage | Minutes | Heartbeat gap | `chain_ok` | Fingerprint = before? | Notes |
 |---|---|---|---|---|---|---|

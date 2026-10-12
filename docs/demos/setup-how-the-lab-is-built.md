@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.4.0
+version: 0.4.1
 date: 2026-10-12
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.4.0 · draft · 2026-10-12** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.4.1 · draft · 2026-10-12** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -27,7 +27,7 @@ ask you to do the **last step** yourself (start your migration). This guide is h
 | **this demo's CI** (`customize`, sections S.5–S.12) | MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans | all three |
 | **you** | start your own migration plan (Demo 1 / 1b), then everything in the demo guides | |
 
-Picture: [lab diagram](lab-diagram.md). Every command below uses the Lab 0 variables (`$A`, `$B`, `$N`, `$VM`, `$DOMAIN`)
+Picture: [lab diagram](lab-diagram.md). Every command below uses your class terminal's variables (`$A`, `$B`, `$N`, `$VM`, `$DOMAIN`; [Toolkit T.1](toolkit.md))
 and the contexts `site-a` / `site-b`. Most "do it yourself" steps need **cluster-admin**. In class you only **read**
 these objects; the instructor (or a cluster you own) can run the build steps.
 
@@ -665,7 +665,7 @@ and VMware guest operations:
 **Check:**
 
 ```bash
-alive site-a; verify site-a                                  # Lab 0 helpers: your VM answers and your chain is intact
+alive; verify                                                # toolkit commands: your VM answers and your chain is intact
 ```
 
 In vCenter: **VMs and Templates → datacenter01 → vm → vms → students → <your ID> → `win-pg-s<NN>`** → Summary,

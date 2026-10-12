@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.7.0
+version: 0.7.1
 date: 2026-10-12
 ---
 
 # Student Guide
 
-> **Version 0.7.0 · draft · 2026-10-12** · class/student-guide.md
+> **Version 0.7.1 · draft · 2026-10-12** · class/student-guide.md
 
 ## What you will learn
 
@@ -73,7 +73,7 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 | 4 | [ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
 | 4b | [Portworx DR](demos/04b-portworx-dr.md) | *when Portworx is offered* | — | — |
 
-Times are estimates until the class has been timed. Lab 0 starts your **proof table**; each demo adds rows (your last
+Times are estimates until the class has been timed. Demo 1 starts your **proof table** ([Toolkit](demos/toolkit.md)); each demo adds rows (your last
 mark, `chain_ok`, the fingerprint, and each move's outage, bytes and time), and by the end it is your evidence.
 
 **Getting help:** a step marked **[verify]** is still being proven in the lab. If one fails, tell the instructor rather

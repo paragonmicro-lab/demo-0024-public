@@ -1,13 +1,13 @@
 ---
 title: "Demo 3 — OpenShift to OpenShift, cold, with storage migration"
 subtitle: "Link the clusters in ACM · move a stopped VM from site A to site B with MTV · prove every row arrived"
-version: 0.4.0
+version: 0.4.1
 date: 2026-10-12
 ---
 
 # Demo 3: OVE → OVE cold migration
 
-> **Version 0.4.0 · draft · 2026-10-12** · class/demos/03-ove-to-ove-cold.md
+> **Version 0.4.1 · draft · 2026-10-12** · class/demos/03-ove-to-ove-cold.md
 
 ## What you will learn
 
@@ -41,15 +41,17 @@ yet.
 
 **What you do yourself:** review ACM and the MTV objects, stop your VM, build and start your plan on site B (this
 one is not staged: you build it, then the last step is to start it), and verify. Your VM keeps its own address on
-site B too, so Lab 0 §0.6 is not needed.
+site B too, so Toolkit T.4 is not needed.
 
-> **Before you start:** complete [Lab 0](00-access-and-tools.md) in this terminal. You need `$ME`, `$A`, `$B`, `$VM`,
-> both contexts (`site-a`, `site-b`) and the helpers (`sql`, `mark`, `verify`, `alive`, `where`).
+> **Before you start:** do [Lab 0](00-access-and-tools.md), then sign your class terminal in on both sites and to your
+> database ([Toolkit T.1-T.2](toolkit.md): `oclogin` for site A and site B, then `dblogin`). It already holds the
+> variables (`$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$WINUSER`) and the commands (`sql`, `mark`, `load`, `verify`,
+> `alive`, `where`).
 
 > 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
 > terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
 > Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
@@ -74,7 +76,7 @@ oc --context site-a -n "$VMNS" get pvc | grep "$VM"
 ### Your VM's address on site A
 
 The staged plan put your VM on the VLAN bridge, so it still answers at **its own `$VM_IP`**. (Only if you moved it
-with the pod map in Demo 1 and followed Lab 0 §0.6: keep that `PGHOST`.)
+with the pod map in Demo 1 and followed Toolkit T.4: keep that `PGHOST`.)
 
 ```bash
 echo "PGHOST=${PGHOST:-$VM_IP}"
@@ -400,7 +402,7 @@ oc --context site-b -n "$VMNS" get vm,vmi "$VM"
 
 The OVE → OVE network map sends each VLAN NAD on site A to the **same-named NAD** on site B, so your VM's NIC stays on
 your VLAN's bridge with **the same static address `$VM_IP`**. (Only a VM that was on the pod network gets a new pod IP
-on site B: then re-read it as in Lab 0 §0.6, step 5, with `CTX=site-b`.)
+on site B: then re-read it as in Toolkit T.4, step 5, with `CTX=site-b`.)
 
 ```bash
 CTX=site-b
@@ -446,7 +448,7 @@ Site B console: **Virtualization → VirtualMachines → `<VM>` → Console**, l
 
 ```powershell
 Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d3-after on site B"
-Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"          # lab0 … d3-before … d3-after: every line present
+Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"          # d1 … d3-before … d3-after: every line present
 ```
 
 📸 `03-after-site-b` — the site B console, with your file showing the `d3-before` and `d3-after` lines.

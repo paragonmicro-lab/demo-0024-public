@@ -1,16 +1,16 @@
 ---
 title: "Lab diagram — demo-0024 (VMware → OpenShift Virtualization, OVE ⇄ OVE, ODF DR)"
-version: 0.3.1
+version: 0.3.2
 date: 2026-10-12
 ---
 
 # Lab diagram
 
-> **Version 0.3.1 · draft · 2026-10-12** · class/demos/lab-diagram.md
+> **Version 0.3.2 · draft · 2026-10-12** · class/demos/lab-diagram.md
 
 One booking reserves **three environments** together: a vSphere landing zone (`lzN`) and two OpenShift clusters
 (`ocp-lzX` = **site A**, `ocp-lzY` = **site B**). They all run as VMs on the same four physical hosts
-(`demosvr01`-`04`), each zone on its own VLAN. The numbers come from your booking card (Lab 0 §0.1) and change from
+(`demosvr01`-`04`), each zone on its own VLAN. The numbers come from your booking (the instructor gives them out) and change from
 booking to booking. How each piece was built, from the CLI and in the console: [Lab S](setup-how-the-lab-is-built.md).
 
 ![Lab diagram](img/lab-diagram.svg)

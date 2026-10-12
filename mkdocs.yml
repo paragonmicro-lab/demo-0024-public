@@ -49,6 +49,7 @@ validation:
 nav:
   - Start here: index.md
   - "Lab 0: Access and tools": demos/00-access-and-tools.md
+  - "Toolkit: your terminal and data": demos/toolkit.md
   - "Demo 1: VMware → OpenShift, cold": demos/01-vmware-to-ove-cold.md
   - "Demo 1b: VMware → both clusters": demos/01b-vmware-to-both-sites.md
   - "Demo 2: Warm migration": demos/02-vmware-to-ove-warm.md

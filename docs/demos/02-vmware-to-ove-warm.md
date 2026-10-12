@@ -1,13 +1,13 @@
 ---
 title: "Demo 2 — Warm migration: VMware to OpenShift Virtualization with minimal downtime"
 subtitle: "Changed Block Tracking · pre-copy while the VM runs · a short cutover · prove every row arrived"
-version: 0.5.0
+version: 0.5.1
 date: 2026-10-12
 ---
 
 # Demo 2: Warm migration, vSphere → OVE
 
-> **Version 0.5.0 · draft · 2026-10-12** · class/demos/02-vmware-to-ove-warm.md
+> **Version 0.5.1 · draft · 2026-10-12** · class/demos/02-vmware-to-ove-warm.md
 
 ## What you will learn
 
@@ -48,16 +48,17 @@ connect, and **[Lab S — how this lab was built](setup-how-the-lab-is-built.md)
 > `oc --context site-a -n "$VMNS" patch vm "$VM" --type merge -p '{"spec":{"runStrategy":"Halted"}}'`.
 
 **What you do yourself:** enable CBT, build and start the warm plan, cut over, and verify. Your VM keeps its own
-address on OpenShift, so Lab 0 §0.6 is not needed.
+address on OpenShift, so Toolkit T.4 is not needed.
 
-> **Before you start:** do [Lab 0](00-access-and-tools.md) in this terminal. You need `site-a` / `site-b`
-> contexts, the variables (`ME`, `N`, `A`, `B`, `VM`, `VM_IP`, `WINUSER`) and the helpers (`sql`, `mark`, `load`,
-> `verify`, `alive`, `where`).
+> **Before you start:** do [Lab 0](00-access-and-tools.md), then sign your class terminal in on both sites and to your
+> database ([Toolkit T.1-T.2](toolkit.md): `oclogin` for site A and site B, then `dblogin`). It already holds the
+> variables (`$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$WINUSER`) and the commands (`sql`, `mark`, `load`, `verify`,
+> `alive`, `where`).
 
 > 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
 > terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
 > Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
@@ -445,7 +446,7 @@ oc --context site-a -n openshift-mtv get migration "$PLAN" -w        # Ctrl-C at
 ### Your VM keeps its address
 
 The warm plan used the **bridge** map, so `<TARGET>` answers at your own `$VM_IP`, and the helpers keep working.
-(Only if you chose the **pod** map: follow [Lab 0 §0.6](00-access-and-tools.md#06-optional-give-your-vm-a-pod-network-address-on-openshift)
+(Only if you chose the **pod** map: follow [Toolkit T.4](toolkit.md#t4-optional-give-your-vm-a-pod-network-address-on-openshift)
 with `CTX=site-a` and `VM=$TARGET`.)
 
 ```bash
@@ -490,7 +491,7 @@ The **first** gap after `$CUTOVER_AT` is the cutover. Compare the cutover gap wi
 Console, site A → **Virtualization → VirtualMachines → `<TARGET>` → Console**. Log in as `.\<WINUSER>`:
 
 ```powershell
-Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"          # lab0 … d2-before-cutover, all there
+Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"          # d1 … d2-before-cutover, all there
 Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2-on-ove"
 Get-Service | Where-Object Name -match 'qemu-ga|vmtools' | Format-Table Name, Status   # guest agent vs VMware Tools [verify]
 ```

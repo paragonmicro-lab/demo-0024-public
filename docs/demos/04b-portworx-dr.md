@@ -1,14 +1,14 @@
 ---
 title: "Demo 4b — Portworx DR: asynchronous replication, failover and clean failback"
 subtitle: "The Demo 4 BCDR story on Portworx PX-DR instead of ODF · bonus: a hostile link break"
-version: 0.1.0
+version: 0.1.1
 status: framework
 date: 2026-10-12
 ---
 
 # Demo 4b: Portworx asynchronous DR
 
-> **Version 0.1.0 · framework · 2026-10-12** · class/demos/04b-portworx-dr.md
+> **Version 0.1.1 · framework · 2026-10-12** · class/demos/04b-portworx-dr.md
 
 > 🚧 **Framework: to be completed when Portworx is offered on the lab clusters.** This guide has the shape of the
 > demo and the stages it will have, but not its final commands. Every stage lists what still needs to be written
@@ -31,15 +31,18 @@ The CI customization will have to pre-build the following. None of it exists yet
 - **TODO:** an S3 object store reachable from both sites, for the ClusterPair.
 - **TODO:** a Portworx StorageClass for VM disks, and the MTV storage map pointing at it.
 - **TODO:** `ovedr-app`, `sql-client` and a Service per student VM on both sites, as in Demo 4.
-- **TODO:** each student's VM (`$VM`) running on site A on Portworx volumes, with its own address ([Lab 0 §0.6](00-access-and-tools.md)).
+- **TODO:** each student's VM (`$VM`) running on site A on Portworx volumes, with its own address ([Toolkit T.4](toolkit.md)).
 - See the [lab diagram](lab-diagram.md).
 
-> **Before you start:** do [Lab 0](00-access-and-tools.md) in this terminal (variables, contexts, helpers).
+> **Before you start:** do [Lab 0](00-access-and-tools.md), then sign your class terminal in on both sites and to your
+> database ([Toolkit T.1-T.2](toolkit.md): `oclogin` for site A and site B, then `dblogin`). It already holds the
+> variables (`$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$WINUSER`) and the commands (`sql`, `mark`, `load`, `verify`,
+> `alive`, `where`).
 
 > 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
 > terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Lab 0 §0.3](00-access-and-tools.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` from Lab 0 stay signed in while the pod runs.
+> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
+> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
 > Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
@@ -126,7 +129,7 @@ storkctl --context site-a suspend migrationschedule ovedr-a-to-b -n ovedr-app
 storkctl --context site-b activate migration -n ovedr-app
 ```
 
-- Checks on site B: refresh your address (Lab 0 §0.6), then `verify` with `chain_ok = t`, and read the touch file.
+- Checks on site B: refresh your address (Toolkit T.4), then `verify` with `chain_ok = t`, and read the touch file.
 
 ---
 
