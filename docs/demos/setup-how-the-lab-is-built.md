@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.4.1
+version: 0.5.0
 date: 2026-10-12
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.4.1 · draft · 2026-10-12** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.5.0 · draft · 2026-10-12** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -331,7 +331,8 @@ oc patch console.operator cluster --type json -p "[{\"op\":\"add\",\"path\":\"/s
 - On each tooled site, Secret + **`Provider/ovedr-vcenter0<N>`** (type `vsphere`, url `https://vcenter0<N>…/sdk`). It
   carries `user`, `password`, `url` and **`cacert`**: the certificate chain vCenter serves, so TLS is verified, never skipped.
 - **VDDK:** if the repo variable `MTV_VDDK_IMAGE` is set, the provider gets `settings.vddkInitImage`. Without it,
-  migrations are **cold only** and slower. Warm migration (Demo 2) needs it.
+  migrations are **cold only** and slower. Warm migration (Demo 2) needs it. Why the customer must supply it, and how to
+  build it: [S.15](#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence).
 
 **Check:**
 
@@ -950,6 +951,70 @@ Red Hat: [ODF Regional-DR](https://docs.redhat.com/en/documentation/red_hat_open
 | 1 · ACM join | ✅ **every deploy**: site A booked `acm: managed` (demo-openshift's member option), then `acm_join.sh` (demo-prep) imports it into site B's hub; both in set `ovedr` | first proof on the next booking **[verify]** |
 | 2 · Submariner (Globalnet) | ✅ when DR=on: `dr_fabric.sh` | ODF on both sites |
 | 3 · ODF replication link | ✅ when DR=on: `dr_fabric.sh` (MCG, MirrorPeer, DRClusters) + `dr_policy.sh` (DRPolicy 15m) | ODF on both sites (SSDs, BL-C20) |
+
+## S.15 VDDK: the one piece the customer supplies (Broadcom licence)
+
+**What it is.** The VMware **Virtual Disk Development Kit (VDDK)** is VMware's library for reading a VM's disks
+straight from ESXi. MTV uses it to copy disks, and for a **warm** migration to copy only the blocks that changed since
+the last pass (VMware's Changed Block Tracking, Demo 2). **Warm migration needs it**; a cold migration works without it,
+only slower **[verify: MTV 2.11 cold path without VDDK]**.
+
+**Why you supply it.** VDDK is Broadcom's software, and its licence does **not** allow Red Hat, Paragon Micro or anyone
+else to redistribute it. So OpenShift doesn't ship it, and neither does this lab's code: **each customer downloads VDDK
+themselves** from Broadcom's developer portal with their own account, accepts the licence, builds a small container
+image from it, and keeps that image in **their own private registry**. Never put the tarball or the image in git or a
+public registry. In a real migration project this is one of the first prerequisites to arrange.
+
+**How to build it** (Red Hat's procedure):
+
+1. Download **VDDK 8.0.x for Linux** (`VMware-vix-disklib-<version>.x86_64.tar.gz`) from Broadcom's developer portal.
+2. Unpack it next to this `Containerfile`:
+
+   ```dockerfile
+   FROM registry.access.redhat.com/ubi8/ubi-minimal
+   USER 1001
+   COPY vmware-vix-disklib-distrib /vmware-vix-disklib-distrib
+   RUN mkdir -p /opt
+   ENTRYPOINT ["cp", "-r", "/vmware-vix-disklib-distrib", "/opt"]
+   ```
+
+3. Build and push it to a **private** registry. On OpenShift, the cluster's own registry works, with no tool on your
+   laptop:
+
+   ```bash
+   tar -xzf VMware-vix-disklib-*.x86_64.tar.gz                  # → vmware-vix-disklib-distrib/
+   oc -n openshift-mtv new-build --name vddk --binary --strategy docker
+   oc -n openshift-mtv start-build vddk --from-dir=. --follow   # the directory with the Containerfile and the unpacked kit
+   oc -n openshift-mtv get istag vddk:latest                    # image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest
+   ```
+
+   **[verify: the image-pull grant the migration pods need to read `openshift-mtv/vddk` from the target namespaces]**
+
+4. Point the vSphere provider at it. **Console:** Migration for Virtualization → Providers → your vSphere provider →
+   **VDDK init image** → edit. **CLI:**
+
+   ```bash
+   oc -n openshift-mtv patch provider "ovedr-vcenter0$N" --type merge \
+     -p '{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'
+   ```
+
+**How this lab does it (BL-B27, being built):** the operator downloads the kit once into private, CI-readable storage
+(never git). When MTV is installed on a cluster, the build above runs **inside that cluster** into its own registry, and
+the provider is pointed at it. So every booking gets VDDK, nothing is redistributed, and the licensed file never leaves
+the lab's private storage. Until then the warm plans show `VDDKInitImageUnavailable` (Demo 2 §2.5).
+
+**Check:**
+
+```bash
+oc --context site-a -n openshift-mtv get provider "ovedr-vcenter0$N" -o jsonpath='{.spec.settings.vddkInitImage}{"\n"}'   # the image
+oc --context site-a -n openshift-mtv get plan -o jsonpath='{range .items[*]}{.metadata.name}{"  "}{.status.conditions[?(@.type=="VDDKInitImageUnavailable")].status}{"\n"}{end}'   # empty: no plan lacks it
+```
+
+**Red Hat docs:**
+- [Creating a VDDK image](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#creating-vddk-image_mtv) [verify link]
+- [Warm migration](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) [verify link]
+
+---
 
 ## Thank you
 
