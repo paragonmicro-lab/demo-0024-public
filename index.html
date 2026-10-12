@@ -284,60 +284,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-how-the-lab-is-put-together" class="md-nav__link">
+  <a href="#your-login-and-what-you-need" class="md-nav__link">
     <span class="md-ellipsis">
-      1. How the lab is put together
+      Your login, and what you need
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-signing-in-sso-and-keeping-your-credentials-safe" class="md-nav__link">
+  <a href="#how-the-lab-is-put-together" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Signing in: SSO, and keeping your credentials safe
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Signing in: SSO, and keeping your credentials safe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-vm-windows-and-database-logins" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your VM: Windows and database logins
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-the-demos-in-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. The demos, in order
+      How the lab is put together
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-your-proof-table" class="md-nav__link">
+  <a href="#the-demos-in-order" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Your proof table
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-getting-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Getting help
+      The demos, in order
     </span>
   </a>
   
@@ -574,60 +541,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1-how-the-lab-is-put-together" class="md-nav__link">
+  <a href="#your-login-and-what-you-need" class="md-nav__link">
     <span class="md-ellipsis">
-      1. How the lab is put together
+      Your login, and what you need
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-signing-in-sso-and-keeping-your-credentials-safe" class="md-nav__link">
+  <a href="#how-the-lab-is-put-together" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Signing in: SSO, and keeping your credentials safe
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Signing in: SSO, and keeping your credentials safe">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-vm-windows-and-database-logins" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your VM: Windows and database logins
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-the-demos-in-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. The demos, in order
+      How the lab is put together
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-your-proof-table" class="md-nav__link">
+  <a href="#the-demos-in-order" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Your proof table
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-getting-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Getting help
+      The demos, in order
     </span>
   </a>
   
@@ -650,147 +584,87 @@
 
 <h1 id="student-guide">Student Guide<a class="headerlink" href="#student-guide" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.0 · draft · 2026-10-12</strong> · class/student-guide.md</p>
+<p><strong>Version 0.7.0 · draft · 2026-10-12</strong> · class/student-guide.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
-<p>In this class you take a real Windows Server + PostgreSQL VM from VMware vSphere onto Red Hat OpenShift
-Virtualization: first cold, then warm with minimal downtime. You move it between two OpenShift clusters, and you
-protect it with OpenShift Data Foundation disaster recovery: replication, failover, and a clean failback. At every
-step you write your own data into the VM's database and then prove that none of it was lost, changed or reordered.
-You leave knowing what each tool does, and with the evidence that it worked.</p>
-<p>This guide is the <strong>map</strong>. The commands are in the demo guides it points to.</p>
+<p>You take a real Windows Server + PostgreSQL VM from VMware vSphere onto Red Hat OpenShift Virtualization, cold and then
+warm. You move it between two OpenShift clusters and protect it with OpenShift Data Foundation disaster recovery. At
+every step you write your own data into the VM's database and prove that none of it was lost, changed or reordered.</p>
+<p>This guide is the <strong>map</strong>. The steps are in the demo guides below.</p>
+<h2 id="your-login-and-what-you-need">Your login, and what you need<a class="headerlink" href="#your-login-and-what-you-need" title="Permanent link">&para;</a></h2>
+<p><strong>The instructor gives you your login.</strong> One student username and one password open everything in this class:</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Sign in as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vSphere Client (vCenter) and both OpenShift consoles</td>
+<td>your class ID, with <strong>SSO (Entra)</strong></td>
+</tr>
+<tr>
+<td>Your Windows VM</td>
+<td><code>.\student-NN</code></td>
+</tr>
+<tr>
+<td>Your VM's PostgreSQL database</td>
+<td><code>student_NN</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>All you need is a web browser.</strong> Nothing is installed on your computer. You work in the vSphere Client, the two
+OpenShift consoles, and <strong>your browser terminal</strong>: a shell in your own pod in the OpenShift console, where every
+command in these guides runs. Copy a command here with its copy button; paste it there with <strong>right-click → Paste</strong>.</p>
+<p><strong><a href="demos/00-access-and-tools.html">Lab 0</a> walks you through it in about 5 minutes:</strong> open the tabs, sign in to vCenter,
+both OpenShift clusters and PostgreSQL, and see your VM and your access.</p>
 <blockquote>
-<p>🌐 <strong>All you need is a web browser.</strong> You install nothing and need no access to the lab's network from your computer.
-You work in three browser pages: the <strong>vSphere Client</strong>, the <strong>site A</strong> and <strong>site B</strong> OpenShift consoles, plus this
-class site. Every command runs in <strong>your browser terminal</strong>, a shell in your own pod in the OpenShift console (Lab 0
-§0.3), with <code>psql</code>, <code>oc</code>, <code>virtctl</code> and the class commands ready. Copy a command here with its copy button, and
-paste it there with <strong>right-click → Paste</strong>.</p>
+<p>💡 A page stuck after a timeout? Sign in again in a <strong>private window</strong>. Nothing is lost: your VM, your data and your
+terminal live in the lab, not in the browser.</p>
 </blockquote>
-<hr />
-<h2 id="1-how-the-lab-is-put-together">1. How the lab is put together<a class="headerlink" href="#1-how-the-lab-is-put-together" title="Permanent link">&para;</a></h2>
-<p>Each class gets its <strong>own</strong> three environments, built together when the booking starts and removed together when it
-ends (<a href="demos/lab-diagram.html">lab diagram</a>):</p>
+<h2 id="how-the-lab-is-put-together">How the lab is put together<a class="headerlink" href="#how-the-lab-is-put-together" title="Permanent link">&para;</a></h2>
+<p>Each class gets its <strong>own</strong> three environments (<a href="demos/lab-diagram.html">lab diagram</a>):</p>
 <table>
 <thead>
 <tr>
 <th>Environment</th>
 <th>What it is</th>
-<th>Your role there</th>
+<th>You</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>vSphere</strong> <code>lzN</code></td>
-<td>VMware vCenter + ESXi, where your VM starts</td>
+<td><strong>vSphere</strong></td>
+<td>vCenter + ESXi, where your VM starts</td>
 <td>inspect your VM, enable CBT, shut it down</td>
 </tr>
 <tr>
-<td><strong>Site A</strong> <code>ocp-lzX</code></td>
+<td><strong>Site A</strong></td>
 <td>OpenShift + OpenShift Virtualization + MTV, on <strong>ODF</strong> storage</td>
 <td>migrate your VM in, run it, snapshot it</td>
 </tr>
 <tr>
-<td><strong>Site B</strong> <code>ocp-lzY</code></td>
-<td>the same: OpenShift + OpenShift Virtualization + MTV, on <strong>ODF</strong> storage, plus the ACM / DR hub</td>
+<td><strong>Site B</strong></td>
+<td>the same on <strong>NFS</strong> storage, plus the ACM / DR hub</td>
 <td>move your VM in, fail over to it</td>
 </tr>
 </tbody>
 </table>
-<p>Both clusters are built the same way and carry the same operators (OpenShift Virtualization, MTV with its console menu,
-ODF, ACM, cert-manager).</p>
-<blockquote>
-<p>⚠️ <strong>The zone numbers change from booking to booking.</strong> The scheduler gives each class whichever zones are free,
-so your vSphere zone can be <code>lz1</code>, <code>lz2</code> or <code>lz3</code>, and your two clusters any two of <code>ocp-lz1</code>-<code>ocp-lz3</code>, in any
-order. The guides show <code>lz1</code> / <code>ocp-lz1</code> / <code>ocp-lz2</code> as <strong>examples only</strong>. <strong>Use the values on your booking card</strong>
-(Lab 0 §0.1) every time.</p>
-</blockquote>
-<p><strong>You get your own VM.</strong> <code>win-pg-s&lt;NN&gt;</code> (for example <code>student-03</code> → <code>win-pg-s03</code>) is a full copy of the instructor's
-<code>win-pg-i01</code>: Windows Server 2022, PostgreSQL 16 with its log on <code>L:</code> and data on <code>D:</code>, a heartbeat writer, and the
-data-integrity toolkit. It lives in <strong>your own vCenter folder</strong> (<code>vms/students/&lt;your class ID&gt;</code>) at <strong>its own
-address</strong> (<code>.100+NN</code>; the instructor's is <code>.62</code>), and you can power it on and off, open its console, change its
-settings (Changed Block Tracking in Demo 2) and snapshot it <strong>at your own pace</strong>. You migrate it, snapshot it and
-fail it over yourself.</p>
-<p><strong>You get your own OpenShift namespace.</strong> On <strong>both</strong> clusters you have a namespace (project) named exactly your
-class ID in lower case, for example <code>student-03-0024-005</code>, the same name as your vCenter folder. You are <strong>admin</strong>
-there: full rights, but only in that namespace. Your migration plans move your VM into it, and your VM's database
-Service (<code>&lt;your VM&gt;-sql</code>) lives there, and so does <strong>your browser terminal</strong> (pod <code>sql-client</code>), where you run every
-command. Lab 0 sets it up as <code>$VMNS</code>.</p>
-<p><strong>Everything is staged; you do the last step.</strong> The lab pre-builds every customization a demo needs: the migration
-operator and its connection to vCenter, the network and storage maps, the class namespace, and <strong>a migration plan for
-your VM on each cluster, ready but not started</strong> (<code>d1-&lt;your VM&gt;</code> on site A, <code>d1b-&lt;your VM&gt;-to-&lt;B&gt;</code> on site B). Each
-demo shows you what was staged and <strong>how you would build it yourself</strong>, from the command line and in the console,
-with links to the Red Hat documentation for every step (that is what <strong>Lab S</strong> is for). Your task is the last step:
-review it, then start it.</p>
-<hr />
-<h2 id="2-signing-in-sso-and-keeping-your-credentials-safe">2. Signing in: SSO, and keeping your credentials safe<a class="headerlink" href="#2-signing-in-sso-and-keeping-your-credentials-safe" title="Permanent link">&para;</a></h2>
-<p><strong>Sign in with SSO (Entra), everywhere.</strong> On vCenter and on both OpenShift consoles choose the <strong>SSO / Entra</strong> sign-in
-and use your class account. Sign in once in your browser and the other two consoles reuse it. For the command line use
-the OpenShift console's <strong>Copy login command</strong>. The Windows VM is the one exception: it uses a local login (see
-<a href="#your-vm-windows-and-database-logins">Your VM: Windows and database logins</a>).</p>
-<p><strong>Your credentials:</strong></p>
-<ol>
-<li><strong>Save them</strong> in a password manager or your company's secure notes <strong>before class</strong>. The email you received
-   holds your class ID, your password and your booking card.</li>
-<li><strong>Never share them</strong>: not with a classmate, not in chat, not in a screenshot, not on a shared screen. Everything
-   you do is recorded against your ID.</li>
-<li><strong>Treat tokens as passwords.</strong> An <code>oc login --token=…</code> line logs in as you.</li>
-<li><strong>They expire with the booking.</strong> Accounts and environments are removed when the class ends.</li>
-<li><strong>Lost or exposed?</strong> Tell the instructor straight away. They can reset it.</li>
-</ol>
-<blockquote>
-<p>💡 <strong>Page stuck after a timeout? Use a private window.</strong> Sometimes a console page or vCenter stops responding after
-your session times out. Typical signs: a refresh brings back the same stale page, you loop back to the login page,
-or you see "unauthorized" even after signing in. The browser has cached your old, expired sign-in.
-Open a <strong>private / incognito window</strong> (Chrome/Edge: <code>Ctrl+Shift+N</code>, Firefox: <code>Ctrl+Shift+P</code>, Safari:
-<code>Cmd+Shift+N</code>) and sign in there with SSO again. If that works, carry on in the private window, or clear the
-site's cookies in your normal window. Your work is not lost: the VM, your data and your browser terminal's sign-ins
-live on the clusters, not in the browser.</p>
-</blockquote>
-<p>Full steps: <a href="demos/00-access-and-tools.html">Lab 0 §0.0-0.4</a>.</p>
-<h3 id="your-vm-windows-and-database-logins">Your VM: Windows and database logins<a class="headerlink" href="#your-vm-windows-and-database-logins" title="Permanent link">&para;</a></h3>
-<p>Your VM has <strong>one password for both</strong>: your class password.</p>
-<table>
-<thead>
-<tr>
-<th>Where</th>
-<th>Login</th>
-<th>Password</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Windows (console or RDP)</td>
-<td><code>.\student-NN</code> (your number, e.g. <code>.\student-03</code>)</td>
-<td>your class password</td>
-</tr>
-<tr>
-<td>PostgreSQL, database <code>bcdr</code></td>
-<td><code>student_NN</code> (underscore, e.g. <code>student_03</code>)</td>
-<td>the same class password</td>
-</tr>
-</tbody>
-</table>
-<ol>
-<li><strong>Open the VM.</strong> vCenter: your VM → <strong>Launch Web Console</strong>. After a move to OpenShift: your namespace →
-   <strong>VirtualMachines → your VM → Console</strong>. Or RDP to your VM's address (<code>.100+NN</code> on your booking's VLAN).</li>
-<li><strong>Sign in to Windows</strong> as <code>.\student-NN</code> with your class password. You are an administrator on your own VM.</li>
-<li><strong>Open the database.</strong> In PowerShell:
-   <div class="highlight"><pre><span></span><code><span class="p">&amp;</span> <span class="s1">'C:\Program Files\PostgreSQL\16\bin\psql.exe'</span> <span class="n">-h</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="n">-U</span> <span class="n">student_NN</span> <span class="n">-d</span> <span class="n">bcdr</span>
-</code></pre></div>
-   Enter your class password when asked.</li>
-<li><strong>Write and read a row</strong> to prove it works:
-   <div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_mark</span><span class="p">(</span><span class="s1">'&lt;your class ID&gt;'</span><span class="p">,</span><span class="w"> </span><span class="s1">'login-check'</span><span class="p">,</span><span class="w"> </span><span class="s1">'first row'</span><span class="p">);</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_verify</span><span class="p">(</span><span class="s1">'&lt;your class ID&gt;'</span><span class="p">);</span><span class="w">      </span><span class="c1">-- chain_ok = t</span>
-</code></pre></div></li>
-</ol>
-<p>From your browser terminal, the class commands (<code>mark</code>, <code>verify</code>, <code>alive</code>) reach the same database as your own
-PostgreSQL login: run <code>dblogin</code> once (Lab 0 §0.5).</p>
-<hr />
-<h2 id="3-the-demos-in-order">3. The demos, in order<a class="headerlink" href="#3-the-demos-in-order" title="Permanent link">&para;</a></h2>
-<p>Each demo guide opens with what you will learn and <strong>how the lab was prepared for it</strong> (what is installed, and the
-state your VM starts in), with a pointer into Lab S for every pre-built piece. Every stage follows the same rhythm:
-<strong>inject</strong> (a hash-chained row of your own, plus a line in a file in your VM) → <strong>change</strong> something → <strong>verify</strong>
-that it all arrived intact.</p>
+<p>The zone names (<code>lz1</code>, <code>ocp-lz1</code>, …) change per booking; the guides use them as examples. Your browser terminal already
+knows your own (type <code>ovedr</code>).</p>
+<ul>
+<li><strong>Your own VM</strong>, <code>win-pg-s&lt;NN&gt;</code>: a full copy of the instructor's, with its own address, in your own vCenter folder.
+  You power it, snapshot it, migrate it and fail it over yourself.</li>
+<li><strong>Your own namespace</strong> on both clusters, named your class ID, where you are admin. Your VM lands there, and your
+  browser terminal lives there.</li>
+<li><strong>Everything is staged; you do the last step.</strong> Each demo's pieces (operators, maps, a migration plan for your VM)
+  are pre-built, and each guide shows how to build them yourself (<a href="demos/setup-how-the-lab-is-built.html">Lab S</a>). Your
+  task is to review and start.</li>
+</ul>
+<h2 id="the-demos-in-order">The demos, in order<a class="headerlink" href="#the-demos-in-order" title="Permanent link">&para;</a></h2>
+<p>Every stage follows one rhythm: <strong>inject</strong> your own data → <strong>change</strong> something → <strong>verify</strong> it all arrived intact.</p>
 <table>
 <thead>
 <tr>
@@ -798,96 +672,80 @@ that it all arrived intact.</p>
 <th>Guide</th>
 <th>You will</th>
 <th>Time</th>
-<th>Bonus (optional, for early finishers)</th>
+<th>Bonus (optional)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>0</td>
 <td><a href="demos/00-access-and-tools.html">Access and tools</a></td>
-<td>sign in everywhere, open your browser terminal, write and verify your first row</td>
-<td>20 min</td>
+<td>sign in to vCenter, both clusters and PostgreSQL; open your browser terminal</td>
+<td>5 min</td>
 <td>§0.6 a pod-network address for your VM (15 min)</td>
 </tr>
 <tr>
 <td>S</td>
-<td><a href="demos/setup-how-the-lab-is-built.html">Lab S — how this lab was built (CLI + console), read alongside each demo</a></td>
-<td>every staged piece (operators, bridges, storage, MTV providers and maps, the class namespace, your VM, the staged plans, the healthcheck), each with the commands, the console path and the Red Hat docs</td>
+<td><a href="demos/setup-how-the-lab-is-built.html">Lab S: how this lab was built</a></td>
+<td>every staged piece, with the commands, the console path and the Red Hat docs</td>
 <td>read alongside</td>
 <td>—</td>
 </tr>
 <tr>
 <td>1</td>
 <td><a href="demos/01-vmware-to-ove-cold.html">VMware → OpenShift, cold</a></td>
-<td>inspect your VM, review MTV, networking (VLAN → bridge) and templates; link OpenShift to vCenter; review your staged plan and start it; swap VMware Tools for virtio and the guest agent</td>
+<td>inspect your VM and the OpenShift side; start your staged plan; swap VMware Tools for virtio</td>
 <td>80 min</td>
-<td>A: live migration between nodes (15 min) · B: snapshot, drop the database, restore the disks (25 min)</td>
+<td>A: live migration (15 min) · B: snapshot and restore (25 min)</td>
 </tr>
 <tr>
 <td>1b</td>
 <td><a href="demos/01b-vmware-to-both-sites.html">VMware → both clusters</a></td>
-<td>build a plan to site A from the command line; review and start your staged plan to site B in the console</td>
+<td>a plan to site A from the terminal; your staged plan to site B in the console</td>
 <td>40 min</td>
 <td>—</td>
 </tr>
 <tr>
 <td>2</td>
 <td><a href="demos/02-vmware-to-ove-warm.html">VMware → OpenShift, warm</a></td>
-<td>enable Changed Block Tracking, pre-copy while the VM runs, cut over in moments</td>
+<td>enable CBT, pre-copy while the VM runs, cut over in moments</td>
 <td>60 min</td>
-<td>§2.8 live migration between nodes (15 min)</td>
+<td>§2.8 live migration (15 min)</td>
 </tr>
 <tr>
 <td>3</td>
 <td><a href="demos/03-ove-to-ove-cold.html">OpenShift → OpenShift</a></td>
-<td>link the clusters in ACM, move your stopped VM to the other cluster, storage and all</td>
+<td>link the clusters in ACM; move your VM to the other cluster, storage and all</td>
 <td>45 min</td>
 <td>—</td>
 </tr>
 <tr>
 <td>4</td>
 <td><a href="demos/04-odf-regional-dr.html">ODF Regional-DR</a></td>
-<td>replicate every 15 minutes, prove a sync completed, snapshot, fail over, reverse, come home clean</td>
+<td>replicate every 15 minutes, fail over, reverse, come home clean</td>
 <td>90 min</td>
-<td>§4.8 a hostile failover: break the link, force a failover, resync (30 min)</td>
+<td>§4.8 hostile failover (30 min)</td>
 </tr>
 <tr>
 <td>4b</td>
 <td><a href="demos/04b-portworx-dr.html">Portworx DR</a></td>
-<td><em>framework, to be completed when Portworx is offered</em></td>
+<td><em>when Portworx is offered</em></td>
 <td>—</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>Times are estimates until the class has been run with a stopwatch; they include reading and waiting for copies.</p>
-<p><strong>Your VM keeps its own address after every move.</strong> The staged plans map its network card onto the same VLAN on
-OpenShift (a bridge network map), so it answers at the same address on vSphere, site A and site B. Only if you choose
-the pod network in a plan you build yourself do you need <a href="demos/00-access-and-tools.html">Lab 0 §0.6</a>, the optional
-NIC swap. <em>(That swap is a lab-only workaround; a real migration keeps the VM's own NIC and address.)</em></p>
-<p><strong>Red Hat documentation used across the class:</strong>
-<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization 4.19</a> ·
-<a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11</a> ·
-<a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">OpenShift Data Foundation 4.19</a> ·
+<p>Times are estimates until the class has been timed. Lab 0 starts your <strong>proof table</strong>; each demo adds rows (your last
+mark, <code>chain_ok</code>, the fingerprint, and each move's outage, bytes and time), and by the end it is your evidence.</p>
+<p><strong>Getting help:</strong> a step marked <strong>[verify]</strong> is still being proven in the lab. If one fails, tell the instructor rather
+than improvising. Each section has a 🎬 recording of the same steps in the console.</p>
+<p><strong>Red Hat documentation:</strong>
+<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization</a> ·
+<a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11</a> ·
+<a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">ODF</a> ·
 <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF disaster recovery</a> ·
-<a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">ACM 2.13</a> ·
-<a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index">Kubernetes NMState</a> [verify link] ·
+<a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">ACM</a> ·
 <a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316 training</a> ·
 <a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs</a></p>
-<hr />
-<h2 id="4-your-proof-table">4. Your proof table<a class="headerlink" href="#4-your-proof-table" title="Permanent link">&para;</a></h2>
-<p>Lab 0 starts a proof table. Each demo adds rows to it: your last mark, <code>chain_ok</code>, the fingerprint, and the outage,
-bytes and time of every move. By the end of the class it is your evidence that every migration and every failover
-kept your data intact.</p>
-<h2 id="5-getting-help">5. Getting help<a class="headerlink" href="#5-getting-help" title="Permanent link">&para;</a></h2>
-<ul>
-<li>A command marked <strong>[verify]</strong> is still being proven in the lab. If it fails, tell the instructor rather than
-  improvising.</li>
-<li>If something breaks mid-demo, the instructor can show the step from the screenshot deck and help you catch up.</li>
-<li>Earlier versions of this guide held every command for one combined flow (M0-M10). That flow now lives in the demo
-  guides above, chiefly <a href="demos/04-odf-regional-dr.html">Demo 4</a> for disaster recovery. Its full text is in this file's
-  git history.</li>
-</ul>
 
 
 
