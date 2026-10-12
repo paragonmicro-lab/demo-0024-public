@@ -1,89 +1,108 @@
 ---
-title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
-subtitle: "Start here · how the class works · the demos in order"
-version: 0.7.1
+title: "Welcome — VMware to OpenShift Virtualization"
+subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
+version: 1.0.0
 date: 2026-10-12
 ---
 
-# Student Guide
+# Welcome
 
-> **Version 0.7.1 · draft · 2026-10-12** · class/student-guide.md
+> **Version 1.0.0 · draft · 2026-10-12** · class/welcome.md
 
-## What you will learn
+## Thank you for joining us
 
-You take a real Windows Server + PostgreSQL VM from VMware vSphere onto Red Hat OpenShift Virtualization, cold and then
-warm. You move it between two OpenShift clusters and protect it with OpenShift Data Foundation disaster recovery. At
-every step you write your own data into the VM's database and prove that none of it was lost, changed or reordered.
+Today you take a real Windows Server + PostgreSQL VM off VMware vSphere and onto Red Hat OpenShift Virtualization. You
+move it between two OpenShift clusters and protect it with disaster recovery. At every step you prove, with your own
+data, that nothing was lost. Everything happens in your web browser, and this site is all you need.
 
-This guide is the **map**. The steps are in the demo guides below.
+> 🙋 **Stuck, or something not working?** Ask your **instructor**. They can reset your login, catch you up, or show
+> any step on the big screen. Don't lose time on your own: stuck for 5 minutes means ask.
 
-## Your login, and what you need
+## Start here
 
-**The instructor gives you your login.** One student username and one password open everything in this class:
+1. **Get your login from your instructor.** One username and password open everything: vCenter, both OpenShift
+   clusters, your Windows VM and its database.
+2. **Read the [Student Guide](student-guide.md):** how the class works, and the demos in order with their times.
+3. **Do [Lab 0](demos/00-access-and-tools.md)** (5 minutes): sign in, open a command line, reach your VM's database.
 
-| Resource | Sign in as |
+## What you will do today
+
+- Sign in once and reach vCenter and two OpenShift clusters with the same account
+- Migrate **your own** Windows + PostgreSQL VM from vSphere to OpenShift Virtualization, cold and warm
+- Move it again: to the second cluster, and between clusters
+- Prove with your own data that nothing was lost, changed or reordered on any move
+- Bonus rounds for early finishers: live migration, snapshot restore, a hostile disaster-recovery failover
+
+## How the class works
+
+- **One VM each:** `win-pg-s<NN>`, a full copy of the instructor's, in your own vCenter folder, at its own address.
+- **One namespace each** on both clusters, named your class ID. You are admin there.
+- **One password** everywhere.
+- **Only a web browser:** nothing to install. Commands run in a terminal inside the OpenShift console.
+- **Every step:** **inject** your data → **change** something → **verify** it all arrived. Your **proof table** grows
+  through every demo: it is your evidence at the end.
+- 🧑‍🏫 marks a step only the instructor runs. **[verify]** marks a step still being proven: if it fails, ask.
+- 🎬 every section has a recording of the same steps in the console: watch it, then do it.
+
+## The day
+
+| Block | Time |
 |---|---|
-| vSphere Client (vCenter) and both OpenShift consoles | your class ID, with **SSO (Entra)** |
-| Your Windows VM | `.\student-NN` |
-| Your VM's PostgreSQL database | `student_NN` |
+| Welcome, and Kubernetes in a few ideas (this page) | 20 min |
+| Lab 0 · Demo 1 | 1 h 25 |
+| *Break* | 15 min |
+| Demo 1b · Demo 3 | 1 h 25 |
+| *Lunch* | 45 min |
+| Demo 2 (warm) | 1 h |
+| Demo 4 (disaster recovery) and bonus rounds | 1 h 30 |
+| Wrap-up: your proof table, questions | 15 min |
 
-**All you need is a web browser.** Nothing is installed on your computer. You work in the vSphere Client, the two
-OpenShift consoles, and **your browser terminal**: a shell in your own pod in the OpenShift console, where every
-command in these guides runs. Copy a command here with its copy button; paste it there with **right-click → Paste**.
+Times are estimates until the class has been timed. The demos and their bonus rounds, each with its time, are in the
+[Student Guide](student-guide.md#the-demos-in-order).
 
-**[Lab 0](demos/00-access-and-tools.md) walks you through it in about 5 minutes:** open the tabs, sign in to vCenter,
-both OpenShift clusters and PostgreSQL, and see your VM and your access.
+## Kubernetes in a few ideas
 
-> 💡 A page stuck after a timeout? Sign in again in a **private window**. Nothing is lost: your VM, your data and your
-> terminal live in the lab, not in the browser.
+**A cluster.** A set of machines (**nodes**) run as one computer. The **control plane** keeps the desired state; the
+**worker nodes** run the workloads, your VMs included. One **API** serves everything: the web console, `oc` and
+automation. **OpenShift** is Kubernetes plus an installer, a console, security defaults and operators, supported by
+Red Hat. Each of our two clusters has 4 nodes.
 
-## How the lab is put together
+**You declare it; controllers make it so.** Everything is an **object** in YAML: what you want (`spec`) and what is
+true now (`status`). **Controllers** keep comparing the two and act until they match. An **operator** is a controller
+with its own object types. Today's: **OpenShift Virtualization** (VMs), **MTV** (migrations), **ODF** (storage),
+**NMState** (host networking), **ACM** (many clusters). You don't run "migrate" as a command: you create a migration
+`Plan`, and MTV does the work and reports progress in its `status`.
 
-Each class gets its **own** three environments ([lab diagram](demos/lab-diagram.md)):
+**A VM is a pod.** A **pod** is the smallest thing Kubernetes schedules. OpenShift Virtualization runs each VM's
+QEMU/KVM inside a pod (`virt-launcher-<vm>`): `VirtualMachine` is the definition, `VirtualMachineInstance` the running
+VM. So VMs and containers share one scheduler, network, storage and set of permissions. Live migration is a new pod on
+another node, with the memory copied across.
 
-| Environment | What it is | You |
-|---|---|---|
-| **vSphere** | vCenter + ESXi, where your VM starts | inspect your VM, enable CBT, shut it down |
-| **Site A** | OpenShift + OpenShift Virtualization + MTV, on **ODF** storage | migrate your VM in, run it, snapshot it |
-| **Site B** | the same on **NFS** storage, plus the ACM / DR hub | move your VM in, fail over to it |
+**Namespaces and RBAC.** A **namespace** groups objects and is where permissions apply, like a vCenter folder with its
+own permissions. **RBAC** binds roles (what you may do) to users and groups (who).
 
-The zone names (`lz1`, `ocp-lz1`, …) change per booking; the guides use them as examples. Your browser terminal already
-knows your own (type `ovedr`).
+**Storage.** A VM disk is a **PersistentVolumeClaim** ("I need 10 GiB like this"). A **StorageClass** says how claims
+are met, through a **CSI** driver. Site A runs **ODF** (Ceph, on the lab's SSDs: snapshots, clones and replication
+for disaster recovery); site B runs **NFS** for now.
 
-- **Your own VM**, `win-pg-s<NN>`: a full copy of the instructor's, with its own address, in your own vCenter folder.
-  You power it, snapshot it, migrate it and fail it over yourself.
-- **Your own namespace** on both clusters, named your class ID, where you are admin. Your VM lands there, and your
-  browser terminal lives there.
-- **Everything is staged; you do the last step.** Each demo's pieces (operators, maps, a migration plan for your VM)
-  are pre-built, and each guide shows how to build them yourself ([Lab S](demos/setup-how-the-lab-is-built.md)). Your
-  task is to review and start.
+**Networking.** Every pod gets an address on the **pod network**; a **Service** gives a stable name. **NMState**
+builds a bridge for a lab VLAN on each node, and a **NetworkAttachmentDefinition** (NAD) puts a VM's NIC on it. So your
+migrated VM keeps its address.
 
-## The demos, in order
+## From vSphere words to OpenShift words
 
-Every stage follows one rhythm: **inject** your own data → **change** something → **verify** it all arrived intact.
+| vSphere | OpenShift Virtualization |
+|---|---|
+| vCenter | the cluster's API and web console |
+| ESXi host | node |
+| VM / `.vmx` | `VirtualMachine` (running: `VirtualMachineInstance`) |
+| folder + permissions | namespace + RBAC |
+| datastore | StorageClass |
+| VMDK | PersistentVolumeClaim (a DataVolume while importing) |
+| port group | NetworkAttachmentDefinition (NAD) |
+| vMotion | live migration |
+| VM snapshot | `VirtualMachineSnapshot` |
+| VMware Tools | QEMU guest agent + virtio drivers |
+| *(no equivalent)* | MTV: plans that move VMs into the cluster |
 
-| # | Guide | You will | Time | Bonus (optional) |
-|---|---|---|---|---|
-| 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open your browser terminal | 5 min | §0.6 a pod-network address for your VM (15 min) |
-| S | [Lab S: how this lab was built](demos/setup-how-the-lab-is-built.md) | every staged piece, with the commands, the console path and the Red Hat docs | read alongside | — |
-| 1 | [VMware → OpenShift, cold](demos/01-vmware-to-ove-cold.md) | inspect your VM and the OpenShift side; start your staged plan; swap VMware Tools for virtio | 80 min | A: live migration (15 min) · B: snapshot and restore (25 min) |
-| 1b | [VMware → both clusters](demos/01b-vmware-to-both-sites.md) | a plan to site A from the terminal; your staged plan to site B in the console | 40 min | — |
-| 2 | [VMware → OpenShift, warm](demos/02-vmware-to-ove-warm.md) | enable CBT, pre-copy while the VM runs, cut over in moments | 60 min | §2.8 live migration (15 min) |
-| 3 | [OpenShift → OpenShift](demos/03-ove-to-ove-cold.md) | link the clusters in ACM; move your VM to the other cluster, storage and all | 45 min | — |
-| 4 | [ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
-| 4b | [Portworx DR](demos/04b-portworx-dr.md) | *when Portworx is offered* | — | — |
-
-Times are estimates until the class has been timed. Demo 1 starts your **proof table** ([Toolkit](demos/toolkit.md)); each demo adds rows (your last
-mark, `chain_ok`, the fingerprint, and each move's outage, bytes and time), and by the end it is your evidence.
-
-**Getting help:** a step marked **[verify]** is still being proven in the lab. If one fails, tell the instructor rather
-than improvising. Each section has a 🎬 recording of the same steps in the console.
-
-**Red Hat documentation:**
-[OpenShift Virtualization](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index) ·
-[MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) ·
-[ODF](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) ·
-[ODF disaster recovery](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) ·
-[ACM](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13) ·
-[DO316 training](https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization) ·
-[Red Hat interactive labs](https://www.redhat.com/en/interactive-labs)
+**Ready? Open the [Student Guide](student-guide.md), then [Lab 0](demos/00-access-and-tools.md).**

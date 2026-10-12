@@ -114,7 +114,7 @@ SELECT current_user, inet_server_addr() AS vm_address, now();   -- student_NN, y
 ## Done
 
 You are signed in to vCenter and both OpenShift clusters, you have a command line, and you reached your own VM's
-database. **Go back to the [Student Guide](../index.md)** and continue with the next module, Demo 1.
+database. **Go back to the [Student Guide](../student-guide.md)** and continue with the next module, Demo 1.
 
 Every demo uses the class commands that write and prove your data (`mark`, `verify`, `alive`): they are in the
 [Toolkit](toolkit.md), which each demo points to when you need it.

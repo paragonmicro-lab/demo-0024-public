@@ -46,8 +46,13 @@ validation:
     not_found: warn                # --strict turns these into failures
     anchors: info                  # GitHub-style anchors (emoji, punctuation) differ from MkDocs' slugs: reported, not fatal
 
+# A Paragon-branded class gets the Paragon class banner (class/site/paragon-banner.md) on the welcome page.
+extra:
+  paragon_branded: false
+
 nav:
-  - Start here: index.md
+  - Welcome: index.md
+  - Student guide: student-guide.md
   - "Lab 0: Access and tools": demos/00-access-and-tools.md
   - "Toolkit: your terminal and data": demos/toolkit.md
   - "Demo 1: VMware → OpenShift, cold": demos/01-vmware-to-ove-cold.md
