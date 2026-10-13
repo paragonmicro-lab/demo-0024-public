@@ -1,67 +1,47 @@
 ---
-title: "Demo 2 — Warm migration: VMware to OpenShift Virtualization with minimal downtime"
-subtitle: "Changed Block Tracking · pre-copy while the VM runs · a short cutover · prove every row arrived"
-version: 0.6.0
-date: 2026-10-12
+title: "Demo 2 — VMware to OpenShift Virtualization: warm migration"
+subtitle: "Inject · turn on Changed Block Tracking · start the warm plan while the VM runs · cut over · review on OpenShift · inject and read back"
+version: 2.0.0
+date: 2026-10-13
 ---
 
-# Demo 2: Warm migration, vSphere → OVE
+# Demo 2: VMware to OpenShift Virtualization (warm migration)
 
-> **Version 0.6.0 · draft · 2026-10-12** · class/demos/02-vmware-to-ove-warm.md
+> **Version 2.0.0 · draft · 2026-10-13** · class/demos/02-vmware-to-ove-warm.md
 
 ## What you will learn
 
-In this demo you migrate a running VMware VM to OpenShift Virtualization while it keeps serving its database.
-The only outage is a short cutover. You will turn on vSphere Changed Block Tracking (CBT) for the VM and for each
-of its disks, and see why MTV needs it to copy only what changed between rounds. You will load the database while
-the disks pre-copy, cut over, and measure the real downtime from the VM's own heartbeat. Finally, you will prove
-with your hash-chained rows that every write, including those made *during* the copy, arrived intact and in order.
+You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization again, this time
+**warm**. A warm migration copies the disks while the VM keeps **running**: a first full copy, then every 5 minutes only
+the blocks that changed. The VM stops only for the **cutover**, a last small copy, so the outage is minutes instead of
+the whole copy. vSphere's **Changed Block Tracking** (CBT) is what tells MTV which blocks changed, so you turn it on
+first. You write rows before, during and after the move, read them all back, and measure the real outage from your
+VM's own heartbeat.
 
----
-
-## How the lab is set up for this demo
-
-The class CI customization (the `customize` run that core-web starts after the three environments are built)
-prepares everything below before you log in. See the [lab diagram](lab-diagram.md) for how the three environments
-connect, and **[Lab S — how this lab was built](setup-how-the-lab-is-built.md)** for the CLI and console steps behind each row.
-
-| Pre-built for you | Where | How it was built · Red Hat docs |
+| Phase | Your VM | What MTV does |
 |---|---|---|
-| OpenShift Virtualization (`ove: cnv`) | both clusters (the same operators on both) | [S.2](setup-how-the-lab-is-built.md) · [OpenShift Virtualization 4.19](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index) |
-| ACM and cert-manager | both clusters (base `demo-openshift` build) | [S.10](setup-how-the-lab-is-built.md) · [ACM 2.13](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13) |
-| NMState bridges + VLAN NADs (`vmnet<VLAN>`) | both clusters | [S.3](setup-how-the-lab-is-built.md) · [Kubernetes NMState](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index) [verify link] |
-| Storage | site A **ODF** (`ocs-storagecluster-ceph-rbd-virtualization`), site B **NFS** (`nfs-csi`): one ODF site today, the lab's SSDs fit one | [S.4](setup-how-the-lab-is-built.md) · [ODF 4.19](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) |
-| MTV (Migration Toolkit for Virtualization) | both tooled sites, with its console menu | provider `ovedr-vcenter0<N>` with network maps (pod + bridge) and storage map, **Ready**. [S.5](setup-how-the-lab-is-built.md) · [S.6](setup-how-the-lab-is-built.md) · [S.8](setup-how-the-lab-is-built.md) · [MTV 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11) |
-| **VDDK image** on that provider | site A | **prerequisite for warm migration**: the lab copies its saved VDDK image into the cluster and sets it here (Lab S §S.15). Without it, MTV can only migrate cold. The `demo-prep` readiness table says whether this booking has it. [S.6](setup-how-the-lab-is-built.md) · [Creating a VDDK image](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link] |
-| **Pre-copy interval** shortened to 5 min | both tooled sites | the MTV default is 60 min between rounds, too slow for a class. [S.10](setup-how-the-lab-is-built.md) |
-| Staged **cold** plans `d1-<VM>` / `d1b-<VM>-to-<B>` | both sites | for Demos 1 and 1b. Demo 2's **warm** plan is the one **you** build here. [S.12](setup-how-the-lab-is-built.md) |
-| **Your namespace** `$VMNS` (your class ID, you are **admin**) with your `Service/<VM>-sql` and your browser terminal `sql-client` | both clusters | your VM lands in your namespace. [S.9](setup-how-the-lab-is-built.md) |
-| Student rights | both clusters | read MTV objects, bridges, storage classes; **create and run your own plans and migrations**. [S.9](setup-how-the-lab-is-built.md) |
-| **Your own VM**, `win-pg-s<NN>` | vSphere `vcenter0<N>`, in your folder `vms/students/<class ID>` | a full clone of `win-pg-i01` at its own address `.100+NN`: Windows Server 2022 + PostgreSQL 16 (WAL on `L:`, data on `D:`), heartbeat writer, the `marks` toolkit, your Windows login. You can power it, open its console and Edit Settings yourself. [S.11](setup-how-the-lab-is-built.md) |
+| **Pre-copy 1** | running | snapshots each disk on vSphere and copies the **whole** disk |
+| **Pre-copy 2, 3, …** | running | every 5 minutes, copies **only the blocks changed** since the last round (CBT) |
+| **Cutover** | **stopped** | one last snapshot, copies the last small change, converts the drivers, starts the VM on OpenShift |
 
-**State at the start of this demo:** your VM is **powered on and writing on vSphere**, at its own address
-`$VM_IP`. If you ran Demo 1 first, MTV left the vSphere original powered off. Power it back on in vCenter
-(**Actions → Power → Power On**; your `ovedr-student-vm` role allows it on your own VM).
+**Before you start:** do [Lab 0](00-access-and-tools.md). You are signed in to the **site A** console. Every command
+below runs in the console's **Web Terminal** (`>_`). Your VM must be **running on vSphere**:
 
-> ⚠️ **One copy on the VLAN at a time.** The warm plan uses the **bridge** map, so the migrated VM keeps `$VM_IP`.
-> If your Demo 1 copy is still **running** on OpenShift, stop it first (it holds the same address):
-> `oc --context site-a -n "$VMNS" patch vm "$VM" --type merge -p '{"spec":{"runStrategy":"Halted"}}'`.
+- **Straight after Lab 0:** it is. Go to 2.0.
+- **After Demo 1:** your VM runs on OpenShift and the vSphere original is powered off. Both use the same address, so
+  only one may run at a time. Stop the OpenShift copy first (**Virtualization → VirtualMachines → `win-pg-s01` →
+  Actions → Stop**), then power the original on in vCenter (**`win-pg-s01` → Actions → Power → Power On**). The
+  original holds your rows up to `start-cold-migration`. `cold-migration-complete` was written on the OpenShift copy,
+  so the original doesn't have it, and that's expected.
 
-**What you do yourself:** enable CBT, build and start the warm plan, cut over, and verify. Your VM keeps its own
-address on OpenShift, so Toolkit T.4 is not needed.
-
-> **Before you start:** do [Lab 0](00-access-and-tools.md), then sign your class terminal in on both sites and to your
-> database ([Toolkit T.1-T.2](toolkit.md): `oclogin` for site A and site B, then `dblogin`). It already holds the
-> variables (`$ME`, `$N`, `$A`, `$B`, `$VM`, `$VM_IP`, `$WINUSER`) and the commands (`sql`, `mark`, `load`, `verify`,
-> `alive`, `where`).
-
-> 🖥️ **Where you type the commands: your browser terminal.** Every `bash` block in this guide runs in **your own
-> terminal pod**, in the browser: in the site A console, project **`<your class ID>`** → **Workloads → Pods →
-> `sql-client` → Terminal** ([Toolkit T.1](toolkit.md)). Nothing is installed on your computer. It already
-> knows your VM and its address (type `ovedr`); `dblogin` and `oclogin` (Toolkit T.1-T.2) stay signed in while the pod runs.
-> Variables you `export` last until you close that Terminal tab: if you reopen it, re-run the guide's `export` lines.
-> Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
-> console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
+> ⚠ **The commands are an example. Change these values to yours before you run them:**
+>
+> | In the example | Is the example's | Replace with yours |
+> |---|---|---|
+> | `student-01-0024-012` | class ID and project (`student-01` on booking `0024-012`) | your class ID |
+> | `win-pg-s01` | your VM (`s` + your student number); on OpenShift it lands as `win-pg-s01-warm` | your VM |
+> | `10.101.23.101` | your VM's address, the SQL server (it keeps it on OpenShift) | your VM's address, from Lab 0.1 |
+> | `vcenter01` / VLAN `23` | your booking's vCenter (`N` = 1) and VLAN (`22 + N`) | from your instructor's `N` |
 
 <!-- 🎬 video slot 02-vmware-to-ove-warm: one walk-through of the whole demo in the console -->
 <video controls preload="metadata" playsinline width="100%" poster="../.images/02-vmware-to-ove-warm.jpg">
@@ -72,125 +52,57 @@ address on OpenShift, so Toolkit T.4 is not needed.
 
 ---
 
-## 2.1 Prerequisites and the starting state
-
-### The name your VM gets on OpenShift
-
-Your **staged warm plan** `d2-<VM>` lands your VM on site A, in your namespace, as **`<VM>-warm`**. That way it never
-collides with your Demo 1 copy (`<VM>`), whether or not that copy still exists.
+## 2.0 Inject: the demo has started
 
 ```bash
-export TARGET="$VM-warm" PLAN="d2-$VM"
-echo "vSphere VM=$VM  →  OpenShift name=$TARGET (namespace $VMNS)  plan=$PLAN"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 2: warm migration');"
 ```
 
-> 💡 **Your chain continues on the vSphere copy.** If you ran Demo 1, its OpenShift copy and the vSphere original
-> split at Demo 1's cutover. Rows you wrote on OpenShift in Demo 1 are **not** on the vSphere original, and that's
-> expected. Your chain on the original carries on from your last pre-migration row.
-
-### Check: the provider can do warm
-
-```bash
-oc --context site-a -n openshift-mtv get provider ovedr-vcenter0$N \
-  -o jsonpath='{.status.phase}{"  vddk="}{.spec.settings.vddkInitImage}{"\n"}'     # Ready, and a vddk image [verify]
-oc --context site-a -n openshift-mtv get forkliftcontroller forklift-controller \
-  -o jsonpath='{"precopy interval (min): "}{.spec.controller_precopy_interval}{"\n"}'  # 5 [verify]
-```
-
-> ⚠️ **No VDDK image, no warm migration.** If `vddk=` is empty, tell the instructor and stop here. The warm plan will
-> either refuse to start, or fall back to behaviour this guide doesn't describe.
-
-#### 🧑‍🏫 Instructor only: if CI did not set them
-
-```bash
-oc --context site-a -n openshift-mtv patch forkliftcontroller forklift-controller --type merge \
-  -p '{"spec":{"controller_precopy_interval":5}}'          # minutes between pre-copies [verify]
-```
-
-### Check: your VM is up and writing on vSphere
-
-Your VM still runs on vSphere, and your browser terminal reaches it at its own address, `$VM_IP`:
-
-```bash
-export PGHOST=$VM_IP            # your VM's own address (the terminal's default)
-alive                           # staleness < 10 s
-mark d2-start                   # ✍️ note the id
-verify                          # chain_ok = t
-```
-
-📸 `02-start-alive` — `alive` and `verify` output, with the VM on vSphere.
+✅ It prints the row it wrote, with stage `demo-started`. (If it says *First sign in … dblogin*, run Lab 0's step 1
+again. If it can't connect, your VM isn't running on vSphere yet: see **Before you start**.)
 
 ---
 
-## 2.2 Why warm, and why it needs CBT
+## 2.1 Check the link to vCenter, and your warm plan
 
-A **cold** migration (Demo 1) powers the VM off, copies every block of every disk, then boots it on
-OpenShift. The outage is the whole copy.
+The lab staged a **warm** plan for you, ready but not started: **`d2-win-pg-s01`** (`d2-<your VM>`). It lands your
+VM on site A as **`win-pg-s01-warm`**, so it never collides with a Demo 1 copy.
 
-A **warm** migration works in rounds:
+**Console (site A):** **Migration for Virtualization → Providers → `ovedr-vcenter01`**.
 
-| Phase | VM state | What MTV does |
+✅ Status **Ready**, and **Connected**.
+
+**Console:** **Migration for Virtualization → Migration plans → `d2-win-pg-s01`**.
+
+✅ Type **Warm**, source provider `ovedr-vcenter01`, your VM, target project **your class ID**. The status is **not**
+Ready yet: expand your VM to see why.
+
+| Concern | What it means | Who fixes it |
 |---|---|---|
-| **Pre-copy 1** | running | snapshots each disk on vSphere and copies the **whole** disk to a PVC |
-| **Pre-copy 2…n** | running | every interval, takes a new snapshot and copies **only the blocks changed** since the previous one |
-| **Cutover** | **stopped** | one last snapshot, copies the last small delta, converts drivers, boots on OpenShift |
+| **VMMissingChangedBlockTracking** | your VM's disks don't have CBT on, so MTV can't copy only the changes | **you**, in 2.2 |
+| **VDDKInitImageUnavailable** | the provider has no VDDK image, the VMware library MTV needs to read changed blocks | the **instructor**: tell them and stop here (Lab S §S.15) |
 
-The question *"which blocks changed since the last snapshot?"* is answered by vSphere **Changed Block Tracking**.
-Without CBT, every round would be a full copy. That's why MTV refuses a warm plan for a VM whose disks don't have
-CBT enabled.
+The same from the Web Terminal:
+
+```bash
+oc -n openshift-mtv get provider ovedr-vcenter01 -o jsonpath='{.status.phase}  vddk={.spec.settings.vddkInitImage}{"\n"}'   # Ready  vddk=<an image>
+oc -n openshift-mtv get plan d2-win-pg-s01 -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
+```
+
+✅ The provider shows a `vddk=` image, and the plan's only concern is `VMMissingChangedBlockTracking`.
 
 ---
 
-## 2.3 Enable Changed Block Tracking
+## 2.2 Turn on Changed Block Tracking
 
-CBT is a per-VM switch (`ctkEnabled`) **plus** a per-disk switch for each virtual disk (`scsi0:N.ctkEnabled`).
-It takes effect at the next power-on, so turn it on while the VM is **off**.
+CBT is one switch for the VM (`ctkEnabled`) **plus** one for each disk (`scsi0:N.ctkEnabled`). vCenter accepts them
+only while the VM is **off**, and they take effect at the next power-on.
 
-### Leave a mark, then shut your VM down cleanly
+**Shut it down.** **vCenter:** **VMs and Templates → datacenter01 → vms → students → `student-01-0024-012` →
+`win-pg-s01`** → **Actions → Power → Shut Down Guest OS**. Wait for **Powered Off**.
 
-```bash
-mark d2-before-cbt
-```
-
-In your VM's web console (vCenter → `<VM>` → **Launch Web Console**, log in as `.\<WINUSER>`), in PowerShell:
-
-```powershell
-Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2-before-cbt"
-Stop-Computer -Force          # a clean guest shutdown of YOUR VM [verify: Users may shut down this server]
-```
-
-Or, from vCenter: **Actions → Power → Shut Down Guest OS**.
-
-### Find the exact disk keys first
-
-The VM's three disks sit on one LSI Logic SAS controller, so their keys are `scsi0:<unit>`. **Read** the units
-rather than guessing.
-
-**vCenter UI:** VM → **Edit Settings → Virtual Hardware**. Expand each **Hard disk** and note its
-**Virtual Device Node**, for example `SCSI controller 0 : SCSI(0:0)`.
-
-| Disk | Size | Holds | Device node (fill in) |
-|---|---|---|---|
-| Hard disk 1 | 60 GB | `C:` Windows | `scsi0:__` |
-| Hard disk 2 | 5 GB | `L:` PostgreSQL WAL | `scsi0:__` |
-| Hard disk 3 | 10 GB | `D:` PostgreSQL data | `scsi0:__` |
-
-📸 `02-disk-device-nodes` — Edit Settings, with the three hard disks' Virtual Device Node expanded.
-
-**🧑‍🏫 Instructor alternative (govc):**
-
-```bash
-govc device.info -vm "$VM" 'disk-*' | grep -E 'Name:|Label:|Unit number|Controller|Summary'
-```
-
-### Set the parameters (VM powered **off**)
-
-> ⚠️ **Your VM must be shut down.** vCenter only accepts these parameters on a powered-off VM, and CBT takes effect at
-> the next power-on. With CBT on, MTV can copy only the blocks that changed since the last pre-copy, which is what
-> makes the warm ("hot") migration in this demo possible.
-
-**vCenter UI:** your VM → **Edit Settings → Advanced Parameters** (vSphere 8; older UIs: *VM Options → Advanced →
-Edit Configuration*). For each row below, type the **Attribute** and **Value**, then click **ADD**:
+**Add the four parameters.** **`win-pg-s01` → Edit Settings → Advanced Parameters**. For each row, type the
+**Attribute** and **Value**, then click **ADD**:
 
 | Attribute | Value |
 |---|---|
@@ -199,402 +111,241 @@ Edit Configuration*). For each row below, type the **Attribute** and **Value**, 
 | `scsi0:1.ctkEnabled` | `true` |
 | `scsi0:2.ctkEnabled` | `true` |
 
-(Use the device nodes you found above if they differ from `0`, `1` and `2`.)
-
 ![Adding ctkEnabled = true on the Advanced Parameters tab](../.images/02-cbt-advanced-params-add.png)
-*Adding a row: Attribute `ctkEnabled`, Value `true`, then **ADD**. The list's filter (funnel icon) set to `ctk` shows only
-the CBT rows.*
-
-When all four are added, the list (filtered on `ctk`) shows them. Click **OK**:
+*Adding a row: Attribute `ctkEnabled`, Value `true`, then **ADD**. The filter (funnel icon) set to `ctk` shows only the
+CBT rows.*
 
 ![The Advanced Parameters list with all four ctkEnabled rows set to true](../.images/02-cbt-advanced-params.png)
-*All four rows set: `ctkEnabled` for the VM, plus `scsi0:0`, `scsi0:1` and `scsi0:2` for its three disks.*
+*All four rows set: the VM, plus `scsi0:0`, `scsi0:1` and `scsi0:2` for its three disks. Click **OK**.*
 
-**🧑‍🏫 Instructor alternative (govc):**
+<details markdown="1">
+<summary>Check your disks really are scsi0:0, 0:1 and 0:2</summary>
 
-```bash
-govc vm.info "$VM" | grep 'Power state'                                                   # poweredOff
-govc vm.change -vm "$VM" \
-  -e ctkEnabled=TRUE \
-  -e scsi0:0.ctkEnabled=TRUE -e scsi0:1.ctkEnabled=TRUE -e scsi0:2.ctkEnabled=TRUE
-govc vm.info -e "$VM" | grep -i ctkEnabled                                                # four rows, TRUE
-```
+**Edit Settings → Virtual Hardware**: expand each **Hard disk** and read its **Virtual Device Node**, for example
+`SCSI controller 0 : SCSI(0:1)`. The class VMs have three disks on one controller: 60 GB `C:`, 5 GB `L:` (WAL) and
+10 GB `D:` (data). If a node differs, use its number in the parameter name.
 
-### Power your VM back on
+</details>
 
-vCenter: **Actions → Power → Power On**.
+**Power it back on:** **Actions → Power → Power On**.
 
-### Check: CBT is active
-
-When a VM powers on with CBT enabled, vSphere creates a **change-tracking file** (`*-ctk.vmdk`) next to each disk.
-
-- **vCenter UI:** **Storage → `coresan01_data00` → Files → `ovedr-lz<N>-<VM>/`** (each class VM's folder carries
-  its zone, because every zone shares this datastore). There should be one `…-ctk.vmdk` per disk, three in all.
-- **🧑‍🏫 govc:**
-
-  ```bash
-  govc datastore.ls -ds coresan01_data00 "ovedr-lz$N-$VM/" | grep -- '-ctk.vmdk'            # 3 files
-  ```
-
-📸 `02-ctk-files` — the datastore browser listing three `-ctk.vmdk` files.
-
-Wait for the database to come back, then prove nothing was lost across the shutdown:
+✅ Within a minute or two the plan `d2-win-pg-s01` shows **Ready**, and the CBT concern is gone:
 
 ```bash
-until alive 2>/dev/null | grep -q 'beats'; do sleep 10; done
-alive                                # postgres_started is new: the VM rebooted
-mark d2-cbt-on
-verify                               # chain_ok = t — the reboot lost nothing
+oc -n openshift-mtv get plan d2-win-pg-s01 -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'   # Ready=True
 ```
 
-✍️ **Row 2.1:** CBT on (yes/no), the number of `-ctk.vmdk` files, and your `d2-cbt-on` id.
+If the concern stays, a disk is missing its `scsi0:N.ctkEnabled`, or the VM hasn't been powered on since you set it.
+
+Give Windows a minute to start PostgreSQL, then check that the shutdown lost nothing:
+
+```bash
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
+```
+
+✅ `chain_ok = t`.
 
 ---
 
-## 2.4 Make the database busy
+## 2.3 Start the warm migration, and keep writing
 
-Warm migration matters when the VM is **changing** while it copies. Give it something to copy.
+**Console (site A):** **Migration for Virtualization → Migration plans → `d2-win-pg-s01`** → **Start** → confirm.
 
-### In the guest
-
-```powershell
-Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2-precopy-started"
-```
-
-### From your terminal
-
-A burst now, then a small burst every minute in the background, so each pre-copy round has new blocks to ship:
+Your VM **keeps running on vSphere**. Expand it on the plan's page: MTV takes a snapshot on vSphere and copies the
+whole of each disk (the first pre-copy). After that, every 5 minutes it copies only what changed. In vCenter, your
+VM's **Snapshots** show MTV's snapshot for each round.
 
 ```bash
-load d2-precopy 500                                            # 500 hash-chained rows, right now
-( for i in $(seq 1 30); do load "d2-precopy-$i" 50 >/dev/null 2>&1; sleep 60; done ) &
-export LOADER=$!                                               # stop it before cutover (2.6)
-verify
+oc -n openshift-mtv get plan d2-win-pg-s01 -w                        # EXECUTING True (Ctrl-C to stop watching)
 ```
 
-✍️ **Row 2.2:** your `marks` count after the 500-row burst.
-
----
-
-## 2.5 Your warm plan: staged, waiting for CBT
-
-The lab **staged** a warm plan for every class VM on **both** sites: **`d2-<VM>`** on site A (and `d2b-<VM>-to-<B>` on site B, the same
-plan to the other cluster) (type **Warm**, target name `<VM>-warm`, target
-namespace yours, the class's bridge network map and storage map), **not started**. How it was built: Lab S
-[§S.12](setup-how-the-lab-is-built.md). Red Hat: [Warm migration](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/index) [verify link].
-
-### Before 2.3: the plan flags CBT (expected)
-
-Open **Migration for Virtualization → Migration plans → `d2-<VM>` → Virtual machines** and expand your VM. Until you
-enable Changed Block Tracking, MTV flags it, and the plan can't start: **this is the point of 2.3**. Once your VM
-has CBT on all four keys and has been powered on again, the concern clears and the plan shows *Ready*.
-
-📸 `02-plan-warm-cbt-concern`: your `d2-<VM>` plan, the VM row expanded, with the CBT concern (before 2.3).
+**Give it something to copy.** The database is busy while it copies: write a burst of 500 rows now, and again
+after each pre-copy round if you like:
 
 ```bash
-oc --context site-a -n openshift-mtv get plan "$PLAN" \
-  -o jsonpath='{range .status.conditions[*]}{.type}={.status} {.category} {.message}{"\n"}{end}'
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_load('student-01-0024-012', 'warm-precopy-load', 500);"
 ```
 
-Expected conditions **before** 2.3: `VMMissingChangedBlockTracking` (yours to fix in 2.3). If you also see
-`VDDKInitImageUnavailable`, the lab has no VDDK image yet: that one is the instructor's, not yours (BL-B27). Stop and tell them.
+✅ It prints `rows_written = 500`. Your VM is still serving its database in the middle of the migration.
 
-✅ After 2.3: `Ready=True`, and no CBT concern. If the plan still says CBT isn't enabled on a disk, go back to 2.3: a disk
-is missing its `scsi0:N.ctkEnabled`, or the VM hasn't been power-cycled since you set it.
-
-### Build it yourself (learning path, optional)
-
-To see every field, build your own warm plan with a **different name**, e.g. `<your class ID>-warm-migration-plan`. Start
-**either** the staged `d2-<VM>` **or** yours, never both. **Console**, site A → **Migration for Virtualization →
-Migration plans → Create plan**, as in Demo 1 (same General step, same class maps), with **Migration type: Warm**:
-
-| Field | Value |
-|---|---|
-| Plan name | `<your class ID>-warm-migration-plan` |
-| Source provider / Target provider / Target project | `ovedr-vcenter0<N>` / `host` / your namespace (`$VMNS`) |
-| VM | your `<VM>` |
-| Network map | `ovedr-vcenter0<N>-net-bridge` (use the existing map; keeps `$VM_IP`) |
-| Storage map | `ovedr-vcenter0<N>-storage` (use the existing map) |
-| Migration type | **Warm** |
-
-**Or as YAML:**
+**Count the pre-copies:**
 
 ```bash
-oc --context site-a apply -f - <<EOF
+oc -n openshift-mtv get plan d2-win-pg-s01 -o jsonpath='pre-copies done: {.status.migration.vms[0].warm.successes}  next: {.status.migration.vms[0].warm.nextPrecopyAt}{"\n"}'
+```
+
+✅ Wait for **at least two** pre-copies. The first carries the whole disks; later ones carry only the changed
+blocks, so they're much quicker. That difference is CBT at work.
+
+<details markdown="1">
+<summary>Or: create and start your own warm plan from the CLI (instead of the staged one)</summary>
+
+This builds a warm plan like your staged `d2-win-pg-s01`, under a **new name**, so the staged plan stays as the lab
+built it. Use **one** of them: a VM can be in only one running plan. If you start this one, skip the console's
+**Start** above, and cut over with the last command below instead of the console.
+
+Set the values once. Every command below reads them:
+
+```bash
+# your class ID: MTV creates your VM in this project on site A
+CLASS_ID=student-01-0024-012
+# your VM's name in vCenter
+VM=win-pg-s01
+# the provider that links site A to your booking's vCenter ("ovedr-vcenter0" + N), and its maps
+SRC=ovedr-vcenter01
+# a NEW plan name, so this never touches the staged d2-win-pg-s01
+PLAN=$CLASS_ID-warm-cli
+```
+
+Create the plan. `warm: true` is the only difference from a cold plan; `targetName` gives the copy on OpenShift its
+own name:
+
+```bash
+oc apply -f - <<EOF
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Plan
-metadata: { name: $VMNS-warm-migration-plan, namespace: openshift-mtv }
+metadata: { name: $PLAN, namespace: openshift-mtv }
 spec:
   warm: true
-  targetNamespace: $VMNS
+  targetNamespace: $CLASS_ID
   provider:
-    source:      { name: ovedr-vcenter0$N, namespace: openshift-mtv }
-    destination: { name: host,             namespace: openshift-mtv }
+    source:      { name: $SRC, namespace: openshift-mtv }
+    destination: { name: host, namespace: openshift-mtv }
   map:
-    network: { name: ovedr-vcenter0$N-net-bridge, namespace: openshift-mtv }
-    storage: { name: ovedr-vcenter0$N-storage,    namespace: openshift-mtv }
+    network: { name: $SRC-net-bridge, namespace: openshift-mtv }
+    storage: { name: $SRC-storage,    namespace: openshift-mtv }
   vms:
-    - name: $VM
-      targetName: $TARGET-mine                # [verify: Plan.spec.vms[].targetName in MTV 2.11]
+    - { name: $VM, targetName: $VM-warm-cli }
 EOF
+oc -n openshift-mtv get plan $PLAN -w                # READY True (Ctrl-C)
 ```
 
-### Start it
-
-Your task, the last step, once CBT is on and the plan is *Ready*: console **Migration plans → `d2-<VM>` → Start**. Or:
+Start it: a **Migration** is what the console's Start button creates. A warm migration pre-copies until it has a
+**cutover** time:
 
 ```bash
-oc --context site-a apply -f - <<EOF
+oc apply -f - <<EOF
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Migration
-metadata: { name: $PLAN, namespace: openshift-mtv }
+metadata: { name: $PLAN-run1, namespace: openshift-mtv }
 spec: { plan: { name: $PLAN, namespace: openshift-mtv } }
 EOF
+oc -n openshift-mtv get plan $PLAN -w                # EXECUTING True (Ctrl-C)
 ```
 
-### Check: watch the pre-copies
+In 2.4, after your `start-warm-migration` row, cut over by giving the Migration a cutover time of **now**:
 
 ```bash
-precopies() { oc --context site-a -n openshift-mtv get migration "$PLAN" -o json \
-  | jq -r '.status.vms[0] | "phase=\(.phase)  precopies=\(.warm.precopies | length)  ok=\(.warm.successes // 0)  failures=\(.warm.failures // 0)  next=\(.warm.nextPrecopyAt // "-")",
-           (.warm.precopies[]? | "  #\(.snapshot // "-")  start=\(.start)  end=\(.end // "running")")'; }
-precopies
-watch -n 30 "oc --context site-a -n openshift-mtv get migration $PLAN -o jsonpath='{.status.vms[0].phase}{\"  precopies=\"}{.status.vms[0].warm.successes}{\"\n\"}'"
+oc -n openshift-mtv patch migration $PLAN-run1 --type merge -p "{\"spec\":{\"cutover\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}}"
+oc -n openshift-mtv get plan $PLAN -w                # SUCCEEDED True (Ctrl-C)
 ```
 
-While pre-copies run:
-
-```bash
-alive                             # STILL writing: the VM is up during pre-copy
-mark d2-during-precopy
-oc --context site-a -n "$VMNS" get pvc | grep "$TARGET"      # three PVCs filling for your VM
-```
-
-In vCenter, open your VM → **Snapshots**. MTV creates a snapshot for each round and removes the previous one.
-
-📸 `02-precopy-snapshots` — the VM's snapshot manager during a pre-copy round.
-📸 `02-precopy-status` — the plan page showing completed pre-copies.
-
-> 💡 **Watch the round sizes.** The first pre-copy carries the whole disks. Every round after it carries only the
-> blocks your `load` loop and the heartbeat changed. That shrink is CBT at work.
-
-✍️ **Row 2.3:** the number of successful pre-copies before cutover, and how long the first one took versus a
-later one.
+</details>
 
 ---
 
-## 2.6 Cutover: the only downtime
+## 2.4 Inject, then cut over
 
-Let at least **two** pre-copies complete, then stop the background load and leave a last mark on vSphere:
-
-```bash
-kill "$LOADER" 2>/dev/null; wait "$LOADER" 2>/dev/null
-mark d2-before-cutover                  # ✍️ note this id: it must survive the cutover
-export CUTOVER_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ); echo "cutover requested at $CUTOVER_AT"
-```
-
-In the guest:
-
-```powershell
-Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2-before-cutover"
-```
-
-### Cut over now
-
-Console: **Plans → `d2-<VM>` → Cutover → now**. Or set the Migration's cutover time:
+Write the "start" row while your VM still runs on vSphere. It must survive the cutover:
 
 ```bash
-oc --context site-a -n openshift-mtv patch migration "$PLAN" --type merge \
-  -p "{\"spec\":{\"cutover\":\"$CUTOVER_AT\"}}"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-warm-migration', 'on vSphere, before cutover');"
 ```
 
-MTV then shuts your source VM down, takes one last snapshot, copies the final delta, converts the drivers for
-KVM, and starts `<TARGET>` on site A.
+**Console (site A):** **Migration plans → `d2-win-pg-s01`** → **Cutover** → keep the date and time it offers
+(**now**) → **Set cutover**.
+
+MTV now shuts your VM down on vSphere, takes one last snapshot, copies the small change since the last round,
+converts the drivers (`virt-v2v` installs virtio and the QEMU guest agent, and removes VMware Tools) and creates your VM
+on OpenShift.
 
 ```bash
-precopies                                                            # phase moves past the copy
-oc --context site-a -n openshift-mtv get migration "$PLAN" -w        # Ctrl-C at Succeeded
+oc -n openshift-mtv get plan d2-win-pg-s01 -w                        # SUCCEEDED True (Ctrl-C to stop watching)
 ```
 
-📸 `02-cutover-done` — the plan showing **Succeeded**, with the cutover timestamps.
+✅ The plan shows **Succeeded**.
 
 ---
 
-## 2.7 Validate on OpenShift
+## 2.5 Review your VM on OpenShift
 
-### Your VM keeps its address
+**Console (site A):** **Virtualization → VirtualMachines**, project **`student-01-0024-012`** → **`win-pg-s01-warm`**.
 
-The warm plan used the **bridge** map, so `<TARGET>` answers at your own `$VM_IP`, and the helpers keep working.
-(Only if you chose the **pod** map: follow [Toolkit T.4](toolkit.md#t4-optional-give-your-vm-a-pod-network-address-on-openshift)
-with `CTX=site-a` and `VM=$TARGET`.)
-
-```bash
-VM=$TARGET where                                   # site-a Running, and the node it landed on
-oc --context site-a -n "$VMNS" get vm,vmi "$TARGET"
-pg_isready -h "${PGHOST:-$VM_IP}" -p 5432
-```
-
-### Check: every row arrived, in order, unaltered
+| Tab | What you see |
+|---|---|
+| **Configuration → Network** | one NIC on **`default/vmnet23`**: your VLAN's bridge, so it keeps its address |
+| **Configuration → Storage** | **three** disks on **`ocs-storagecluster-ceph-rbd-virtualization`** (ODF) |
 
 ```bash
-until alive 2>/dev/null | grep -q beats; do sleep 10; done           # Windows boot + PostgreSQL start
-alive                            # writing again, postgres_started = after cutover
-verify                           # chain_ok = t; last_stage = d2-before-cutover (or later)
-mark d2-after-cutover
-verify
+oc -n student-01-0024-012 get vm win-pg-s01-warm -o jsonpath='{range .spec.template.spec.networks[*]}{.multus.networkName}{"\n"}{end}'   # default/vmnet23
+oc -n student-01-0024-012 get vmi win-pg-s01-warm -w                 # Running (Ctrl-C to stop watching)
 ```
 
-✅ `chain_ok = t`. Every row from `d2-start`, the 500-row burst, every background round and `d2-before-cutover`
-is present and in order.
-✅ `last_stage` before your new mark was `d2-before-cutover` or a background round written after it. The last
-pre-copy didn't lose the tail, because the cutover copied it.
+Your VM was running on vSphere when it was cut over, so MTV starts it on OpenShift. If it shows **Stopped**, start
+it: **Actions → Start** **[verify]**.
 
-### Check: the real downtime
+On the VM's **Overview**, the *Guest agent* shows as connected, and **IP addresses** shows `10.101.23.101`.
 
-The heartbeat writer runs every 5 s, so the outage is the gap in it around the cutover:
-
-```bash
-sql -c "
-SELECT ts AS resumed_at, date_trunc('second', gap) AS outage
-FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g
-WHERE gap > interval '10 seconds' AND ts > timestamptz '$CUTOVER_AT' - interval '5 minutes'
-ORDER BY ts;"
-```
-
-The **first** gap after `$CUTOVER_AT` is the cutover. Compare the cutover gap with Demo 1's cold outage (your proof table, row 1.x), which was the whole copy.
-
-📸 `02-outage-sql` — the gap query result next to Demo 1's.
-
-### ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
-
-Every migration off vSphere must swap the guest's tools: `virt-v2v` installs the **virtio** drivers and the **QEMU guest
-agent**, and VMware Tools must no longer run. Your VM reports its own guest tools at every boot (its heartbeat writer):
-
-```bash
-tools                                  # platform = not VMware · vmtools = Stopped or absent · qemu_ga = Running · virtio = netkvm,vioscsi…
-oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'   # True
-```
-
-✅ `qemu_ga` is **Running**, `virtio` lists the network (`netkvm`) and disk (`vioscsi`/`viostor`) drivers, and `vmtools` is
-**not** Running. In the console, the VM's **Overview** shows the *Guest agent* as connected. If `vmtools` still runs, remove
-it (**Settings → Apps → VMware Tools → Uninstall**, then reboot).
-
-### Check: your file came across too
-
-Console, site A → **Virtualization → VirtualMachines → `<TARGET>` → Console**. Log in as `.\<WINUSER>`:
-
-```powershell
-Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"          # d1 … d2-before-cutover, all there
-Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d2-on-ove"
-Get-Service QEMU-GA, VMTools -ErrorAction SilentlyContinue | Format-Table Name, Status   # QEMU-GA Running; VMTools gone or stopped
-```
-
-📸 `02-ove-console-file` — the OVE VNC console showing your file's lines.
-
-✍️ **Row 2.4:** cutover downtime (heartbeat gap) versus Demo 1's outage, `chain_ok`, and the fingerprint.
+✅ Running, guest agent connected, address `10.101.23.101`.
 
 ---
+
+## 2.6 Inject: the migration is complete, read back, and measure the outage
+
+Give Windows a minute to start PostgreSQL, then:
+
+```bash
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'warm-migration-complete', 'on OpenShift site A');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
+```
+
+✅ The read-back ends with `demo-started`, the 500 `warm-precopy-load` rows (written **while** the disks copied),
+`start-warm-migration` (the last row on vSphere) and `warm-migration-complete` (written on OpenShift).
+`ovedr_verify` shows `chain_ok = t`: nothing written during the copy was lost, changed or reordered.
+
+**The real outage.** Your VM's heartbeat writer adds a row every 5 seconds, so the outage is the gap in it after
+your `start-warm-migration` row:
+
+```bash
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT ts AS back_at, date_trunc('second', gap) AS outage FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g WHERE gap > interval '10 seconds' AND ts > (SELECT max(ts) FROM marks WHERE student = 'student-01-0024-012' AND stage = 'start-warm-migration') ORDER BY ts;"
+```
+
+✅ One row: the cutover outage. Compare it with how long the first pre-copy took. A cold migration would have
+been down for all of that copy.
+
+**The guest tools were swapped:**
+
+```bash
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -x -c "SELECT ts, platform, vmtools, qemu_ga, virtio FROM guest_tools ORDER BY id DESC LIMIT 1;"
+```
+
+✅ `qemu_ga` is **Running**, `virtio` lists the network and disk drivers, and `vmtools` is not running.
+
+**That is the end of Demo 2.** Your VM moved to OpenShift Virtualization while it kept writing, and stopped only for
+the cutover.
+
+> 💡 **One copy on your VLAN at a time.** If you did Demo 1, your project now holds two VMs, `win-pg-s01` (stopped)
+> and `win-pg-s01-warm` (running), with the same address. Never run both at once.
+
+---
+
+## Bonus labs (optional)
+
+The Demo 1 bonus labs work on this VM too: use **`win-pg-s01-warm`** wherever they say `win-pg-s01`.
+
+| Bonus | What you do |
+|---|---|
+| [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot your VM, destroy the database, bring it back from the snapshot's disks |
+| [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the **running** VM to another node, then move its disks to another storage class, with no reboot |
+| [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
+
+**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
 
 ## Thank you
 
-Thank you for working through Demo 2. You moved a live, busy database VM off VMware with an outage measured in
-minutes, and proved with your own hash-chained rows that nothing written during the copy was lost. The bonus round
-below shows what OpenShift Virtualization does once the VM is on it: moves between nodes with **no** outage.
-
-To go further:
-
-- [Lab S — how this lab was built](setup-how-the-lab-is-built.md): the provider, VDDK, maps and plans, from the CLI and in the console
-- [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11): warm migration, VDDK, and the precopy settings
-- [MTV: planning your migration (warm migration, CBT prerequisites)](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/index) [verify link]
-- [OpenShift Virtualization: live migration](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/live-migration) [verify link]
-- [OpenShift Virtualization (OpenShift 4.19) documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index): live migration, storage, networking
-- [Red Hat OpenShift Virtualization product page](https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization)
-- [DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization](https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization): Red Hat Training
-- [Red Hat interactive labs](https://www.redhat.com/en/interactive-labs): try OpenShift Virtualization in your browser
-- [Red Hat Developer: OpenShift](https://developers.redhat.com/products/openshift/overview)
-
----
-
-## 2.8 Bonus: live-migrate the VM between nodes
-
-The VM is on OpenShift now, so moving it to another **node** in the same cluster doesn't stop it at all. KubeVirt
-copies its memory while it runs. (This is in-cluster live migration, not MTV.)
-
-### Is it live-migratable?
-
-```bash
-oc --context site-a -n "$VMNS" get vmi "$TARGET" \
-  -o jsonpath='{range .status.conditions[*]}{.type}={.status} {.message}{"\n"}{end}' | grep -i migrat
-```
-
-✅ `LiveMigratable=True`. That needs ReadWriteMany disks: true on the NFS class, and on ODF's virtualization class
-with RWX block. If it says `False`, read the message (usually the access mode) and tell the instructor **[verify]**.
-
-### Inject, migrate, verify
-
-```bash
-mark d2-before-livemig
-oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.nodeName}{"\n"}'     # ✍️ node before
-export LM_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-```
-
-**Console:** **VirtualMachines → `<TARGET>` → Actions → Migrate** (Compute). Or **virtctl**:
-
-```bash
-virtctl --context site-a -n "$VMNS" migrate "$TARGET"
-```
-
-Or as a resource, which is what `virtctl` creates:
-
-```bash
-oc --context site-a create -f - <<EOF
-apiVersion: kubevirt.io/v1
-kind: VirtualMachineInstanceMigration
-metadata: { generateName: $TARGET-move-, namespace: $VMNS }
-spec: { vmiName: $TARGET }
-EOF
-```
-
-Watch it, then prove the data. A live migration keeps the VM's address: on the bridge it stays `$VM_IP`.
-
-```bash
-oc --context site-a -n "$VMNS" get vmim -w                         # Ctrl-C at Succeeded
-oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.nodeName}{"  "}{.status.migrationState.endTimestamp}{"\n"}'
-mark d2-after-livemig
-verify                                                               # chain_ok = t
-sql -c "
-SELECT max(gap) AS worst_gap FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap
-FROM heartbeat WHERE ts > timestamptz '$LM_AT' - interval '1 minute') g;"   # ≈ 5 s: no outage
-```
-
-✅ A different node, `chain_ok = t`, and the worst heartbeat gap is about the 5 s write interval, so there was no outage.
-PostgreSQL's `postgres_started` (from `alive`) is **unchanged**, because the database never restarted.
-
-📸 `02-livemig-node` — the VM's overview page before and after, showing two different nodes.
-
-✍️ **Row 2.5:** node before → after, the worst heartbeat gap, and `chain_ok`.
-
----
-
-## 2.9 Clean up your terminal
-
-```bash
-kill "$LOADER" 2>/dev/null; unset LOADER LM_AT
-# keep TARGET and PGHOST if your next demo continues with this VM
-```
-
----
-
-## Proof table: Demo 2
-
-| Row | Stage | Your last mark id | `chain_ok` | Fingerprint | Notes |
-|---|---|---|---|---|---|
-| 2.1 | `d2-cbt-on` | | | | CBT on? number of `-ctk.vmdk` files: |
-| 2.2 | `d2-precopy` burst | | | | marks count after 500 rows: |
-| 2.3 | pre-copies | — | — | — | successful pre-copies: ___ · first took ___ · a later one took ___ |
-| 2.4 | `d2-after-cutover` | | | | **cutover downtime ___ s** vs Demo 1 cold outage ___ s · your VM's pod IP: ___ |
-| 2.5 | `d2-after-livemig` (bonus) | | | | node ___ → ___ · worst heartbeat gap ___ s |
-
-> **The claim this table proves:** with CBT, the VM ran and wrote through every pre-copy round, and the only
-> outage was the cutover. The hash chain proves that nothing written before the cutover, including during the
-> copy, was lost, altered or reordered.
+- [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11): warm migration, VDDK and the pre-copy settings
+- [OpenShift Virtualization documentation (4.19)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index)
+- [Lab S — how this lab was built](setup-how-the-lab-is-built.md): the provider, VDDK (§S.15), maps and plans, built by hand
+- [DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)](https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization)
+- [Red Hat interactive labs (free, in the browser)](https://www.redhat.com/en/interactive-labs)

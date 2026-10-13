@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.8.0
-date: 2026-10-12
+version: 0.8.1
+date: 2026-10-13
 ---
 
 # Student Guide
 
-> **Version 0.8.0 · draft · 2026-10-12** · class/student-guide.md
+> **Version 0.8.1 · draft · 2026-10-13** · class/student-guide.md
 
 ## What you will learn
 
@@ -68,7 +68,7 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 |---|---|---|---|---|
 | 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open a command line | 5 min | — |
 | 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 45 min | [1a: snapshot and restore](demos/01a-snapshot-restore.md) (25 min) · [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) · [1c: cross-cluster migration](demos/01c-ocp-vm-cross-cluster-migration.md) (45 min) |
-| 2 | [Warm migration](demos/02-vmware-to-ove-warm.md) | enable CBT, pre-copy while the VM runs, cut over in moments | 60 min | §2.8 live migration (15 min) |
+| 2 | [Warm migration](demos/02-vmware-to-ove-warm.md) | turn on CBT, start the warm plan while the VM runs, keep writing, cut over; inject, read back and measure the outage | 60 min | the Demo 1 bonus labs, on the warm copy |
 
 **Go deeper**, when your instructor offers it:
 
@@ -77,11 +77,11 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 | Storage | [Demo 4: ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
 | Backup | [Demo 5: OADP backup and restore](demos/05-oadp-vm-backup.md) | back up your namespace, delete your VM, restore it, prove the data | 30 min | *framework: when OADP is staged* |
 
-Reference: [Toolkit](demos/toolkit.md) (your terminal, the data commands, the proof table) · [Lab S](demos/setup-how-the-lab-is-built.md)
+Reference: [Toolkit](demos/toolkit.md) (your terminal and the data commands) · [Lab S](demos/setup-how-the-lab-is-built.md)
 (how every staged piece was built, with the commands and the Red Hat docs) · [Lab diagram](demos/lab-diagram.md).
 
-Times are estimates until the class has been timed. Demo 1 starts your **proof table** ([Toolkit](demos/toolkit.md)); each demo adds rows (your last
-mark, `chain_ok`, the fingerprint, and each move's outage, bytes and time), and by the end it is your evidence.
+Times are estimates until the class has been timed. Every demo ends the same way: you read your rows back, and
+`ovedr_verify` shows `chain_ok = t`. That read-back is your evidence that nothing was lost.
 
 **Getting help:** a step marked **[verify]** is still being proven in the lab. If one fails, tell the instructor rather
 than improvising. Each section has a 🎬 recording of the same steps in the console.

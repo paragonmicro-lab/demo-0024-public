@@ -1,8 +1,8 @@
 ---
 title: "Start here — VMware to OpenShift Virtualization"
 subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
-version: 1.2.0
-date: 2026-10-12
+version: 1.2.1
+date: 2026-10-13
 ---
 
 <div class="pm-hero" markdown>
@@ -57,8 +57,8 @@ The [student guide](student-guide.md) explains how the class works and lists the
 - **One namespace each** on both clusters, named your class ID. You are admin there.
 - **One password** everywhere.
 - **Only a web browser:** nothing to install. Commands run in a terminal inside the OpenShift console.
-- **Every step:** **inject** your data → **change** something → **verify** it all arrived. Your **proof table** grows
-  through every demo: it is your evidence at the end.
+- **Every step:** **inject** your data → **change** something → **verify** it all arrived. Each demo ends by reading
+  your rows back with `chain_ok = t`: that is your evidence.
 - 🧑‍🏫 marks a step only the instructor runs. **[verify]** marks a step still being proven: if it fails, ask.
 - 🎬 every section has a recording of the same steps in the console: watch it, then do it.
 
@@ -72,7 +72,7 @@ The [student guide](student-guide.md) explains how the class works and lists the
 | Lab 0 · Demo 1 (cold migration) | 1 h 25 |
 | *Break* | 15 min |
 | Demo 2 (warm migration) | 1 h |
-| Wrap-up: your proof table, questions | 15 min |
+| Wrap-up: your rows read back, questions | 15 min |
 
 **Going deeper**, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), Backup
 (Demo 5, OADP, 30 min), and more demos (moving between clusters, 1 h 25), each with bonus rounds for early finishers.
@@ -129,4 +129,4 @@ migrated VM keeps its address.
 
 ---
 
-> **Version 1.2.0 · draft · 2026-10-12** · class/welcome.md
+> **Version 1.2.1 · draft · 2026-10-13** · class/welcome.md
