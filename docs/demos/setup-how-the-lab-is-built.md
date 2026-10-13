@@ -505,7 +505,7 @@ YAML
   `ovedr-students-edit` (ClusterRole `edit`, group `demo-students`), the instructor VM's Service `win-pg-i01-sql`, Secret
   **`bcdr-db`** (the `bcdr` database password, from the vault), and Deployment **`sql-client`**
   (`registry.redhat.io/rhel9/postgresql-16`), the instructor's tool as the database owner (`bcdr`): the healthcheck
-  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1 Bonus B). Students
+  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1a). Students
   never need it.
 - ClusterRole + ClusterRoleBinding **`ovedr-class-read`**: students may read NNCPs and node network states, storage
   classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.

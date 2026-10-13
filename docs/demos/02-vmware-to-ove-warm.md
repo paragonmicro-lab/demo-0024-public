@@ -498,7 +498,7 @@ oc --context site-a -n "$VMNS" get vmi "$TARGET" -o jsonpath='{.status.condition
 
 ✅ `qemu_ga` is **Running**, `virtio` lists the network (`netkvm`) and disk (`vioscsi`/`viostor`) drivers, and `vmtools` is
 **not** Running. In the console, the VM's **Overview** shows the *Guest agent* as connected. If `vmtools` still runs, remove
-it ([Demo 1 §1.6](01-vmware-to-ove-cold.md)).
+it (**Settings → Apps → VMware Tools → Uninstall**, then reboot).
 
 ### Check: your file came across too
 

@@ -65,7 +65,7 @@ site B too, so Toolkit T.4 is not needed.
 <sub>🎬 *3.1 Prerequisites: your VM is running on site A: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-1-prerequisites-vm-running-site-a.mp4`).*</sub>
 
 This demo starts where Demo 1 ended: `$VM` is running on site A in your namespace `$VMNS`. (Haven't run Demo 1?
-Start your staged plan `d1-<VM>` on site A first: Demo 1 §1.5.)
+Start your staged plan `d1-<VM>` on site A first: [Demo 1 §1.3](01-vmware-to-ove-cold.md).)
 
 ```bash
 where                                          # site-a Running  node=…   /   site-b -
