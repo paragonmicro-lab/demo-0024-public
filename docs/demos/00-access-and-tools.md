@@ -99,9 +99,10 @@ oc whoami            # your class ID, e.g. student-01-0024-012@lab-paragonmicro.
 oc get nodes         # the cluster's nodes, all Ready
 ```
 
-**Your VM's database**, PostgreSQL inside your Windows VM. From `oc` anywhere (the Web Terminal, or your own computer),
-each step is **one line**: `oc exec` runs it inside your class terminal (`sql-client`), which already knows your VM's
-address and your database login. Use your class ID where the example has `student-01-0024-012`.
+**Your VM's database**, PostgreSQL inside your Windows VM, at **your VM's address from 0.1** (the `-h` below). From `oc`
+anywhere (the Web Terminal, or your own computer), each step is **one line**: `oc exec` runs it inside your class
+terminal (`sql-client`). Use your class ID where the example has `student-01-0024-012`, and your VM's address where it
+has `10.101.23.101`.
 
 1. **Sign in to the database**, once (enter your class password):
 
@@ -112,26 +113,22 @@ address and your database login. Use your class ID where the example has `studen
 2. **Inject** a row: the class has started:
 
    ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- mark start-class "Lab 0: signed in"
+   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');"
    ```
 
 3. **Read back** every row you have posted, oldest first:
 
    ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- sql -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
    ```
 
 4. **Prove** them: no row lost, changed or reordered (one summary line, `chain_ok = t`):
 
    ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- verify
+   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
    ```
 
-Every demo repeats steps 2 and 3 at each stage (for example `mark before-vmware-cold-migration`), so the read-back
-lists your messages in order as the class goes on.
-
-> 💡 **Tips.** Inside your class terminal (0.3) the same commands are just `dblogin`, `mark …`, `sql -c "…"` and `verify`.
-> If `mark` says *run: dblogin*, your class terminal restarted: do step 1 again.
+> 💡 If a step says *First sign in to your VM's database … dblogin*, your class terminal restarted: do step 1 again.
 
 ✅ `oc get nodes` lists the nodes Ready, the read-back lists your `start-class` row, and `verify` shows `chain_ok = t`.
 
