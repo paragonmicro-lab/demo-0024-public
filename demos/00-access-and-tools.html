@@ -1099,14 +1099,13 @@ class needs only your browser. Paste the copied line into your terminal and pres
 <p>Nothing to install. Use one of:</p>
 <ul>
 <li><strong>The console's Web Terminal:</strong> the <strong><code>&gt;_</code></strong> icon at the top right of the console opens a terminal already signed
-  in as you. Click <strong>Start</strong> (leave the project as it is). It has <code>oc</code>, but <strong>not</strong> <code>psql</code> or the class commands.</li>
-<li><strong>Your class terminal:</strong> in your project, <strong>Workloads → Pods → <code>sql-client-…</code> → Terminal</strong>. It has <code>oc</code>, <code>psql</code>
-  and the class commands (<code>dblogin</code>, <code>mark</code>, <code>sql</code>, <code>verify</code>) ready, and already knows your VM's address and your
-  database login. Sign its <code>oc</code> in: type <code>oclogin</code> and a space, paste the copied line, and press Enter.</li>
+  in as you. Click <strong>Start</strong> (leave the project as it is). It has <code>oc</code>; for your VM's database you use the one-line <code>oc exec</code> commands in 0.4.</li>
+<li><strong>Your class terminal:</strong> in your project, <strong>Workloads → Pods → <code>sql-client-…</code> → Terminal</strong>. It has <code>oc</code> and the
+  class commands (<code>dblogin</code>, <code>mark</code>, <code>sql</code>, <code>verify</code>) ready, and already knows your VM's address and your database
+  login. Sign its <code>oc</code> in: type <code>oclogin</code> and a space, paste the copied line, and press Enter.</li>
 </ul>
 <blockquote>
-<p>⚠ <strong>Not the Windows VM's command prompt.</strong> <code>psql</code> isn't on its path; everything in this lab runs in one of the two
-terminals above.</p>
+<p>⚠ <strong>Not the Windows VM's command prompt.</strong> Everything in this lab runs in one of the two terminals above.</p>
 <p>📋 <strong>Copy and paste:</strong> paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V, ⌘V on a Mac); copy by selecting the text,
 then <strong>right-click → Copy</strong>. <strong>[verify: per browser]</strong></p>
 </blockquote>
@@ -1143,9 +1142,7 @@ address and your database login. Use your class ID where the example has <code>s
 lists your messages in order as the class goes on.</p>
 <blockquote>
 <p>💡 <strong>Tips.</strong> Inside your class terminal (0.3) the same commands are just <code>dblogin</code>, <code>mark …</code>, <code>sql -c "…"</code> and <code>verify</code>.
-If <code>mark</code> says <em>run: dblogin</em>, your class terminal restarted: do step 1 again. To open <code>psql</code> yourself:
-<code>oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr</code> (the login is
-<code>student_01</code>, with an underscore; <code>no pg_hba.conf entry … user "student-01"</code> means you typed a hyphen).</p>
+If <code>mark</code> says <em>run: dblogin</em>, your class terminal restarted: do step 1 again.</p>
 </blockquote>
 <p>✅ <code>oc get nodes</code> lists the nodes Ready, the read-back lists your <code>start-class</code> row, and <code>verify</code> shows <code>chain_ok = t</code>.</p>
 <hr />
