@@ -35,13 +35,16 @@ restored VM holds exactly the data it had at backup time.
 > 🖥️ **Where you type the commands: your browser terminal** ([Toolkit T.1](toolkit.md)), signed in on site A, with
 > `dblogin` done. `powershell` blocks run inside your Windows VM, from its console.
 
+<!-- 🎬 video slot 05-oadp-vm-backup: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/05-oadp-vm-backup.jpg">
+  <source src="../.images/05-oadp-vm-backup.mp4" type="video/mp4">
+  <a href="../.images/05-oadp-vm-backup.mp4">🎬 Video: Demo 5: OADP backup and restore</a>
+</video>
+<sub>🎬 *Demo 5: OADP backup and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 5.1 What a VM backup contains
-
-<!-- 🎬 video slot 05-5-1-what-vm-backup-contains -->
-[![🎬 Video: 5.1 What a VM backup contains. Watch it, then do the same in the console](../.images/05-5-1-what-vm-backup-contains.jpg)](../.images/05-5-1-what-vm-backup-contains.mp4)
-<sub>🎬 *5.1 What a VM backup contains: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-1-what-vm-backup-contains.mp4`).*</sub>
 
 A backup of your namespace captures its **objects** (the `VirtualMachine`, its `DataVolume`s and PVCs, the Service) and
 its **data**: each disk is snapshotted, and the Data Mover copies the snapshot to object storage, so the backup
@@ -61,10 +64,6 @@ oc --context site-a -n "$VMNS" get nonadminbackupstoragelocations.oadp.openshift
 
 ## 5.2 Inject before the backup
 
-<!-- 🎬 video slot 05-5-2-inject-before-backup -->
-[![🎬 Video: 5.2 Inject before the backup. Watch it, then do the same in the console](../.images/05-5-2-inject-before-backup.jpg)](../.images/05-5-2-inject-before-backup.mp4)
-<sub>🎬 *5.2 Inject before the backup: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-2-inject-before-backup.mp4`).*</sub>
-
 ```bash
 alive                              # your VM is writing
 mark d5-in-backup                  # ✍️ note the id: this row MUST come back
@@ -80,10 +79,6 @@ Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d5
 ---
 
 ## 5.3 Back up your namespace
-
-<!-- 🎬 video slot 05-5-3-back-up-namespace -->
-[![🎬 Video: 5.3 Back up your namespace. Watch it, then do the same in the console](../.images/05-5-3-back-up-namespace.jpg)](../.images/05-5-3-back-up-namespace.mp4)
-<sub>🎬 *5.3 Back up your namespace: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-3-back-up-namespace.mp4`).*</sub>
 
 You create a **`NonAdminBackup`** in your own namespace; OADP turns it into a backup of that namespace only.
 **[verify: the NonAdminBackup fields and the student rights on OADP 1.5 (demo-openshift reports what the operator
@@ -111,10 +106,6 @@ mark d5-after-backup               # this row is NOT in the backup: it must be g
 
 ## 5.4 Lose it: delete your VM
 
-<!-- 🎬 video slot 05-5-4-lose-delete-vm -->
-[![🎬 Video: 5.4 Lose it: delete your VM. Watch it, then do the same in the console](../.images/05-5-4-lose-delete-vm.jpg)](../.images/05-5-4-lose-delete-vm.mp4)
-<sub>🎬 *5.4 Lose it: delete your VM: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-4-lose-delete-vm.mp4`).*</sub>
-
 ```bash
 oc --context site-a -n "$VMNS" delete vm "$VM"                     # the VM and its disks are gone
 oc --context site-a -n "$VMNS" get vm,pvc                          # nothing left of your VM
@@ -124,10 +115,6 @@ alive                                                              # fails: that
 ---
 
 ## 5.5 Restore, and prove the data
-
-<!-- 🎬 video slot 05-5-5-restore-prove-data -->
-[![🎬 Video: 5.5 Restore, and prove the data. Watch it, then do the same in the console](../.images/05-5-5-restore-prove-data.jpg)](../.images/05-5-5-restore-prove-data.mp4)
-<sub>🎬 *5.5 Restore, and prove the data: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/05-5-5-restore-prove-data.mp4`).*</sub>
 
 ```bash
 oc --context site-a -n "$VMNS" apply -f - <<EOF

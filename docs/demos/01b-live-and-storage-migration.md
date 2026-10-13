@@ -21,6 +21,13 @@ in the site A console's **Web Terminal** (`>_`).
 > ⚠ **The commands are an example** for `student-01-0024-012`, VM `win-pg-s01` at `10.101.23.101`. Change them to
 > your class ID, your VM and its address before you run them.
 
+<!-- 🎬 video slot 01b-live-and-storage-migration: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01b-live-and-storage-migration.jpg">
+  <source src="../.images/01b-live-and-storage-migration.mp4" type="video/mp4">
+  <a href="../.images/01b-live-and-storage-migration.mp4">🎬 Video: Demo 1b: live migration and storage migration</a>
+</video>
+<sub>🎬 *Demo 1b: live migration and storage migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 1b.1 Inject, and check the VM can live-migrate

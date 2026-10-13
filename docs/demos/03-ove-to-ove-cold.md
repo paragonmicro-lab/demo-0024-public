@@ -56,13 +56,16 @@ site B too, so Toolkit T.4 is not needed.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
+<!-- 🎬 video slot 03-ove-to-ove-cold: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/03-ove-to-ove-cold.jpg">
+  <source src="../.images/03-ove-to-ove-cold.mp4" type="video/mp4">
+  <a href="../.images/03-ove-to-ove-cold.mp4">🎬 Video: Demo 3: OpenShift to OpenShift, cold</a>
+</video>
+<sub>🎬 *Demo 3: OpenShift to OpenShift, cold: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 3.1 Prerequisites: your VM is running on site A
-
-<!-- 🎬 video slot 03-3-1-prerequisites-vm-running-site-a -->
-[![🎬 Video: 3.1 Prerequisites: your VM is running on site A. Watch it, then do the same in the console](../.images/03-3-1-prerequisites-vm-running-site-a.jpg)](../.images/03-3-1-prerequisites-vm-running-site-a.mp4)
-<sub>🎬 *3.1 Prerequisites: your VM is running on site A: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-1-prerequisites-vm-running-site-a.mp4`).*</sub>
 
 This demo starts where Demo 1 ended: `$VM` is running on site A in your namespace `$VMNS`. (Haven't run Demo 1?
 Start your staged plan `d1-<VM>` on site A first: [Demo 1 §1.3](01-vmware-to-ove-cold.md).)
@@ -106,10 +109,6 @@ Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt"
 ---
 
 ## 3.2 ACM: link the clusters
-
-<!-- 🎬 video slot 03-3-2-acm-link-clusters -->
-[![🎬 Video: 3.2 ACM: link the clusters. Watch it, then do the same in the console](../.images/03-3-2-acm-link-clusters.jpg)](../.images/03-3-2-acm-link-clusters.mp4)
-<sub>🎬 *3.2 ACM: link the clusters: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-2-acm-link-clusters.mp4`).*</sub>
 
 ACM is installed on **both** clusters by the base `demo-openshift` build, so each cluster is a hub for itself
 (`local-cluster`). The class's intended topology is **site B's hub managing site A**. The lab's `demo-prep` step
@@ -196,10 +195,6 @@ with `kind:VirtualMachine name:<VM>` **[verify: ACM 2.13 fleet virtualization vi
 
 ## 3.3 MTV: OVE → OVE provider, network map, storage map
 
-<!-- 🎬 video slot 03-3-3-mtv-ove-ove-provider-network-map -->
-[![🎬 Video: 3.3 MTV: OVE → OVE provider, network map, storage map. Watch it, then do the same in the console](../.images/03-3-3-mtv-ove-ove-provider-network-map.jpg)](../.images/03-3-3-mtv-ove-ove-provider-network-map.mp4)
-<sub>🎬 *3.3 MTV: OVE → OVE provider, network map, storage map: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-3-mtv-ove-ove-provider-network-map.mp4`).*</sub>
-
 The lab's migration fabric already built the OVE → OVE side on each **tooled** site. On the **destination** (site B),
 the objects are:
 
@@ -261,10 +256,6 @@ oc --context site-b get storageclass
 
 ## 3.4 Check the destination namespace on site B
 
-<!-- 🎬 video slot 03-3-4-check-destination-namespace-site-b -->
-[![🎬 Video: 3.4 Check the destination namespace on site B. Watch it, then do the same in the console](../.images/03-3-4-check-destination-namespace-site-b.jpg)](../.images/03-3-4-check-destination-namespace-site-b.mp4)
-<sub>🎬 *3.4 Check the destination namespace on site B: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-4-check-destination-namespace-site-b.mp4`).*</sub>
-
 Your VM lands in **your own namespace** (`$VMNS`) on site B. CI built the same things there as on site A: your
 namespace with you as admin, your Service `<VM>-sql` in it (it selects your VM by name), and your site-B browser terminal `sql-client` ([Lab S §S.9](setup-how-the-lab-is-built.md)).
 
@@ -280,10 +271,6 @@ oc --context site-b -n "$VMNS" get vm "$VM" 2>/dev/null || echo "no $VM on site 
 ---
 
 ## 3.5 The cold move
-
-<!-- 🎬 video slot 03-3-5-cold-move -->
-[![🎬 Video: 3.5 The cold move. Watch it, then do the same in the console](../.images/03-3-5-cold-move.jpg)](../.images/03-3-5-cold-move.mp4)
-<sub>🎬 *3.5 The cold move: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-5-cold-move.mp4`).*</sub>
 
 ### Stop your VM on site A
 
@@ -387,10 +374,6 @@ oc --context site-b -n "$VMNS" get pvc \
 
 ## 3.6 Validate on site B
 
-<!-- 🎬 video slot 03-3-6-validate-site-b -->
-[![🎬 Video: 3.6 Validate on site B. Watch it, then do the same in the console](../.images/03-3-6-validate-site-b.jpg)](../.images/03-3-6-validate-site-b.mp4)
-<sub>🎬 *3.6 Validate on site B: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-6-validate-site-b.mp4`).*</sub>
-
 ### Where is your VM now?
 
 ```bash
@@ -488,10 +471,6 @@ oc --context site-a -n "$VMNS" delete vm "$VM"             # its DataVolumes/PVC
 ---
 
 ## 3.7 What you proved
-
-<!-- 🎬 video slot 03-3-7-what-proved -->
-[![🎬 Video: 3.7 What you proved. Watch it, then do the same in the console](../.images/03-3-7-what-proved.jpg)](../.images/03-3-7-what-proved.mp4)
-<sub>🎬 *3.7 What you proved: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/03-3-7-what-proved.mp4`).*</sub>
 
 - **ACM** links the clusters: site B's hub manages site A, and you can see your VM from the hub.
 - **MTV** moved your VM **between two OpenShift clusters**, reading site A through `api-int` with its own CA.

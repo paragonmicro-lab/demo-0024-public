@@ -63,13 +63,16 @@ address on OpenShift, so Toolkit T.4 is not needed.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
+<!-- 🎬 video slot 02-vmware-to-ove-warm: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/02-vmware-to-ove-warm.jpg">
+  <source src="../.images/02-vmware-to-ove-warm.mp4" type="video/mp4">
+  <a href="../.images/02-vmware-to-ove-warm.mp4">🎬 Video: Demo 2: warm migration</a>
+</video>
+<sub>🎬 *Demo 2: warm migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 2.1 Prerequisites and the starting state
-
-<!-- 🎬 video slot 02-2-1-prerequisites-starting-state -->
-[![🎬 Video: 2.1 Prerequisites and the starting state. Watch it, then do the same in the console](../.images/02-2-1-prerequisites-starting-state.jpg)](../.images/02-2-1-prerequisites-starting-state.mp4)
-<sub>🎬 *2.1 Prerequisites and the starting state: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-1-prerequisites-starting-state.mp4`).*</sub>
 
 ### The name your VM gets on OpenShift
 
@@ -121,10 +124,6 @@ verify                          # chain_ok = t
 
 ## 2.2 Why warm, and why it needs CBT
 
-<!-- 🎬 video slot 02-2-2-why-warm-why-needs-cbt -->
-[![🎬 Video: 2.2 Why warm, and why it needs CBT. Watch it, then do the same in the console](../.images/02-2-2-why-warm-why-needs-cbt.jpg)](../.images/02-2-2-why-warm-why-needs-cbt.mp4)
-<sub>🎬 *2.2 Why warm, and why it needs CBT: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-2-why-warm-why-needs-cbt.mp4`).*</sub>
-
 A **cold** migration (Demo 1) powers the VM off, copies every block of every disk, then boots it on
 OpenShift. The outage is the whole copy.
 
@@ -143,10 +142,6 @@ CBT enabled.
 ---
 
 ## 2.3 Enable Changed Block Tracking
-
-<!-- 🎬 video slot 02-2-3-enable-changed-block-tracking -->
-[![🎬 Video: 2.3 Enable Changed Block Tracking. Watch it, then do the same in the console](../.images/02-2-3-enable-changed-block-tracking.jpg)](../.images/02-2-3-enable-changed-block-tracking.mp4)
-<sub>🎬 *2.3 Enable Changed Block Tracking: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-3-enable-changed-block-tracking.mp4`).*</sub>
 
 CBT is a per-VM switch (`ctkEnabled`) **plus** a per-disk switch for each virtual disk (`scsi0:N.ctkEnabled`).
 It takes effect at the next power-on, so turn it on while the VM is **off**.
@@ -258,10 +253,6 @@ verify                               # chain_ok = t — the reboot lost nothing
 
 ## 2.4 Make the database busy
 
-<!-- 🎬 video slot 02-2-4-make-database-busy -->
-[![🎬 Video: 2.4 Make the database busy. Watch it, then do the same in the console](../.images/02-2-4-make-database-busy.jpg)](../.images/02-2-4-make-database-busy.mp4)
-<sub>🎬 *2.4 Make the database busy: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-4-make-database-busy.mp4`).*</sub>
-
 Warm migration matters when the VM is **changing** while it copies. Give it something to copy.
 
 ### In the guest
@@ -286,10 +277,6 @@ verify
 ---
 
 ## 2.5 Your warm plan: staged, waiting for CBT
-
-<!-- 🎬 video slot 02-2-5-warm-plan-staged-waiting-cbt -->
-[![🎬 Video: 2.5 Your warm plan: staged, waiting for CBT. Watch it, then do the same in the console](../.images/02-2-5-warm-plan-staged-waiting-cbt.jpg)](../.images/02-2-5-warm-plan-staged-waiting-cbt.mp4)
-<sub>🎬 *2.5 Your warm plan: staged, waiting for CBT: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-5-warm-plan-staged-waiting-cbt.mp4`).*</sub>
 
 The lab **staged** a warm plan for every class VM on **both** sites: **`d2-<VM>`** on site A (and `d2b-<VM>-to-<B>` on site B, the same
 plan to the other cluster) (type **Warm**, target name `<VM>-warm`, target
@@ -398,10 +385,6 @@ later one.
 
 ## 2.6 Cutover: the only downtime
 
-<!-- 🎬 video slot 02-2-6-cutover-only-downtime -->
-[![🎬 Video: 2.6 Cutover: the only downtime. Watch it, then do the same in the console](../.images/02-2-6-cutover-only-downtime.jpg)](../.images/02-2-6-cutover-only-downtime.mp4)
-<sub>🎬 *2.6 Cutover: the only downtime: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-6-cutover-only-downtime.mp4`).*</sub>
-
 Let at least **two** pre-copies complete, then stop the background load and leave a last mark on vSphere:
 
 ```bash
@@ -438,10 +421,6 @@ oc --context site-a -n openshift-mtv get migration "$PLAN" -w        # Ctrl-C at
 ---
 
 ## 2.7 Validate on OpenShift
-
-<!-- 🎬 video slot 02-2-7-validate-openshift -->
-[![🎬 Video: 2.7 Validate on OpenShift. Watch it, then do the same in the console](../.images/02-2-7-validate-openshift.jpg)](../.images/02-2-7-validate-openshift.mp4)
-<sub>🎬 *2.7 Validate on OpenShift: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-7-validate-openshift.mp4`).*</sub>
 
 ### Your VM keeps its address
 
@@ -538,10 +517,6 @@ To go further:
 
 ## 2.8 Bonus: live-migrate the VM between nodes
 
-<!-- 🎬 video slot 02-2-8-bonus-live-migrate-vm-nodes -->
-[![🎬 Video: 2.8 Bonus: live-migrate the VM between nodes. Watch it, then do the same in the console](../.images/02-2-8-bonus-live-migrate-vm-nodes.jpg)](../.images/02-2-8-bonus-live-migrate-vm-nodes.mp4)
-<sub>🎬 *2.8 Bonus: live-migrate the VM between nodes: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-8-bonus-live-migrate-vm-nodes.mp4`).*</sub>
-
 The VM is on OpenShift now, so moving it to another **node** in the same cluster doesn't stop it at all. KubeVirt
 copies its memory while it runs. (This is in-cluster live migration, not MTV.)
 
@@ -602,10 +577,6 @@ PostgreSQL's `postgres_started` (from `alive`) is **unchanged**, because the dat
 ---
 
 ## 2.9 Clean up your terminal
-
-<!-- 🎬 video slot 02-2-9-clean-up-terminal -->
-[![🎬 Video: 2.9 Clean up your terminal. Watch it, then do the same in the console](../.images/02-2-9-clean-up-terminal.jpg)](../.images/02-2-9-clean-up-terminal.mp4)
-<sub>🎬 *2.9 Clean up your terminal: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/02-2-9-clean-up-terminal.mp4`).*</sub>
 
 ```bash
 kill "$LOADER" 2>/dev/null; unset LOADER LM_AT

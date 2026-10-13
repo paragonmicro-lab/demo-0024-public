@@ -28,6 +28,13 @@ database rows from Lab 0 are there. Every command below runs in the console's **
 > | `10.101.23.101` | your VM's address, the SQL server (it keeps it on OpenShift) | your VM's address, from Lab 0.1 |
 > | `vcenter01` / VLAN `23` | your booking's vCenter (`N` = 1) and VLAN (`22 + N`) | from your instructor's `N` |
 
+<!-- 🎬 video slot 01-vmware-to-ove-cold: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01-vmware-to-ove-cold.jpg">
+  <source src="../.images/01-vmware-to-ove-cold.mp4" type="video/mp4">
+  <a href="../.images/01-vmware-to-ove-cold.mp4">🎬 Video: Demo 1: cold migration</a>
+</video>
+<sub>🎬 *Demo 1: cold migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 1.0 Inject: the demo has started

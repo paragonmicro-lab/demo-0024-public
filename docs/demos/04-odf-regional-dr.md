@@ -65,13 +65,16 @@ status at three levels, and run the moves when you are the driver.
 > Paste with **right-click → Paste** (or Ctrl+Shift+V / ⌘V). `powershell` blocks run **inside your Windows VM**, from its
 > console (vCenter **Launch Web Console**, or the VM's **Console** tab in OpenShift).
 
+<!-- 🎬 video slot 04-odf-regional-dr: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/04-odf-regional-dr.jpg">
+  <source src="../.images/04-odf-regional-dr.mp4" type="video/mp4">
+  <a href="../.images/04-odf-regional-dr.mp4">🎬 Video: Demo 4: ODF Regional-DR</a>
+</video>
+<sub>🎬 *Demo 4: ODF Regional-DR: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 4.0 Point the helpers at your VM
-
-<!-- 🎬 video slot 04-4-0-point-helpers-at-vm -->
-[![🎬 Video: 4.0 Point the helpers at your VM. Watch it, then do the same in the console](../.images/04-4-0-point-helpers-at-vm.jpg)](../.images/04-4-0-point-helpers-at-vm.mp4)
-<sub>🎬 *4.0 Point the helpers at your VM: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-0-point-helpers-at-vm.mp4`).*</sub>
 
 Use **your VM's own address**, `$VM_IP`, for every connection test. Your VM sits on the VLAN bridge (`vmnet<VLAN>`),
 which exists with the same name on both sites, so after a Relocate or Failover it comes up with the **same** address on
@@ -99,10 +102,6 @@ verify
 
 ## 4.1 Inside the VM: your file
 
-<!-- 🎬 video slot 04-4-1-inside-vm-file -->
-[![🎬 Video: 4.1 Inside the VM: your file. Watch it, then do the same in the console](../.images/04-4-1-inside-vm-file.jpg)](../.images/04-4-1-inside-vm-file.mp4)
-<sub>🎬 *4.1 Inside the VM: your file: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-1-inside-vm-file.mp4`).*</sub>
-
 In your VM's console on site A (**Virtualization → VirtualMachines → `<your VM>` → Console**), log in as `.\<WINUSER>`,
 then run:
 
@@ -116,10 +115,6 @@ Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" -Tail 3
 ---
 
 ## 4.2 Set up asynchronous replication between the clusters
-
-<!-- 🎬 video slot 04-4-2-set-up-asynchronous-replication-clusters -->
-[![🎬 Video: 4.2 Set up asynchronous replication between the clusters. Watch it, then do the same in the console](../.images/04-4-2-set-up-asynchronous-replication-clusters.jpg)](../.images/04-4-2-set-up-asynchronous-replication-clusters.mp4)
-<sub>🎬 *4.2 Set up asynchronous replication between the clusters: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-2-set-up-asynchronous-replication-clusters.mp4`).*</sub>
 
 Regional-DR is built in layers. The lab stages the lower ones (`dr-fabric`); you inspect each one and see what
 it is for.
@@ -187,10 +182,6 @@ for s in site-a site-b; do echo "== $s"; oc --context $s get volumereplicationcl
 
 ## 4.3 Protect the VM
 
-<!-- 🎬 video slot 04-4-3-protect-vm -->
-[![🎬 Video: 4.3 Protect the VM. Watch it, then do the same in the console](../.images/04-4-3-protect-vm.jpg)](../.images/04-4-3-protect-vm.mp4)
-<sub>🎬 *4.3 Protect the VM: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-3-protect-vm.mp4`).*</sub>
-
 ```bash
 mark d4-before-protect
 ```
@@ -244,10 +235,6 @@ demo. Compare it with the VM's disk usage (`oc --context site-a -n "$VMNS" get p
 ---
 
 ## 4.4 Prove replication is running, and that a cycle completed
-
-<!-- 🎬 video slot 04-4-4-prove-replication-running-cycle-completed -->
-[![🎬 Video: 4.4 Prove replication is running, and that a cycle completed. Watch it, then do the same in the console](../.images/04-4-4-prove-replication-running-cycle-completed.jpg)](../.images/04-4-4-prove-replication-running-cycle-completed.mp4)
-<sub>🎬 *4.4 Prove replication is running, and that a cycle completed: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-4-prove-replication-running-cycle-completed.mp4`).*</sub>
 
 ### What "running" looks like, at three levels
 
@@ -303,10 +290,6 @@ echo "✅ a sync completed after your row"; drpc
 ---
 
 ## 4.5 Snapshot, then a planned failover to site B
-
-<!-- 🎬 video slot 04-4-5-snapshot-planned-failover-site-b -->
-[![🎬 Video: 4.5 Snapshot, then a planned failover to site B. Watch it, then do the same in the console](../.images/04-4-5-snapshot-planned-failover-site-b.jpg)](../.images/04-4-5-snapshot-planned-failover-site-b.mp4)
-<sub>🎬 *4.5 Snapshot, then a planned failover to site B: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-5-snapshot-planned-failover-site-b.mp4`).*</sub>
 
 ### A snapshot as a local safety net
 
@@ -377,10 +360,6 @@ Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d4
 
 ## 4.6 Reverse replication B → A, then come home cleanly
 
-<!-- 🎬 video slot 04-4-6-reverse-replication-b-come-home-cleanly -->
-[![🎬 Video: 4.6 Reverse replication B → A, then come home cleanly. Watch it, then do the same in the console](../.images/04-4-6-reverse-replication-b-come-home-cleanly.jpg)](../.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4)
-<sub>🎬 *4.6 Reverse replication B → A, then come home cleanly: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4`).*</sub>
-
 The VM now runs on B, and B is the **primary**. Before you move it again, check that protection has
 **reversed**: B replicates back to A, and A's images are the secondaries.
 
@@ -434,10 +413,6 @@ Get-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" -Tail 4        # both "sit
 
 ## 4.7 End-of-demo validation
 
-<!-- 🎬 video slot 04-4-7-end-demo-validation -->
-[![🎬 Video: 4.7 End-of-demo validation. Watch it, then do the same in the console](../.images/04-4-7-end-demo-validation.jpg)](../.images/04-4-7-end-demo-validation.mp4)
-<sub>🎬 *4.7 End-of-demo validation: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-7-end-demo-validation.mp4`).*</sub>
-
 ```bash
 alive
 verify
@@ -481,10 +456,6 @@ Stay for the bonus round if time allows. It shows what the 15-minute interval co
 ---
 
 ## 4.8 BONUS: a hostile failover, with a broken replication link
-
-<!-- 🎬 video slot 04-4-8-bonus-hostile-failover-broken-replication-link -->
-[![🎬 Video: 4.8 BONUS: a hostile failover, with a broken replication link. Watch it, then do the same in the console](../.images/04-4-8-bonus-hostile-failover-broken-replication-link.jpg)](../.images/04-4-8-bonus-hostile-failover-broken-replication-link.mp4)
-<sub>🎬 *4.8 BONUS: a hostile failover, with a broken replication link: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/04-4-8-bonus-hostile-failover-broken-replication-link.mp4`).*</sub>
 
 Now the link fails, the business can't wait, and the class **forces** the VM onto site B from whatever the last
 completed sync holds. Then it repairs the link and **forces the resync** back.

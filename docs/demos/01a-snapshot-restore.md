@@ -27,6 +27,13 @@ VirtualMachines → your VM → Console**, then log in as `.\student-01` (your W
 > lose the database again. Restore **both** disks from the **same** snapshot. A VM snapshot with the guest agent
 > freezes all disks at the same instant, so its `D:` and `L:` match.
 
+<!-- 🎬 video slot 01a-snapshot-restore: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01a-snapshot-restore.jpg">
+  <source src="../.images/01a-snapshot-restore.mp4" type="video/mp4">
+  <a href="../.images/01a-snapshot-restore.mp4">🎬 Video: Demo 1a: snapshot and restore</a>
+</video>
+<sub>🎬 *Demo 1a: snapshot and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+
 ---
 
 ## 1a.1 Inject, then snapshot
