@@ -13,8 +13,11 @@ date: 2026-10-13
 and your own VM's database. One recording covers the whole lab: watch it, then do the same with the steps below.
 
 <!-- 🎬 video slot 00-access-and-tools -->
-[![🎬 Video: Lab 0: Access and tools. Watch it, then do the same in the console](../.images/00-access-and-tools.jpg)](../.images/00-access-and-tools.mp4)
-<sub>🎬 *Lab 0: Access and tools: a recording of the whole lab, done in the browser (placeholder until recorded: `class/.images/00-access-and-tools.mp4`).*</sub>
+<video controls preload="metadata" playsinline width="100%" poster="../.images/00-access-and-tools.jpg">
+  <source src="../.images/00-access-and-tools.mp4" type="video/mp4">
+  <a href="../.images/00-access-and-tools.mp4">🎬 Video: Lab 0: Access and tools</a>
+</video>
+<sub>🎬 *Lab 0: Access and tools: a recording of the whole lab, done in the browser (3 min 47 s). Watch it, then do the same with the steps below.*</sub>
 
 **You need** your class ID and password from the instructor (one login for everything), and your booking's three
 addresses. The instructor gives you `N`, `A` and `B`; the examples below use `1`, `ocp-lz1` and `ocp-lz2`.
