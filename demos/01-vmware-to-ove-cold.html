@@ -522,6 +522,27 @@
   
   
     <li class="md-nav__item">
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -692,74 +713,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    More demos
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            More demos
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 3: OpenShift → OpenShift
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -813,10 +766,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -827,8 +780,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -1160,6 +1113,51 @@ information concerns are fine for a cold migration.</em></p>
 </code></pre></div>
 <p>✅ The plan shows <strong>Succeeded</strong>.</p>
 <details>
+<summary>Or: create and start your own cold plan from the CLI (instead of the staged one)</summary>
+<p>This builds a cold plan like your staged <code>d1-win-pg-s01</code>, under a <strong>new name</strong>, so the staged plan stays as the lab
+built it. Use <strong>one</strong> of them: a VM can be in only one running plan. If you start this one, skip the console's
+<strong>Start</strong> above.</p>
+<p>Set the values once. Every command below reads them:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># your class ID: MTV creates your VM in this project on site A</span>
+<span class="nv">CLASS_ID</span><span class="o">=</span>student-01-0024-012
+<span class="c1"># your VM's name in vCenter (MTV keeps the name on OpenShift)</span>
+<span class="nv">VM</span><span class="o">=</span>win-pg-s01
+<span class="c1"># the provider that links site A to your booking's vCenter ("ovedr-vcenter0" + N), and its maps</span>
+<span class="nv">SRC</span><span class="o">=</span>ovedr-vcenter01
+<span class="c1"># a NEW plan name, so this never touches the staged d1-win-pg-s01</span>
+<span class="nv">PLAN</span><span class="o">=</span><span class="nv">$CLASS_ID</span>-cold-cli
+</code></pre></div>
+<p>Create the plan. The maps are the class's: <code>-net-bridge</code> keeps your VM on its VLAN (and its address), <code>-storage</code>
+puts its disks on ODF:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Plan</span>
+<span class="s">metadata: { name: $PLAN, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  warm: false</span>
+<span class="s">  targetNamespace: $CLASS_ID</span>
+<span class="s">  provider:</span>
+<span class="s">    source:      { name: $SRC, namespace: openshift-mtv }</span>
+<span class="s">    destination: { name: host, namespace: openshift-mtv }</span>
+<span class="s">  map:</span>
+<span class="s">    network: { name: $SRC-net-bridge, namespace: openshift-mtv }</span>
+<span class="s">    storage: { name: $SRC-storage,    namespace: openshift-mtv }</span>
+<span class="s">  vms:</span>
+<span class="s">    - name: $VM</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># READY True (Ctrl-C)</span>
+</code></pre></div>
+<p>Start it: a <strong>Migration</strong> is what the console's Start button creates.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Migration</span>
+<span class="s">metadata: { name: $PLAN-run1, namespace: openshift-mtv }</span>
+<span class="s">spec: { plan: { name: $PLAN, namespace: openshift-mtv } }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># Executing → Succeeded (Ctrl-C)</span>
+</code></pre></div>
+</details>
+<details>
 <summary>A step failed: read the logs before you delete anything</summary>
 <p><img alt="A failed plan: ImageConversion, Guest conversion failed" src="../.images/01-plan-failed-imageconversion.png" />
 <em>A failed cold migration: ImageConversion (virt-v2v) failed, and the error says "See pod logs for details". There is no
@@ -1219,7 +1217,7 @@ reordered by the move.</p>
 <p><strong>That is the end of Demo 1.</strong> Your VM now runs on OpenShift Virtualization, with every row it held on VMware.</p>
 <hr />
 <h2 id="bonus-labs-optional">Bonus labs (optional)<a class="headerlink" href="#bonus-labs-optional" title="Permanent link">&para;</a></h2>
-<p>Both start from your VM running on site A, where Demo 1 left it.</p>
+<p>All three start from your VM running on site A, where Demo 1 left it.</p>
 <table>
 <thead>
 <tr>
@@ -1235,6 +1233,10 @@ reordered by the move.</p>
 <tr>
 <td><a href="01b-live-and-storage-migration.html">Demo 1b: live migration and storage migration</a></td>
 <td>move the <strong>running</strong> VM to another node, then move its disks to another storage class, with no reboot</td>
+</tr>
+<tr>
+<td><a href="01c-ocp-vm-cross-cluster-migration.html">Demo 1c: cross-cluster migration</a></td>
+<td>link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS)</td>
 </tr>
 </tbody>
 </table>

@@ -399,6 +399,27 @@
   
   
     <li class="md-nav__item">
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -569,74 +590,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    More demos
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            More demos
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 3: OpenShift → OpenShift
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -692,10 +645,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -706,8 +659,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -2054,7 +2007,7 @@ storage maps → <strong>Cold</strong> → <strong>Create</strong>. 📸 <code>S
 - <a href="https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_ping_module.html">ansible.windows.win_ping</a></p>
 <hr />
 <h2 id="s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery">S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery<a class="headerlink" href="#s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery" title="Permanent link">&para;</a></h2>
-<p>Two clusters become one DR pair in <strong>three layers</strong>, and each layer needs the one before it. Demo 3 (moving a VM between
+<p>Two clusters become one DR pair in <strong>three layers</strong>, and each layer needs the one before it. Demo 1c (moving a VM between
 clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR) needs all three layers.</p>
 <div class="highlight"><pre><span></span><code>  layer 1  ACM       one hub MANAGES both clusters        ManagedCluster, ManagedClusterSet
   layer 2  Submariner the clusters' pod/service networks  submariner add-on, Broker, (Globalnet)
@@ -2243,7 +2196,7 @@ Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_dat
 </thead>
 <tbody>
 <tr>
-<td>MTV between the clusters (Demo 3)</td>
+<td>MTV between the clusters (Demo 1c)</td>
 <td>✅ every deploy: providers <code>ovedr-ocp-&lt;peer&gt;</code> + maps, both directions</td>
 <td>—</td>
 </tr>

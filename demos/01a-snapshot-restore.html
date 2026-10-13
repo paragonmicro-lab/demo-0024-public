@@ -522,6 +522,27 @@
   
   
     <li class="md-nav__item">
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -692,74 +713,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    More demos
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            More demos
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 3: OpenShift → OpenShift
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -813,10 +766,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -827,8 +780,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -1098,32 +1051,44 @@ oc<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </
 </code></pre></div>
 <hr />
 <h2 id="1a4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them">1a.4 Create volumes from the snapshot's <code>D:</code> and <code>L:</code>, and hot-plug them<a class="headerlink" href="#1a4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" title="Permanent link">&para;</a></h2>
+<p>Set the values once. Every command in this step reads them:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># your class ID: the project your VM, its disks and the snapshot live in</span>
+<span class="nv">CLASS_ID</span><span class="o">=</span>student-01-0024-012
+<span class="c1"># your VM, and the snapshot you took in 1a.1</span>
+<span class="nv">VM</span><span class="o">=</span>win-pg-s01
+<span class="nv">SNAP</span><span class="o">=</span><span class="nv">$VM</span>-snap
+</code></pre></div>
 <p>The snapshot holds one <strong>VolumeSnapshot</strong> per disk. List them, and note the <strong>10Gi</strong> (<code>D:</code>, data) and <strong>5Gi</strong> (<code>L:</code>,
 WAL) rows:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">CONTENT</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span>win-pg-s01-snap<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.virtualMachineSnapshotContentName}'</span><span class="k">)</span>
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmsnapshotcontent<span class="w"> </span><span class="s2">"</span><span class="nv">$CONTENT</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><span class="nv">CONTENT</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span><span class="nv">$SNAP</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.virtualMachineSnapshotContentName}'</span><span class="k">)</span>
+oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>vmsnapshotcontent<span class="w"> </span><span class="s2">"</span><span class="nv">$CONTENT</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .spec.volumeBackups[*]}{.persistentVolumeClaim.metadata.name}{"  "}{.persistentVolumeClaim.spec.resources.requests.storage}{"  "}{.volumeSnapshotName}{"\n"}{end}'</span>
 </code></pre></div>
-<p>Create a volume <strong>from</strong> each of the two VolumeSnapshots, with the same class, mode and size as the original:</p>
+<p>Copy four names from that list:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># the 10Gi row: your data disk (D:) and its VolumeSnapshot</span>
+<span class="nv">DATA_PVC</span><span class="o">=</span><span class="s1">'&lt;10Gi pvc&gt;'</span>
+<span class="nv">DATA_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
+<span class="c1"># the 5Gi row: your WAL disk (L:) and its VolumeSnapshot, from the SAME snapshot so data and WAL match</span>
+<span class="nv">WAL_PVC</span><span class="o">=</span><span class="s1">'&lt;5Gi pvc&gt;'</span>
+<span class="nv">WAL_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
+</code></pre></div>
+<p>Create a volume <strong>from</strong> each VolumeSnapshot, with the same class, mode and size as the original:</p>
 <div class="highlight"><pre><span></span><code>restore_pvc<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w">   </span><span class="c1"># restore_pvc &lt;original pvc&gt; &lt;volumesnapshot&gt; &lt;new name&gt;</span>
-<span class="w">  </span>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>--arg<span class="w"> </span>s<span class="w"> </span><span class="s2">"</span><span class="nv">$2</span><span class="s2">"</span><span class="w"> </span>--arg<span class="w"> </span>n<span class="w"> </span><span class="s2">"</span><span class="nv">$3</span><span class="s2">"</span><span class="w"> </span><span class="s1">'{</span>
+<span class="w">  </span>oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>--arg<span class="w"> </span>s<span class="w"> </span><span class="s2">"</span><span class="nv">$2</span><span class="s2">"</span><span class="w"> </span>--arg<span class="w"> </span>n<span class="w"> </span><span class="s2">"</span><span class="nv">$3</span><span class="s2">"</span><span class="w"> </span><span class="s1">'{</span>
 <span class="s1">    apiVersion: "v1", kind: "PersistentVolumeClaim",</span>
 <span class="s1">    metadata: {name: $n, namespace: .metadata.namespace},</span>
 <span class="s1">    spec: {storageClassName: .spec.storageClassName, accessModes: .spec.accessModes,</span>
 <span class="s1">           volumeMode: .spec.volumeMode, resources: .spec.resources,</span>
 <span class="s1">           dataSource: {apiGroup: "snapshot.storage.k8s.io", kind: "VolumeSnapshot", name: $s}}}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
 <span class="o">}</span>
-<span class="c1"># fill these four from the list above</span>
-<span class="nv">DATA_PVC</span><span class="o">=</span><span class="s1">'&lt;10Gi pvc&gt;'</span><span class="p">;</span><span class="w"> </span><span class="nv">DATA_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
-<span class="nv">WAL_PVC</span><span class="o">=</span><span class="s1">'&lt;5Gi pvc&gt;'</span><span class="p">;</span><span class="w">   </span><span class="nv">WAL_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
-restore_pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA_PVC</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DATA_SNAP</span><span class="s2">"</span><span class="w"> </span>win-pg-s01-restored-data
-restore_pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$WAL_PVC</span><span class="s2">"</span><span class="w">  </span><span class="s2">"</span><span class="nv">$WAL_SNAP</span><span class="s2">"</span><span class="w">  </span>win-pg-s01-restored-wal
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>win-pg-s01-restored-data<span class="w"> </span>win-pg-s01-restored-wal<span class="w"> </span>-w<span class="w">     </span><span class="c1"># Bound (Ctrl-C)</span>
+restore_pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$DATA_PVC</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$DATA_SNAP</span><span class="s2">"</span><span class="w"> </span><span class="nv">$VM</span>-restored-data
+restore_pvc<span class="w"> </span><span class="s2">"</span><span class="nv">$WAL_PVC</span><span class="s2">"</span><span class="w">  </span><span class="s2">"</span><span class="nv">$WAL_SNAP</span><span class="s2">"</span><span class="w">  </span><span class="nv">$VM</span>-restored-wal
+oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="nv">$VM</span>-restored-data<span class="w"> </span><span class="nv">$VM</span>-restored-wal<span class="w"> </span>-w<span class="w">     </span><span class="c1"># Bound (Ctrl-C)</span>
 </code></pre></div>
 <p>Hot-plug both into the running VM. The serial (<code>data</code>, <code>wal</code>) is how Windows will tell them apart:</p>
-<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>addvolume<span class="w"> </span>win-pg-s01<span class="w"> </span>--volume-name<span class="o">=</span>win-pg-s01-restored-data<span class="w"> </span>--serial<span class="o">=</span>data<span class="w"> </span>--persist
-virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>addvolume<span class="w"> </span>win-pg-s01<span class="w"> </span>--volume-name<span class="o">=</span>win-pg-s01-restored-wal<span class="w">  </span>--serial<span class="o">=</span>wal<span class="w">  </span>--persist
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'</span>
+<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>addvolume<span class="w"> </span><span class="nv">$VM</span><span class="w"> </span>--volume-name<span class="o">=</span><span class="nv">$VM</span>-restored-data<span class="w"> </span>--serial<span class="o">=</span>data<span class="w"> </span>--persist
+virtctl<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>addvolume<span class="w"> </span><span class="nv">$VM</span><span class="w"> </span>--volume-name<span class="o">=</span><span class="nv">$VM</span>-restored-wal<span class="w">  </span>--serial<span class="o">=</span>wal<span class="w">  </span>--persist
+oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="nv">$VM</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'</span>
 </code></pre></div>
 <p>✅ Both restored volumes show <code>Ready</code> <strong>[verify: hot-plug on this cluster, and the <code>vioscsi</code> driver in the guest]</strong>.</p>
 <hr />

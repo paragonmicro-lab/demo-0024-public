@@ -397,6 +397,27 @@
   
   
     <li class="md-nav__item">
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -567,74 +588,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    More demos
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            More demos
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 3: OpenShift → OpenShift
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -690,10 +643,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -704,8 +657,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -925,8 +878,8 @@ booking to booking. How each piece was built, from the CLI and in the console: <
   STU --&gt; A
   STU --&gt; B
   VS == "Demo 1 cold · Demo 2 warm (CBT)&lt;br/&gt;each VM keeps its own address (bridge map)" ==&gt; A
-  VS == "Demo 1b cold" ==&gt; B
-  A == "Demo 3 cold OVE → OVE&lt;br/&gt;ODF → NFS storage migration" ==&gt; B
+  VS == "staged cold plan (site B)" ==&gt; B
+  A == "Demo 1c cross-cluster OVE → OVE&lt;br/&gt;ODF → NFS storage migration" ==&gt; B
   A -. "Demo 4 ODF Regional-DR · RBD mirror every 15 min&lt;br/&gt;(needs ODF on both sites)" .-&gt; B
   B -. "ACM hub manages site A (BL-D11)" .-&gt; A</code></pre>
 

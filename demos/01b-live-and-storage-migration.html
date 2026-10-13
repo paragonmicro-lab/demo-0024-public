@@ -16,7 +16,7 @@
         <link rel="prev" href="01a-snapshot-restore.html">
       
       
-        <link rel="next" href="02-vmware-to-ove-warm.html">
+        <link rel="next" href="01c-ocp-vm-cross-cluster-migration.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -495,6 +495,27 @@
   
   
     <li class="md-nav__item">
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -665,74 +686,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    More demos
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            More demos
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="03-ove-to-ove-cold.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 3: OpenShift → OpenShift
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -786,10 +739,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -800,8 +753,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -1023,9 +976,12 @@ the new copy with a live migration.</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.spec.template.spec.volumes[] | "\(.name)  \(.persistentVolumeClaim.claimName // .dataVolume.name)"'</span>
 oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,SIZE:.spec.resources.requests.storage,CLASS:.spec.storageClassName
 </code></pre></div>
+<p>Set the one value this step needs, from the list above:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># the data disk's current volume (the 10Gi one on ODF): the disk you are moving</span>
+<span class="nv">OLD</span><span class="o">=</span><span class="s1">'&lt;the 10Gi pvc from the list above&gt;'</span>
+</code></pre></div>
 <p>Create an empty 10Gi target volume on <code>nfs-csi</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">OLD</span><span class="o">=</span><span class="s1">'&lt;the 10Gi pvc from the list above&gt;'</span>
-oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: cdi.kubevirt.io/v1beta1</span>
 <span class="s">kind: DataVolume</span>
 <span class="s">metadata: { name: win-pg-s01-data-nfs, namespace: student-01-0024-012 }</span>
@@ -1118,13 +1074,13 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
         
         
           
-          <a href="02-vmware-to-ove-warm.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 2: Warm migration">
+          <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1c: Cross-cluster migration (bonus)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Demo 2: Warm migration
+                Demo 1c: Cross-cluster migration (bonus)
               </div>
             </div>
             <div class="md-footer__button md-icon">

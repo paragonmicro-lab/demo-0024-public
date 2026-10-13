@@ -1,0 +1,1343 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)">
+      
+      
+      
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01c-ocp-vm-cross-cluster-migration.html">
+      
+      
+        <link rel="prev" href="01b-live-and-storage-migration.html">
+      
+      
+        <link rel="next" href="02-vmware-to-ove-warm.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus) - VMware to OpenShift Virtualization: student guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../brand/class.css">
+    
+      <link rel="stylesheet" href="../brand/paragon.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guide" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VMware to OpenShift Virtualization: student guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guide" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VMware to OpenShift Virtualization: student guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start here
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../student-guide.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Student guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Core: VMware → OpenShift
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Core: VMware → OpenShift
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00-access-and-tools.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0: Access and tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1: Cold migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01a-snapshot-restore.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1a: Snapshot and restore (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: Live and storage migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c0-inject-the-demo-has-started-site-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.0 Inject: the demo has started (site A)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c1-acm-the-two-clusters-linked-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.1 ACM: the two clusters, linked (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c2-mtv-the-link-to-site-a-and-the-maps-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.2 MTV: the link to site A, and the maps (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c3-inject-then-stop-your-vm-site-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.3 Inject, then stop your VM (site A)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c4-create-your-plan-and-start-it-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.4 Create your plan, and start it (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c5-review-your-vm-on-site-b-then-power-it-on-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.5 Review your VM on site B, then power it on (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.6 Inject: the move is complete, and read your rows back (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 2: Warm migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Storage
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Storage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-odf-regional-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4: ODF Regional-DR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backup
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Backup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-oadp-vm-backup.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 5: OADP backup and restore (bonus)
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../downloads.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Downloads
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get help
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="setup-how-the-lab-is-built.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab S: how this lab was built
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab-diagram.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab diagram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c0-inject-the-demo-has-started-site-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.0 Inject: the demo has started (site A)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c1-acm-the-two-clusters-linked-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.1 ACM: the two clusters, linked (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c2-mtv-the-link-to-site-a-and-the-maps-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.2 MTV: the link to site A, and the maps (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c3-inject-then-stop-your-vm-site-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.3 Inject, then stop your VM (site A)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c4-create-your-plan-and-start-it-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.4 Create your plan, and start it (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c5-review-your-vm-on-site-b-then-power-it-on-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.5 Review your VM on site B, then power it on (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      1c.6 Inject: the move is complete, and read your rows back (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="demo-1c-cross-cluster-migration-site-a-to-site-b-bonus">Demo 1c: cross-cluster migration, site A to site B (bonus)<a class="headerlink" href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Version 1.0.0 · draft · 2026-10-13</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
+</blockquote>
+<h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
+<p>Your VM already runs on OpenShift: <a href="01-vmware-to-ove-cold.html">Demo 1</a> (cold) or <a href="02-vmware-to-ove-warm.html">Demo 2</a>
+(warm) moved it off VMware onto <strong>site A</strong>. Now you move it to a <strong>second OpenShift cluster</strong>, site B. Advanced
+Cluster Management (ACM) links the two clusters into one fleet, and MTV moves the VM between them. The two sites use
+different storage, so the move is also a <strong>storage migration</strong>: site A's disks on ODF are copied onto site B's NFS.
+As in every demo, you write a row before and after the move and read them all back.</p>
+<p><strong>Before you start:</strong> your VM runs on <strong>site A</strong> (after Demo 1 or 2). You are signed in to <strong>both</strong> consoles. Commands
+run in each console's <strong>Web Terminal</strong> (<code>&gt;_</code>); each step says which site.</p>
+<blockquote>
+<p>⚠ <strong>The commands are an example. Change these values to yours before you run them:</strong></p>
+<table>
+<thead>
+<tr>
+<th>In the example</th>
+<th>Is the example's</th>
+<th>Replace with yours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student-01-0024-012</code></td>
+<td>class ID and project, the same on both sites</td>
+<td>your class ID</td>
+</tr>
+<tr>
+<td><code>win-pg-s01</code></td>
+<td>your VM</td>
+<td>your VM</td>
+</tr>
+<tr>
+<td><code>10.101.23.101</code></td>
+<td>your VM's address, the SQL server: it keeps it on site B too</td>
+<td>your VM's address</td>
+</tr>
+<tr>
+<td><code>ocp-lz1</code> → <code>ocp-lz2</code></td>
+<td>site A → site B (provider <code>ovedr-ocp-lz1</code>, on site B)</td>
+<td>your booking's <code>A</code> and <code>B</code></td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<!-- 🎬 video slot 01c-ocp-vm-cross-cluster-migration: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01c-ocp-vm-cross-cluster-migration.jpg">
+  <source src="../.images/01c-ocp-vm-cross-cluster-migration.mp4" type="video/mp4">
+  <a href="../.images/01c-ocp-vm-cross-cluster-migration.mp4">🎬 Video: Demo 1c: cross-cluster migration</a>
+</video>
+<p><sub>🎬 <em>Demo 1c: cross-cluster migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
+<hr />
+<h2 id="1c0-inject-the-demo-has-started-site-a">1c.0 Inject: the demo has started (site A)<a class="headerlink" href="#1c0-inject-the-demo-has-started-site-a" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1c: running on site A');"</span>
+</code></pre></div>
+<hr />
+<h2 id="1c1-acm-the-two-clusters-linked-site-b">1c.1 ACM: the two clusters, linked (site B)<a class="headerlink" href="#1c1-acm-the-two-clusters-linked-site-b" title="Permanent link">&para;</a></h2>
+<p>Site B runs the ACM <strong>hub</strong>, and site A is imported into it as a <strong>managed cluster</strong>.</p>
+<p><strong>Console (site B):</strong> switch the perspective at the top left to <strong>All Clusters</strong> → <strong>Infrastructure → Clusters</strong>.</p>
+<p>✅ <code>ocp-lz1</code> (site A) shows <strong>Ready</strong>, next to <code>local-cluster</code> (site B itself).</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                              </span><span class="c1"># ocp-lz1  JOINED True  AVAILABLE True</span>
+</code></pre></div>
+<p><strong>Your VM, seen from the hub:</strong> <strong>All Clusters → Infrastructure → Virtual machines</strong> <strong>[verify: ACM 2.13 fleet
+virtualization view on the hub]</strong>. <code>win-pg-s01</code> shows on cluster <code>ocp-lz1</code>, in your project, <strong>Running</strong>.</p>
+<p>ACM shows you where the VM is; <strong>MTV does the move.</strong></p>
+<hr />
+<h2 id="1c2-mtv-the-link-to-site-a-and-the-maps-site-b">1c.2 MTV: the link to site A, and the maps (site B)<a class="headerlink" href="#1c2-mtv-the-link-to-site-a-and-the-maps-site-b" title="Permanent link">&para;</a></h2>
+<p><strong>Console (site B):</strong> <strong>Migration for Virtualization → Providers → <code>ovedr-ocp-lz1</code></strong>.</p>
+<p>✅ <strong>Ready</strong> and <strong>Connected</strong>: site B's MTV reads site A's VMs.</p>
+<table>
+<thead>
+<tr>
+<th>Map (on site B)</th>
+<th>What it does for your VM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Network map <code>ovedr-ocp-lz1-net</code></td>
+<td><code>default/vmnet23</code> on site A → <code>default/vmnet23</code> on site B: same VLAN, so your VM <strong>keeps its address</strong></td>
+</tr>
+<tr>
+<td>Storage map <code>ovedr-ocp-lz1-storage</code></td>
+<td><code>ocs-storagecluster-ceph-rbd-virtualization</code> (ODF, site A) → <code>nfs-csi</code> (NFS, site B): the <strong>storage migration</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span>ovedr-ocp-lz1<span class="w">                                     </span><span class="c1"># READY True · CONNECTED True</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>storagemap<span class="w"> </span>ovedr-ocp-lz1-storage<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.map}{"\n"}'</span><span class="w">   </span><span class="c1"># ODF → nfs-csi</span>
+</code></pre></div>
+<p>MTV doesn't move the disks themselves: for each one it creates a new volume on site B in <code>nfs-csi</code> and fills it by
+<strong>reading the disk on site A over the network</strong>. Site A's disks are left untouched.</p>
+<hr />
+<h2 id="1c3-inject-then-stop-your-vm-site-a">1c.3 Inject, then stop your VM (site A)<a class="headerlink" href="#1c3-inject-then-stop-your-vm-site-a" title="Permanent link">&para;</a></h2>
+<p>Write the "start" row <strong>before</strong> the VM stops, while its database still answers:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"</span>
+</code></pre></div>
+<p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Actions → Stop</strong>.</p>
+<p>✅ The VM shows <strong>Stopped</strong>.</p>
+<hr />
+<h2 id="1c4-create-your-plan-and-start-it-site-b">1c.4 Create your plan, and start it (site B)<a class="headerlink" href="#1c4-create-your-plan-and-start-it-site-b" title="Permanent link">&para;</a></h2>
+<p>This plan isn't staged: you create it, then start it.</p>
+<p><strong>Console (site B):</strong> <strong>Migration for Virtualization → Migration plans → Create plan</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Plan name</td>
+<td><code>d1c-win-pg-s01</code> (<code>d1c-&lt;your VM&gt;</code>)</td>
+</tr>
+<tr>
+<td>Plan project</td>
+<td><code>openshift-mtv</code></td>
+</tr>
+<tr>
+<td>Source provider</td>
+<td><code>ovedr-ocp-lz1</code></td>
+</tr>
+<tr>
+<td>Target provider</td>
+<td><code>host</code> (site B)</td>
+</tr>
+<tr>
+<td>Target project</td>
+<td><code>student-01-0024-012</code></td>
+</tr>
+<tr>
+<td>Virtual machines</td>
+<td><strong>only</strong> your VM, <code>win-pg-s01</code> (in project <code>student-01-0024-012</code>)</td>
+</tr>
+<tr>
+<td>Network map</td>
+<td><code>ovedr-ocp-lz1-net</code> (use the existing map)</td>
+</tr>
+<tr>
+<td>Storage map</td>
+<td><code>ovedr-ocp-lz1-storage</code> (use the existing map)</td>
+</tr>
+<tr>
+<td>Migration type</td>
+<td><strong>Cold</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Create plan</strong>. When it shows <strong>Ready</strong>, click <strong>Start</strong> → confirm. Expand your VM on the plan's page to watch
+<strong>DiskTransfer</strong>: three disks copied from ODF on site A into <code>nfs-csi</code> on site B.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1c-win-pg-s01<span class="w"> </span>-w<span class="w">      </span><span class="c1"># Ready → Executing → Succeeded (Ctrl-C)</span>
+</code></pre></div>
+<details>
+<summary>Or: create and start the plan from the CLI (site B Web Terminal)</summary>
+<p>This builds the <strong>same</strong> plan under its own name, <code>d1c-cli-win-pg-s01</code>, so it never touches one you made in the
+console. Use <strong>one</strong> of them: a VM can be in only one running plan.</p>
+<p>Set the values once. Every command below reads them:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># your class ID: your project on both sites, and where MTV creates the VM on site B</span>
+<span class="nv">CLASS_ID</span><span class="o">=</span>student-01-0024-012
+<span class="c1"># your VM's name on site A (MTV keeps the name on site B)</span>
+<span class="nv">VM</span><span class="o">=</span>win-pg-s01
+<span class="c1"># the provider on site B that reads site A ("ovedr-ocp-" + site A's slot), and its two maps</span>
+<span class="nv">SRC</span><span class="o">=</span>ovedr-ocp-lz1
+<span class="c1"># a NEW plan name, so this never overwrites a plan you created in the console</span>
+<span class="nv">PLAN</span><span class="o">=</span>d1c-cli-<span class="nv">$VM</span>
+</code></pre></div>
+<p>Create the plan:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Plan</span>
+<span class="s">metadata: { name: $PLAN, namespace: openshift-mtv }</span>
+<span class="s">spec:</span>
+<span class="s">  warm: false</span>
+<span class="s">  targetNamespace: $CLASS_ID</span>
+<span class="s">  provider:</span>
+<span class="s">    source:      { name: $SRC, namespace: openshift-mtv }</span>
+<span class="s">    destination: { name: host, namespace: openshift-mtv }</span>
+<span class="s">  map:</span>
+<span class="s">    network: { name: $SRC-net,     namespace: openshift-mtv }</span>
+<span class="s">    storage: { name: $SRC-storage, namespace: openshift-mtv }</span>
+<span class="s">  vms:</span>
+<span class="s">    - { name: $VM, namespace: $CLASS_ID }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># READY True (Ctrl-C)</span>
+</code></pre></div>
+<p>Start it: a <strong>Migration</strong> is what the console's Start button creates.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
+<span class="s">kind: Migration</span>
+<span class="s">metadata: { name: $PLAN-run1, namespace: openshift-mtv }</span>
+<span class="s">spec: { plan: { name: $PLAN, namespace: openshift-mtv } }</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># Executing → Succeeded (Ctrl-C)</span>
+</code></pre></div>
+<p>If the plan reports a <strong>critical</strong> condition, read it before you start: usually a network or storage class on site
+A that the maps don't cover.</p>
+</details>
+<p>✅ The plan shows <strong>Succeeded</strong>.</p>
+<hr />
+<h2 id="1c5-review-your-vm-on-site-b-then-power-it-on-site-b">1c.5 Review your VM on site B, then power it on (site B)<a class="headerlink" href="#1c5-review-your-vm-on-site-b-then-power-it-on-site-b" title="Permanent link">&para;</a></h2>
+<p><strong>Console (site B):</strong> <strong>Virtualization → VirtualMachines</strong>, project <strong><code>student-01-0024-012</code></strong> → <strong><code>win-pg-s01</code></strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>What you see</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Configuration → Network</strong></td>
+<td>the NIC on <strong><code>default/vmnet23</code></strong>: the same VLAN as on site A</td>
+</tr>
+<tr>
+<td><strong>Configuration → Storage</strong></td>
+<td>three disks, now on <strong><code>nfs-csi</code></strong> (they were on ODF on site A): the storage migration</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,SIZE:.spec.resources.requests.storage,CLASS:.spec.storageClassName
+</code></pre></div>
+<p>If it isn't running yet: <strong>Actions → Start</strong>, and wait for <strong>Running</strong>. On its <strong>Overview</strong>, <strong>IP addresses</strong> shows
+<code>10.101.23.101</code>: the same address on a different cluster.</p>
+<p>✅ Running on site B, disks on <code>nfs-csi</code>, address <code>10.101.23.101</code>.</p>
+<blockquote>
+<p>💡 <strong>The source is stopped, not deleted.</strong> Site A still holds your VM, stopped, as of <code>start-cross-cluster-migration</code>.
+<strong>Never run both copies at once:</strong> they share an address and a database identity. To roll back, stop it on site B
+and start it on site A (rows written on B are not on A). Once you've checked site B, your instructor can delete the
+site A copy.</p>
+</blockquote>
+<hr />
+<h2 id="1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b">1c.6 Inject: the move is complete, and read your rows back (site B)<a class="headerlink" href="#1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b" title="Permanent link">&para;</a></h2>
+<p>Site B has its own class terminal (<code>sql-client</code>, in your project), which needs its own database sign-in once:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>dblogin
+</code></pre></div>
+<p>Give Windows a minute to start PostgreSQL, then:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-migration-complete', 'running on site B, disks on NFS');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
+</code></pre></div>
+<p>✅ Every row from Lab 0 and Demo 1 (or 2) is there, then <code>cross-cluster-started</code>, <code>start-cross-cluster-migration</code>
+(both written on site A) and <code>cross-cluster-migration-complete</code> (written on site B), in order, with <code>chain_ok = t</code>.</p>
+<p><strong>That is the end of Demo 1c.</strong> Your VM crossed from one OpenShift cluster to another, and from ODF to NFS, with every
+row it held.</p>
+<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next:</strong> <a href="02-vmware-to-ove-warm.html">Demo 2: warm migration</a>.</p>
+<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a>: OpenShift-to-OpenShift migration, network and storage maps</li>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">Red Hat Advanced Cluster Management for Kubernetes 2.13 documentation</a>: importing clusters, fleet virtualization</li>
+<li><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a>: the OpenShift-to-OpenShift provider, maps and the ACM import</li>
+<li><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">OpenShift Data Foundation 4.19</a></li>
+<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="01b-live-and-storage-migration.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1b: Live and storage migration (bonus)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Demo 1b: Live and storage migration (bonus)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="02-vmware-to-ove-warm.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 2: Warm migration">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Demo 2: Warm migration
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Paragon Micro lab · generated from the class source; changes made here are overwritten
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+    
+  </body>
+</html>
