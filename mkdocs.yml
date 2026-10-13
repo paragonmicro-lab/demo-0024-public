@@ -74,6 +74,7 @@ nav:
       - "Demo 1a: Snapshot and restore (bonus)": demos/01a-snapshot-restore.md
       - "Demo 1b: Live and storage migration (bonus)": demos/01b-live-and-storage-migration.md
       - "Demo 1c: Cross-cluster migration (bonus)": demos/01c-ocp-vm-cross-cluster-migration.md
+      - "Demo 1d: A cloud-native golden image (bonus)": demos/01d-vm-cloudnative-golden-image.md
       - "Demo 2: Warm migration": demos/02-vmware-to-ove-warm.md
   - "Storage":
       - "Demo 4: ODF Regional-DR": demos/04-odf-regional-dr.md

@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.1.0
+version: 1.1.1
 date: 2026-10-13
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.1.0 · draft · 2026-10-13** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.1.1 · draft · 2026-10-13** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -256,13 +256,14 @@ reordered by the move.
 
 ## Bonus labs (optional)
 
-All three start from your VM running on site A, where Demo 1 left it.
+1a to 1c start from your VM running on site A, where Demo 1 left it. 1d builds a new server next to it.
 
 | Bonus | What you do |
 |---|---|
 | [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot your VM, destroy the database, bring it back from the snapshot's disks |
 | [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the **running** VM to another node, then move its disks to another storage class, with no reboot |
 | [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
+| [Demo 1d: a cloud-native golden image](01d-vm-cloudnative-golden-image.md) | build a new CentOS Stream 10 + PostgreSQL server purely in code, from Red Hat's boot source and a Template, and inject into it |
 
 **Next:** [Demo 2: warm migration](02-vmware-to-ove-warm.md).
 
