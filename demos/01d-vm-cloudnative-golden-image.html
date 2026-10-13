@@ -1,0 +1,1354 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Migrate, move and protect your VM: the class guides for the Paragon Micro lab (demo-0024)">
+      
+      
+      
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01d-vm-cloudnative-golden-image.html">
+      
+      
+        <link rel="prev" href="01c-ocp-vm-cross-cluster-migration.html">
+      
+      
+        <link rel="next" href="02-vmware-to-ove-warm.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Demo 1d — A cloud-native golden image: a new Linux database server, built from code (bonus) - VMware to OpenShift Virtualization: student guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../brand/class.css">
+    
+      <link rel="stylesheet" href="../brand/paragon.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#demo-1d-a-cloud-native-golden-image-bonus" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guide" class="md-header__button md-logo" aria-label="VMware to OpenShift Virtualization: student guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VMware to OpenShift Virtualization: student guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Demo 1d — A cloud-native golden image: a new Linux database server, built from code (bonus)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="VMware to OpenShift Virtualization: student guide" class="md-nav__button md-logo" aria-label="VMware to OpenShift Virtualization: student guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VMware to OpenShift Virtualization: student guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start here
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../student-guide.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Student guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Core: VMware → OpenShift
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Core: VMware → OpenShift
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00-access-and-tools.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab 0: Access and tools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-vmware-to-ove-cold.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1: Cold migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01a-snapshot-restore.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1a: Snapshot and restore (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: Live and storage migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Cross-cluster migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Demo 1d: A cloud-native golden image (bonus)
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="01d-vm-cloudnative-golden-image.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1d: A cloud-native golden image (bonus)
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d1-look-at-the-golden-image-its-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.1 Look at the golden image: it's code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d2-deploy-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.2 Deploy it
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d3-watch-it-build-itself" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.3 Watch it build itself
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d4-inject-into-your-new-linux-postgresql-and-read-it-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.4 Inject into your new Linux PostgreSQL, and read it back
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d5-rebuild-it-the-point-of-a-golden-image-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.5 Rebuild it: the point of a golden image as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#addendum-how-the-lab-staged-this-demo-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Addendum: how the lab staged this demo, as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 2: Warm migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Storage
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Storage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04-odf-regional-dr.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 4: ODF Regional-DR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Backup
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Backup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-oadp-vm-backup.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 5: OADP backup and restore (bonus)
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../downloads.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Downloads
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../help.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get help
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="toolkit.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toolkit: your terminal and data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="setup-how-the-lab-is-built.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab S: how this lab was built
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab-diagram.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lab diagram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      What you will learn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d1-look-at-the-golden-image-its-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.1 Look at the golden image: it's code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d2-deploy-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.2 Deploy it
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d3-watch-it-build-itself" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.3 Watch it build itself
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d4-inject-into-your-new-linux-postgresql-and-read-it-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.4 Inject into your new Linux PostgreSQL, and read it back
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d5-rebuild-it-the-point-of-a-golden-image-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.5 Rebuild it: the point of a golden image as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#addendum-how-the-lab-staged-this-demo-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Addendum: how the lab staged this demo, as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank you
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="demo-1d-a-cloud-native-golden-image-bonus">Demo 1d: a cloud-native golden image (bonus)<a class="headerlink" href="#demo-1d-a-cloud-native-golden-image-bonus" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Version 1.0.0 · draft · 2026-10-13</strong> · class/demos/01d-vm-cloudnative-golden-image.md</p>
+</blockquote>
+<h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
+<p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
+whenever someone needs another. Here you build its replacement <strong>from scratch, in code</strong>: a <strong>CentOS Stream 10</strong>
+server running the same PostgreSQL database, with its own logins, its data and its WAL (the log) on separate disks,
+and its services running. Nothing is installed by hand and nothing is baked into an image:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>The pet golden image (vSphere)</th>
+<th>The cloud-native golden image (OpenShift)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Base OS</strong></td>
+<td>an ISO you install, then keep patching yourself</td>
+<td>Red Hat's <strong>boot source</strong>, a cloud image that OpenShift Virtualization keeps up to date</td>
+</tr>
+<tr>
+<td><strong>Customization</strong></td>
+<td>clicks and scripts inside the image, then <em>sysprep</em> and <em>Convert to Template</em></td>
+<td>a <strong>Template</strong> with <strong>cloud-init</strong>: text in git, reviewed like code</td>
+</tr>
+<tr>
+<td><strong>A new server</strong></td>
+<td>clone the template, then fix what drifted</td>
+<td>the same code, every time: <strong>identical</strong> servers in minutes</td>
+</tr>
+<tr>
+<td><strong>Proof it works</strong></td>
+<td>someone checks by hand</td>
+<td><strong>CI</strong> deploys it on every lab build and tests it with SQL</td>
+</tr>
+</tbody>
+</table>
+<p>You deploy it twice over: in the console (as in the video), and with one command. Then you inject rows into the new
+Linux PostgreSQL and read them back, exactly as you did on Windows.</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>. You are signed in to the <strong>site A</strong> console, and your
+class terminal is signed in to the database (<code>dblogin</code>, once). Your Windows VM can be anywhere: this demo builds a
+<strong>new</strong> VM next to it. Commands run in the console's <strong>Web Terminal</strong> (<code>&gt;_</code>).</p>
+<blockquote>
+<p>⚠ <strong>The commands are an example. Change these values to yours before you run them:</strong></p>
+<table>
+<thead>
+<tr>
+<th>In the example</th>
+<th>Is the example's</th>
+<th>Replace with yours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student-01-0024-012</code></td>
+<td>class ID and project</td>
+<td>your class ID</td>
+</tr>
+<tr>
+<td><code>pg-s01-centos10</code></td>
+<td>the new VM's name</td>
+<td><code>pg-s&lt;NN&gt;-centos10</code></td>
+</tr>
+<tr>
+<td><code>10.101.23.151</code></td>
+<td>the new VM's address: VLAN 23, <strong>150 + your student number</strong></td>
+<td><code>10.101.&lt;22 + N&gt;.&lt;150 + NN&gt;</code></td>
+</tr>
+<tr>
+<td><code>23</code></td>
+<td>your booking's VLAN (<code>22 + N</code>, <code>vcenter01</code> → 23)</td>
+<td>from your instructor's <code>N</code></td>
+</tr>
+<tr>
+<td><code>student-01</code> / <code>student_01</code></td>
+<td>your Linux login / your database login (underscore)</td>
+<td>yours</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<!-- 🎬 video slot 01d-vm-cloudnative-golden-image: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01d-vm-cloudnative-golden-image.jpg">
+  <source src="../.images/01d-vm-cloudnative-golden-image.mp4" type="video/mp4">
+  <a href="../.images/01d-vm-cloudnative-golden-image.mp4">🎬 Video: Demo 1d: a cloud-native golden image</a>
+</video>
+<p><sub>🎬 <em>Demo 1d: a cloud-native golden image: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
+<hr />
+<h2 id="1d1-look-at-the-golden-image-its-code">1d.1 Look at the golden image: it's code<a class="headerlink" href="#1d1-look-at-the-golden-image-its-code" title="Permanent link">&para;</a></h2>
+<p>The lab published the customer's Template, <strong><code>ovedr-centos10-postgres</code></strong>, on both clusters.</p>
+<p><strong>Console (site A):</strong> <strong>Virtualization → Catalog → Template catalog</strong>. Find <strong>CentOS Stream 10 + PostgreSQL 16
+(class)</strong> (filter on <em>PostgreSQL</em>; it is a user template, not a Red Hat one) <strong>[verify]</strong>. Open it: the boot source is Red Hat's <strong>CentOS Stream 10</strong>, with three disks and
+your VLAN's network.</p>
+<p>The same from the Web Terminal: what it asks for, and the code itself:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>process<span class="w"> </span>--parameters<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres
+oc<span class="w"> </span>get<span class="w"> </span>template<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>less<span class="w">          </span><span class="c1"># q to quit</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>In the Template</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataVolumeTemplates</code></td>
+<td>the system disk, cloned from Red Hat's <code>centos-stream10</code> boot source, plus two <strong>empty</strong> disks: 10 GB for the data, 5 GB for the WAL</td>
+</tr>
+<tr>
+<td><code>networks</code></td>
+<td>one NIC on your VLAN's bridge (<code>default/vmnet23</code>), so the server has its own address on the lab network</td>
+</tr>
+<tr>
+<td><code>cloudInitNoCloud.networkData</code></td>
+<td>that address, its gateway and the lab's DNS</td>
+</tr>
+<tr>
+<td><code>cloudInitNoCloud.userData</code></td>
+<td><strong>cloud-init</strong>, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's <code>marks</code> toolkit, creates your Linux and database logins, starts the database and a heartbeat</td>
+</tr>
+</tbody>
+</table>
+<p>The whole file is also on the class site: <a href="../downloads/ovedr-centos10-postgres.yaml"><code>ovedr-centos10-postgres.yaml</code></a>.</p>
+<hr />
+<h2 id="1d2-deploy-it">1d.2 Deploy it<a class="headerlink" href="#1d2-deploy-it" title="Permanent link">&para;</a></h2>
+<p>Do <strong>one</strong> of the two. Both create the same VM.</p>
+<p><strong>Console (site A), as in the video:</strong> in the Template catalog, open <strong>CentOS Stream 10 + PostgreSQL 16 (class)</strong> →
+<strong>Customize VirtualMachine</strong> → project <strong><code>student-01-0024-012</code></strong>, and fill in the parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VM name</td>
+<td><code>pg-s01-centos10</code></td>
+</tr>
+<tr>
+<td>VLAN</td>
+<td><code>23</code></td>
+</tr>
+<tr>
+<td>IP address</td>
+<td><code>10.101.23.151</code></td>
+</tr>
+<tr>
+<td>Linux login</td>
+<td><code>student-01</code></td>
+</tr>
+<tr>
+<td>Database login</td>
+<td><code>student_01</code></td>
+</tr>
+<tr>
+<td>Password (Linux and database)</td>
+<td>your class password</td>
+</tr>
+</tbody>
+</table>
+<p>Then <strong>Create VirtualMachine</strong>.</p>
+<p><strong>Or, the Web Terminal: the whole server is one command.</strong> It asks for your password, so it never appears on screen:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Your class password: '</span><span class="w"> </span>PW<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>process<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres<span class="w"> </span>-p<span class="w"> </span><span class="nv">NAME</span><span class="o">=</span>pg-s01-centos10<span class="w"> </span>-p<span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="m">23</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">IP</span><span class="o">=</span><span class="m">10</span>.101.23.151<span class="w"> </span>-p<span class="w"> </span><span class="nv">OS_USER</span><span class="o">=</span>student-01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_USER</span><span class="o">=</span>student_01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PW</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>-f<span class="w"> </span>-<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>PW
+</code></pre></div>
+<p>✅ <code>virtualmachine.kubevirt.io/pg-s01-centos10 created</code>.</p>
+<blockquote>
+<p>💡 <strong>Your password is in the VM's cloud-init</strong>, readable by you and the instructors in your project. That is fine
+for a lab account that dies with the booking. In production, cloud-init comes from a <strong>Secret</strong>
+(<code>cloudInitNoCloud.secretRef</code>), so the VM's definition holds no password.</p>
+</blockquote>
+<hr />
+<h2 id="1d3-watch-it-build-itself">1d.3 Watch it build itself<a class="headerlink" href="#1d3-watch-it-build-itself" title="Permanent link">&para;</a></h2>
+<p><strong>Console:</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code></strong>. It goes <strong>Provisioning</strong> (the disks are
+created: the system disk is cloned from the boot source), <strong>Starting</strong>, then <strong>Running</strong>.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>dv<span class="w">                                     </span><span class="c1"># pg-s01-centos10, -pgdata, -pgwal: Succeeded</span>
+oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>pg-s01-centos10<span class="w"> </span>-w<span class="w">                 </span><span class="c1"># Running (Ctrl-C to stop watching)</span>
+</code></pre></div>
+<p>Once it is <strong>Running</strong>, cloud-init installs and configures PostgreSQL: allow a few minutes. Open the VM's
+<strong>Console</strong> tab and log in as <strong><code>student-01</code></strong> with your class password, then:</p>
+<div class="highlight"><pre><span></span><code>cloud-init<span class="w"> </span>status<span class="w"> </span>--wait<span class="w">                                 </span><span class="c1"># status: done</span>
+lsblk<span class="w"> </span>-o<span class="w"> </span>NAME,SIZE,LABEL,MOUNTPOINT<span class="w">                      </span><span class="c1"># vdc pgdata /var/lib/pgsql/data · vdd pgwal /var/lib/pgsql/wal</span>
+systemctl<span class="w"> </span>is-active<span class="w"> </span>postgresql<span class="w"> </span>ovedr-heartbeat<span class="w">           </span><span class="c1"># active, active</span>
+sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/var/lib/pgsql/data/pg_wal<span class="w">                    </span><span class="c1"># → /var/lib/pgsql/wal/pg_wal: the WAL on its own disk</span>
+</code></pre></div>
+<p>✅ cloud-init <strong>done</strong>, both database disks mounted, both services <strong>active</strong>. Every one of these was declared in
+the Template, and none was typed by hand.</p>
+<hr />
+<h2 id="1d4-inject-into-your-new-linux-postgresql-and-read-it-back">1d.4 Inject into your new Linux PostgreSQL, and read it back<a class="headerlink" href="#1d4-inject-into-your-new-linux-postgresql-and-read-it-back" title="Permanent link">&para;</a></h2>
+<p>Same commands as on Windows, at the new address. Your class terminal's <code>dblogin</code> works here too: same login, same
+password, a different server.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cloudnative-started', 'Demo 1d: CentOS Stream 10 from the Template');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_load('student-01-0024-012', 'cloudnative-load', 100);"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
+</code></pre></div>
+<p>✅ The read-back starts <strong>fresh</strong> at <code>cloudnative-started</code>, then your 100 <code>cloudnative-load</code> rows, and
+<code>ovedr_verify</code> shows <code>chain_ok = t</code>. A new server has a new database: your Windows VM's rows are still on your
+Windows VM.</p>
+<p><strong>Is it alive, and what is it?</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT count(*) AS beats, date_trunc('second', clock_timestamp() - max(ts)) AS staleness FROM heartbeat;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-x<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT version(); SELECT platform, qemu_ga, virtio FROM guest_tools ORDER BY id DESC LIMIT 1;"</span>
+</code></pre></div>
+<p>✅ <code>staleness</code> under 10 seconds, PostgreSQL <strong>16</strong> on Linux, platform <strong>kvm</strong>, QEMU guest agent <strong>active</strong>, virtio
+drivers: the same checks as your migrated Windows VM, on a server that was never migrated.</p>
+<hr />
+<h2 id="1d5-rebuild-it-the-point-of-a-golden-image-as-code">1d.5 Rebuild it: the point of a golden image as code<a class="headerlink" href="#1d5-rebuild-it-the-point-of-a-golden-image-as-code" title="Permanent link">&para;</a></h2>
+<p>A pet is repaired. Cattle are replaced. Delete the server and deploy it again from the same Template:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete<span class="w"> </span>vm<span class="w"> </span>pg-s01-centos10<span class="w">                  </span><span class="c1"># the VM and its three disks</span>
+</code></pre></div>
+<p>Then run <strong>1d.2</strong> again. In a few minutes you have the <strong>same</strong> server at the same address, with an empty <code>marks</code>
+table: every setting came from code, so nothing drifted and nothing was forgotten.</p>
+<p><strong>That is the end of Demo 1d.</strong> You built a database server purely in code, from Red Hat's maintained image, and
+proved it with your own rows.</p>
+<blockquote>
+<p>💡 <strong>One copy at a time on an address.</strong> Delete or stop your <code>pg-s01-centos10</code> when you're done: its address
+is yours alone.</p>
+</blockquote>
+<hr />
+<h2 id="addendum-how-the-lab-staged-this-demo-as-code">Addendum: how the lab staged this demo, as code<a class="headerlink" href="#addendum-how-the-lab-staged-this-demo-as-code" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>CI job</th>
+<th>Code</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>golden-linux</code></td>
+<td><code>automation/customize/golden_linux.sh</code></td>
+<td>builds the Template and applies it to namespace <code>openshift</code> on every site that has the CentOS Stream 10 boot source</td>
+</tr>
+<tr>
+<td>(same job)</td>
+<td>the proof</td>
+<td>deploys a test VM from the Template (<code>ovedr-ci-centos10</code>, <code>10.101.&lt;VLAN&gt;.98</code>), waits for PostgreSQL, writes a mark, checks <code>chain_ok</code>, the heartbeat and the guest tools, then deletes the VM. The run's summary shows how long the server took to answer</td>
+</tr>
+<tr>
+<td>(build)</td>
+<td><code>automation/tools/centos10_template.sh</code></td>
+<td>assembles the Template from <strong>one</strong> cloud-init file (<code>workload/centos10/user-data.yaml</code>) and the class's SQL (<code>workload/sql/</code>), the same schema and toolkit the Windows VMs run. A test fails if the published copy differs from what it builds</td>
+</tr>
+</tbody>
+</table>
+<p>The customer's version of this is a short pipeline: change the cloud-init in git → CI builds the Template, deploys a
+test VM, runs its checks → the Template is published for everyone. The base OS comes from Red Hat's boot source,
+which OpenShift Virtualization updates on its own; your code stays the same.</p>
+<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <a href="../student-guide.html">Student guide</a>.</p>
+<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization: creating VMs from templates and boot sources (4.19)</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/images/using-templates">OpenShift templates</a> [verify link]</li>
+<li><a href="https://cloudinit.readthedocs.io/">cloud-init documentation</a></li>
+<li><a href="https://www.postgresql.org/docs/16/">PostgreSQL 16 documentation</a></li>
+<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1c: Cross-cluster migration (bonus)">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Demo 1c: Cross-cluster migration (bonus)
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="02-vmware-to-ove-warm.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 2: Warm migration">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Demo 2: Warm migration
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Paragon Micro lab · generated from the class source; changes made here are overwritten
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.sections", "navigation.top", "navigation.footer", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+    
+  </body>
+</html>
