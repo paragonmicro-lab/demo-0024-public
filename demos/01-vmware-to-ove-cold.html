@@ -1071,6 +1071,12 @@ database rows from Lab 0 are there. Every command below runs in the console's <s
 </tbody>
 </table>
 </blockquote>
+<!-- 🎬 video slot 01-vmware-to-ove-cold: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01-vmware-to-ove-cold.jpg">
+  <source src="../.images/01-vmware-to-ove-cold.mp4" type="video/mp4">
+  <a href="../.images/01-vmware-to-ove-cold.mp4">🎬 Video: Demo 1: cold migration</a>
+</video>
+<p><sub>🎬 <em>Demo 1: cold migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
 <h2 id="10-inject-the-demo-has-started">1.0 Inject: the demo has started<a class="headerlink" href="#10-inject-the-demo-has-started" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 1: cold migration');"</span>

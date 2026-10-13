@@ -1078,11 +1078,14 @@ restored VM holds exactly the data it had at backup time.</p>
 <p>🖥️ <strong>Where you type the commands: your browser terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>), signed in on site A, with
 <code>dblogin</code> done. <code>powershell</code> blocks run inside your Windows VM, from its console.</p>
 </blockquote>
+<!-- 🎬 video slot 05-oadp-vm-backup: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/05-oadp-vm-backup.jpg">
+  <source src="../.images/05-oadp-vm-backup.mp4" type="video/mp4">
+  <a href="../.images/05-oadp-vm-backup.mp4">🎬 Video: Demo 5: OADP backup and restore</a>
+</video>
+<p><sub>🎬 <em>Demo 5: OADP backup and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
 <h2 id="51-what-a-vm-backup-contains">5.1 What a VM backup contains<a class="headerlink" href="#51-what-a-vm-backup-contains" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 05-5-1-what-vm-backup-contains -->
-<p><a href="../.images/05-5-1-what-vm-backup-contains.mp4"><img alt="🎬 Video: 5.1 What a VM backup contains. Watch it, then do the same in the console" src="../.images/05-5-1-what-vm-backup-contains.jpg" /></a>
-<sub>🎬 <em>5.1 What a VM backup contains: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/05-5-1-what-vm-backup-contains.mp4</code>).</em></sub></p>
 <p>A backup of your namespace captures its <strong>objects</strong> (the <code>VirtualMachine</code>, its <code>DataVolume</code>s and PVCs, the Service) and
 its <strong>data</strong>: each disk is snapshotted, and the Data Mover copies the snapshot to object storage, so the backup
 survives even if the cluster's storage is lost. A running Windows VM is backed up <strong>crash-consistent</strong> unless the guest
@@ -1097,9 +1100,6 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 for example <code>nonadminbackups.oadp.openshift.io</code> or <code>backups.velero.io</code>.</p>
 </blockquote>
 <h2 id="52-inject-before-the-backup">5.2 Inject before the backup<a class="headerlink" href="#52-inject-before-the-backup" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 05-5-2-inject-before-backup -->
-<p><a href="../.images/05-5-2-inject-before-backup.mp4"><img alt="🎬 Video: 5.2 Inject before the backup. Watch it, then do the same in the console" src="../.images/05-5-2-inject-before-backup.jpg" /></a>
-<sub>🎬 <em>5.2 Inject before the backup: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/05-5-2-inject-before-backup.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code>alive<span class="w">                              </span><span class="c1"># your VM is writing</span>
 mark<span class="w"> </span>d5-in-backup<span class="w">                  </span><span class="c1"># ✍️ note the id: this row MUST come back</span>
 verify<span class="w">                             </span><span class="c1"># chain_ok = t</span>
@@ -1109,9 +1109,6 @@ verify<span class="w">                             </span><span class="c1"># cha
 </code></pre></div>
 <hr />
 <h2 id="53-back-up-your-namespace">5.3 Back up your namespace<a class="headerlink" href="#53-back-up-your-namespace" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 05-5-3-back-up-namespace -->
-<p><a href="../.images/05-5-3-back-up-namespace.mp4"><img alt="🎬 Video: 5.3 Back up your namespace. Watch it, then do the same in the console" src="../.images/05-5-3-back-up-namespace.jpg" /></a>
-<sub>🎬 <em>5.3 Back up your namespace: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/05-5-3-back-up-namespace.mp4</code>).</em></sub></p>
 <p>You create a <strong><code>NonAdminBackup</code></strong> in your own namespace; OADP turns it into a backup of that namespace only.
 <strong>[verify: the NonAdminBackup fields and the student rights on OADP 1.5 (demo-openshift reports what the operator
 grants)]</strong></p>
@@ -1131,18 +1128,12 @@ mark<span class="w"> </span>d5-after-backup<span class="w">               </span
 <p>✍️ <strong>Row 5.3:</strong> the backup's duration and size (<code>oc -n "$VMNS" get nonadminbackups.oadp.openshift.io d5 -o yaml</code>, under <code>status</code>).</p>
 <hr />
 <h2 id="54-lose-it-delete-your-vm">5.4 Lose it: delete your VM<a class="headerlink" href="#54-lose-it-delete-your-vm" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 05-5-4-lose-delete-vm -->
-<p><a href="../.images/05-5-4-lose-delete-vm.mp4"><img alt="🎬 Video: 5.4 Lose it: delete your VM. Watch it, then do the same in the console" src="../.images/05-5-4-lose-delete-vm.jpg" /></a>
-<sub>🎬 <em>5.4 Lose it: delete your VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/05-5-4-lose-delete-vm.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>delete<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w">                     </span><span class="c1"># the VM and its disks are gone</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,pvc<span class="w">                          </span><span class="c1"># nothing left of your VM</span>
 alive<span class="w">                                                              </span><span class="c1"># fails: that is the disaster</span>
 </code></pre></div>
 <hr />
 <h2 id="55-restore-and-prove-the-data">5.5 Restore, and prove the data<a class="headerlink" href="#55-restore-and-prove-the-data" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 05-5-5-restore-prove-data -->
-<p><a href="../.images/05-5-5-restore-prove-data.mp4"><img alt="🎬 Video: 5.5 Restore, and prove the data. Watch it, then do the same in the console" src="../.images/05-5-5-restore-prove-data.jpg" /></a>
-<sub>🎬 <em>5.5 Restore, and prove the data: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/05-5-5-restore-prove-data.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: oadp.openshift.io/v1alpha1</span>
 <span class="s">kind: NonAdminRestore</span>

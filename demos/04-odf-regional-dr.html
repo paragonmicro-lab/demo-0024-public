@@ -1633,11 +1633,14 @@ Variables you <code>export</code> last until you close that Terminal tab: if you
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
+<!-- 🎬 video slot 04-odf-regional-dr: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/04-odf-regional-dr.jpg">
+  <source src="../.images/04-odf-regional-dr.mp4" type="video/mp4">
+  <a href="../.images/04-odf-regional-dr.mp4">🎬 Video: Demo 4: ODF Regional-DR</a>
+</video>
+<p><sub>🎬 <em>Demo 4: ODF Regional-DR: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
 <h2 id="40-point-the-helpers-at-your-vm">4.0 Point the helpers at your VM<a class="headerlink" href="#40-point-the-helpers-at-your-vm" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-0-point-helpers-at-vm -->
-<p><a href="../.images/04-4-0-point-helpers-at-vm.mp4"><img alt="🎬 Video: 4.0 Point the helpers at your VM. Watch it, then do the same in the console" src="../.images/04-4-0-point-helpers-at-vm.jpg" /></a>
-<sub>🎬 <em>4.0 Point the helpers at your VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-0-point-helpers-at-vm.mp4</code>).</em></sub></p>
 <p>Use <strong>your VM's own address</strong>, <code>$VM_IP</code>, for every connection test. Your VM sits on the VLAN bridge (<code>vmnet&lt;VLAN&gt;</code>),
 which exists with the same name on both sites, so after a Relocate or Failover it comes up with the <strong>same</strong> address on
 the other site. (Only a VM on the pod network gets a new pod IP per site: then refresh it with Toolkit T.4 after every
@@ -1658,9 +1661,6 @@ verify
 <p>✍️ <strong>Row 4.0:</strong> your <code>d4-start</code> mark id and the <code>fingerprint</code>.</p>
 <hr />
 <h2 id="41-inside-the-vm-your-file">4.1 Inside the VM: your file<a class="headerlink" href="#41-inside-the-vm-your-file" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-1-inside-vm-file -->
-<p><a href="../.images/04-4-1-inside-vm-file.mp4"><img alt="🎬 Video: 4.1 Inside the VM: your file. Watch it, then do the same in the console" src="../.images/04-4-1-inside-vm-file.jpg" /></a>
-<sub>🎬 <em>4.1 Inside the VM: your file: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-1-inside-vm-file.mp4</code>).</em></sub></p>
 <p>In your VM's console on site A (<strong>Virtualization → VirtualMachines → <code>&lt;your VM&gt;</code> → Console</strong>), log in as <code>.\&lt;WINUSER&gt;</code>,
 then run:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d4-start on site A"</span>
@@ -1669,9 +1669,6 @@ then run:</p>
 <p>📸 <code>04-touch-start</code>: the last three lines of your file, on site A.</p>
 <hr />
 <h2 id="42-set-up-asynchronous-replication-between-the-clusters">4.2 Set up asynchronous replication between the clusters<a class="headerlink" href="#42-set-up-asynchronous-replication-between-the-clusters" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-2-set-up-asynchronous-replication-clusters -->
-<p><a href="../.images/04-4-2-set-up-asynchronous-replication-clusters.mp4"><img alt="🎬 Video: 4.2 Set up asynchronous replication between the clusters. Watch it, then do the same in the console" src="../.images/04-4-2-set-up-asynchronous-replication-clusters.jpg" /></a>
-<sub>🎬 <em>4.2 Set up asynchronous replication between the clusters: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-2-set-up-asynchronous-replication-clusters.mp4</code>).</em></sub></p>
 <p>Regional-DR is built in layers. The lab stages the lower ones (<code>dr-fabric</code>); you inspect each one and see what
 it is for.</p>
 <table>
@@ -1748,9 +1745,6 @@ MirrorPeer offers <code>2m</code> and <code>5m</code> today, so <code>15m</code>
 <p>📸 <code>04-drpolicy</code>: the DRPolicy validated at 15m.</p>
 <hr />
 <h2 id="43-protect-the-vm">4.3 Protect the VM<a class="headerlink" href="#43-protect-the-vm" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-3-protect-vm -->
-<p><a href="../.images/04-4-3-protect-vm.mp4"><img alt="🎬 Video: 4.3 Protect the VM. Watch it, then do the same in the console" src="../.images/04-4-3-protect-vm.jpg" /></a>
-<sub>🎬 <em>4.3 Protect the VM: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-3-protect-vm.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4-before-protect
 </code></pre></div>
 <h3 id="driver-enrol-the-vm">🧑‍🏫 Driver: enrol the VM<a class="headerlink" href="#driver-enrol-the-vm" title="Permanent link">&para;</a></h3>
@@ -1790,9 +1784,6 @@ demo. Compare it with the VM's disk usage (<code>oc --context site-a -n "$VMNS" 
 <p>📸 <code>04-protected</code>: the Protected applications page showing <code>ovedr-app</code> Healthy.</p>
 <hr />
 <h2 id="44-prove-replication-is-running-and-that-a-cycle-completed">4.4 Prove replication is running, and that a cycle completed<a class="headerlink" href="#44-prove-replication-is-running-and-that-a-cycle-completed" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-4-prove-replication-running-cycle-completed -->
-<p><a href="../.images/04-4-4-prove-replication-running-cycle-completed.mp4"><img alt="🎬 Video: 4.4 Prove replication is running, and that a cycle completed. Watch it, then do the same in the console" src="../.images/04-4-4-prove-replication-running-cycle-completed.jpg" /></a>
-<sub>🎬 <em>4.4 Prove replication is running, and that a cycle completed: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-4-prove-replication-running-cycle-completed.mp4</code>).</em></sub></p>
 <h3 id="what-running-looks-like-at-three-levels">What "running" looks like, at three levels<a class="headerlink" href="#what-running-looks-like-at-three-levels" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>drpc<span class="w">                                                           </span><span class="c1"># 1 · Ramen: the last group sync</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>volumereplication<span class="w">          </span><span class="c1"># 2 · CSI: one VolumeReplication per disk</span>
@@ -1834,9 +1825,6 @@ instructor may use a 5-minute policy in a short session.</p>
 <p>📸 <code>04-sync-complete</code>: the <code>drpc</code> line after the loop ends.</p>
 <hr />
 <h2 id="45-snapshot-then-a-planned-failover-to-site-b">4.5 Snapshot, then a planned failover to site B<a class="headerlink" href="#45-snapshot-then-a-planned-failover-to-site-b" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-5-snapshot-planned-failover-site-b -->
-<p><a href="../.images/04-4-5-snapshot-planned-failover-site-b.mp4"><img alt="🎬 Video: 4.5 Snapshot, then a planned failover to site B. Watch it, then do the same in the console" src="../.images/04-4-5-snapshot-planned-failover-site-b.jpg" /></a>
-<sub>🎬 <em>4.5 Snapshot, then a planned failover to site B: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-5-snapshot-planned-failover-site-b.mp4</code>).</em></sub></p>
 <h3 id="a-snapshot-as-a-local-safety-net">A snapshot as a local safety net<a class="headerlink" href="#a-snapshot-as-a-local-safety-net" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt;YAML | oc --context site-a apply -f -</span>
 <span class="s">apiVersion: snapshot.kubevirt.io/v1beta1</span>
@@ -1906,9 +1894,6 @@ sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id
 <p>📸 <code>04-on-site-b</code>: <code>where</code> showing site-b, and the file's tail.</p>
 <hr />
 <h2 id="46-reverse-replication-b-a-then-come-home-cleanly">4.6 Reverse replication B → A, then come home cleanly<a class="headerlink" href="#46-reverse-replication-b-a-then-come-home-cleanly" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-6-reverse-replication-b-come-home-cleanly -->
-<p><a href="../.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4"><img alt="🎬 Video: 4.6 Reverse replication B → A, then come home cleanly. Watch it, then do the same in the console" src="../.images/04-4-6-reverse-replication-b-come-home-cleanly.jpg" /></a>
-<sub>🎬 <em>4.6 Reverse replication B → A, then come home cleanly: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-6-reverse-replication-b-come-home-cleanly.mp4</code>).</em></sub></p>
 <p>The VM now runs on B, and B is the <strong>primary</strong>. Before you move it again, check that protection has
 <strong>reversed</strong>: B replicates back to A, and A's images are the secondaries.</p>
 <div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d4-on-b
@@ -1944,9 +1929,6 @@ drpc<span class="w">                                             </span><span cl
 <p>📸 <code>04-home</code>: <code>verify</code> with <code>chain_ok = t</code>, and the file's tail.</p>
 <hr />
 <h2 id="47-end-of-demo-validation">4.7 End-of-demo validation<a class="headerlink" href="#47-end-of-demo-validation" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-7-end-demo-validation -->
-<p><a href="../.images/04-4-7-end-demo-validation.mp4"><img alt="🎬 Video: 4.7 End-of-demo validation. Watch it, then do the same in the console" src="../.images/04-4-7-end-demo-validation.jpg" /></a>
-<sub>🎬 <em>4.7 End-of-demo validation: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-7-end-demo-validation.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code>alive
 verify
 sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify();"</span><span class="w">                        </span><span class="c1"># the whole class: every student's chain_ok</span>
@@ -2040,9 +2022,6 @@ reached the DR site, and moved the whole application there and back with every r
 <p>Stay for the bonus round if time allows. It shows what the 15-minute interval costs when the link fails without warning.</p>
 <hr />
 <h2 id="48-bonus-a-hostile-failover-with-a-broken-replication-link">4.8 BONUS: a hostile failover, with a broken replication link<a class="headerlink" href="#48-bonus-a-hostile-failover-with-a-broken-replication-link" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 04-4-8-bonus-hostile-failover-broken-replication-link -->
-<p><a href="../.images/04-4-8-bonus-hostile-failover-broken-replication-link.mp4"><img alt="🎬 Video: 4.8 BONUS: a hostile failover, with a broken replication link. Watch it, then do the same in the console" src="../.images/04-4-8-bonus-hostile-failover-broken-replication-link.jpg" /></a>
-<sub>🎬 <em>4.8 BONUS: a hostile failover, with a broken replication link: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/04-4-8-bonus-hostile-failover-broken-replication-link.mp4</code>).</em></sub></p>
 <p>Now the link fails, the business can't wait, and the class <strong>forces</strong> the VM onto site B from whatever the last
 completed sync holds. Then it repairs the link and <strong>forces the resync</strong> back.</p>
 <h3 id="how-to-break-the-link-options">How to break the link: options<a class="headerlink" href="#how-to-break-the-link-options" title="Permanent link">&para;</a></h3>

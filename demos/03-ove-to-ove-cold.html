@@ -1548,11 +1548,14 @@ Variables you <code>export</code> last until you close that Terminal tab: if you
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
+<!-- 🎬 video slot 03-ove-to-ove-cold: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/03-ove-to-ove-cold.jpg">
+  <source src="../.images/03-ove-to-ove-cold.mp4" type="video/mp4">
+  <a href="../.images/03-ove-to-ove-cold.mp4">🎬 Video: Demo 3: OpenShift to OpenShift, cold</a>
+</video>
+<p><sub>🎬 <em>Demo 3: OpenShift to OpenShift, cold: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
 <h2 id="31-prerequisites-your-vm-is-running-on-site-a">3.1 Prerequisites: your VM is running on site A<a class="headerlink" href="#31-prerequisites-your-vm-is-running-on-site-a" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-1-prerequisites-vm-running-site-a -->
-<p><a href="../.images/03-3-1-prerequisites-vm-running-site-a.mp4"><img alt="🎬 Video: 3.1 Prerequisites: your VM is running on site A. Watch it, then do the same in the console" src="../.images/03-3-1-prerequisites-vm-running-site-a.jpg" /></a>
-<sub>🎬 <em>3.1 Prerequisites: your VM is running on site A: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-1-prerequisites-vm-running-site-a.mp4</code>).</em></sub></p>
 <p>This demo starts where Demo 1 ended: <code>$VM</code> is running on site A in your namespace <code>$VMNS</code>. (Haven't run Demo 1?
 Start your staged plan <code>d1-&lt;VM&gt;</code> on site A first: <a href="01-vmware-to-ove-cold.html">Demo 1 §1.3</a>.)</p>
 <div class="highlight"><pre><span></span><code>where<span class="w">                                          </span><span class="c1"># site-a Running  node=…   /   site-b -</span>
@@ -1579,9 +1582,6 @@ line to your file:</p>
 <p>📸 <code>03-before-site-a</code> — the site A console showing <code>&lt;VM&gt;</code> <strong>Running</strong>, with PowerShell showing your file.</p>
 <hr />
 <h2 id="32-acm-link-the-clusters">3.2 ACM: link the clusters<a class="headerlink" href="#32-acm-link-the-clusters" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-2-acm-link-clusters -->
-<p><a href="../.images/03-3-2-acm-link-clusters.mp4"><img alt="🎬 Video: 3.2 ACM: link the clusters. Watch it, then do the same in the console" src="../.images/03-3-2-acm-link-clusters.jpg" /></a>
-<sub>🎬 <em>3.2 ACM: link the clusters: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-2-acm-link-clusters.mp4</code>).</em></sub></p>
 <p>ACM is installed on <strong>both</strong> clusters by the base <code>demo-openshift</code> build, so each cluster is a hub for itself
 (<code>local-cluster</code>). The class's intended topology is <strong>site B's hub managing site A</strong>. The lab's <code>demo-prep</code> step
 imports site A only when site A is not a hub itself, so on a booking where both are hubs the instructor decides
@@ -1648,9 +1648,6 @@ it.</p>
 </blockquote>
 <hr />
 <h2 id="33-mtv-ove-ove-provider-network-map-storage-map">3.3 MTV: OVE → OVE provider, network map, storage map<a class="headerlink" href="#33-mtv-ove-ove-provider-network-map-storage-map" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-3-mtv-ove-ove-provider-network-map -->
-<p><a href="../.images/03-3-3-mtv-ove-ove-provider-network-map.mp4"><img alt="🎬 Video: 3.3 MTV: OVE → OVE provider, network map, storage map. Watch it, then do the same in the console" src="../.images/03-3-3-mtv-ove-ove-provider-network-map.jpg" /></a>
-<sub>🎬 <em>3.3 MTV: OVE → OVE provider, network map, storage map: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-3-mtv-ove-ove-provider-network-map.mp4</code>).</em></sub></p>
 <p>The lab's migration fabric already built the OVE → OVE side on each <strong>tooled</strong> site. On the <strong>destination</strong> (site B),
 the objects are:</p>
 <table>
@@ -1738,9 +1735,6 @@ over the network</strong>. The source PVCs on site A are left untouched. That is
 <p>📸 <code>03-mtv-maps</code> — site B console, <strong>Migration for Virtualization → Network maps / Storage maps</strong>, showing the <code>ovedr-ocp-&lt;A-slot&gt;</code> maps.</p>
 <hr />
 <h2 id="34-check-the-destination-namespace-on-site-b">3.4 Check the destination namespace on site B<a class="headerlink" href="#34-check-the-destination-namespace-on-site-b" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-4-check-destination-namespace-site-b -->
-<p><a href="../.images/03-3-4-check-destination-namespace-site-b.mp4"><img alt="🎬 Video: 3.4 Check the destination namespace on site B. Watch it, then do the same in the console" src="../.images/03-3-4-check-destination-namespace-site-b.jpg" /></a>
-<sub>🎬 <em>3.4 Check the destination namespace on site B: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-4-check-destination-namespace-site-b.mp4</code>).</em></sub></p>
 <p>Your VM lands in <strong>your own namespace</strong> (<code>$VMNS</code>) on site B. CI built the same things there as on site A: your
 namespace with you as admin, your Service <code>&lt;VM&gt;-sql</code> in it (it selects your VM by name), and your site-B browser terminal <code>sql-client</code> (<a href="setup-how-the-lab-is-built.html">Lab S §S.9</a>).</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>ns<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w">                                        </span><span class="c1"># your namespace, on site B too</span>
@@ -1751,9 +1745,6 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <p>✅ Your namespace exists on site B, with your <code>sql-client</code> ready, <code>&lt;VM&gt;-sql</code> waiting, and no copy of your VM yet.</p>
 <hr />
 <h2 id="35-the-cold-move">3.5 The cold move<a class="headerlink" href="#35-the-cold-move" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-5-cold-move -->
-<p><a href="../.images/03-3-5-cold-move.mp4"><img alt="🎬 Video: 3.5 The cold move. Watch it, then do the same in the console" src="../.images/03-3-5-cold-move.jpg" /></a>
-<sub>🎬 <em>3.5 The cold move: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-5-cold-move.mp4</code>).</em></sub></p>
 <h3 id="stop-your-vm-on-site-a">Stop your VM on site A<a class="headerlink" href="#stop-your-vm-on-site-a" title="Permanent link">&para;</a></h3>
 <p>A cold migration copies <strong>stopped</strong> disks. Stop your VM cleanly first. Windows shuts down and PostgreSQL flushes.</p>
 <div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d3-last-before-stop<span class="w"> </span><span class="s2">"final row on </span><span class="nv">$A</span><span class="s2">"</span><span class="w">                   </span><span class="c1"># your last row on site A</span>
@@ -1862,9 +1853,6 @@ class.
 </code></pre></div>
 <hr />
 <h2 id="36-validate-on-site-b">3.6 Validate on site B<a class="headerlink" href="#36-validate-on-site-b" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-6-validate-site-b -->
-<p><a href="../.images/03-3-6-validate-site-b.mp4"><img alt="🎬 Video: 3.6 Validate on site B. Watch it, then do the same in the console" src="../.images/03-3-6-validate-site-b.jpg" /></a>
-<sub>🎬 <em>3.6 Validate on site B: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-6-validate-site-b.mp4</code>).</em></sub></p>
 <h3 id="where-is-your-vm-now">Where is your VM now?<a class="headerlink" href="#where-is-your-vm-now" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>where<span class="w">                                          </span><span class="c1"># site-a -   (stopped)   /   site-b Running  node=…</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span>
@@ -1927,9 +1915,6 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <p>📸 <code>03-source-stopped</code> — the site A console, <code>&lt;VM&gt;</code> <strong>Stopped</strong>.</p>
 <hr />
 <h2 id="37-what-you-proved">3.7 What you proved<a class="headerlink" href="#37-what-you-proved" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 03-3-7-what-proved -->
-<p><a href="../.images/03-3-7-what-proved.mp4"><img alt="🎬 Video: 3.7 What you proved. Watch it, then do the same in the console" src="../.images/03-3-7-what-proved.jpg" /></a>
-<sub>🎬 <em>3.7 What you proved: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-7-what-proved.mp4</code>).</em></sub></p>
 <ul>
 <li><strong>ACM</strong> links the clusters: site B's hub manages site A, and you can see your VM from the hub.</li>
 <li><strong>MTV</strong> moved your VM <strong>between two OpenShift clusters</strong>, reading site A through <code>api-int</code> with its own CA.</li>

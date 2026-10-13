@@ -1712,11 +1712,14 @@ Variables you <code>export</code> last until you close that Terminal tab: if you
 Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
 console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
 </blockquote>
+<!-- 🎬 video slot 02-vmware-to-ove-warm: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/02-vmware-to-ove-warm.jpg">
+  <source src="../.images/02-vmware-to-ove-warm.mp4" type="video/mp4">
+  <a href="../.images/02-vmware-to-ove-warm.mp4">🎬 Video: Demo 2: warm migration</a>
+</video>
+<p><sub>🎬 <em>Demo 2: warm migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
 <h2 id="21-prerequisites-and-the-starting-state">2.1 Prerequisites and the starting state<a class="headerlink" href="#21-prerequisites-and-the-starting-state" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-1-prerequisites-starting-state -->
-<p><a href="../.images/02-2-1-prerequisites-starting-state.mp4"><img alt="🎬 Video: 2.1 Prerequisites and the starting state. Watch it, then do the same in the console" src="../.images/02-2-1-prerequisites-starting-state.jpg" /></a>
-<sub>🎬 <em>2.1 Prerequisites and the starting state: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-1-prerequisites-starting-state.mp4</code>).</em></sub></p>
 <h3 id="the-name-your-vm-gets-on-openshift">The name your VM gets on OpenShift<a class="headerlink" href="#the-name-your-vm-gets-on-openshift" title="Permanent link">&para;</a></h3>
 <p>Your <strong>staged warm plan</strong> <code>d2-&lt;VM&gt;</code> lands your VM on site A, in your namespace, as <strong><code>&lt;VM&gt;-warm</code></strong>. That way it never
 collides with your Demo 1 copy (<code>&lt;VM&gt;</code>), whether or not that copy still exists.</p>
@@ -1752,9 +1755,6 @@ verify<span class="w">                          </span><span class="c1"># chain_
 <p>📸 <code>02-start-alive</code> — <code>alive</code> and <code>verify</code> output, with the VM on vSphere.</p>
 <hr />
 <h2 id="22-why-warm-and-why-it-needs-cbt">2.2 Why warm, and why it needs CBT<a class="headerlink" href="#22-why-warm-and-why-it-needs-cbt" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-2-why-warm-why-needs-cbt -->
-<p><a href="../.images/02-2-2-why-warm-why-needs-cbt.mp4"><img alt="🎬 Video: 2.2 Why warm, and why it needs CBT. Watch it, then do the same in the console" src="../.images/02-2-2-why-warm-why-needs-cbt.jpg" /></a>
-<sub>🎬 <em>2.2 Why warm, and why it needs CBT: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-2-why-warm-why-needs-cbt.mp4</code>).</em></sub></p>
 <p>A <strong>cold</strong> migration (Demo 1) powers the VM off, copies every block of every disk, then boots it on
 OpenShift. The outage is the whole copy.</p>
 <p>A <strong>warm</strong> migration works in rounds:</p>
@@ -1789,9 +1789,6 @@ Without CBT, every round would be a full copy. That's why MTV refuses a warm pla
 CBT enabled.</p>
 <hr />
 <h2 id="23-enable-changed-block-tracking">2.3 Enable Changed Block Tracking<a class="headerlink" href="#23-enable-changed-block-tracking" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-3-enable-changed-block-tracking -->
-<p><a href="../.images/02-2-3-enable-changed-block-tracking.mp4"><img alt="🎬 Video: 2.3 Enable Changed Block Tracking. Watch it, then do the same in the console" src="../.images/02-2-3-enable-changed-block-tracking.jpg" /></a>
-<sub>🎬 <em>2.3 Enable Changed Block Tracking: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-3-enable-changed-block-tracking.mp4</code>).</em></sub></p>
 <p>CBT is a per-VM switch (<code>ctkEnabled</code>) <strong>plus</strong> a per-disk switch for each virtual disk (<code>scsi0:N.ctkEnabled</code>).
 It takes effect at the next power-on, so turn it on while the VM is <strong>off</strong>.</p>
 <h3 id="leave-a-mark-then-shut-your-vm-down-cleanly">Leave a mark, then shut your VM down cleanly<a class="headerlink" href="#leave-a-mark-then-shut-your-vm-down-cleanly" title="Permanent link">&para;</a></h3>
@@ -1910,9 +1907,6 @@ verify<span class="w">                               </span><span class="c1"># c
 <p>✍️ <strong>Row 2.1:</strong> CBT on (yes/no), the number of <code>-ctk.vmdk</code> files, and your <code>d2-cbt-on</code> id.</p>
 <hr />
 <h2 id="24-make-the-database-busy">2.4 Make the database busy<a class="headerlink" href="#24-make-the-database-busy" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-4-make-database-busy -->
-<p><a href="../.images/02-2-4-make-database-busy.mp4"><img alt="🎬 Video: 2.4 Make the database busy. Watch it, then do the same in the console" src="../.images/02-2-4-make-database-busy.jpg" /></a>
-<sub>🎬 <em>2.4 Make the database busy: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-4-make-database-busy.mp4</code>).</em></sub></p>
 <p>Warm migration matters when the VM is <strong>changing</strong> while it copies. Give it something to copy.</p>
 <h3 id="in-the-guest">In the guest<a class="headerlink" href="#in-the-guest" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-precopy-started"</span>
@@ -1927,9 +1921,6 @@ verify
 <p>✍️ <strong>Row 2.2:</strong> your <code>marks</code> count after the 500-row burst.</p>
 <hr />
 <h2 id="25-your-warm-plan-staged-waiting-for-cbt">2.5 Your warm plan: staged, waiting for CBT<a class="headerlink" href="#25-your-warm-plan-staged-waiting-for-cbt" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-5-warm-plan-staged-waiting-cbt -->
-<p><a href="../.images/02-2-5-warm-plan-staged-waiting-cbt.mp4"><img alt="🎬 Video: 2.5 Your warm plan: staged, waiting for CBT. Watch it, then do the same in the console" src="../.images/02-2-5-warm-plan-staged-waiting-cbt.jpg" /></a>
-<sub>🎬 <em>2.5 Your warm plan: staged, waiting for CBT: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-5-warm-plan-staged-waiting-cbt.mp4</code>).</em></sub></p>
 <p>The lab <strong>staged</strong> a warm plan for every class VM on <strong>both</strong> sites: <strong><code>d2-&lt;VM&gt;</code></strong> on site A (and <code>d2b-&lt;VM&gt;-to-&lt;B&gt;</code> on site B, the same
 plan to the other cluster) (type <strong>Warm</strong>, target name <code>&lt;VM&gt;-warm</code>, target
 namespace yours, the class's bridge network map and storage map), <strong>not started</strong>. How it was built: Lab S
@@ -2035,9 +2026,6 @@ blocks your <code>load</code> loop and the heartbeat changed. That shrink is CBT
 later one.</p>
 <hr />
 <h2 id="26-cutover-the-only-downtime">2.6 Cutover: the only downtime<a class="headerlink" href="#26-cutover-the-only-downtime" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-6-cutover-only-downtime -->
-<p><a href="../.images/02-2-6-cutover-only-downtime.mp4"><img alt="🎬 Video: 2.6 Cutover: the only downtime. Watch it, then do the same in the console" src="../.images/02-2-6-cutover-only-downtime.jpg" /></a>
-<sub>🎬 <em>2.6 Cutover: the only downtime: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-6-cutover-only-downtime.mp4</code>).</em></sub></p>
 <p>Let at least <strong>two</strong> pre-copies complete, then stop the background load and leave a last mark on vSphere:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">kill</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
 mark<span class="w"> </span>d2-before-cutover<span class="w">                  </span><span class="c1"># ✍️ note this id: it must survive the cutover</span>
@@ -2059,9 +2047,6 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <p>📸 <code>02-cutover-done</code> — the plan showing <strong>Succeeded</strong>, with the cutover timestamps.</p>
 <hr />
 <h2 id="27-validate-on-openshift">2.7 Validate on OpenShift<a class="headerlink" href="#27-validate-on-openshift" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-7-validate-openshift -->
-<p><a href="../.images/02-2-7-validate-openshift.mp4"><img alt="🎬 Video: 2.7 Validate on OpenShift. Watch it, then do the same in the console" src="../.images/02-2-7-validate-openshift.jpg" /></a>
-<sub>🎬 <em>2.7 Validate on OpenShift: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-7-validate-openshift.mp4</code>).</em></sub></p>
 <h3 id="your-vm-keeps-its-address">Your VM keeps its address<a class="headerlink" href="#your-vm-keeps-its-address" title="Permanent link">&para;</a></h3>
 <p>The warm plan used the <strong>bridge</strong> map, so <code>&lt;TARGET&gt;</code> answers at your own <code>$VM_IP</code>, and the helpers keep working.
 (Only if you chose the <strong>pod</strong> map: follow <a href="toolkit.html#t4-optional-give-your-vm-a-pod-network-address-on-openshift">Toolkit T.4</a>
@@ -2127,9 +2112,6 @@ below shows what OpenShift Virtualization does once the VM is on it: moves betwe
 </ul>
 <hr />
 <h2 id="28-bonus-live-migrate-the-vm-between-nodes">2.8 Bonus: live-migrate the VM between nodes<a class="headerlink" href="#28-bonus-live-migrate-the-vm-between-nodes" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-8-bonus-live-migrate-vm-nodes -->
-<p><a href="../.images/02-2-8-bonus-live-migrate-vm-nodes.mp4"><img alt="🎬 Video: 2.8 Bonus: live-migrate the VM between nodes. Watch it, then do the same in the console" src="../.images/02-2-8-bonus-live-migrate-vm-nodes.jpg" /></a>
-<sub>🎬 <em>2.8 Bonus: live-migrate the VM between nodes: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-8-bonus-live-migrate-vm-nodes.mp4</code>).</em></sub></p>
 <p>The VM is on OpenShift now, so moving it to another <strong>node</strong> in the same cluster doesn't stop it at all. KubeVirt
 copies its memory while it runs. (This is in-cluster live migration, not MTV.)</p>
 <h3 id="is-it-live-migratable">Is it live-migratable?<a class="headerlink" href="#is-it-live-migratable" title="Permanent link">&para;</a></h3>
@@ -2169,9 +2151,6 @@ PostgreSQL's <code>postgres_started</code> (from <code>alive</code>) is <strong>
 <p>✍️ <strong>Row 2.5:</strong> node before → after, the worst heartbeat gap, and <code>chain_ok</code>.</p>
 <hr />
 <h2 id="29-clean-up-your-terminal">2.9 Clean up your terminal<a class="headerlink" href="#29-clean-up-your-terminal" title="Permanent link">&para;</a></h2>
-<!-- 🎬 video slot 02-2-9-clean-up-terminal -->
-<p><a href="../.images/02-2-9-clean-up-terminal.mp4"><img alt="🎬 Video: 2.9 Clean up your terminal. Watch it, then do the same in the console" src="../.images/02-2-9-clean-up-terminal.jpg" /></a>
-<sub>🎬 <em>2.9 Clean up your terminal: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/02-2-9-clean-up-terminal.mp4</code>).</em></sub></p>
 <div class="highlight"><pre><span></span><code><span class="nb">kill</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>LOADER<span class="w"> </span>LM_AT
 <span class="c1"># keep TARGET and PGHOST if your next demo continues with this VM</span>
 </code></pre></div>
