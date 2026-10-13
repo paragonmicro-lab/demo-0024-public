@@ -1112,49 +1112,33 @@ then <strong>right-click → Copy</strong>. <strong>[verify: per browser]</stron
 </blockquote>
 <hr />
 <h2 id="04-test-the-cluster-then-your-vms-database">0.4 Test: the cluster, then your VM's database<a class="headerlink" href="#04-test-the-cluster-then-your-vms-database" title="Permanent link">&para;</a></h2>
-<p><strong>The cluster</strong> (either terminal):</p>
+<p><strong>The cluster:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>whoami<span class="w">            </span><span class="c1"># your class ID, e.g. student-01-0024-012@lab-paragonmicro.com</span>
 oc<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">         </span><span class="c1"># the cluster's nodes, all Ready</span>
 </code></pre></div>
-<p><strong>Your VM's database</strong>: PostgreSQL inside your Windows VM. Do this in <strong>your class terminal</strong> (0.3). You write a row
-into your own database and read it back. Every demo repeats this at each stage, so you can watch your rows grow as
-your VM moves.</p>
-<ol>
-<li><strong>Sign in to the database</strong>, once per terminal. Enter your class password:</li>
-</ol>
-<div class="highlight"><pre><span></span><code>dblogin<span class="w">              </span><span class="c1"># ✓ signed in to bcdr on win-pg-s01 (10.101.23.101) as student_01</span>
-</code></pre></div>
-<ol>
-<li><strong>Inject</strong> your first row: the class has started:</li>
-</ol>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>start-class<span class="w"> </span><span class="s2">"Lab 0: signed in"</span>
-</code></pre></div>
-<p>It prints the row it wrote: its <code>id</code>, the time, the stage <code>start-class</code>, and the start of its fingerprint (<code>sha</code>).</p>
-<ol>
-<li><strong>Read it back</strong>: every row you have written, oldest first:</li>
-</ol>
-<div class="highlight"><pre><span></span><code>sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
-</code></pre></div>
-<p>Your <code>start-class</code> row is there, with its time and note.</p>
-<ol>
-<li><strong>Prove</strong> it: no row lost, changed or reordered:</li>
-</ol>
-<div class="highlight"><pre><span></span><code>verify<span class="w">               </span><span class="c1"># chain_ok = t</span>
-</code></pre></div>
-<blockquote>
-<p>💡 <strong>From the Web Terminal or your own computer</strong>, the same <code>psql</code> runs inside your class terminal. For example:</p>
+<p><strong>Your VM's database</strong>, PostgreSQL inside your Windows VM. From <code>oc</code> anywhere (the Web Terminal, or your own computer),
+run <code>psql</code> inside your class terminal, with your class ID, your VM's address (0.1) and your database login. Example:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-U<span class="w"> </span>student_01<span class="w"> </span>-d<span class="w"> </span>bcdr
 </code></pre></div>
-<p><code>no pg_hba.conf entry … user "student-01"</code> means you typed a hyphen: the database login is <code>student_01</code>.</p>
+<p>Enter your class password. At the <code>bcdr=&gt;</code> prompt, <strong>inject</strong> your first row (the class has started), <strong>read it back</strong>,
+then <strong>prove</strong> your rows. Use your class ID where the example has <code>student-01-0024-012</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_mark</span><span class="p">(</span><span class="s1">'student-01-0024-012'</span><span class="p">,</span><span class="w"> </span><span class="s1">'start-class'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Lab 0: signed in'</span><span class="p">);</span><span class="w">   </span><span class="c1">-- inject</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">ts</span><span class="p">,</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">marks</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">                                  </span><span class="c1">-- read back</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_verify</span><span class="p">(</span><span class="s1">'student-01-0024-012'</span><span class="p">);</span><span class="w">                                     </span><span class="c1">-- chain_ok = t</span>
+<span class="err">\</span><span class="n">q</span>
+</code></pre></div>
+<p>Every demo does the same at each stage (<code>before-…</code>, <code>after-…</code>), so you watch your rows grow as your VM moves.</p>
+<blockquote>
+<p>💡 <code>no pg_hba.conf entry … user "student-01"</code> means you typed a hyphen: the database login is <code>student_01</code>. In your
+class terminal (0.3) the same three steps are short commands: <code>dblogin</code> once, then <code>mark start-class</code>, then <code>verify</code>.</p>
 </blockquote>
-<p>✅ <code>oc get nodes</code> lists the nodes Ready, and reading back your rows shows <code>start-class</code>, with <code>verify</code> reporting
-<code>chain_ok = t</code>.</p>
+<p>✅ <code>oc get nodes</code> lists the nodes Ready, and reading back your rows shows <code>start-class</code>, with <code>chain_ok = t</code>.</p>
 <hr />
 <h2 id="done">Done<a class="headerlink" href="#done" title="Permanent link">&para;</a></h2>
 <p>You are signed in to vCenter and both OpenShift clusters, you have a command line, and you reached your own VM's
 database. <strong>Go back to the <a href="../student-guide.html">Student Guide</a></strong> and continue with the next module, Demo 1.</p>
-<p>Every demo uses the class commands you just used (<code>mark</code>, then read back and <code>verify</code>), plus <code>load</code> and <code>alive</code>: they
-are in the <a href="toolkit.html">Toolkit</a>, which each demo points to when you need it.</p>
+<p>Every demo uses the class commands for the same inject, read back and prove (<code>mark</code>, <code>verify</code>), plus <code>load</code> and
+<code>alive</code>: they are in the <a href="toolkit.html">Toolkit</a>, which each demo points to when you need it.</p>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/cli_tools/openshift-cli-oc">OpenShift CLI (<code>oc</code>)</a></li>
