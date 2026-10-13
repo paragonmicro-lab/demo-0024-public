@@ -835,7 +835,7 @@
 
 <h1 id="lab-diagram">Lab diagram<a class="headerlink" href="#lab-diagram" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.2 · draft · 2026-10-12</strong> · class/demos/lab-diagram.md</p>
+<p><strong>Version 0.4.0 · draft · 2026-10-13</strong> · class/demos/lab-diagram.md</p>
 </blockquote>
 <p>One booking reserves <strong>three environments</strong> together: a vSphere landing zone (<code>lzN</code>) and two OpenShift clusters
 (<code>ocp-lzX</code> = <strong>site A</strong>, <code>ocp-lzY</code> = <strong>site B</strong>). They all run as VMs on the same four physical hosts
@@ -859,7 +859,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
   subgraph A["② Site A · OpenShift ocp-lzX"]
     direction LR
     A1["OpenShift Virtualization · ACM · cert-manager&lt;br/&gt;bridge → NAD vmnet(22+N)"]
-    A2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzY&lt;br/&gt;staged plans d1-&amp;lt;vm&amp;gt; (not started)"]
+    A2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzY&lt;br/&gt;staged plans d1-&amp;lt;vm&amp;gt; cold · d2-&amp;lt;vm&amp;gt; warm (not started)"]
     A3[("ODF (4 scratch SSDs)&lt;br/&gt;ceph-rbd-virtualization")]
     A4["one namespace per student (admin)&lt;br/&gt;with their browser terminal sql-client&lt;br/&gt;+ ovedr-app"]
     A1 --- A2 --- A3 --- A4
@@ -868,7 +868,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
   subgraph B["③ Site B · OpenShift ocp-lzY"]
     direction LR
     B1["OpenShift Virtualization · ACM · cert-manager&lt;br/&gt;the same bridges / NADs"]
-    B2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzX&lt;br/&gt;staged plans d1b-&amp;lt;vm&amp;gt;-to-lzY (not started)"]
+    B2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzX&lt;br/&gt;no staged plans: Demo 1c builds its own"]
     B3[("NFS · nfs-csi&lt;br/&gt;(ODF when more SSDs land)")]
     B4["one namespace per student (admin)&lt;br/&gt;with their browser terminal sql-client&lt;br/&gt;+ ovedr-app"]
     B1 --- B2 --- B3 --- B4
@@ -878,7 +878,6 @@ booking to booking. How each piece was built, from the CLI and in the console: <
   STU --&gt; A
   STU --&gt; B
   VS == "Demo 1 cold · Demo 2 warm (CBT)&lt;br/&gt;each VM keeps its own address (bridge map)" ==&gt; A
-  VS == "staged cold plan (site B)" ==&gt; B
   A == "Demo 1c cross-cluster OVE → OVE&lt;br/&gt;ODF → NFS storage migration" ==&gt; B
   A -. "Demo 4 ODF Regional-DR · RBD mirror every 15 min&lt;br/&gt;(needs ODF on both sites)" .-&gt; B
   B -. "ACM hub manages site A (BL-D11)" .-&gt; A</code></pre>
@@ -909,8 +908,8 @@ password to vCenter, both clusters and the Windows VMs.</p>
 <tr>
 <td>Customized by this demo</td>
 <td>the instructor's <code>win-pg-i01</code> (<code>vms/ovedr</code>, <code>.62</code>) and <strong>one full clone per student</strong> <code>win-pg-sNN</code> in <strong>that student's own folder</strong> <code>vms/students/&lt;class ID&gt;</code> (<code>.100+NN</code>), each with PostgreSQL (WAL on <code>L:</code>, data on <code>D:</code>), the toolkit, Windows logins and WinRM; each student may power, open the console, Edit Settings (CBT) and snapshot <strong>their own</strong> VM</td>
-<td>MTV with its console menu, providers + maps, <strong>a staged plan <code>d1-&lt;vm&gt;</code> per class VM (not started)</strong> landing each student's VM in <strong>that student's own namespace</strong> (their class ID, where they are admin), <code>ovedr-app</code> with <code>sql-client</code> and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class)</td>
-<td>the same as A, with <strong>staged plans <code>d1b-&lt;vm&gt;-to-&lt;lzY&gt;</code></strong>, plus the ACM hub role and DR (Demo 4)</td>
+<td>MTV with its console menu, providers + maps, <strong>staged plans <code>d1-&lt;vm&gt;</code> (cold) and <code>d2-&lt;vm&gt;</code> (warm) per class VM (not started)</strong> landing each student's VM in <strong>that student's own namespace</strong> (their class ID, where they are admin), <code>ovedr-app</code> with <code>sql-client</code> and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class)</td>
+<td>the same as A without staged plans (Demo 1c builds its own from site A), plus the ACM hub role and DR (Demo 4)</td>
 </tr>
 <tr>
 <td>Storage</td>
@@ -926,9 +925,9 @@ password to vCenter, both clusters and the Windows VMs.</p>
 </tr>
 <tr>
 <td>Demos</td>
-<td>1, 1b, 2 (source)</td>
-<td>1, 2 (target) · 3 (source) · 4 (primary)</td>
-<td>1b (target) · 3 (target) · 4 (DR site, hub)</td>
+<td>1, 2 (source)</td>
+<td>1, 2 (target) · 1c (source) · 4 (primary)</td>
+<td>1c (target) · 4 (DR site, hub)</td>
 </tr>
 </tbody>
 </table>

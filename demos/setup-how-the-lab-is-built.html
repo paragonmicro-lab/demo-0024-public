@@ -1275,7 +1275,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.0 · draft · 2026-10-12</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.6.0 · draft · 2026-10-13</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1908,22 +1908,13 @@ govc<span class="w"> </span>object.mv<span class="w"> </span><span class="s2">"<
 <td><strong><code>d2-&lt;vm&gt;</code></strong></td>
 <td>vSphere → site A, <strong>warm</strong> (Demo 2): lands as <code>&lt;vm&gt;-warm</code>. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking)</td>
 </tr>
-<tr>
-<td>site B</td>
-<td><strong><code>d1b-&lt;vm&gt;-to-&lt;B slot&gt;</code></strong></td>
-<td>vSphere → site B, cold (Demo 1b)</td>
-</tr>
-<tr>
-<td>site B</td>
-<td><strong><code>d2b-&lt;vm&gt;-to-&lt;B slot&gt;</code></strong></td>
-<td>vSphere → site B, <strong>warm</strong>: lands as <code>&lt;vm&gt;-warm</code>, waits on CBT like <code>d2-&lt;vm&gt;</code></td>
-</tr>
 </tbody>
 </table>
 <p>Each plan targets <strong>its VM's owner's namespace</strong>: a student's VM lands in that student's own namespace (their class ID,
 <code>$VMNS</code>), the instructor's <code>win-pg-i01</code> in <code>ovedr-app</code>. It uses the <strong>bridge</strong> network map when it exists (your VM keeps its own address), plus the
 site's storage map. CI waits until every plan is <strong>Ready</strong>: MTV found the VM and the maps validate. <strong>No plan is started.</strong>
-That is the one step left to you (Demo 1 / 1b). A plan that has started is never touched again.</p>
+That is the one step left to you (Demo 1, Demo 2). Site B gets no vSphere plans (since 2026-10-13): your VM reaches
+site B from site A in Demo 1c, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}{"\n"}'</span><span class="w">     </span><span class="c1"># True</span>

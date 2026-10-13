@@ -549,6 +549,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#addendum-how-the-lab-staged-this-demo-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Addendum: how the lab staged this demo, as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
@@ -974,6 +983,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#addendum-how-the-lab-staged-this-demo-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Addendum: how the lab staged this demo, as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
@@ -999,7 +1017,7 @@
 
 <h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration">Demo 2: VMware to OpenShift Virtualization (warm migration)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.0.0 · draft · 2026-10-13</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 2.1.0 · draft · 2026-10-13</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization again, this time
@@ -1340,6 +1358,72 @@ and <code>win-pg-s01-warm</code> (running), with the same address. Never run bot
 </tbody>
 </table>
 <p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <a href="../student-guide.html">Student guide</a>.</p>
+<h2 id="addendum-how-the-lab-staged-this-demo-as-code">Addendum: how the lab staged this demo, as code<a class="headerlink" href="#addendum-how-the-lab-staged-this-demo-as-code" title="Permanent link">&para;</a></h2>
+<p>The provider, the maps and the CI pipeline are the same as Demo 1's (<a href="01-vmware-to-ove-cold.html#addendum-how-the-lab-staged-this-demo-as-code">Demo 1 addendum</a>).
+A warm migration needs three more things, and CI declares each one:</p>
+<table>
+<thead>
+<tr>
+<th>CI job</th>
+<th>Code</th>
+<th>What it declares for warm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mtv-install</code></td>
+<td>Ansible role <code>mtv_operator</code></td>
+<td>the <strong>pre-copy interval</strong>: 5 minutes instead of MTV's default 60, so a class sees several rounds</td>
+</tr>
+<tr>
+<td><code>vddk</code></td>
+<td><code>automation/customize/vddk.sh</code></td>
+<td>the <strong>VDDK image</strong>: Broadcom's library, which can't be redistributed, built from the lab's private copy into the cluster's own registry, then set on the provider (<a href="setup-how-the-lab-is-built.html">Lab S §S.15</a>)</td>
+</tr>
+<tr>
+<td><code>stage</code></td>
+<td><code>automation/customize/stage.sh</code></td>
+<td>the <strong>warm plan</strong> <code>d2-&lt;vm&gt;</code>, landing as <code>&lt;vm&gt;-warm</code>. Staged and reported, never fatal: it waits for CBT, which you turn on in 2.2</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="c1"># the pre-copy interval, on MTV's own controller</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ForkliftController</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">forklift-controller</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">controller_precopy_interval</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span><span class="w">        </span><span class="c1"># minutes between pre-copy rounds</span>
+<span class="nn">---</span>
+<span class="c1"># the provider, plus the VDDK image (the only difference from Demo 1's)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Provider</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vsphere</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://vcenter01.demo.lab-paragonmicro.com/sdk</span>
+<span class="w">  </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">settings</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vddkInitImage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:8.0.3</span>
+<span class="nn">---</span>
+<span class="c1"># the staged warm plan: warm: true, and a target name so it never collides with Demo 1's copy</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Plan</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">d2-win-pg-s01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="p p-Indicator">,</span><span class="nt"> labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> ovedr/stage</span><span class="p">:</span><span class="w"> </span><span class="nv">plan</span><span class="p p-Indicator">,</span><span class="nt"> ovedr/type</span><span class="p">:</span><span class="w"> </span><span class="nv">warm</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">warm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">targetNamespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">student-01-0024-012</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> source</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">},</span><span class="nt"> destination</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">host</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">map</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01-net-bridge</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01-storage</span><span class="p p-Indicator">,</span><span class="nt">    namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">vms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">win-pg-s01</span><span class="p p-Indicator">,</span><span class="nt"> targetName</span><span class="p">:</span><span class="w"> </span><span class="nv">win-pg-s01-warm</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>What stays a hands-on step, on purpose: <strong>CBT</strong> (2.2). It's a setting on the VMware VM, which the lab could set too
+(<code>govc vm.change -e ctkEnabled=TRUE …</code>), but turning it on yourself is the lesson. Then the <strong>Migration</strong> and its
+<strong>cutover</strong> (2.3, 2.4).</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d2-win-pg-s01<span class="w"> </span>-o<span class="w"> </span>yaml
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span>ovedr-vcenter01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.settings}{"\n"}'</span>
+</code></pre></div>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a>: warm migration, VDDK and the pre-copy settings</li>

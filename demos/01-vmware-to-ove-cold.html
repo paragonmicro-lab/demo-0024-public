@@ -456,6 +456,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#addendum-how-the-lab-staged-this-demo-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Addendum: how the lab staged this demo, as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
@@ -956,6 +965,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#addendum-how-the-lab-staged-this-demo-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Addendum: how the lab staged this demo, as code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
@@ -981,7 +999,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.0.0 · draft · 2026-10-13</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.1.0 · draft · 2026-10-13</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1241,6 +1259,91 @@ reordered by the move.</p>
 </tbody>
 </table>
 <p><strong>Next:</strong> <a href="02-vmware-to-ove-warm.html">Demo 2: warm migration</a>.</p>
+<h2 id="addendum-how-the-lab-staged-this-demo-as-code">Addendum: how the lab staged this demo, as code<a class="headerlink" href="#addendum-how-the-lab-staged-this-demo-as-code" title="Permanent link">&para;</a></h2>
+<p>Nothing you used in this demo was clicked together. The class's CI (the GitHub Actions workflow <code>deploy.yml</code>, action
+<code>customize</code>) declared every object, and it runs again on every booking with the same result: run it twice and the
+second run changes nothing. In order:</p>
+<table>
+<thead>
+<tr>
+<th>CI job</th>
+<th>Code</th>
+<th>What it declares</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mtv-install</code></td>
+<td>Ansible role <code>mtv_operator</code></td>
+<td>checks MTV (installed by the OpenShift build, option <code>ove: cnv-mtv</code>), sets the pre-copy interval, grants students the right to create plans and migrations</td>
+</tr>
+<tr>
+<td><code>mtv-fabric</code></td>
+<td><code>automation/customize/mtv_fabric.sh</code></td>
+<td>the link to vCenter (a Secret + a <strong>Provider</strong>), and the <strong>NetworkMap</strong>s and <strong>StorageMap</strong></td>
+</tr>
+<tr>
+<td><code>stage</code></td>
+<td><code>automation/customize/stage.sh</code></td>
+<td>one <strong>Plan</strong> per class VM, <code>d1-&lt;vm&gt;</code> (cold) and <code>d2-&lt;vm&gt;</code> (warm), <strong>not started</strong></td>
+</tr>
+<tr>
+<td><code>migration-test</code></td>
+<td><code>automation/test/migrate_both.sh</code></td>
+<td>the proof: a test clone migrates from vSphere to each site with the same Plan + Migration you used, and its data is checked (action <code>test-migration</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>The chain MTV follows, and each object as the lab declares it (the Secret's password never appears in the code: CI
+reads it from the vault at run time):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1 · Provider: the link to vCenter. MTV reads its inventory (VMs, networks, datastores) through it.</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Provider</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vsphere</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://vcenter01.demo.lab-paragonmicro.com/sdk</span>
+<span class="w">  </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w">   </span><span class="c1"># user, password, the vCenter CA</span>
+<span class="nn">---</span>
+<span class="c1"># 2 · NetworkMap: vSphere port group → your VLAN's bridge on OpenShift, so the VM keeps its address</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NetworkMap</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01-net-bridge</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> source</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">},</span><span class="nt"> destination</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">host</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">map</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> source</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">vm-network</span><span class="w"> </span><span class="p p-Indicator">},</span><span class="nt"> destination</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> type</span><span class="p">:</span><span class="w"> </span><span class="nv">multus</span><span class="p p-Indicator">,</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">vmnet23</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">default</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nn">---</span>
+<span class="c1"># 3 · StorageMap: vSphere datastore → OpenShift storage class (ODF on site A)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StorageMap</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01-storage</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> source</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">},</span><span class="nt"> destination</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">host</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">map</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> source</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">coresan01_data00</span><span class="w"> </span><span class="p p-Indicator">},</span><span class="nt"> destination</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> storageClass</span><span class="p">:</span><span class="w"> </span><span class="nv">ocs-storagecluster-ceph-rbd-virtualization</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nn">---</span>
+<span class="c1"># 4 · Plan: which VM, to which project, through which maps. Staged, not started.</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forklift.konveyor.io/v1beta1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Plan</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">d1-win-pg-s01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="p p-Indicator">,</span><span class="nt"> labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> ovedr/stage</span><span class="p">:</span><span class="w"> </span><span class="nv">plan</span><span class="p p-Indicator">,</span><span class="nt"> ovedr/type</span><span class="p">:</span><span class="w"> </span><span class="nv">cold</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">warm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">targetNamespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">student-01-0024-012</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> source</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">},</span><span class="nt"> destination</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">host</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">map</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01-net-bridge</span><span class="p p-Indicator">,</span><span class="nt"> namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">ovedr-vcenter01-storage</span><span class="p p-Indicator">,</span><span class="nt">    namespace</span><span class="p">:</span><span class="w"> </span><span class="nv">openshift-mtv</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">vms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">win-pg-s01</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>5 · <strong>Migration</strong>: the only object left to you. The console's <strong>Start</strong> creates it, as does the CLI box in 1.3.</p>
+<p>Read the live ones from your Web Terminal:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span>ovedr-vcenter01<span class="w"> </span>-o<span class="w"> </span>yaml
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>networkmap<span class="w"> </span>ovedr-vcenter01-net-bridge<span class="w"> </span>-o<span class="w"> </span>yaml
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>storagemap<span class="w"> </span>ovedr-vcenter01-storage<span class="w"> </span>-o<span class="w"> </span>yaml
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-o<span class="w"> </span>yaml
+</code></pre></div>
+<p>Field by field, with the console screens for each: <a href="setup-how-the-lab-is-built.html">Lab S §S.5–S.8 and §S.12</a>.</p>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a></li>
