@@ -1115,9 +1115,10 @@ then <strong>right-click → Copy</strong>. <strong>[verify: per browser]</stron
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>whoami<span class="w">            </span><span class="c1"># your class ID, e.g. student-01-0024-012@lab-paragonmicro.com</span>
 oc<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">         </span><span class="c1"># the cluster's nodes, all Ready</span>
 </code></pre></div>
-<p><strong>Your VM's database</strong>, PostgreSQL inside your Windows VM. From <code>oc</code> anywhere (the Web Terminal, or your own computer),
-each step is <strong>one line</strong>: <code>oc exec</code> runs it inside your class terminal (<code>sql-client</code>), which already knows your VM's
-address and your database login. Use your class ID where the example has <code>student-01-0024-012</code>.</p>
+<p><strong>Your VM's database</strong>, PostgreSQL inside your Windows VM, at <strong>your VM's address from 0.1</strong> (the <code>-h</code> below). From <code>oc</code>
+anywhere (the Web Terminal, or your own computer), each step is <strong>one line</strong>: <code>oc exec</code> runs it inside your class
+terminal (<code>sql-client</code>). Use your class ID where the example has <code>student-01-0024-012</code>, and your VM's address where it
+has <code>10.101.23.101</code>.</p>
 <ol>
 <li><strong>Sign in to the database</strong>, once (enter your class password):</li>
 </ol>
@@ -1126,23 +1127,20 @@ address and your database login. Use your class ID where the example has <code>s
 <ol>
 <li><strong>Inject</strong> a row: the class has started:</li>
 </ol>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>mark<span class="w"> </span>start-class<span class="w"> </span><span class="s2">"Lab 0: signed in"</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');"</span>
 </code></pre></div>
 <ol>
 <li><strong>Read back</strong> every row you have posted, oldest first:</li>
 </ol>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
 </code></pre></div>
 <ol>
 <li><strong>Prove</strong> them: no row lost, changed or reordered (one summary line, <code>chain_ok = t</code>):</li>
 </ol>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>verify
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
 </code></pre></div>
-<p>Every demo repeats steps 2 and 3 at each stage (for example <code>mark before-vmware-cold-migration</code>), so the read-back
-lists your messages in order as the class goes on.</p>
 <blockquote>
-<p>💡 <strong>Tips.</strong> Inside your class terminal (0.3) the same commands are just <code>dblogin</code>, <code>mark …</code>, <code>sql -c "…"</code> and <code>verify</code>.
-If <code>mark</code> says <em>run: dblogin</em>, your class terminal restarted: do step 1 again.</p>
+<p>💡 If a step says <em>First sign in to your VM's database … dblogin</em>, your class terminal restarted: do step 1 again.</p>
 </blockquote>
 <p>✅ <code>oc get nodes</code> lists the nodes Ready, the read-back lists your <code>start-class</code> row, and <code>verify</code> shows <code>chain_ok = t</code>.</p>
 <hr />
