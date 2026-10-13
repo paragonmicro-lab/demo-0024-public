@@ -1,13 +1,13 @@
 ---
 title: "Lab 0 — Access and tools (5 minutes)"
 subtitle: "Sign in to vCenter and both OpenShift clusters · open a command line · reach the cluster and your VM's database"
-version: 1.0.0
-date: 2026-10-12
+version: 1.1.0
+date: 2026-10-13
 ---
 
 # Lab 0: Access and tools
 
-> **Version 1.0.0 · draft · 2026-10-12** · class/demos/00-access-and-tools.md
+> **Version 1.1.0 · draft · 2026-10-13** · class/demos/00-access-and-tools.md
 
 **About 5 minutes.** You sign in to the lab in your browser, open a command line, and prove you can reach the cluster
 and your own VM's database. One recording covers the whole lab: watch it, then do the same with the steps below.
@@ -18,6 +18,15 @@ and your own VM's database. One recording covers the whole lab: watch it, then d
 
 **You need** your class ID and password from the instructor (one login for everything), and your booking's three
 addresses. The instructor gives you `N`, `A` and `B`; the examples below use `1`, `ocp-lz1` and `ocp-lz2`.
+
+**Your names, by example.** The examples in this lab are for **`student-01`** on booking **`0024-012`**. Swap in your own:
+
+| What | Example | Where it comes from |
+|---|---|---|
+| Class ID (also your project) | `student-01-0024-012` | your sign-in name, the part before `@` |
+| Your VM | `win-pg-s01` | `s` + your student number |
+| Your VM's address | `10.101.23.101` | vCenter, step 0.1 |
+| Database login | `student_01` | your student number with an **underscore**, not a hyphen, and not your email address |
 
 | Open in a browser tab | Address |
 |---|---|
@@ -43,7 +52,8 @@ addresses. The instructor gives you `N`, `A` and `B`; the examples below use `1`
 
 1. Open the **site A** console tab and choose **Entra (SSO)**. Your vCenter sign-in carries over.
 2. Do the same in the **site B** console tab.
-3. In each, **Home → Projects** shows your own project, named your class ID. You are admin there.
+3. In each, **Home → Projects** shows your own project, named your class ID (for example `student-01-0024-012`). You
+   are admin there.
 
 ---
 
@@ -68,10 +78,13 @@ class needs only your browser. Paste the copied line into your terminal and pres
 Nothing to install. Use one of:
 
 - **The console's Web Terminal:** the **`>_`** icon at the top right of the console opens a terminal already signed
-  in as you. Every lab cluster includes it. If you don't see `>_`, use your class terminal.
-  **[verify: `>_` for a student account on a booking]**
-- **Your class terminal:** in your project, **Workloads → Pods → `sql-client-…` → Terminal**. It has `oc` and
-  `psql` ready. Sign its `oc` in: type `oclogin` and a space, paste the copied line, and press Enter.
+  in as you. Click **Start** (leave the project as it is). It has `oc`, but **not** `psql` or the class commands.
+- **Your class terminal:** in your project, **Workloads → Pods → `sql-client-…` → Terminal**. It has `oc`, `psql`
+  and the class commands (`dblogin`, `mark`, `sql`, `verify`) ready, and already knows your VM's address and your
+  database login. Sign its `oc` in: type `oclogin` and a space, paste the copied line, and press Enter.
+
+> ⚠ **Not the Windows VM's command prompt.** `psql` isn't on its path; everything in this lab runs in one of the two
+> terminals above.
 
 > 📋 **Copy and paste:** paste with **right-click → Paste** (or Ctrl+Shift+V, ⌘V on a Mac); copy by selecting the text,
 > then **right-click → Copy**. **[verify: per browser]**
@@ -80,34 +93,55 @@ Nothing to install. Use one of:
 
 ## 0.4 Test: the cluster, then your VM's database
 
-**The cluster:**
+**The cluster** (either terminal):
 
 ```bash
-oc whoami            # your class ID
+oc whoami            # your class ID, e.g. student-01-0024-012@lab-paragonmicro.com
 oc get nodes         # the cluster's nodes, all Ready
 ```
 
-**Your VM's database**, PostgreSQL inside your Windows VM, as `student_NN` (your number, with an underscore) at the
-address you wrote down in 0.1. In **your class terminal**, `psql` is already there:
+**Your VM's database**: PostgreSQL inside your Windows VM. Do this in **your class terminal** (0.3). You write a row
+into your own database and read it back. Every demo repeats this at each stage, so you can watch your rows grow as
+your VM moves.
 
-```bash
-psql -h <your VM address> -U student_NN -d bcdr
-```
+1. **Sign in to the database**, once per terminal. Enter your class password:
 
-From `oc` anywhere else (your computer, or the Web Terminal), run the same `psql` inside your class terminal:
+   ```bash
+   dblogin              # ✓ signed in to bcdr on win-pg-s01 (10.101.23.101) as student_01
+   ```
 
-```bash
-oc exec -it -n <your class ID> deploy/sql-client -- psql -h <your VM address> -U student_NN -d bcdr
-```
+2. **Inject** your first row: the class has started:
 
-Enter your class password. At the `bcdr=>` prompt:
+   ```bash
+   mark start-class "Lab 0: signed in"
+   ```
 
-```sql
-SELECT current_user, inet_server_addr() AS vm_address, now();   -- student_NN, your VM's address
-\q
-```
+   It prints the row it wrote: its `id`, the time, the stage `start-class`, and the start of its fingerprint (`sha`).
 
-✅ `oc get nodes` lists the nodes, and PostgreSQL answers as `student_NN` from your VM's address.
+3. **Read it back**: every row you have written, oldest first:
+
+   ```bash
+   sql -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+   ```
+
+   Your `start-class` row is there, with its time and note.
+
+4. **Prove** it: no row lost, changed or reordered:
+
+   ```bash
+   verify               # chain_ok = t
+   ```
+
+> 💡 **From the Web Terminal or your own computer**, the same `psql` runs inside your class terminal. For example:
+>
+> ```bash
+> oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr
+> ```
+>
+> `no pg_hba.conf entry … user "student-01"` means you typed a hyphen: the database login is `student_01`.
+
+✅ `oc get nodes` lists the nodes Ready, and reading back your rows shows `start-class`, with `verify` reporting
+`chain_ok = t`.
 
 ---
 
@@ -116,8 +150,8 @@ SELECT current_user, inet_server_addr() AS vm_address, now();   -- student_NN, y
 You are signed in to vCenter and both OpenShift clusters, you have a command line, and you reached your own VM's
 database. **Go back to the [Student Guide](../student-guide.md)** and continue with the next module, Demo 1.
 
-Every demo uses the class commands that write and prove your data (`mark`, `verify`, `alive`): they are in the
-[Toolkit](toolkit.md), which each demo points to when you need it.
+Every demo uses the class commands you just used (`mark`, then read back and `verify`), plus `load` and `alive`: they
+are in the [Toolkit](toolkit.md), which each demo points to when you need it.
 
 ## Thank you
 
