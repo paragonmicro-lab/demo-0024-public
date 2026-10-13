@@ -93,55 +93,36 @@ Nothing to install. Use one of:
 
 ## 0.4 Test: the cluster, then your VM's database
 
-**The cluster** (either terminal):
+**The cluster:**
 
 ```bash
 oc whoami            # your class ID, e.g. student-01-0024-012@lab-paragonmicro.com
 oc get nodes         # the cluster's nodes, all Ready
 ```
 
-**Your VM's database**: PostgreSQL inside your Windows VM. Do this in **your class terminal** (0.3). You write a row
-into your own database and read it back. Every demo repeats this at each stage, so you can watch your rows grow as
-your VM moves.
+**Your VM's database**, PostgreSQL inside your Windows VM. From `oc` anywhere (the Web Terminal, or your own computer),
+run `psql` inside your class terminal, with your class ID, your VM's address (0.1) and your database login. Example:
 
-1. **Sign in to the database**, once per terminal. Enter your class password:
+```bash
+oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr
+```
 
-   ```bash
-   dblogin              # ✓ signed in to bcdr on win-pg-s01 (10.101.23.101) as student_01
-   ```
+Enter your class password. At the `bcdr=>` prompt, **inject** your first row (the class has started), **read it back**,
+then **prove** your rows. Use your class ID where the example has `student-01-0024-012`:
 
-2. **Inject** your first row: the class has started:
+```sql
+SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');   -- inject
+SELECT id, ts, stage, payload FROM marks ORDER BY id;                                  -- read back
+SELECT * FROM ovedr_verify('student-01-0024-012');                                     -- chain_ok = t
+\q
+```
 
-   ```bash
-   mark start-class "Lab 0: signed in"
-   ```
+Every demo does the same at each stage (`before-…`, `after-…`), so you watch your rows grow as your VM moves.
 
-   It prints the row it wrote: its `id`, the time, the stage `start-class`, and the start of its fingerprint (`sha`).
+> 💡 `no pg_hba.conf entry … user "student-01"` means you typed a hyphen: the database login is `student_01`. In your
+> class terminal (0.3) the same three steps are short commands: `dblogin` once, then `mark start-class`, then `verify`.
 
-3. **Read it back**: every row you have written, oldest first:
-
-   ```bash
-   sql -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
-   ```
-
-   Your `start-class` row is there, with its time and note.
-
-4. **Prove** it: no row lost, changed or reordered:
-
-   ```bash
-   verify               # chain_ok = t
-   ```
-
-> 💡 **From the Web Terminal or your own computer**, the same `psql` runs inside your class terminal. For example:
->
-> ```bash
-> oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr
-> ```
->
-> `no pg_hba.conf entry … user "student-01"` means you typed a hyphen: the database login is `student_01`.
-
-✅ `oc get nodes` lists the nodes Ready, and reading back your rows shows `start-class`, with `verify` reporting
-`chain_ok = t`.
+✅ `oc get nodes` lists the nodes Ready, and reading back your rows shows `start-class`, with `chain_ok = t`.
 
 ---
 
@@ -150,8 +131,8 @@ your VM moves.
 You are signed in to vCenter and both OpenShift clusters, you have a command line, and you reached your own VM's
 database. **Go back to the [Student Guide](../student-guide.md)** and continue with the next module, Demo 1.
 
-Every demo uses the class commands you just used (`mark`, then read back and `verify`), plus `load` and `alive`: they
-are in the [Toolkit](toolkit.md), which each demo points to when you need it.
+Every demo uses the class commands for the same inject, read back and prove (`mark`, `verify`), plus `load` and
+`alive`: they are in the [Toolkit](toolkit.md), which each demo points to when you need it.
 
 ## Thank you
 
