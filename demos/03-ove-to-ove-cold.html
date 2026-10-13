@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/03-ove-to-ove-cold.html">
       
       
-        <link rel="prev" href="01b-vmware-to-both-sites.html">
+        <link rel="prev" href="05-oadp-vm-backup.html">
       
       
         <link rel="next" href="../downloads.html">
@@ -357,6 +357,48 @@
   
   
     <li class="md-nav__item">
+      <a href="01a-snapshot-restore.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1a: Snapshot and restore (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: Live and storage migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -562,27 +604,6 @@
             More demos
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="01b-vmware-to-both-sites.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 1b: VMware → both clusters
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -1533,7 +1554,7 @@ console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Consol
 <p><a href="../.images/03-3-1-prerequisites-vm-running-site-a.mp4"><img alt="🎬 Video: 3.1 Prerequisites: your VM is running on site A. Watch it, then do the same in the console" src="../.images/03-3-1-prerequisites-vm-running-site-a.jpg" /></a>
 <sub>🎬 <em>3.1 Prerequisites: your VM is running on site A: a recording of this whole section, done in the console (placeholder until recorded: <code>class/.images/03-3-1-prerequisites-vm-running-site-a.mp4</code>).</em></sub></p>
 <p>This demo starts where Demo 1 ended: <code>$VM</code> is running on site A in your namespace <code>$VMNS</code>. (Haven't run Demo 1?
-Start your staged plan <code>d1-&lt;VM&gt;</code> on site A first: Demo 1 §1.5.)</p>
+Start your staged plan <code>d1-&lt;VM&gt;</code> on site A first: <a href="01-vmware-to-ove-cold.html">Demo 1 §1.3</a>.)</p>
 <div class="highlight"><pre><span></span><code>where<span class="w">                                          </span><span class="c1"># site-a Running  node=…   /   site-b -</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span>
@@ -2036,7 +2057,7 @@ cluster trust are the foundation of the disaster-recovery demo that follows.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="01b-vmware-to-both-sites.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1b: VMware → both clusters">
+          <a href="05-oadp-vm-backup.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 5: OADP backup and restore (bonus)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2046,7 +2067,7 @@ cluster trust are the foundation of the disaster-recovery demo that follows.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Demo 1b: VMware → both clusters
+                Demo 5: OADP backup and restore (bonus)
               </div>
             </div>
           </a>

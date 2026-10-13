@@ -357,6 +357,48 @@
   
   
     <li class="md-nav__item">
+      <a href="01a-snapshot-restore.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1a: Snapshot and restore (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: Live and storage migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -560,27 +602,6 @@
             More demos
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="01b-vmware-to-both-sites.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 1b: VMware → both clusters
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -1764,7 +1785,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
   <code>ovedr-students-edit</code> (ClusterRole <code>edit</code>, group <code>demo-students</code>), the instructor VM's Service <code>win-pg-i01-sql</code>, Secret
   <strong><code>bcdr-db</code></strong> (the <code>bcdr</code> database password, from the vault), and Deployment <strong><code>sql-client</code></strong>
   (<code>registry.redhat.io/rhel9/postgresql-16</code>), the instructor's tool as the database owner (<code>bcdr</code>): the healthcheck
-  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1 Bonus B). Students
+  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1a). Students
   never need it.
 - ClusterRole + ClusterRoleBinding <strong><code>ovedr-class-read</code></strong>: students may read NNCPs and node network states, storage
   classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.</p>

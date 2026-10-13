@@ -433,6 +433,48 @@
   
   
     <li class="md-nav__item">
+      <a href="demos/01a-snapshot-restore.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1a: Snapshot and restore (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/01b-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: Live and storage migration (bonus)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="demos/02-vmware-to-ove-warm.html" class="md-nav__link">
         
   
@@ -636,27 +678,6 @@
             More demos
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="demos/01b-vmware-to-both-sites.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 1b: VMware → both clusters
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -1018,9 +1039,9 @@ knows your own (type <code>ovedr</code>).</p>
 <tr>
 <td>1</td>
 <td><a href="demos/01-vmware-to-ove-cold.html">Cold migration</a></td>
-<td>inspect your VM and the OpenShift side; start your staged plan; swap VMware Tools for virtio</td>
-<td>80 min</td>
-<td>A: live migration (15 min) · B: snapshot and restore (25 min)</td>
+<td>check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows</td>
+<td>45 min</td>
+<td><a href="demos/01a-snapshot-restore.html">1a: snapshot and restore</a> (25 min) · <a href="demos/01b-live-and-storage-migration.html">1b: live and storage migration</a> (20 min)</td>
 </tr>
 <tr>
 <td>2</td>
@@ -1056,13 +1077,6 @@ knows your own (type <code>ovedr</code>).</p>
 <td>back up your namespace, delete your VM, restore it, prove the data</td>
 <td>30 min</td>
 <td><em>framework: when OADP is staged</em></td>
-</tr>
-<tr>
-<td>More</td>
-<td><a href="demos/01b-vmware-to-both-sites.html">Demo 1b: VMware → both clusters</a></td>
-<td>a plan to site A from the terminal; your staged plan to site B in the console</td>
-<td>40 min</td>
-<td>—</td>
 </tr>
 <tr>
 <td>More</td>
