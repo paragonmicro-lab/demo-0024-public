@@ -889,7 +889,7 @@
 
 <h1 id="student-guide">Student Guide<a class="headerlink" href="#student-guide" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.8.0 · draft · 2026-10-12</strong> · class/student-guide.md</p>
+<p><strong>Version 0.8.1 · draft · 2026-10-13</strong> · class/student-guide.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You take a real Windows Server + PostgreSQL VM from VMware vSphere onto Red Hat OpenShift Virtualization, cold and then
@@ -999,9 +999,9 @@ knows your own (type <code>ovedr</code>).</p>
 <tr>
 <td>2</td>
 <td><a href="demos/02-vmware-to-ove-warm.html">Warm migration</a></td>
-<td>enable CBT, pre-copy while the VM runs, cut over in moments</td>
+<td>turn on CBT, start the warm plan while the VM runs, keep writing, cut over; inject, read back and measure the outage</td>
 <td>60 min</td>
-<td>§2.8 live migration (15 min)</td>
+<td>the Demo 1 bonus labs, on the warm copy</td>
 </tr>
 </tbody>
 </table>
@@ -1033,10 +1033,10 @@ knows your own (type <code>ovedr</code>).</p>
 </tr>
 </tbody>
 </table>
-<p>Reference: <a href="demos/toolkit.html">Toolkit</a> (your terminal, the data commands, the proof table) · <a href="demos/setup-how-the-lab-is-built.html">Lab S</a>
+<p>Reference: <a href="demos/toolkit.html">Toolkit</a> (your terminal and the data commands) · <a href="demos/setup-how-the-lab-is-built.html">Lab S</a>
 (how every staged piece was built, with the commands and the Red Hat docs) · <a href="demos/lab-diagram.html">Lab diagram</a>.</p>
-<p>Times are estimates until the class has been timed. Demo 1 starts your <strong>proof table</strong> (<a href="demos/toolkit.html">Toolkit</a>); each demo adds rows (your last
-mark, <code>chain_ok</code>, the fingerprint, and each move's outage, bytes and time), and by the end it is your evidence.</p>
+<p>Times are estimates until the class has been timed. Every demo ends the same way: you read your rows back, and
+<code>ovedr_verify</code> shows <code>chain_ok = t</code>. That read-back is your evidence that nothing was lost.</p>
 <p><strong>Getting help:</strong> a step marked <strong>[verify]</strong> is still being proven in the lab. If one fails, tell the instructor rather
 than improvising. Each section has a 🎬 recording of the same steps in the console.</p>
 <p><strong>Red Hat documentation:</strong>

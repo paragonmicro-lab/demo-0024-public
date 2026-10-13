@@ -24,7 +24,7 @@
     
     
       
-        <title>Demo 2 — Warm migration: VMware to OpenShift Virtualization with minimal downtime - VMware to OpenShift Virtualization: student guide</title>
+        <title>Demo 2 — VMware to OpenShift Virtualization: warm migration - VMware to OpenShift Virtualization: student guide</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#demo-2-warm-migration-vsphere-ove" class="md-skip">
+        <a href="#demo-2-vmware-to-openshift-virtualization-warm-migration" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Demo 2 — Warm migration: VMware to OpenShift Virtualization with minimal downtime
+              Demo 2 — VMware to OpenShift Virtualization: warm migration
             
           </span>
         </div>
@@ -477,305 +477,74 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+  <a href="#20-inject-the-demo-has-started" class="md-nav__link">
     <span class="md-ellipsis">
-      How the lab is set up for this demo
+      2.0 Inject: the demo has started
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#21-prerequisites-and-the-starting-state" class="md-nav__link">
+  <a href="#21-check-the-link-to-vcenter-and-your-warm-plan" class="md-nav__link">
     <span class="md-ellipsis">
-      2.1 Prerequisites and the starting state
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.1 Prerequisites and the starting state">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-name-your-vm-gets-on-openshift" class="md-nav__link">
-    <span class="md-ellipsis">
-      The name your VM gets on OpenShift
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-the-provider-can-do-warm" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: the provider can do warm
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Check: the provider can do warm">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#instructor-only-if-ci-did-not-set-them" class="md-nav__link">
-    <span class="md-ellipsis">
-      🧑‍🏫 Instructor only: if CI did not set them
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-your-vm-is-up-and-writing-on-vsphere" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: your VM is up and writing on vSphere
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#22-why-warm-and-why-it-needs-cbt" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.2 Why warm, and why it needs CBT
+      2.1 Check the link to vCenter, and your warm plan
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#23-enable-changed-block-tracking" class="md-nav__link">
+  <a href="#22-turn-on-changed-block-tracking" class="md-nav__link">
     <span class="md-ellipsis">
-      2.3 Enable Changed Block Tracking
+      2.2 Turn on Changed Block Tracking
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.3 Enable Changed Block Tracking">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#leave-a-mark-then-shut-your-vm-down-cleanly" class="md-nav__link">
-    <span class="md-ellipsis">
-      Leave a mark, then shut your VM down cleanly
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#find-the-exact-disk-keys-first" class="md-nav__link">
-    <span class="md-ellipsis">
-      Find the exact disk keys first
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-the-parameters-vm-powered-off" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set the parameters (VM powered off)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#power-your-vm-back-on" class="md-nav__link">
-    <span class="md-ellipsis">
-      Power your VM back on
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-cbt-is-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: CBT is active
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#24-make-the-database-busy" class="md-nav__link">
+  <a href="#23-start-the-warm-migration-and-keep-writing" class="md-nav__link">
     <span class="md-ellipsis">
-      2.4 Make the database busy
+      2.3 Start the warm migration, and keep writing
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.4 Make the database busy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#in-the-guest" class="md-nav__link">
-    <span class="md-ellipsis">
-      In the guest
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-your-terminal" class="md-nav__link">
-    <span class="md-ellipsis">
-      From your terminal
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#25-your-warm-plan-staged-waiting-for-cbt" class="md-nav__link">
+  <a href="#24-inject-then-cut-over" class="md-nav__link">
     <span class="md-ellipsis">
-      2.5 Your warm plan: staged, waiting for CBT
+      2.4 Inject, then cut over
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.5 Your warm plan: staged, waiting for CBT">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#before-23-the-plan-flags-cbt-expected" class="md-nav__link">
-    <span class="md-ellipsis">
-      Before 2.3: the plan flags CBT (expected)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-it-yourself-learning-path-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      Build it yourself (learning path, optional)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#start-it" class="md-nav__link">
-    <span class="md-ellipsis">
-      Start it
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-watch-the-pre-copies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: watch the pre-copies
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#26-cutover-the-only-downtime" class="md-nav__link">
+  <a href="#25-review-your-vm-on-openshift" class="md-nav__link">
     <span class="md-ellipsis">
-      2.6 Cutover: the only downtime
+      2.5 Review your VM on OpenShift
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.6 Cutover: the only downtime">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cut-over-now" class="md-nav__link">
-    <span class="md-ellipsis">
-      Cut over now
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#27-validate-on-openshift" class="md-nav__link">
+  <a href="#26-inject-the-migration-is-complete-read-back-and-measure-the-outage" class="md-nav__link">
     <span class="md-ellipsis">
-      2.7 Validate on OpenShift
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.7 Validate on OpenShift">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-vm-keeps-its-address" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your VM keeps its address
+      2.6 Inject: the migration is complete, read back, and measure the outage
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#check-every-row-arrived-in-order-unaltered" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#bonus-labs-optional" class="md-nav__link">
     <span class="md-ellipsis">
-      Check: every row arrived, in order, unaltered
+      Bonus labs (optional)
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-the-real-downtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: the real downtime
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" class="md-nav__link">
-    <span class="md-ellipsis">
-      ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-your-file-came-across-too" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: your file came across too
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -783,57 +552,6 @@
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#28-bonus-live-migrate-the-vm-between-nodes" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.8 Bonus: live-migrate the VM between nodes
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.8 Bonus: live-migrate the VM between nodes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#is-it-live-migratable" class="md-nav__link">
-    <span class="md-ellipsis">
-      Is it live-migratable?
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#inject-migrate-verify" class="md-nav__link">
-    <span class="md-ellipsis">
-      Inject, migrate, verify
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#29-clean-up-your-terminal" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.9 Clean up your terminal
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#proof-table-demo-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      Proof table: Demo 2
     </span>
   </a>
   
@@ -1184,305 +902,74 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
+  <a href="#20-inject-the-demo-has-started" class="md-nav__link">
     <span class="md-ellipsis">
-      How the lab is set up for this demo
+      2.0 Inject: the demo has started
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#21-prerequisites-and-the-starting-state" class="md-nav__link">
+  <a href="#21-check-the-link-to-vcenter-and-your-warm-plan" class="md-nav__link">
     <span class="md-ellipsis">
-      2.1 Prerequisites and the starting state
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.1 Prerequisites and the starting state">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-name-your-vm-gets-on-openshift" class="md-nav__link">
-    <span class="md-ellipsis">
-      The name your VM gets on OpenShift
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-the-provider-can-do-warm" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: the provider can do warm
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Check: the provider can do warm">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#instructor-only-if-ci-did-not-set-them" class="md-nav__link">
-    <span class="md-ellipsis">
-      🧑‍🏫 Instructor only: if CI did not set them
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-your-vm-is-up-and-writing-on-vsphere" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: your VM is up and writing on vSphere
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#22-why-warm-and-why-it-needs-cbt" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.2 Why warm, and why it needs CBT
+      2.1 Check the link to vCenter, and your warm plan
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#23-enable-changed-block-tracking" class="md-nav__link">
+  <a href="#22-turn-on-changed-block-tracking" class="md-nav__link">
     <span class="md-ellipsis">
-      2.3 Enable Changed Block Tracking
+      2.2 Turn on Changed Block Tracking
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.3 Enable Changed Block Tracking">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#leave-a-mark-then-shut-your-vm-down-cleanly" class="md-nav__link">
-    <span class="md-ellipsis">
-      Leave a mark, then shut your VM down cleanly
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#find-the-exact-disk-keys-first" class="md-nav__link">
-    <span class="md-ellipsis">
-      Find the exact disk keys first
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set-the-parameters-vm-powered-off" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set the parameters (VM powered off)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#power-your-vm-back-on" class="md-nav__link">
-    <span class="md-ellipsis">
-      Power your VM back on
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-cbt-is-active" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: CBT is active
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#24-make-the-database-busy" class="md-nav__link">
+  <a href="#23-start-the-warm-migration-and-keep-writing" class="md-nav__link">
     <span class="md-ellipsis">
-      2.4 Make the database busy
+      2.3 Start the warm migration, and keep writing
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.4 Make the database busy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#in-the-guest" class="md-nav__link">
-    <span class="md-ellipsis">
-      In the guest
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-your-terminal" class="md-nav__link">
-    <span class="md-ellipsis">
-      From your terminal
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#25-your-warm-plan-staged-waiting-for-cbt" class="md-nav__link">
+  <a href="#24-inject-then-cut-over" class="md-nav__link">
     <span class="md-ellipsis">
-      2.5 Your warm plan: staged, waiting for CBT
+      2.4 Inject, then cut over
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.5 Your warm plan: staged, waiting for CBT">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#before-23-the-plan-flags-cbt-expected" class="md-nav__link">
-    <span class="md-ellipsis">
-      Before 2.3: the plan flags CBT (expected)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#build-it-yourself-learning-path-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      Build it yourself (learning path, optional)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#start-it" class="md-nav__link">
-    <span class="md-ellipsis">
-      Start it
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-watch-the-pre-copies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: watch the pre-copies
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#26-cutover-the-only-downtime" class="md-nav__link">
+  <a href="#25-review-your-vm-on-openshift" class="md-nav__link">
     <span class="md-ellipsis">
-      2.6 Cutover: the only downtime
+      2.5 Review your VM on OpenShift
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2.6 Cutover: the only downtime">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cut-over-now" class="md-nav__link">
-    <span class="md-ellipsis">
-      Cut over now
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#27-validate-on-openshift" class="md-nav__link">
+  <a href="#26-inject-the-migration-is-complete-read-back-and-measure-the-outage" class="md-nav__link">
     <span class="md-ellipsis">
-      2.7 Validate on OpenShift
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.7 Validate on OpenShift">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#your-vm-keeps-its-address" class="md-nav__link">
-    <span class="md-ellipsis">
-      Your VM keeps its address
+      2.6 Inject: the migration is complete, read back, and measure the outage
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#check-every-row-arrived-in-order-unaltered" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#bonus-labs-optional" class="md-nav__link">
     <span class="md-ellipsis">
-      Check: every row arrived, in order, unaltered
+      Bonus labs (optional)
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-the-real-downtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: the real downtime
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" class="md-nav__link">
-    <span class="md-ellipsis">
-      ✅ Check: VMware Tools out, virtio and the QEMU guest agent in
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#check-your-file-came-across-too" class="md-nav__link">
-    <span class="md-ellipsis">
-      Check: your file came across too
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1490,57 +977,6 @@
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#28-bonus-live-migrate-the-vm-between-nodes" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.8 Bonus: live-migrate the VM between nodes
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2.8 Bonus: live-migrate the VM between nodes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#is-it-live-migratable" class="md-nav__link">
-    <span class="md-ellipsis">
-      Is it live-migratable?
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#inject-migrate-verify" class="md-nav__link">
-    <span class="md-ellipsis">
-      Inject, migrate, verify
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#29-clean-up-your-terminal" class="md-nav__link">
-    <span class="md-ellipsis">
-      2.9 Clean up your terminal
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#proof-table-demo-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      Proof table: Demo 2
     </span>
   </a>
   
@@ -1561,109 +997,86 @@
                   
 
 
-<h1 id="demo-2-warm-migration-vsphere-ove">Demo 2: Warm migration, vSphere → OVE<a class="headerlink" href="#demo-2-warm-migration-vsphere-ove" title="Permanent link">&para;</a></h1>
+<h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration">Demo 2: VMware to OpenShift Virtualization (warm migration)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.0 · draft · 2026-10-12</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 2.0.0 · draft · 2026-10-13</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
-<p>In this demo you migrate a running VMware VM to OpenShift Virtualization while it keeps serving its database.
-The only outage is a short cutover. You will turn on vSphere Changed Block Tracking (CBT) for the VM and for each
-of its disks, and see why MTV needs it to copy only what changed between rounds. You will load the database while
-the disks pre-copy, cut over, and measure the real downtime from the VM's own heartbeat. Finally, you will prove
-with your hash-chained rows that every write, including those made <em>during</em> the copy, arrived intact and in order.</p>
-<hr />
-<h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
-<p>The class CI customization (the <code>customize</code> run that core-web starts after the three environments are built)
-prepares everything below before you log in. See the <a href="lab-diagram.html">lab diagram</a> for how the three environments
-connect, and <strong><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a></strong> for the CLI and console steps behind each row.</p>
+<p>You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization again, this time
+<strong>warm</strong>. A warm migration copies the disks while the VM keeps <strong>running</strong>: a first full copy, then every 5 minutes only
+the blocks that changed. The VM stops only for the <strong>cutover</strong>, a last small copy, so the outage is minutes instead of
+the whole copy. vSphere's <strong>Changed Block Tracking</strong> (CBT) is what tells MTV which blocks changed, so you turn it on
+first. You write rows before, during and after the move, read them all back, and measure the real outage from your
+VM's own heartbeat.</p>
 <table>
 <thead>
 <tr>
-<th>Pre-built for you</th>
-<th>Where</th>
-<th>How it was built · Red Hat docs</th>
+<th>Phase</th>
+<th>Your VM</th>
+<th>What MTV does</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>OpenShift Virtualization (<code>ove: cnv</code>)</td>
-<td>both clusters (the same operators on both)</td>
-<td><a href="setup-how-the-lab-is-built.html">S.2</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization 4.19</a></td>
+<td><strong>Pre-copy 1</strong></td>
+<td>running</td>
+<td>snapshots each disk on vSphere and copies the <strong>whole</strong> disk</td>
 </tr>
 <tr>
-<td>ACM and cert-manager</td>
-<td>both clusters (base <code>demo-openshift</code> build)</td>
-<td><a href="setup-how-the-lab-is-built.html">S.10</a> · <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">ACM 2.13</a></td>
+<td><strong>Pre-copy 2, 3, …</strong></td>
+<td>running</td>
+<td>every 5 minutes, copies <strong>only the blocks changed</strong> since the last round (CBT)</td>
 </tr>
 <tr>
-<td>NMState bridges + VLAN NADs (<code>vmnet&lt;VLAN&gt;</code>)</td>
-<td>both clusters</td>
-<td><a href="setup-how-the-lab-is-built.html">S.3</a> · <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index">Kubernetes NMState</a> [verify link]</td>
-</tr>
-<tr>
-<td>Storage</td>
-<td>site A <strong>ODF</strong> (<code>ocs-storagecluster-ceph-rbd-virtualization</code>), site B <strong>NFS</strong> (<code>nfs-csi</code>): one ODF site today, the lab's SSDs fit one</td>
-<td><a href="setup-how-the-lab-is-built.html">S.4</a> · <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19">ODF 4.19</a></td>
-</tr>
-<tr>
-<td>MTV (Migration Toolkit for Virtualization)</td>
-<td>both tooled sites, with its console menu</td>
-<td>provider <code>ovedr-vcenter0&lt;N&gt;</code> with network maps (pod + bridge) and storage map, <strong>Ready</strong>. <a href="setup-how-the-lab-is-built.html">S.5</a> · <a href="setup-how-the-lab-is-built.html">S.6</a> · <a href="setup-how-the-lab-is-built.html">S.8</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11</a></td>
-</tr>
-<tr>
-<td><strong>VDDK image</strong> on that provider</td>
-<td>site A</td>
-<td><strong>prerequisite for warm migration</strong>: the lab copies its saved VDDK image into the cluster and sets it here (Lab S §S.15). Without it, MTV can only migrate cold. The <code>demo-prep</code> readiness table says whether this booking has it. <a href="setup-how-the-lab-is-built.html">S.6</a> · <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Creating a VDDK image</a> [verify link]</td>
-</tr>
-<tr>
-<td><strong>Pre-copy interval</strong> shortened to 5 min</td>
-<td>both tooled sites</td>
-<td>the MTV default is 60 min between rounds, too slow for a class. <a href="setup-how-the-lab-is-built.html">S.10</a></td>
-</tr>
-<tr>
-<td>Staged <strong>cold</strong> plans <code>d1-&lt;VM&gt;</code> / <code>d1b-&lt;VM&gt;-to-&lt;B&gt;</code></td>
-<td>both sites</td>
-<td>for Demos 1 and 1b. Demo 2's <strong>warm</strong> plan is the one <strong>you</strong> build here. <a href="setup-how-the-lab-is-built.html">S.12</a></td>
-</tr>
-<tr>
-<td><strong>Your namespace</strong> <code>$VMNS</code> (your class ID, you are <strong>admin</strong>) with your <code>Service/&lt;VM&gt;-sql</code> and your browser terminal <code>sql-client</code></td>
-<td>both clusters</td>
-<td>your VM lands in your namespace. <a href="setup-how-the-lab-is-built.html">S.9</a></td>
-</tr>
-<tr>
-<td>Student rights</td>
-<td>both clusters</td>
-<td>read MTV objects, bridges, storage classes; <strong>create and run your own plans and migrations</strong>. <a href="setup-how-the-lab-is-built.html">S.9</a></td>
-</tr>
-<tr>
-<td><strong>Your own VM</strong>, <code>win-pg-s&lt;NN&gt;</code></td>
-<td>vSphere <code>vcenter0&lt;N&gt;</code>, in your folder <code>vms/students/&lt;class ID&gt;</code></td>
-<td>a full clone of <code>win-pg-i01</code> at its own address <code>.100+NN</code>: Windows Server 2022 + PostgreSQL 16 (WAL on <code>L:</code>, data on <code>D:</code>), heartbeat writer, the <code>marks</code> toolkit, your Windows login. You can power it, open its console and Edit Settings yourself. <a href="setup-how-the-lab-is-built.html">S.11</a></td>
+<td><strong>Cutover</strong></td>
+<td><strong>stopped</strong></td>
+<td>one last snapshot, copies the last small change, converts the drivers, starts the VM on OpenShift</td>
 </tr>
 </tbody>
 </table>
-<p><strong>State at the start of this demo:</strong> your VM is <strong>powered on and writing on vSphere</strong>, at its own address
-<code>$VM_IP</code>. If you ran Demo 1 first, MTV left the vSphere original powered off. Power it back on in vCenter
-(<strong>Actions → Power → Power On</strong>; your <code>ovedr-student-vm</code> role allows it on your own VM).</p>
+<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>. You are signed in to the <strong>site A</strong> console. Every command
+below runs in the console's <strong>Web Terminal</strong> (<code>&gt;_</code>). Your VM must be <strong>running on vSphere</strong>:</p>
+<ul>
+<li><strong>Straight after Lab 0:</strong> it is. Go to 2.0.</li>
+<li><strong>After Demo 1:</strong> your VM runs on OpenShift and the vSphere original is powered off. Both use the same address, so
+  only one may run at a time. Stop the OpenShift copy first (<strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> →
+  Actions → Stop</strong>), then power the original on in vCenter (<strong><code>win-pg-s01</code> → Actions → Power → Power On</strong>). The
+  original holds your rows up to <code>start-cold-migration</code>. <code>cold-migration-complete</code> was written on the OpenShift copy,
+  so the original doesn't have it, and that's expected.</li>
+</ul>
 <blockquote>
-<p>⚠️ <strong>One copy on the VLAN at a time.</strong> The warm plan uses the <strong>bridge</strong> map, so the migrated VM keeps <code>$VM_IP</code>.
-If your Demo 1 copy is still <strong>running</strong> on OpenShift, stop it first (it holds the same address):
-<code>oc --context site-a -n "$VMNS" patch vm "$VM" --type merge -p '{"spec":{"runStrategy":"Halted"}}'</code>.</p>
-</blockquote>
-<p><strong>What you do yourself:</strong> enable CBT, build and start the warm plan, cut over, and verify. Your VM keeps its own
-address on OpenShift, so Toolkit T.4 is not needed.</p>
-<blockquote>
-<p><strong>Before you start:</strong> do <a href="00-access-and-tools.html">Lab 0</a>, then sign your class terminal in on both sites and to your
-database (<a href="toolkit.html">Toolkit T.1-T.2</a>: <code>oclogin</code> for site A and site B, then <code>dblogin</code>). It already holds the
-variables (<code>$ME</code>, <code>$N</code>, <code>$A</code>, <code>$B</code>, <code>$VM</code>, <code>$VM_IP</code>, <code>$WINUSER</code>) and the commands (<code>sql</code>, <code>mark</code>, <code>load</code>, <code>verify</code>,
-<code>alive</code>, <code>where</code>).</p>
-<p>🖥️ <strong>Where you type the commands: your browser terminal.</strong> Every <code>bash</code> block in this guide runs in <strong>your own
-terminal pod</strong>, in the browser: in the site A console, project <strong><code>&lt;your class ID&gt;</code></strong> → <strong>Workloads → Pods →
-<code>sql-client</code> → Terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>). Nothing is installed on your computer. It already
-knows your VM and its address (type <code>ovedr</code>); <code>dblogin</code> and <code>oclogin</code> (Toolkit T.1-T.2) stay signed in while the pod runs.
-Variables you <code>export</code> last until you close that Terminal tab: if you reopen it, re-run the guide's <code>export</code> lines.
-Paste with <strong>right-click → Paste</strong> (or Ctrl+Shift+V / ⌘V). <code>powershell</code> blocks run <strong>inside your Windows VM</strong>, from its
-console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Console</strong> tab in OpenShift).</p>
+<p>⚠ <strong>The commands are an example. Change these values to yours before you run them:</strong></p>
+<table>
+<thead>
+<tr>
+<th>In the example</th>
+<th>Is the example's</th>
+<th>Replace with yours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student-01-0024-012</code></td>
+<td>class ID and project (<code>student-01</code> on booking <code>0024-012</code>)</td>
+<td>your class ID</td>
+</tr>
+<tr>
+<td><code>win-pg-s01</code></td>
+<td>your VM (<code>s</code> + your student number); on OpenShift it lands as <code>win-pg-s01-warm</code></td>
+<td>your VM</td>
+</tr>
+<tr>
+<td><code>10.101.23.101</code></td>
+<td>your VM's address, the SQL server (it keeps it on OpenShift)</td>
+<td>your VM's address, from Lab 0.1</td>
+</tr>
+<tr>
+<td><code>vcenter01</code> / VLAN <code>23</code></td>
+<td>your booking's vCenter (<code>N</code> = 1) and VLAN (<code>22 + N</code>)</td>
+<td>from your instructor's <code>N</code></td>
+</tr>
+</tbody>
+</table>
 </blockquote>
 <!-- 🎬 video slot 02-vmware-to-ove-warm: one walk-through of the whole demo in the console -->
 <video controls preload="metadata" playsinline width="100%" poster="../.images/02-vmware-to-ove-warm.jpg">
@@ -1672,133 +1085,54 @@ console (vCenter <strong>Launch Web Console</strong>, or the VM's <strong>Consol
 </video>
 <p><sub>🎬 <em>Demo 2: warm migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
-<h2 id="21-prerequisites-and-the-starting-state">2.1 Prerequisites and the starting state<a class="headerlink" href="#21-prerequisites-and-the-starting-state" title="Permanent link">&para;</a></h2>
-<h3 id="the-name-your-vm-gets-on-openshift">The name your VM gets on OpenShift<a class="headerlink" href="#the-name-your-vm-gets-on-openshift" title="Permanent link">&para;</a></h3>
-<p>Your <strong>staged warm plan</strong> <code>d2-&lt;VM&gt;</code> lands your VM on site A, in your namespace, as <strong><code>&lt;VM&gt;-warm</code></strong>. That way it never
-collides with your Demo 1 copy (<code>&lt;VM&gt;</code>), whether or not that copy still exists.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">TARGET</span><span class="o">=</span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">-warm"</span><span class="w"> </span><span class="nv">PLAN</span><span class="o">=</span><span class="s2">"d2-</span><span class="nv">$VM</span><span class="s2">"</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">"vSphere VM=</span><span class="nv">$VM</span><span class="s2">  →  OpenShift name=</span><span class="nv">$TARGET</span><span class="s2"> (namespace </span><span class="nv">$VMNS</span><span class="s2">)  plan=</span><span class="nv">$PLAN</span><span class="s2">"</span>
+<h2 id="20-inject-the-demo-has-started">2.0 Inject: the demo has started<a class="headerlink" href="#20-inject-the-demo-has-started" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 2: warm migration');"</span>
 </code></pre></div>
-<blockquote>
-<p>💡 <strong>Your chain continues on the vSphere copy.</strong> If you ran Demo 1, its OpenShift copy and the vSphere original
-split at Demo 1's cutover. Rows you wrote on OpenShift in Demo 1 are <strong>not</strong> on the vSphere original, and that's
-expected. Your chain on the original carries on from your last pre-migration row.</p>
-</blockquote>
-<h3 id="check-the-provider-can-do-warm">Check: the provider can do warm<a class="headerlink" href="#check-the-provider-can-do-warm" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span>ovedr-vcenter0<span class="nv">$N</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}{"  vddk="}{.spec.settings.vddkInitImage}{"\n"}'</span><span class="w">     </span><span class="c1"># Ready, and a vddk image [verify]</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>forkliftcontroller<span class="w"> </span>forklift-controller<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{"precopy interval (min): "}{.spec.controller_precopy_interval}{"\n"}'</span><span class="w">  </span><span class="c1"># 5 [verify]</span>
-</code></pre></div>
-<blockquote>
-<p>⚠️ <strong>No VDDK image, no warm migration.</strong> If <code>vddk=</code> is empty, tell the instructor and stop here. The warm plan will
-either refuse to start, or fall back to behaviour this guide doesn't describe.</p>
-</blockquote>
-<h4 id="instructor-only-if-ci-did-not-set-them">🧑‍🏫 Instructor only: if CI did not set them<a class="headerlink" href="#instructor-only-if-ci-did-not-set-them" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>forkliftcontroller<span class="w"> </span>forklift-controller<span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-p<span class="w"> </span><span class="s1">'{"spec":{"controller_precopy_interval":5}}'</span><span class="w">          </span><span class="c1"># minutes between pre-copies [verify]</span>
-</code></pre></div>
-<h3 id="check-your-vm-is-up-and-writing-on-vsphere">Check: your VM is up and writing on vSphere<a class="headerlink" href="#check-your-vm-is-up-and-writing-on-vsphere" title="Permanent link">&para;</a></h3>
-<p>Your VM still runs on vSphere, and your browser terminal reaches it at its own address, <code>$VM_IP</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="nv">$VM_IP</span><span class="w">            </span><span class="c1"># your VM's own address (the terminal's default)</span>
-alive<span class="w">                           </span><span class="c1"># staleness &lt; 10 s</span>
-mark<span class="w"> </span>d2-start<span class="w">                   </span><span class="c1"># ✍️ note the id</span>
-verify<span class="w">                          </span><span class="c1"># chain_ok = t</span>
-</code></pre></div>
-<p>📸 <code>02-start-alive</code> — <code>alive</code> and <code>verify</code> output, with the VM on vSphere.</p>
+<p>✅ It prints the row it wrote, with stage <code>demo-started</code>. (If it says <em>First sign in … dblogin</em>, run Lab 0's step 1
+again. If it can't connect, your VM isn't running on vSphere yet: see <strong>Before you start</strong>.)</p>
 <hr />
-<h2 id="22-why-warm-and-why-it-needs-cbt">2.2 Why warm, and why it needs CBT<a class="headerlink" href="#22-why-warm-and-why-it-needs-cbt" title="Permanent link">&para;</a></h2>
-<p>A <strong>cold</strong> migration (Demo 1) powers the VM off, copies every block of every disk, then boots it on
-OpenShift. The outage is the whole copy.</p>
-<p>A <strong>warm</strong> migration works in rounds:</p>
+<h2 id="21-check-the-link-to-vcenter-and-your-warm-plan">2.1 Check the link to vCenter, and your warm plan<a class="headerlink" href="#21-check-the-link-to-vcenter-and-your-warm-plan" title="Permanent link">&para;</a></h2>
+<p>The lab staged a <strong>warm</strong> plan for you, ready but not started: <strong><code>d2-win-pg-s01</code></strong> (<code>d2-&lt;your VM&gt;</code>). It lands your
+VM on site A as <strong><code>win-pg-s01-warm</code></strong>, so it never collides with a Demo 1 copy.</p>
+<p><strong>Console (site A):</strong> <strong>Migration for Virtualization → Providers → <code>ovedr-vcenter01</code></strong>.</p>
+<p>✅ Status <strong>Ready</strong>, and <strong>Connected</strong>.</p>
+<p><strong>Console:</strong> <strong>Migration for Virtualization → Migration plans → <code>d2-win-pg-s01</code></strong>.</p>
+<p>✅ Type <strong>Warm</strong>, source provider <code>ovedr-vcenter01</code>, your VM, target project <strong>your class ID</strong>. The status is <strong>not</strong>
+Ready yet: expand your VM to see why.</p>
 <table>
 <thead>
 <tr>
-<th>Phase</th>
-<th>VM state</th>
-<th>What MTV does</th>
+<th>Concern</th>
+<th>What it means</th>
+<th>Who fixes it</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Pre-copy 1</strong></td>
-<td>running</td>
-<td>snapshots each disk on vSphere and copies the <strong>whole</strong> disk to a PVC</td>
+<td><strong>VMMissingChangedBlockTracking</strong></td>
+<td>your VM's disks don't have CBT on, so MTV can't copy only the changes</td>
+<td><strong>you</strong>, in 2.2</td>
 </tr>
 <tr>
-<td><strong>Pre-copy 2…n</strong></td>
-<td>running</td>
-<td>every interval, takes a new snapshot and copies <strong>only the blocks changed</strong> since the previous one</td>
-</tr>
-<tr>
-<td><strong>Cutover</strong></td>
-<td><strong>stopped</strong></td>
-<td>one last snapshot, copies the last small delta, converts drivers, boots on OpenShift</td>
+<td><strong>VDDKInitImageUnavailable</strong></td>
+<td>the provider has no VDDK image, the VMware library MTV needs to read changed blocks</td>
+<td>the <strong>instructor</strong>: tell them and stop here (Lab S §S.15)</td>
 </tr>
 </tbody>
 </table>
-<p>The question <em>"which blocks changed since the last snapshot?"</em> is answered by vSphere <strong>Changed Block Tracking</strong>.
-Without CBT, every round would be a full copy. That's why MTV refuses a warm plan for a VM whose disks don't have
-CBT enabled.</p>
+<p>The same from the Web Terminal:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span>ovedr-vcenter01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.phase}  vddk={.spec.settings.vddkInitImage}{"\n"}'</span><span class="w">   </span><span class="c1"># Ready  vddk=&lt;an image&gt;</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d2-win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'</span>
+</code></pre></div>
+<p>✅ The provider shows a <code>vddk=</code> image, and the plan's only concern is <code>VMMissingChangedBlockTracking</code>.</p>
 <hr />
-<h2 id="23-enable-changed-block-tracking">2.3 Enable Changed Block Tracking<a class="headerlink" href="#23-enable-changed-block-tracking" title="Permanent link">&para;</a></h2>
-<p>CBT is a per-VM switch (<code>ctkEnabled</code>) <strong>plus</strong> a per-disk switch for each virtual disk (<code>scsi0:N.ctkEnabled</code>).
-It takes effect at the next power-on, so turn it on while the VM is <strong>off</strong>.</p>
-<h3 id="leave-a-mark-then-shut-your-vm-down-cleanly">Leave a mark, then shut your VM down cleanly<a class="headerlink" href="#leave-a-mark-then-shut-your-vm-down-cleanly" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d2-before-cbt
-</code></pre></div>
-<p>In your VM's web console (vCenter → <code>&lt;VM&gt;</code> → <strong>Launch Web Console</strong>, log in as <code>.\&lt;WINUSER&gt;</code>), in PowerShell:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-before-cbt"</span>
-<span class="nb">Stop-Computer</span> <span class="n">-Force</span>          <span class="c"># a clean guest shutdown of YOUR VM [verify: Users may shut down this server]</span>
-</code></pre></div>
-<p>Or, from vCenter: <strong>Actions → Power → Shut Down Guest OS</strong>.</p>
-<h3 id="find-the-exact-disk-keys-first">Find the exact disk keys first<a class="headerlink" href="#find-the-exact-disk-keys-first" title="Permanent link">&para;</a></h3>
-<p>The VM's three disks sit on one LSI Logic SAS controller, so their keys are <code>scsi0:&lt;unit&gt;</code>. <strong>Read</strong> the units
-rather than guessing.</p>
-<p><strong>vCenter UI:</strong> VM → <strong>Edit Settings → Virtual Hardware</strong>. Expand each <strong>Hard disk</strong> and note its
-<strong>Virtual Device Node</strong>, for example <code>SCSI controller 0 : SCSI(0:0)</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Disk</th>
-<th>Size</th>
-<th>Holds</th>
-<th>Device node (fill in)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Hard disk 1</td>
-<td>60 GB</td>
-<td><code>C:</code> Windows</td>
-<td><code>scsi0:__</code></td>
-</tr>
-<tr>
-<td>Hard disk 2</td>
-<td>5 GB</td>
-<td><code>L:</code> PostgreSQL WAL</td>
-<td><code>scsi0:__</code></td>
-</tr>
-<tr>
-<td>Hard disk 3</td>
-<td>10 GB</td>
-<td><code>D:</code> PostgreSQL data</td>
-<td><code>scsi0:__</code></td>
-</tr>
-</tbody>
-</table>
-<p>📸 <code>02-disk-device-nodes</code> — Edit Settings, with the three hard disks' Virtual Device Node expanded.</p>
-<p><strong>🧑‍🏫 Instructor alternative (govc):</strong></p>
-<div class="highlight"><pre><span></span><code>govc<span class="w"> </span>device.info<span class="w"> </span>-vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="s1">'disk-*'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'Name:|Label:|Unit number|Controller|Summary'</span>
-</code></pre></div>
-<h3 id="set-the-parameters-vm-powered-off">Set the parameters (VM powered <strong>off</strong>)<a class="headerlink" href="#set-the-parameters-vm-powered-off" title="Permanent link">&para;</a></h3>
-<blockquote>
-<p>⚠️ <strong>Your VM must be shut down.</strong> vCenter only accepts these parameters on a powered-off VM, and CBT takes effect at
-the next power-on. With CBT on, MTV can copy only the blocks that changed since the last pre-copy, which is what
-makes the warm ("hot") migration in this demo possible.</p>
-</blockquote>
-<p><strong>vCenter UI:</strong> your VM → <strong>Edit Settings → Advanced Parameters</strong> (vSphere 8; older UIs: <em>VM Options → Advanced →
-Edit Configuration</em>). For each row below, type the <strong>Attribute</strong> and <strong>Value</strong>, then click <strong>ADD</strong>:</p>
+<h2 id="22-turn-on-changed-block-tracking">2.2 Turn on Changed Block Tracking<a class="headerlink" href="#22-turn-on-changed-block-tracking" title="Permanent link">&para;</a></h2>
+<p>CBT is one switch for the VM (<code>ctkEnabled</code>) <strong>plus</strong> one for each disk (<code>scsi0:N.ctkEnabled</code>). vCenter accepts them
+only while the VM is <strong>off</strong>, and they take effect at the next power-on.</p>
+<p><strong>Shut it down.</strong> <strong>vCenter:</strong> <strong>VMs and Templates → datacenter01 → vms → students → <code>student-01-0024-012</code> →
+<code>win-pg-s01</code></strong> → <strong>Actions → Power → Shut Down Guest OS</strong>. Wait for <strong>Powered Off</strong>.</p>
+<p><strong>Add the four parameters.</strong> <strong><code>win-pg-s01</code> → Edit Settings → Advanced Parameters</strong>. For each row, type the
+<strong>Attribute</strong> and <strong>Value</strong>, then click <strong>ADD</strong>:</p>
 <table>
 <thead>
 <tr>
@@ -1825,349 +1159,195 @@ Edit Configuration</em>). For each row below, type the <strong>Attribute</strong
 </tr>
 </tbody>
 </table>
-<p>(Use the device nodes you found above if they differ from <code>0</code>, <code>1</code> and <code>2</code>.)</p>
 <p><img alt="Adding ctkEnabled = true on the Advanced Parameters tab" src="../.images/02-cbt-advanced-params-add.png" />
-<em>Adding a row: Attribute <code>ctkEnabled</code>, Value <code>true</code>, then </em><em>ADD</em><em>. The list's filter (funnel icon) set to <code>ctk</code> shows only
-the CBT rows.</em></p>
-<p>When all four are added, the list (filtered on <code>ctk</code>) shows them. Click <strong>OK</strong>:</p>
+<em>Adding a row: Attribute <code>ctkEnabled</code>, Value <code>true</code>, then </em><em>ADD</em><em>. The filter (funnel icon) set to <code>ctk</code> shows only the
+CBT rows.</em></p>
 <p><img alt="The Advanced Parameters list with all four ctkEnabled rows set to true" src="../.images/02-cbt-advanced-params.png" />
-<em>All four rows set: <code>ctkEnabled</code> for the VM, plus <code>scsi0:0</code>, <code>scsi0:1</code> and <code>scsi0:2</code> for its three disks.</em></p>
-<p><strong>🧑‍🏫 Instructor alternative (govc):</strong></p>
-<div class="highlight"><pre><span></span><code>govc<span class="w"> </span>vm.info<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'Power state'</span><span class="w">                                                   </span><span class="c1"># poweredOff</span>
-govc<span class="w"> </span>vm.change<span class="w"> </span>-vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-e<span class="w"> </span><span class="nv">ctkEnabled</span><span class="o">=</span>TRUE<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-e<span class="w"> </span>scsi0:0.ctkEnabled<span class="o">=</span>TRUE<span class="w"> </span>-e<span class="w"> </span>scsi0:1.ctkEnabled<span class="o">=</span>TRUE<span class="w"> </span>-e<span class="w"> </span>scsi0:2.ctkEnabled<span class="o">=</span>TRUE
-govc<span class="w"> </span>vm.info<span class="w"> </span>-e<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ctkEnabled<span class="w">                                                </span><span class="c1"># four rows, TRUE</span>
+<em>All four rows set: the VM, plus <code>scsi0:0</code>, <code>scsi0:1</code> and <code>scsi0:2</code> for its three disks. Click </em><em>OK</em><em>.</em></p>
+<details>
+<summary>Check your disks really are scsi0:0, 0:1 and 0:2</summary>
+<p><strong>Edit Settings → Virtual Hardware</strong>: expand each <strong>Hard disk</strong> and read its <strong>Virtual Device Node</strong>, for example
+<code>SCSI controller 0 : SCSI(0:1)</code>. The class VMs have three disks on one controller: 60 GB <code>C:</code>, 5 GB <code>L:</code> (WAL) and
+10 GB <code>D:</code> (data). If a node differs, use its number in the parameter name.</p>
+</details>
+<p><strong>Power it back on:</strong> <strong>Actions → Power → Power On</strong>.</p>
+<p>✅ Within a minute or two the plan <code>d2-win-pg-s01</code> shows <strong>Ready</strong>, and the CBT concern is gone:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d2-win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'</span><span class="w">   </span><span class="c1"># Ready=True</span>
 </code></pre></div>
-<h3 id="power-your-vm-back-on">Power your VM back on<a class="headerlink" href="#power-your-vm-back-on" title="Permanent link">&para;</a></h3>
-<p>vCenter: <strong>Actions → Power → Power On</strong>.</p>
-<h3 id="check-cbt-is-active">Check: CBT is active<a class="headerlink" href="#check-cbt-is-active" title="Permanent link">&para;</a></h3>
-<p>When a VM powers on with CBT enabled, vSphere creates a <strong>change-tracking file</strong> (<code>*-ctk.vmdk</code>) next to each disk.</p>
-<ul>
-<li><strong>vCenter UI:</strong> <strong>Storage → <code>coresan01_data00</code> → Files → <code>ovedr-lz&lt;N&gt;-&lt;VM&gt;/</code></strong> (each class VM's folder carries
-  its zone, because every zone shares this datastore). There should be one <code>…-ctk.vmdk</code> per disk, three in all.</li>
-<li><strong>🧑‍🏫 govc:</strong></li>
-</ul>
-<div class="highlight"><pre><span></span><code>govc<span class="w"> </span>datastore.ls<span class="w"> </span>-ds<span class="w"> </span>coresan01_data00<span class="w"> </span><span class="s2">"ovedr-lz</span><span class="nv">$N</span><span class="s2">-</span><span class="nv">$VM</span><span class="s2">/"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>--<span class="w"> </span><span class="s1">'-ctk.vmdk'</span><span class="w">            </span><span class="c1"># 3 files</span>
+<p>If the concern stays, a disk is missing its <code>scsi0:N.ctkEnabled</code>, or the VM hasn't been powered on since you set it.</p>
+<p>Give Windows a minute to start PostgreSQL, then check that the shutdown lost nothing:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
 </code></pre></div>
-<p>📸 <code>02-ctk-files</code> — the datastore browser listing three <code>-ctk.vmdk</code> files.</p>
-<p>Wait for the database to come back, then prove nothing was lost across the shutdown:</p>
-<div class="highlight"><pre><span></span><code><span class="k">until</span><span class="w"> </span>alive<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'beats'</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
-alive<span class="w">                                </span><span class="c1"># postgres_started is new: the VM rebooted</span>
-mark<span class="w"> </span>d2-cbt-on
-verify<span class="w">                               </span><span class="c1"># chain_ok = t — the reboot lost nothing</span>
-</code></pre></div>
-<p>✍️ <strong>Row 2.1:</strong> CBT on (yes/no), the number of <code>-ctk.vmdk</code> files, and your <code>d2-cbt-on</code> id.</p>
+<p>✅ <code>chain_ok = t</code>.</p>
 <hr />
-<h2 id="24-make-the-database-busy">2.4 Make the database busy<a class="headerlink" href="#24-make-the-database-busy" title="Permanent link">&para;</a></h2>
-<p>Warm migration matters when the VM is <strong>changing</strong> while it copies. Give it something to copy.</p>
-<h3 id="in-the-guest">In the guest<a class="headerlink" href="#in-the-guest" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-precopy-started"</span>
+<h2 id="23-start-the-warm-migration-and-keep-writing">2.3 Start the warm migration, and keep writing<a class="headerlink" href="#23-start-the-warm-migration-and-keep-writing" title="Permanent link">&para;</a></h2>
+<p><strong>Console (site A):</strong> <strong>Migration for Virtualization → Migration plans → <code>d2-win-pg-s01</code></strong> → <strong>Start</strong> → confirm.</p>
+<p>Your VM <strong>keeps running on vSphere</strong>. Expand it on the plan's page: MTV takes a snapshot on vSphere and copies the
+whole of each disk (the first pre-copy). After that, every 5 minutes it copies only what changed. In vCenter, your
+VM's <strong>Snapshots</strong> show MTV's snapshot for each round.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d2-win-pg-s01<span class="w"> </span>-w<span class="w">                        </span><span class="c1"># EXECUTING True (Ctrl-C to stop watching)</span>
 </code></pre></div>
-<h3 id="from-your-terminal">From your terminal<a class="headerlink" href="#from-your-terminal" title="Permanent link">&para;</a></h3>
-<p>A burst now, then a small burst every minute in the background, so each pre-copy round has new blocks to ship:</p>
-<div class="highlight"><pre><span></span><code>load<span class="w"> </span>d2-precopy<span class="w"> </span><span class="m">500</span><span class="w">                                            </span><span class="c1"># 500 hash-chained rows, right now</span>
-<span class="o">(</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">30</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>load<span class="w"> </span><span class="s2">"d2-precopy-</span><span class="nv">$i</span><span class="s2">"</span><span class="w"> </span><span class="m">50</span><span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w"> </span><span class="o">)</span><span class="w"> </span><span class="p">&amp;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">LOADER</span><span class="o">=</span><span class="nv">$!</span><span class="w">                                               </span><span class="c1"># stop it before cutover (2.6)</span>
-verify
+<p><strong>Give it something to copy.</strong> The database is busy while it copies: write a burst of 500 rows now, and again
+after each pre-copy round if you like:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_load('student-01-0024-012', 'warm-precopy-load', 500);"</span>
 </code></pre></div>
-<p>✍️ <strong>Row 2.2:</strong> your <code>marks</code> count after the 500-row burst.</p>
-<hr />
-<h2 id="25-your-warm-plan-staged-waiting-for-cbt">2.5 Your warm plan: staged, waiting for CBT<a class="headerlink" href="#25-your-warm-plan-staged-waiting-for-cbt" title="Permanent link">&para;</a></h2>
-<p>The lab <strong>staged</strong> a warm plan for every class VM on <strong>both</strong> sites: <strong><code>d2-&lt;VM&gt;</code></strong> on site A (and <code>d2b-&lt;VM&gt;-to-&lt;B&gt;</code> on site B, the same
-plan to the other cluster) (type <strong>Warm</strong>, target name <code>&lt;VM&gt;-warm</code>, target
-namespace yours, the class's bridge network map and storage map), <strong>not started</strong>. How it was built: Lab S
-<a href="setup-how-the-lab-is-built.html">§S.12</a>. Red Hat: <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/index">Warm migration</a> [verify link].</p>
-<h3 id="before-23-the-plan-flags-cbt-expected">Before 2.3: the plan flags CBT (expected)<a class="headerlink" href="#before-23-the-plan-flags-cbt-expected" title="Permanent link">&para;</a></h3>
-<p>Open <strong>Migration for Virtualization → Migration plans → <code>d2-&lt;VM&gt;</code> → Virtual machines</strong> and expand your VM. Until you
-enable Changed Block Tracking, MTV flags it, and the plan can't start: <strong>this is the point of 2.3</strong>. Once your VM
-has CBT on all four keys and has been powered on again, the concern clears and the plan shows <em>Ready</em>.</p>
-<p>📸 <code>02-plan-warm-cbt-concern</code>: your <code>d2-&lt;VM&gt;</code> plan, the VM row expanded, with the CBT concern (before 2.3).</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.category} {.message}{"\n"}{end}'</span>
+<p>✅ It prints <code>rows_written = 500</code>. Your VM is still serving its database in the middle of the migration.</p>
+<p><strong>Count the pre-copies:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d2-win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'pre-copies done: {.status.migration.vms[0].warm.successes}  next: {.status.migration.vms[0].warm.nextPrecopyAt}{"\n"}'</span>
 </code></pre></div>
-<p>Expected conditions <strong>before</strong> 2.3: <code>VMMissingChangedBlockTracking</code> (yours to fix in 2.3). If you also see
-<code>VDDKInitImageUnavailable</code>, the lab has no VDDK image yet: that one is the instructor's, not yours (BL-B27). Stop and tell them.</p>
-<p>✅ After 2.3: <code>Ready=True</code>, and no CBT concern. If the plan still says CBT isn't enabled on a disk, go back to 2.3: a disk
-is missing its <code>scsi0:N.ctkEnabled</code>, or the VM hasn't been power-cycled since you set it.</p>
-<h3 id="build-it-yourself-learning-path-optional">Build it yourself (learning path, optional)<a class="headerlink" href="#build-it-yourself-learning-path-optional" title="Permanent link">&para;</a></h3>
-<p>To see every field, build your own warm plan with a <strong>different name</strong>, e.g. <code>&lt;your class ID&gt;-warm-migration-plan</code>. Start
-<strong>either</strong> the staged <code>d2-&lt;VM&gt;</code> <strong>or</strong> yours, never both. <strong>Console</strong>, site A → <strong>Migration for Virtualization →
-Migration plans → Create plan</strong>, as in Demo 1 (same General step, same class maps), with <strong>Migration type: Warm</strong>:</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Plan name</td>
-<td><code>&lt;your class ID&gt;-warm-migration-plan</code></td>
-</tr>
-<tr>
-<td>Source provider / Target provider / Target project</td>
-<td><code>ovedr-vcenter0&lt;N&gt;</code> / <code>host</code> / your namespace (<code>$VMNS</code>)</td>
-</tr>
-<tr>
-<td>VM</td>
-<td>your <code>&lt;VM&gt;</code></td>
-</tr>
-<tr>
-<td>Network map</td>
-<td><code>ovedr-vcenter0&lt;N&gt;-net-bridge</code> (use the existing map; keeps <code>$VM_IP</code>)</td>
-</tr>
-<tr>
-<td>Storage map</td>
-<td><code>ovedr-vcenter0&lt;N&gt;-storage</code> (use the existing map)</td>
-</tr>
-<tr>
-<td>Migration type</td>
-<td><strong>Warm</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Or as YAML:</strong></p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<p>✅ Wait for <strong>at least two</strong> pre-copies. The first carries the whole disks; later ones carry only the changed
+blocks, so they're much quicker. That difference is CBT at work.</p>
+<details>
+<summary>Or: create and start your own warm plan from the CLI (instead of the staged one)</summary>
+<p>This builds a warm plan like your staged <code>d2-win-pg-s01</code>, under a <strong>new name</strong>, so the staged plan stays as the lab
+built it. Use <strong>one</strong> of them: a VM can be in only one running plan. If you start this one, skip the console's
+<strong>Start</strong> above, and cut over with the last command below instead of the console.</p>
+<p>Set the values once. Every command below reads them:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># your class ID: MTV creates your VM in this project on site A</span>
+<span class="nv">CLASS_ID</span><span class="o">=</span>student-01-0024-012
+<span class="c1"># your VM's name in vCenter</span>
+<span class="nv">VM</span><span class="o">=</span>win-pg-s01
+<span class="c1"># the provider that links site A to your booking's vCenter ("ovedr-vcenter0" + N), and its maps</span>
+<span class="nv">SRC</span><span class="o">=</span>ovedr-vcenter01
+<span class="c1"># a NEW plan name, so this never touches the staged d2-win-pg-s01</span>
+<span class="nv">PLAN</span><span class="o">=</span><span class="nv">$CLASS_ID</span>-warm-cli
+</code></pre></div>
+<p>Create the plan. <code>warm: true</code> is the only difference from a cold plan; <code>targetName</code> gives the copy on OpenShift its
+own name:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
 <span class="s">kind: Plan</span>
-<span class="s">metadata: { name: $VMNS-warm-migration-plan, namespace: openshift-mtv }</span>
+<span class="s">metadata: { name: $PLAN, namespace: openshift-mtv }</span>
 <span class="s">spec:</span>
 <span class="s">  warm: true</span>
-<span class="s">  targetNamespace: $VMNS</span>
+<span class="s">  targetNamespace: $CLASS_ID</span>
 <span class="s">  provider:</span>
-<span class="s">    source:      { name: ovedr-vcenter0$N, namespace: openshift-mtv }</span>
-<span class="s">    destination: { name: host,             namespace: openshift-mtv }</span>
+<span class="s">    source:      { name: $SRC, namespace: openshift-mtv }</span>
+<span class="s">    destination: { name: host, namespace: openshift-mtv }</span>
 <span class="s">  map:</span>
-<span class="s">    network: { name: ovedr-vcenter0$N-net-bridge, namespace: openshift-mtv }</span>
-<span class="s">    storage: { name: ovedr-vcenter0$N-storage,    namespace: openshift-mtv }</span>
+<span class="s">    network: { name: $SRC-net-bridge, namespace: openshift-mtv }</span>
+<span class="s">    storage: { name: $SRC-storage,    namespace: openshift-mtv }</span>
 <span class="s">  vms:</span>
-<span class="s">    - name: $VM</span>
-<span class="s">      targetName: $TARGET-mine                # [verify: Plan.spec.vms[].targetName in MTV 2.11]</span>
+<span class="s">    - { name: $VM, targetName: $VM-warm-cli }</span>
 <span class="s">EOF</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># READY True (Ctrl-C)</span>
 </code></pre></div>
-<h3 id="start-it">Start it<a class="headerlink" href="#start-it" title="Permanent link">&para;</a></h3>
-<p>Your task, the last step, once CBT is on and the plan is <em>Ready</em>: console <strong>Migration plans → <code>d2-&lt;VM&gt;</code> → Start</strong>. Or:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<p>Start it: a <strong>Migration</strong> is what the console's Start button creates. A warm migration pre-copies until it has a
+<strong>cutover</strong> time:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: forklift.konveyor.io/v1beta1</span>
 <span class="s">kind: Migration</span>
-<span class="s">metadata: { name: $PLAN, namespace: openshift-mtv }</span>
+<span class="s">metadata: { name: $PLAN-run1, namespace: openshift-mtv }</span>
 <span class="s">spec: { plan: { name: $PLAN, namespace: openshift-mtv } }</span>
 <span class="s">EOF</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># EXECUTING True (Ctrl-C)</span>
 </code></pre></div>
-<h3 id="check-watch-the-pre-copies">Check: watch the pre-copies<a class="headerlink" href="#check-watch-the-pre-copies" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>precopies<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>migration<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.status.vms[0] | "phase=\(.phase)  precopies=\(.warm.precopies | length)  ok=\(.warm.successes // 0)  failures=\(.warm.failures // 0)  next=\(.warm.nextPrecopyAt // "-")",</span>
-<span class="s1">           (.warm.precopies[]? | "  #\(.snapshot // "-")  start=\(.start)  end=\(.end // "running")")'</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
-precopies
-watch<span class="w"> </span>-n<span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="s2">"oc --context site-a -n openshift-mtv get migration </span><span class="nv">$PLAN</span><span class="s2"> -o jsonpath='{.status.vms[0].phase}{\"  precopies=\"}{.status.vms[0].warm.successes}{\"\n\"}'"</span>
+<p>In 2.4, after your <code>start-warm-migration</code> row, cut over by giving the Migration a cutover time of <strong>now</strong>:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>migration<span class="w"> </span><span class="nv">$PLAN</span>-run1<span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"cutover\":\"</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%Y-%m-%dT%H:%M:%SZ<span class="k">)</span><span class="s2">\"}}"</span>
+oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># SUCCEEDED True (Ctrl-C)</span>
 </code></pre></div>
-<p>While pre-copies run:</p>
-<div class="highlight"><pre><span></span><code>alive<span class="w">                             </span><span class="c1"># STILL writing: the VM is up during pre-copy</span>
-mark<span class="w"> </span>d2-during-precopy
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w">      </span><span class="c1"># three PVCs filling for your VM</span>
-</code></pre></div>
-<p>In vCenter, open your VM → <strong>Snapshots</strong>. MTV creates a snapshot for each round and removes the previous one.</p>
-<p>📸 <code>02-precopy-snapshots</code> — the VM's snapshot manager during a pre-copy round.
-📸 <code>02-precopy-status</code> — the plan page showing completed pre-copies.</p>
-<blockquote>
-<p>💡 <strong>Watch the round sizes.</strong> The first pre-copy carries the whole disks. Every round after it carries only the
-blocks your <code>load</code> loop and the heartbeat changed. That shrink is CBT at work.</p>
-</blockquote>
-<p>✍️ <strong>Row 2.3:</strong> the number of successful pre-copies before cutover, and how long the first one took versus a
-later one.</p>
+</details>
 <hr />
-<h2 id="26-cutover-the-only-downtime">2.6 Cutover: the only downtime<a class="headerlink" href="#26-cutover-the-only-downtime" title="Permanent link">&para;</a></h2>
-<p>Let at least <strong>two</strong> pre-copies complete, then stop the background load and leave a last mark on vSphere:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">kill</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null
-mark<span class="w"> </span>d2-before-cutover<span class="w">                  </span><span class="c1"># ✍️ note this id: it must survive the cutover</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">CUTOVER_AT</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%Y-%m-%dT%H:%M:%SZ<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"cutover requested at </span><span class="nv">$CUTOVER_AT</span><span class="s2">"</span>
+<h2 id="24-inject-then-cut-over">2.4 Inject, then cut over<a class="headerlink" href="#24-inject-then-cut-over" title="Permanent link">&para;</a></h2>
+<p>Write the "start" row while your VM still runs on vSphere. It must survive the cutover:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-warm-migration', 'on vSphere, before cutover');"</span>
 </code></pre></div>
-<p>In the guest:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-before-cutover"</span>
+<p><strong>Console (site A):</strong> <strong>Migration plans → <code>d2-win-pg-s01</code></strong> → <strong>Cutover</strong> → keep the date and time it offers
+(<strong>now</strong>) → <strong>Set cutover</strong>.</p>
+<p>MTV now shuts your VM down on vSphere, takes one last snapshot, copies the small change since the last round,
+converts the drivers (<code>virt-v2v</code> installs virtio and the QEMU guest agent, and removes VMware Tools) and creates your VM
+on OpenShift.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d2-win-pg-s01<span class="w"> </span>-w<span class="w">                        </span><span class="c1"># SUCCEEDED True (Ctrl-C to stop watching)</span>
 </code></pre></div>
-<h3 id="cut-over-now">Cut over now<a class="headerlink" href="#cut-over-now" title="Permanent link">&para;</a></h3>
-<p>Console: <strong>Plans → <code>d2-&lt;VM&gt;</code> → Cutover → now</strong>. Or set the Migration's cutover time:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>migration<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-p<span class="w"> </span><span class="s2">"{\"spec\":{\"cutover\":\"</span><span class="nv">$CUTOVER_AT</span><span class="s2">\"}}"</span>
-</code></pre></div>
-<p>MTV then shuts your source VM down, takes one last snapshot, copies the final delta, converts the drivers for
-KVM, and starts <code>&lt;TARGET&gt;</code> on site A.</p>
-<div class="highlight"><pre><span></span><code>precopies<span class="w">                                                            </span><span class="c1"># phase moves past the copy</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>migration<span class="w"> </span><span class="s2">"</span><span class="nv">$PLAN</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">        </span><span class="c1"># Ctrl-C at Succeeded</span>
-</code></pre></div>
-<p>📸 <code>02-cutover-done</code> — the plan showing <strong>Succeeded</strong>, with the cutover timestamps.</p>
+<p>✅ The plan shows <strong>Succeeded</strong>.</p>
 <hr />
-<h2 id="27-validate-on-openshift">2.7 Validate on OpenShift<a class="headerlink" href="#27-validate-on-openshift" title="Permanent link">&para;</a></h2>
-<h3 id="your-vm-keeps-its-address">Your VM keeps its address<a class="headerlink" href="#your-vm-keeps-its-address" title="Permanent link">&para;</a></h3>
-<p>The warm plan used the <strong>bridge</strong> map, so <code>&lt;TARGET&gt;</code> answers at your own <code>$VM_IP</code>, and the helpers keep working.
-(Only if you chose the <strong>pod</strong> map: follow <a href="toolkit.html#t4-optional-give-your-vm-a-pod-network-address-on-openshift">Toolkit T.4</a>
-with <code>CTX=site-a</code> and <code>VM=$TARGET</code>.)</p>
-<div class="highlight"><pre><span></span><code><span class="nv">VM</span><span class="o">=</span><span class="nv">$TARGET</span><span class="w"> </span>where<span class="w">                                   </span><span class="c1"># site-a Running, and the node it landed on</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span>
-pg_isready<span class="w"> </span>-h<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">PGHOST</span><span class="k">:-</span><span class="nv">$VM_IP</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="m">5432</span>
-</code></pre></div>
-<h3 id="check-every-row-arrived-in-order-unaltered">Check: every row arrived, in order, unaltered<a class="headerlink" href="#check-every-row-arrived-in-order-unaltered" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">until</span><span class="w"> </span>alive<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span>beats<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="w">           </span><span class="c1"># Windows boot + PostgreSQL start</span>
-alive<span class="w">                            </span><span class="c1"># writing again, postgres_started = after cutover</span>
-verify<span class="w">                           </span><span class="c1"># chain_ok = t; last_stage = d2-before-cutover (or later)</span>
-mark<span class="w"> </span>d2-after-cutover
-verify
-</code></pre></div>
-<p>✅ <code>chain_ok = t</code>. Every row from <code>d2-start</code>, the 500-row burst, every background round and <code>d2-before-cutover</code>
-is present and in order.
-✅ <code>last_stage</code> before your new mark was <code>d2-before-cutover</code> or a background round written after it. The last
-pre-copy didn't lose the tail, because the cutover copied it.</p>
-<h3 id="check-the-real-downtime">Check: the real downtime<a class="headerlink" href="#check-the-real-downtime" title="Permanent link">&para;</a></h3>
-<p>The heartbeat writer runs every 5 s, so the outage is the gap in it around the cutover:</p>
-<div class="highlight"><pre><span></span><code>sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
-<span class="s2">SELECT ts AS resumed_at, date_trunc('second', gap) AS outage</span>
-<span class="s2">FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g</span>
-<span class="s2">WHERE gap &gt; interval '10 seconds' AND ts &gt; timestamptz '</span><span class="nv">$CUTOVER_AT</span><span class="s2">' - interval '5 minutes'</span>
-<span class="s2">ORDER BY ts;"</span>
-</code></pre></div>
-<p>The <strong>first</strong> gap after <code>$CUTOVER_AT</code> is the cutover. Compare the cutover gap with Demo 1's cold outage (your proof table, row 1.x), which was the whole copy.</p>
-<p>📸 <code>02-outage-sql</code> — the gap query result next to Demo 1's.</p>
-<h3 id="check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in">✅ Check: VMware Tools out, virtio and the QEMU guest agent in<a class="headerlink" href="#check-vmware-tools-out-virtio-and-the-qemu-guest-agent-in" title="Permanent link">&para;</a></h3>
-<p>Every migration off vSphere must swap the guest's tools: <code>virt-v2v</code> installs the <strong>virtio</strong> drivers and the <strong>QEMU guest
-agent</strong>, and VMware Tools must no longer run. Your VM reports its own guest tools at every boot (its heartbeat writer):</p>
-<div class="highlight"><pre><span></span><code>tools<span class="w">                                  </span><span class="c1"># platform = not VMware · vmtools = Stopped or absent · qemu_ga = Running · virtio = netkvm,vioscsi…</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="AgentConnected")].status}{"\n"}'</span><span class="w">   </span><span class="c1"># True</span>
-</code></pre></div>
-<p>✅ <code>qemu_ga</code> is <strong>Running</strong>, <code>virtio</code> lists the network (<code>netkvm</code>) and disk (<code>vioscsi</code>/<code>viostor</code>) drivers, and <code>vmtools</code> is
-<strong>not</strong> Running. In the console, the VM's <strong>Overview</strong> shows the <em>Guest agent</em> as connected. If <code>vmtools</code> still runs, remove
-it (<strong>Settings → Apps → VMware Tools → Uninstall</strong>, then reboot).</p>
-<h3 id="check-your-file-came-across-too">Check: your file came across too<a class="headerlink" href="#check-your-file-came-across-too" title="Permanent link">&para;</a></h3>
-<p>Console, site A → <strong>Virtualization → VirtualMachines → <code>&lt;TARGET&gt;</code> → Console</strong>. Log in as <code>.\&lt;WINUSER&gt;</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Get-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span>          <span class="c"># d1 … d2-before-cutover, all there</span>
-<span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d2-on-ove"</span>
-<span class="nb">Get-Service</span> <span class="n">QEMU-GA</span><span class="p">,</span> <span class="n">VMTools</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span>   <span class="c"># QEMU-GA Running; VMTools gone or stopped</span>
-</code></pre></div>
-<p>📸 <code>02-ove-console-file</code> — the OVE VNC console showing your file's lines.</p>
-<p>✍️ <strong>Row 2.4:</strong> cutover downtime (heartbeat gap) versus Demo 1's outage, <code>chain_ok</code>, and the fingerprint.</p>
-<hr />
-<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
-<p>Thank you for working through Demo 2. You moved a live, busy database VM off VMware with an outage measured in
-minutes, and proved with your own hash-chained rows that nothing written during the copy was lost. The bonus round
-below shows what OpenShift Virtualization does once the VM is on it: moves between nodes with <strong>no</strong> outage.</p>
-<p>To go further:</p>
-<ul>
-<li><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a>: the provider, VDDK, maps and plans, from the CLI and in the console</li>
-<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a>: warm migration, VDDK, and the precopy settings</li>
-<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/index">MTV: planning your migration (warm migration, CBT prerequisites)</a> [verify link]</li>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/live-migration">OpenShift Virtualization: live migration</a> [verify link]</li>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization (OpenShift 4.19) documentation</a>: live migration, storage, networking</li>
-<li><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization">Red Hat OpenShift Virtualization product page</a></li>
-<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization</a>: Red Hat Training</li>
-<li><a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs</a>: try OpenShift Virtualization in your browser</li>
-<li><a href="https://developers.redhat.com/products/openshift/overview">Red Hat Developer: OpenShift</a></li>
-</ul>
-<hr />
-<h2 id="28-bonus-live-migrate-the-vm-between-nodes">2.8 Bonus: live-migrate the VM between nodes<a class="headerlink" href="#28-bonus-live-migrate-the-vm-between-nodes" title="Permanent link">&para;</a></h2>
-<p>The VM is on OpenShift now, so moving it to another <strong>node</strong> in the same cluster doesn't stop it at all. KubeVirt
-copies its memory while it runs. (This is in-cluster live migration, not MTV.)</p>
-<h3 id="is-it-live-migratable">Is it live-migratable?<a class="headerlink" href="#is-it-live-migratable" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.message}{"\n"}{end}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>migrat
-</code></pre></div>
-<p>✅ <code>LiveMigratable=True</code>. That needs ReadWriteMany disks: true on the NFS class, and on ODF's virtualization class
-with RWX block. If it says <code>False</code>, read the message (usually the access mode) and tell the instructor <strong>[verify]</strong>.</p>
-<h3 id="inject-migrate-verify">Inject, migrate, verify<a class="headerlink" href="#inject-migrate-verify" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>mark<span class="w"> </span>d2-before-livemig
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}{"\n"}'</span><span class="w">     </span><span class="c1"># ✍️ node before</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">LM_AT</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%Y-%m-%dT%H:%M:%SZ<span class="k">)</span>
-</code></pre></div>
-<p><strong>Console:</strong> <strong>VirtualMachines → <code>&lt;TARGET&gt;</code> → Actions → Migrate</strong> (Compute). Or <strong>virtctl</strong>:</p>
-<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>migrate<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span>
-</code></pre></div>
-<p>Or as a resource, which is what <code>virtctl</code> creates:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-<span class="s">apiVersion: kubevirt.io/v1</span>
-<span class="s">kind: VirtualMachineInstanceMigration</span>
-<span class="s">metadata: { generateName: $TARGET-move-, namespace: $VMNS }</span>
-<span class="s">spec: { vmiName: $TARGET }</span>
-<span class="s">EOF</span>
-</code></pre></div>
-<p>Watch it, then prove the data. A live migration keeps the VM's address: on the bridge it stays <code>$VM_IP</code>.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                         </span><span class="c1"># Ctrl-C at Succeeded</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="s2">"</span><span class="nv">$TARGET</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}{"  "}{.status.migrationState.endTimestamp}{"\n"}'</span>
-mark<span class="w"> </span>d2-after-livemig
-verify<span class="w">                                                               </span><span class="c1"># chain_ok = t</span>
-sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span>
-<span class="s2">SELECT max(gap) AS worst_gap FROM (SELECT ts - lag(ts) OVER (ORDER BY id) AS gap</span>
-<span class="s2">FROM heartbeat WHERE ts &gt; timestamptz '</span><span class="nv">$LM_AT</span><span class="s2">' - interval '1 minute') g;"</span><span class="w">   </span><span class="c1"># ≈ 5 s: no outage</span>
-</code></pre></div>
-<p>✅ A different node, <code>chain_ok = t</code>, and the worst heartbeat gap is about the 5 s write interval, so there was no outage.
-PostgreSQL's <code>postgres_started</code> (from <code>alive</code>) is <strong>unchanged</strong>, because the database never restarted.</p>
-<p>📸 <code>02-livemig-node</code> — the VM's overview page before and after, showing two different nodes.</p>
-<p>✍️ <strong>Row 2.5:</strong> node before → after, the worst heartbeat gap, and <code>chain_ok</code>.</p>
-<hr />
-<h2 id="29-clean-up-your-terminal">2.9 Clean up your terminal<a class="headerlink" href="#29-clean-up-your-terminal" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nb">kill</span><span class="w"> </span><span class="s2">"</span><span class="nv">$LOADER</span><span class="s2">"</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>LOADER<span class="w"> </span>LM_AT
-<span class="c1"># keep TARGET and PGHOST if your next demo continues with this VM</span>
-</code></pre></div>
-<hr />
-<h2 id="proof-table-demo-2">Proof table: Demo 2<a class="headerlink" href="#proof-table-demo-2" title="Permanent link">&para;</a></h2>
+<h2 id="25-review-your-vm-on-openshift">2.5 Review your VM on OpenShift<a class="headerlink" href="#25-review-your-vm-on-openshift" title="Permanent link">&para;</a></h2>
+<p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines</strong>, project <strong><code>student-01-0024-012</code></strong> → <strong><code>win-pg-s01-warm</code></strong>.</p>
 <table>
 <thead>
 <tr>
-<th>Row</th>
-<th>Stage</th>
-<th>Your last mark id</th>
-<th><code>chain_ok</code></th>
-<th>Fingerprint</th>
-<th>Notes</th>
+<th>Tab</th>
+<th>What you see</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>2.1</td>
-<td><code>d2-cbt-on</code></td>
-<td></td>
-<td></td>
-<td></td>
-<td>CBT on? number of <code>-ctk.vmdk</code> files:</td>
+<td><strong>Configuration → Network</strong></td>
+<td>one NIC on <strong><code>default/vmnet23</code></strong>: your VLAN's bridge, so it keeps its address</td>
 </tr>
 <tr>
-<td>2.2</td>
-<td><code>d2-precopy</code> burst</td>
-<td></td>
-<td></td>
-<td></td>
-<td>marks count after 500 rows:</td>
-</tr>
-<tr>
-<td>2.3</td>
-<td>pre-copies</td>
-<td>—</td>
-<td>—</td>
-<td>—</td>
-<td>successful pre-copies: ___ · first took ___ · a later one took ___</td>
-</tr>
-<tr>
-<td>2.4</td>
-<td><code>d2-after-cutover</code></td>
-<td></td>
-<td></td>
-<td></td>
-<td><strong>cutover downtime ___ s</strong> vs Demo 1 cold outage ___ s · your VM's pod IP: ___</td>
-</tr>
-<tr>
-<td>2.5</td>
-<td><code>d2-after-livemig</code> (bonus)</td>
-<td></td>
-<td></td>
-<td></td>
-<td>node ___ → ___ · worst heartbeat gap ___ s</td>
+<td><strong>Configuration → Storage</strong></td>
+<td><strong>three</strong> disks on <strong><code>ocs-storagecluster-ceph-rbd-virtualization</code></strong> (ODF)</td>
 </tr>
 </tbody>
 </table>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01-warm<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .spec.template.spec.networks[*]}{.multus.networkName}{"\n"}{end}'</span><span class="w">   </span><span class="c1"># default/vmnet23</span>
+oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>win-pg-s01-warm<span class="w"> </span>-w<span class="w">                 </span><span class="c1"># Running (Ctrl-C to stop watching)</span>
+</code></pre></div>
+<p>Your VM was running on vSphere when it was cut over, so MTV starts it on OpenShift. If it shows <strong>Stopped</strong>, start
+it: <strong>Actions → Start</strong> <strong>[verify]</strong>.</p>
+<p>On the VM's <strong>Overview</strong>, the <em>Guest agent</em> shows as connected, and <strong>IP addresses</strong> shows <code>10.101.23.101</code>.</p>
+<p>✅ Running, guest agent connected, address <code>10.101.23.101</code>.</p>
+<hr />
+<h2 id="26-inject-the-migration-is-complete-read-back-and-measure-the-outage">2.6 Inject: the migration is complete, read back, and measure the outage<a class="headerlink" href="#26-inject-the-migration-is-complete-read-back-and-measure-the-outage" title="Permanent link">&para;</a></h2>
+<p>Give Windows a minute to start PostgreSQL, then:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'warm-migration-complete', 'on OpenShift site A');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
+</code></pre></div>
+<p>✅ The read-back ends with <code>demo-started</code>, the 500 <code>warm-precopy-load</code> rows (written <strong>while</strong> the disks copied),
+<code>start-warm-migration</code> (the last row on vSphere) and <code>warm-migration-complete</code> (written on OpenShift).
+<code>ovedr_verify</code> shows <code>chain_ok = t</code>: nothing written during the copy was lost, changed or reordered.</p>
+<p><strong>The real outage.</strong> Your VM's heartbeat writer adds a row every 5 seconds, so the outage is the gap in it after
+your <code>start-warm-migration</code> row:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT ts AS back_at, date_trunc('second', gap) AS outage FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g WHERE gap &gt; interval '10 seconds' AND ts &gt; (SELECT max(ts) FROM marks WHERE student = 'student-01-0024-012' AND stage = 'start-warm-migration') ORDER BY ts;"</span>
+</code></pre></div>
+<p>✅ One row: the cutover outage. Compare it with how long the first pre-copy took. A cold migration would have
+been down for all of that copy.</p>
+<p><strong>The guest tools were swapped:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-x<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT ts, platform, vmtools, qemu_ga, virtio FROM guest_tools ORDER BY id DESC LIMIT 1;"</span>
+</code></pre></div>
+<p>✅ <code>qemu_ga</code> is <strong>Running</strong>, <code>virtio</code> lists the network and disk drivers, and <code>vmtools</code> is not running.</p>
+<p><strong>That is the end of Demo 2.</strong> Your VM moved to OpenShift Virtualization while it kept writing, and stopped only for
+the cutover.</p>
 <blockquote>
-<p><strong>The claim this table proves:</strong> with CBT, the VM ran and wrote through every pre-copy round, and the only
-outage was the cutover. The hash chain proves that nothing written before the cutover, including during the
-copy, was lost, altered or reordered.</p>
+<p>💡 <strong>One copy on your VLAN at a time.</strong> If you did Demo 1, your project now holds two VMs, <code>win-pg-s01</code> (stopped)
+and <code>win-pg-s01-warm</code> (running), with the same address. Never run both at once.</p>
 </blockquote>
+<hr />
+<h2 id="bonus-labs-optional">Bonus labs (optional)<a class="headerlink" href="#bonus-labs-optional" title="Permanent link">&para;</a></h2>
+<p>The Demo 1 bonus labs work on this VM too: use <strong><code>win-pg-s01-warm</code></strong> wherever they say <code>win-pg-s01</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Bonus</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="01a-snapshot-restore.html">Demo 1a: snapshot and restore</a></td>
+<td>snapshot your VM, destroy the database, bring it back from the snapshot's disks</td>
+</tr>
+<tr>
+<td><a href="01b-live-and-storage-migration.html">Demo 1b: live migration and storage migration</a></td>
+<td>move the <strong>running</strong> VM to another node, then move its disks to another storage class, with no reboot</td>
+</tr>
+<tr>
+<td><a href="01c-ocp-vm-cross-cluster-migration.html">Demo 1c: cross-cluster migration</a></td>
+<td>link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <a href="../student-guide.html">Student guide</a>.</p>
+<h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a>: warm migration, VDDK and the pre-copy settings</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization documentation (4.19)</a></li>
+<li><a href="setup-how-the-lab-is-built.html">Lab S — how this lab was built</a>: the provider, VDDK (§S.15), maps and plans, built by hand</li>
+<li><a href="https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization">DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)</a></li>
+<li><a href="https://www.redhat.com/en/interactive-labs">Red Hat interactive labs (free, in the browser)</a></li>
+</ul>
 
 
 
