@@ -787,6 +787,11 @@
   account for a while.</li>
 <li><strong>A page is stuck after a timeout:</strong> sign in again in a <strong>private window</strong>. Nothing is lost: your VM, your data and
   your terminal live in the lab, not in the browser.</li>
+<li><strong><code>no pg_hba.conf entry … user "student-01"</code>:</strong> the database login uses an <strong>underscore</strong>, <code>student_01</code>, not the
+  hyphen of your class ID. Type it again with <code>_</code>. It is not a network fault.</li>
+<li><strong>The OpenShift console goes dark but vCenter still opens:</strong> your computer is asking a public DNS server (such as
+  8.8.8.8) for the lab's names and gets a dead address. Turn off your browser's <strong>Secure DNS</strong> (DNS over HTTPS) and
+  tell the instructor, who can point your laptop at the lab's DNS.</li>
 <li><strong>After class:</strong> the lab team, at <a href="mailto:lab@paragonmicro.com">lab@paragonmicro.com</a>.</li>
 </ul>
 <p>This site is public and never contains passwords or anything about your company's environment.</p>
