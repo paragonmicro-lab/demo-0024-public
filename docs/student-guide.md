@@ -67,7 +67,7 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 | # | Guide | You will | Time | Bonus (optional) |
 |---|---|---|---|---|
 | 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open a command line | 5 min | — |
-| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 45 min | [1a: snapshot and restore](demos/01a-snapshot-restore.md) (25 min) · [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) |
+| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 45 min | [1a: snapshot and restore](demos/01a-snapshot-restore.md) (25 min) · [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) · [1c: cross-cluster migration](demos/01c-ocp-vm-cross-cluster-migration.md) (45 min) |
 | 2 | [Warm migration](demos/02-vmware-to-ove-warm.md) | enable CBT, pre-copy while the VM runs, cut over in moments | 60 min | §2.8 live migration (15 min) |
 
 **Go deeper**, when your instructor offers it:
@@ -76,7 +76,6 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 |---|---|---|---|---|
 | Storage | [Demo 4: ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
 | Backup | [Demo 5: OADP backup and restore](demos/05-oadp-vm-backup.md) | back up your namespace, delete your VM, restore it, prove the data | 30 min | *framework: when OADP is staged* |
-| More | [Demo 3: OpenShift → OpenShift](demos/03-ove-to-ove-cold.md) | link the clusters in ACM; move your VM to the other cluster, storage and all | 45 min | — |
 
 Reference: [Toolkit](demos/toolkit.md) (your terminal, the data commands, the proof table) · [Lab S](demos/setup-how-the-lab-is-built.md)
 (how every staged piece was built, with the commands and the Red Hat docs) · [Lab diagram](demos/lab-diagram.md).

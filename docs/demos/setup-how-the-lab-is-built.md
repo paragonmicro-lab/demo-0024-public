@@ -790,7 +790,7 @@ The booking turns **READY** only when CI's last job passes every check, against 
 
 ## S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery
 
-Two clusters become one DR pair in **three layers**, and each layer needs the one before it. Demo 3 (moving a VM between
+Two clusters become one DR pair in **three layers**, and each layer needs the one before it. Demo 1c (moving a VM between
 clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR) needs all three layers.
 
 ```
@@ -948,7 +948,7 @@ Red Hat: [ODF Regional-DR](https://docs.redhat.com/en/documentation/red_hat_open
 
 | Layer | Automated | Waits on |
 |---|---|---|
-| MTV between the clusters (Demo 3) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | — |
+| MTV between the clusters (Demo 1c) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | — |
 | 1 · ACM join | ✅ **every deploy**: site A booked `acm: managed` (demo-openshift's member option), then `acm_join.sh` (demo-prep) imports it into site B's hub; both in set `ovedr` | first proof on the next booking **[verify]** |
 | 2 · Submariner (Globalnet) | ✅ when DR=on: `dr_fabric.sh` | ODF on both sites |
 | 3 · ODF replication link | ✅ when DR=on: `dr_fabric.sh` (MCG, MirrorPeer, DRClusters) + `dr_policy.sh` (DRPolicy 15m) | ODF on both sites (SSDs, BL-C20) |

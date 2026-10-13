@@ -79,10 +79,16 @@ oc -n student-01-0024-012 get vm win-pg-s01 -o json | jq -r '.spec.template.spec
 oc -n student-01-0024-012 get pvc -o custom-columns=NAME:.metadata.name,SIZE:.spec.resources.requests.storage,CLASS:.spec.storageClassName
 ```
 
+Set the one value this step needs, from the list above:
+
+```bash
+# the data disk's current volume (the 10Gi one on ODF): the disk you are moving
+OLD='<the 10Gi pvc from the list above>'
+```
+
 Create an empty 10Gi target volume on `nfs-csi`:
 
 ```bash
-OLD='<the 10Gi pvc from the list above>'
 oc apply -f - <<EOF
 apiVersion: cdi.kubevirt.io/v1beta1
 kind: DataVolume

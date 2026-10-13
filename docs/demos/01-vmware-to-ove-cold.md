@@ -125,6 +125,63 @@ oc -n openshift-mtv get plan d1-win-pg-s01 -w                        # Executing
 ✅ The plan shows **Succeeded**.
 
 <details markdown="1">
+<summary>Or: create and start your own cold plan from the CLI (instead of the staged one)</summary>
+
+This builds a cold plan like your staged `d1-win-pg-s01`, under a **new name**, so the staged plan stays as the lab
+built it. Use **one** of them: a VM can be in only one running plan. If you start this one, skip the console's
+**Start** above.
+
+Set the values once. Every command below reads them:
+
+```bash
+# your class ID: MTV creates your VM in this project on site A
+CLASS_ID=student-01-0024-012
+# your VM's name in vCenter (MTV keeps the name on OpenShift)
+VM=win-pg-s01
+# the provider that links site A to your booking's vCenter ("ovedr-vcenter0" + N), and its maps
+SRC=ovedr-vcenter01
+# a NEW plan name, so this never touches the staged d1-win-pg-s01
+PLAN=$CLASS_ID-cold-cli
+```
+
+Create the plan. The maps are the class's: `-net-bridge` keeps your VM on its VLAN (and its address), `-storage`
+puts its disks on ODF:
+
+```bash
+oc apply -f - <<EOF
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Plan
+metadata: { name: $PLAN, namespace: openshift-mtv }
+spec:
+  warm: false
+  targetNamespace: $CLASS_ID
+  provider:
+    source:      { name: $SRC, namespace: openshift-mtv }
+    destination: { name: host, namespace: openshift-mtv }
+  map:
+    network: { name: $SRC-net-bridge, namespace: openshift-mtv }
+    storage: { name: $SRC-storage,    namespace: openshift-mtv }
+  vms:
+    - name: $VM
+EOF
+oc -n openshift-mtv get plan $PLAN -w                # READY True (Ctrl-C)
+```
+
+Start it: a **Migration** is what the console's Start button creates.
+
+```bash
+oc apply -f - <<EOF
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Migration
+metadata: { name: $PLAN-run1, namespace: openshift-mtv }
+spec: { plan: { name: $PLAN, namespace: openshift-mtv } }
+EOF
+oc -n openshift-mtv get plan $PLAN -w                # Executing → Succeeded (Ctrl-C)
+```
+
+</details>
+
+<details markdown="1">
 <summary>A step failed: read the logs before you delete anything</summary>
 
 ![A failed plan: ImageConversion, Guest conversion failed](../.images/01-plan-failed-imageconversion.png)
@@ -199,12 +256,13 @@ reordered by the move.
 
 ## Bonus labs (optional)
 
-Both start from your VM running on site A, where Demo 1 left it.
+All three start from your VM running on site A, where Demo 1 left it.
 
 | Bonus | What you do |
 |---|---|
 | [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot your VM, destroy the database, bring it back from the snapshot's disks |
 | [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the **running** VM to another node, then move its disks to another storage class, with no reboot |
+| [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
 
 **Next:** [Demo 2: warm migration](02-vmware-to-ove-warm.md).
 

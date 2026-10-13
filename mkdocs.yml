@@ -73,13 +73,12 @@ nav:
       - "Demo 1: Cold migration": demos/01-vmware-to-ove-cold.md
       - "Demo 1a: Snapshot and restore (bonus)": demos/01a-snapshot-restore.md
       - "Demo 1b: Live and storage migration (bonus)": demos/01b-live-and-storage-migration.md
+      - "Demo 1c: Cross-cluster migration (bonus)": demos/01c-ocp-vm-cross-cluster-migration.md
       - "Demo 2: Warm migration": demos/02-vmware-to-ove-warm.md
   - "Storage":
       - "Demo 4: ODF Regional-DR": demos/04-odf-regional-dr.md
   - "Backup":
       - "Demo 5: OADP backup and restore (bonus)": demos/05-oadp-vm-backup.md
-  - "More demos":
-      - "Demo 3: OpenShift → OpenShift": demos/03-ove-to-ove-cold.md
   - "Downloads": downloads.md
   - "Get help": help.md
   - "Reference":

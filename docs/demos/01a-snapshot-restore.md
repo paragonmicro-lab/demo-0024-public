@@ -111,40 +111,58 @@ $bad | ForEach-Object { Set-Disk -Number $_.Number -IsOffline $true }
 
 ## 1a.4 Create volumes from the snapshot's `D:` and `L:`, and hot-plug them
 
+Set the values once. Every command in this step reads them:
+
+```bash
+# your class ID: the project your VM, its disks and the snapshot live in
+CLASS_ID=student-01-0024-012
+# your VM, and the snapshot you took in 1a.1
+VM=win-pg-s01
+SNAP=$VM-snap
+```
+
 The snapshot holds one **VolumeSnapshot** per disk. List them, and note the **10Gi** (`D:`, data) and **5Gi** (`L:`,
 WAL) rows:
 
 ```bash
-CONTENT=$(oc -n student-01-0024-012 get vmsnapshot win-pg-s01-snap -o jsonpath='{.status.virtualMachineSnapshotContentName}')
-oc -n student-01-0024-012 get vmsnapshotcontent "$CONTENT" \
+CONTENT=$(oc -n $CLASS_ID get vmsnapshot $SNAP -o jsonpath='{.status.virtualMachineSnapshotContentName}')
+oc -n $CLASS_ID get vmsnapshotcontent "$CONTENT" \
   -o jsonpath='{range .spec.volumeBackups[*]}{.persistentVolumeClaim.metadata.name}{"  "}{.persistentVolumeClaim.spec.resources.requests.storage}{"  "}{.volumeSnapshotName}{"\n"}{end}'
 ```
 
-Create a volume **from** each of the two VolumeSnapshots, with the same class, mode and size as the original:
+Copy four names from that list:
+
+```bash
+# the 10Gi row: your data disk (D:) and its VolumeSnapshot
+DATA_PVC='<10Gi pvc>'
+DATA_SNAP='<its volumesnapshot>'
+# the 5Gi row: your WAL disk (L:) and its VolumeSnapshot, from the SAME snapshot so data and WAL match
+WAL_PVC='<5Gi pvc>'
+WAL_SNAP='<its volumesnapshot>'
+```
+
+Create a volume **from** each VolumeSnapshot, with the same class, mode and size as the original:
 
 ```bash
 restore_pvc() {   # restore_pvc <original pvc> <volumesnapshot> <new name>
-  oc -n student-01-0024-012 get pvc "$1" -o json | jq --arg s "$2" --arg n "$3" '{
+  oc -n $CLASS_ID get pvc "$1" -o json | jq --arg s "$2" --arg n "$3" '{
     apiVersion: "v1", kind: "PersistentVolumeClaim",
     metadata: {name: $n, namespace: .metadata.namespace},
     spec: {storageClassName: .spec.storageClassName, accessModes: .spec.accessModes,
            volumeMode: .spec.volumeMode, resources: .spec.resources,
            dataSource: {apiGroup: "snapshot.storage.k8s.io", kind: "VolumeSnapshot", name: $s}}}' | oc apply -f -
 }
-# fill these four from the list above
-DATA_PVC='<10Gi pvc>'; DATA_SNAP='<its volumesnapshot>'
-WAL_PVC='<5Gi pvc>';   WAL_SNAP='<its volumesnapshot>'
-restore_pvc "$DATA_PVC" "$DATA_SNAP" win-pg-s01-restored-data
-restore_pvc "$WAL_PVC"  "$WAL_SNAP"  win-pg-s01-restored-wal
-oc -n student-01-0024-012 get pvc win-pg-s01-restored-data win-pg-s01-restored-wal -w     # Bound (Ctrl-C)
+restore_pvc "$DATA_PVC" "$DATA_SNAP" $VM-restored-data
+restore_pvc "$WAL_PVC"  "$WAL_SNAP"  $VM-restored-wal
+oc -n $CLASS_ID get pvc $VM-restored-data $VM-restored-wal -w     # Bound (Ctrl-C)
 ```
 
 Hot-plug both into the running VM. The serial (`data`, `wal`) is how Windows will tell them apart:
 
 ```bash
-virtctl -n student-01-0024-012 addvolume win-pg-s01 --volume-name=win-pg-s01-restored-data --serial=data --persist
-virtctl -n student-01-0024-012 addvolume win-pg-s01 --volume-name=win-pg-s01-restored-wal  --serial=wal  --persist
-oc -n student-01-0024-012 get vmi win-pg-s01 -o jsonpath='{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'
+virtctl -n $CLASS_ID addvolume $VM --volume-name=$VM-restored-data --serial=data --persist
+virtctl -n $CLASS_ID addvolume $VM --volume-name=$VM-restored-wal  --serial=wal  --persist
+oc -n $CLASS_ID get vmi $VM -o jsonpath='{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'
 ```
 
 ✅ Both restored volumes show `Ready` **[verify: hot-plug on this cluster, and the `vioscsi` driver in the guest]**.

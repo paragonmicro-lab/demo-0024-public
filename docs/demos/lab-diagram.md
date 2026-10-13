@@ -52,8 +52,8 @@ flowchart TB
   STU --> A
   STU --> B
   VS == "Demo 1 cold · Demo 2 warm (CBT)<br/>each VM keeps its own address (bridge map)" ==> A
-  VS == "Demo 1b cold" ==> B
-  A == "Demo 3 cold OVE → OVE<br/>ODF → NFS storage migration" ==> B
+  VS == "staged cold plan (site B)" ==> B
+  A == "Demo 1c cross-cluster OVE → OVE<br/>ODF → NFS storage migration" ==> B
   A -. "Demo 4 ODF Regional-DR · RBD mirror every 15 min<br/>(needs ODF on both sites)" .-> B
   B -. "ACM hub manages site A (BL-D11)" .-> A
 ```
