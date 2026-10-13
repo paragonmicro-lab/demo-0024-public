@@ -1117,22 +1117,37 @@ then <strong>right-click → Copy</strong>. <strong>[verify: per browser]</stron
 oc<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">         </span><span class="c1"># the cluster's nodes, all Ready</span>
 </code></pre></div>
 <p><strong>Your VM's database</strong>, PostgreSQL inside your Windows VM. From <code>oc</code> anywhere (the Web Terminal, or your own computer),
-run <code>psql</code> inside your class terminal, with your class ID, your VM's address (0.1) and your database login. Example:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-U<span class="w"> </span>student_01<span class="w"> </span>-d<span class="w"> </span>bcdr
+each step is <strong>one line</strong>: <code>oc exec</code> runs it inside your class terminal (<code>sql-client</code>), which already knows your VM's
+address and your database login. Use your class ID where the example has <code>student-01-0024-012</code>.</p>
+<ol>
+<li><strong>Sign in to the database</strong>, once (enter your class password):</li>
+</ol>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>dblogin
 </code></pre></div>
-<p>Enter your class password. At the <code>bcdr=&gt;</code> prompt, <strong>inject</strong> your first row (the class has started), <strong>read it back</strong>,
-then <strong>prove</strong> your rows. Use your class ID where the example has <code>student-01-0024-012</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_mark</span><span class="p">(</span><span class="s1">'student-01-0024-012'</span><span class="p">,</span><span class="w"> </span><span class="s1">'start-class'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Lab 0: signed in'</span><span class="p">);</span><span class="w">   </span><span class="c1">-- inject</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">ts</span><span class="p">,</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">marks</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">                                  </span><span class="c1">-- read back</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">ovedr_verify</span><span class="p">(</span><span class="s1">'student-01-0024-012'</span><span class="p">);</span><span class="w">                                     </span><span class="c1">-- chain_ok = t</span>
-<span class="err">\</span><span class="n">q</span>
+<ol>
+<li><strong>Inject</strong> a row: the class has started:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>mark<span class="w"> </span>start-class<span class="w"> </span><span class="s2">"Lab 0: signed in"</span>
 </code></pre></div>
-<p>Every demo does the same at each stage (<code>before-…</code>, <code>after-…</code>), so you watch your rows grow as your VM moves.</p>
+<ol>
+<li><strong>Read back</strong> every row you have posted, oldest first:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+</code></pre></div>
+<ol>
+<li><strong>Prove</strong> them: no row lost, changed or reordered (one summary line, <code>chain_ok = t</code>):</li>
+</ol>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>verify
+</code></pre></div>
+<p>Every demo repeats steps 2 and 3 at each stage (for example <code>mark before-vmware-cold-migration</code>), so the read-back
+lists your messages in order as the class goes on.</p>
 <blockquote>
-<p>💡 <code>no pg_hba.conf entry … user "student-01"</code> means you typed a hyphen: the database login is <code>student_01</code>. In your
-class terminal (0.3) the same three steps are short commands: <code>dblogin</code> once, then <code>mark start-class</code>, then <code>verify</code>.</p>
+<p>💡 <strong>Tips.</strong> Inside your class terminal (0.3) the same commands are just <code>dblogin</code>, <code>mark …</code>, <code>sql -c "…"</code> and <code>verify</code>.
+If <code>mark</code> says <em>run: dblogin</em>, your class terminal restarted: do step 1 again. To open <code>psql</code> yourself:
+<code>oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr</code> (the login is
+<code>student_01</code>, with an underscore; <code>no pg_hba.conf entry … user "student-01"</code> means you typed a hyphen).</p>
 </blockquote>
-<p>✅ <code>oc get nodes</code> lists the nodes Ready, and reading back your rows shows <code>start-class</code>, with <code>chain_ok = t</code>.</p>
+<p>✅ <code>oc get nodes</code> lists the nodes Ready, the read-back lists your <code>start-class</code> row, and <code>verify</code> shows <code>chain_ok = t</code>.</p>
 <hr />
 <h2 id="done">Done<a class="headerlink" href="#done" title="Permanent link">&para;</a></h2>
 <p>You are signed in to vCenter and both OpenShift clusters, you have a command line, and you reached your own VM's
