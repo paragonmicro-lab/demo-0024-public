@@ -101,28 +101,42 @@ oc get nodes         # the cluster's nodes, all Ready
 ```
 
 **Your VM's database**, PostgreSQL inside your Windows VM. From `oc` anywhere (the Web Terminal, or your own computer),
-run `psql` inside your class terminal, with your class ID, your VM's address (0.1) and your database login. Example:
+each step is **one line**: `oc exec` runs it inside your class terminal (`sql-client`), which already knows your VM's
+address and your database login. Use your class ID where the example has `student-01-0024-012`.
 
-```bash
-oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr
-```
+1. **Sign in to the database**, once (enter your class password):
 
-Enter your class password. At the `bcdr=>` prompt, **inject** your first row (the class has started), **read it back**,
-then **prove** your rows. Use your class ID where the example has `student-01-0024-012`:
+   ```bash
+   oc exec -it -n student-01-0024-012 deploy/sql-client -- dblogin
+   ```
 
-```sql
-SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');   -- inject
-SELECT id, ts, stage, payload FROM marks ORDER BY id;                                  -- read back
-SELECT * FROM ovedr_verify('student-01-0024-012');                                     -- chain_ok = t
-\q
-```
+2. **Inject** a row: the class has started:
 
-Every demo does the same at each stage (`before-…`, `after-…`), so you watch your rows grow as your VM moves.
+   ```bash
+   oc exec -n student-01-0024-012 deploy/sql-client -- mark start-class "Lab 0: signed in"
+   ```
 
-> 💡 `no pg_hba.conf entry … user "student-01"` means you typed a hyphen: the database login is `student_01`. In your
-> class terminal (0.3) the same three steps are short commands: `dblogin` once, then `mark start-class`, then `verify`.
+3. **Read back** every row you have posted, oldest first:
 
-✅ `oc get nodes` lists the nodes Ready, and reading back your rows shows `start-class`, with `chain_ok = t`.
+   ```bash
+   oc exec -n student-01-0024-012 deploy/sql-client -- sql -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+   ```
+
+4. **Prove** them: no row lost, changed or reordered (one summary line, `chain_ok = t`):
+
+   ```bash
+   oc exec -n student-01-0024-012 deploy/sql-client -- verify
+   ```
+
+Every demo repeats steps 2 and 3 at each stage (for example `mark before-vmware-cold-migration`), so the read-back
+lists your messages in order as the class goes on.
+
+> 💡 **Tips.** Inside your class terminal (0.3) the same commands are just `dblogin`, `mark …`, `sql -c "…"` and `verify`.
+> If `mark` says *run: dblogin*, your class terminal restarted: do step 1 again. To open `psql` yourself:
+> `oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr` (the login is
+> `student_01`, with an underscore; `no pg_hba.conf entry … user "student-01"` means you typed a hyphen).
+
+✅ `oc get nodes` lists the nodes Ready, the read-back lists your `start-class` row, and `verify` shows `chain_ok = t`.
 
 ---
 
