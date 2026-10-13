@@ -101,8 +101,14 @@ oc get nodes         # the cluster's nodes, all Ready
 
 **Your VM's database**, PostgreSQL inside your Windows VM, at **your VM's address from 0.1** (the `-h` below). From `oc`
 anywhere (the Web Terminal, or your own computer), each step is **one line**: `oc exec` runs it inside your class
-terminal (`sql-client`). Use your class ID where the example has `student-01-0024-012`, and your VM's address where it
-has `10.101.23.101`.
+terminal (`sql-client`).
+
+> ⚠ **Steps 1–4 are an example. Change two values to yours before you run them:**
+>
+> | In the example | Is the example's | Replace with yours |
+> |---|---|---|
+> | `student-01-0024-012` | class ID (`student-01` on booking `0024-012`) | your class ID, e.g. `student-03-0024-012` (appears in every line, and twice in steps 2 and 4) |
+> | `10.101.23.101` | address of `win-pg-s01`, the Windows VM running the SQL server | your VM's address, from vCenter in 0.1 |
 
 1. **Sign in to the database**, once (enter your class password):
 
