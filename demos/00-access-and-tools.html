@@ -1117,8 +1117,31 @@ oc<span class="w"> </span>get<span class="w"> </span>nodes<span class="w">      
 </code></pre></div>
 <p><strong>Your VM's database</strong>, PostgreSQL inside your Windows VM, at <strong>your VM's address from 0.1</strong> (the <code>-h</code> below). From <code>oc</code>
 anywhere (the Web Terminal, or your own computer), each step is <strong>one line</strong>: <code>oc exec</code> runs it inside your class
-terminal (<code>sql-client</code>). Use your class ID where the example has <code>student-01-0024-012</code>, and your VM's address where it
-has <code>10.101.23.101</code>.</p>
+terminal (<code>sql-client</code>).</p>
+<blockquote>
+<p>⚠ <strong>Steps 1–4 are an example. Change two values to yours before you run them:</strong></p>
+<table>
+<thead>
+<tr>
+<th>In the example</th>
+<th>Is the example's</th>
+<th>Replace with yours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>student-01-0024-012</code></td>
+<td>class ID (<code>student-01</code> on booking <code>0024-012</code>)</td>
+<td>your class ID, e.g. <code>student-03-0024-012</code> (appears in every line, and twice in steps 2 and 4)</td>
+</tr>
+<tr>
+<td><code>10.101.23.101</code></td>
+<td>address of <code>win-pg-s01</code>, the Windows VM running the SQL server</td>
+<td>your VM's address, from vCenter in 0.1</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
 <ol>
 <li><strong>Sign in to the database</strong>, once (enter your class password):</li>
 </ol>
