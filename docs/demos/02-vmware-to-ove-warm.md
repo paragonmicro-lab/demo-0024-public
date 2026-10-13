@@ -1,13 +1,13 @@
 ---
 title: "Demo 2 — VMware to OpenShift Virtualization: warm migration"
 subtitle: "Inject · turn on Changed Block Tracking · start the warm plan while the VM runs · cut over · review on OpenShift · inject and read back"
-version: 2.0.0
+version: 2.1.0
 date: 2026-10-13
 ---
 
 # Demo 2: VMware to OpenShift Virtualization (warm migration)
 
-> **Version 2.0.0 · draft · 2026-10-13** · class/demos/02-vmware-to-ove-warm.md
+> **Version 2.1.0 · draft · 2026-10-13** · class/demos/02-vmware-to-ove-warm.md
 
 ## What you will learn
 
@@ -341,6 +341,59 @@ The Demo 1 bonus labs work on this VM too: use **`win-pg-s01-warm`** wherever th
 | [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
 
 **Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
+
+## Addendum: how the lab staged this demo, as code
+
+The provider, the maps and the CI pipeline are the same as Demo 1's ([Demo 1 addendum](01-vmware-to-ove-cold.md#addendum-how-the-lab-staged-this-demo-as-code)).
+A warm migration needs three more things, and CI declares each one:
+
+| CI job | Code | What it declares for warm |
+|---|---|---|
+| `mtv-install` | Ansible role `mtv_operator` | the **pre-copy interval**: 5 minutes instead of MTV's default 60, so a class sees several rounds |
+| `vddk` | `automation/customize/vddk.sh` | the **VDDK image**: Broadcom's library, which can't be redistributed, built from the lab's private copy into the cluster's own registry, then set on the provider ([Lab S §S.15](setup-how-the-lab-is-built.md)) |
+| `stage` | `automation/customize/stage.sh` | the **warm plan** `d2-<vm>`, landing as `<vm>-warm`. Staged and reported, never fatal: it waits for CBT, which you turn on in 2.2 |
+
+```yaml
+# the pre-copy interval, on MTV's own controller
+apiVersion: forklift.konveyor.io/v1beta1
+kind: ForkliftController
+metadata: { name: forklift-controller, namespace: openshift-mtv }
+spec:
+  controller_precopy_interval: "5"        # minutes between pre-copy rounds
+---
+# the provider, plus the VDDK image (the only difference from Demo 1's)
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Provider
+metadata: { name: ovedr-vcenter01, namespace: openshift-mtv }
+spec:
+  type: vsphere
+  url: https://vcenter01.demo.lab-paragonmicro.com/sdk
+  secret: { name: ovedr-vcenter01, namespace: openshift-mtv }
+  settings:
+    vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:8.0.3
+---
+# the staged warm plan: warm: true, and a target name so it never collides with Demo 1's copy
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Plan
+metadata: { name: d2-win-pg-s01, namespace: openshift-mtv, labels: { ovedr/stage: plan, ovedr/type: warm } }
+spec:
+  warm: true
+  targetNamespace: student-01-0024-012
+  provider: { source: { name: ovedr-vcenter01, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
+  map:
+    network: { name: ovedr-vcenter01-net-bridge, namespace: openshift-mtv }
+    storage: { name: ovedr-vcenter01-storage,    namespace: openshift-mtv }
+  vms: [ { name: win-pg-s01, targetName: win-pg-s01-warm } ]
+```
+
+What stays a hands-on step, on purpose: **CBT** (2.2). It's a setting on the VMware VM, which the lab could set too
+(`govc vm.change -e ctkEnabled=TRUE …`), but turning it on yourself is the lesson. Then the **Migration** and its
+**cutover** (2.3, 2.4).
+
+```bash
+oc -n openshift-mtv get plan d2-win-pg-s01 -o yaml
+oc -n openshift-mtv get provider ovedr-vcenter01 -o jsonpath='{.spec.settings}{"\n"}'
+```
 
 ## Thank you
 

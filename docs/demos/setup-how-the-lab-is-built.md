@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.5.0
-date: 2026-10-12
+version: 0.6.0
+date: 2026-10-13
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.5.0 · draft · 2026-10-12** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.6.0 · draft · 2026-10-13** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -709,13 +709,12 @@ govc object.mv "$F/my-win-pg-s01" '/datacenter01/vm/vms/students/<student ID>'
 |---|---|---|
 | site A | **`d1-<vm>`** | vSphere → site A, cold (Demo 1) |
 | site A | **`d2-<vm>`** | vSphere → site A, **warm** (Demo 2): lands as `<vm>-warm`. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking) |
-| site B | **`d1b-<vm>-to-<B slot>`** | vSphere → site B, cold (Demo 1b) |
-| site B | **`d2b-<vm>-to-<B slot>`** | vSphere → site B, **warm**: lands as `<vm>-warm`, waits on CBT like `d2-<vm>` |
 
 Each plan targets **its VM's owner's namespace**: a student's VM lands in that student's own namespace (their class ID,
 `$VMNS`), the instructor's `win-pg-i01` in `ovedr-app`. It uses the **bridge** network map when it exists (your VM keeps its own address), plus the
 site's storage map. CI waits until every plan is **Ready**: MTV found the VM and the maps validate. **No plan is started.**
-That is the one step left to you (Demo 1 / 1b). A plan that has started is never touched again.
+That is the one step left to you (Demo 1, Demo 2). Site B gets no vSphere plans (since 2026-10-13): your VM reaches
+site B from site A in Demo 1c, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.
 
 **Check:**
 

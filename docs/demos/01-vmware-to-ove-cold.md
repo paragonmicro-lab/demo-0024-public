@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.0.0
+version: 1.1.0
 date: 2026-10-13
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.0.0 · draft · 2026-10-13** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.1.0 · draft · 2026-10-13** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -265,6 +265,77 @@ All three start from your VM running on site A, where Demo 1 left it.
 | [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
 
 **Next:** [Demo 2: warm migration](02-vmware-to-ove-warm.md).
+
+## Addendum: how the lab staged this demo, as code
+
+Nothing you used in this demo was clicked together. The class's CI (the GitHub Actions workflow `deploy.yml`, action
+`customize`) declared every object, and it runs again on every booking with the same result: run it twice and the
+second run changes nothing. In order:
+
+| CI job | Code | What it declares |
+|---|---|---|
+| `mtv-install` | Ansible role `mtv_operator` | checks MTV (installed by the OpenShift build, option `ove: cnv-mtv`), sets the pre-copy interval, grants students the right to create plans and migrations |
+| `mtv-fabric` | `automation/customize/mtv_fabric.sh` | the link to vCenter (a Secret + a **Provider**), and the **NetworkMap**s and **StorageMap** |
+| `stage` | `automation/customize/stage.sh` | one **Plan** per class VM, `d1-<vm>` (cold) and `d2-<vm>` (warm), **not started** |
+| `migration-test` | `automation/test/migrate_both.sh` | the proof: a test clone migrates from vSphere to each site with the same Plan + Migration you used, and its data is checked (action `test-migration`) |
+
+The chain MTV follows, and each object as the lab declares it (the Secret's password never appears in the code: CI
+reads it from the vault at run time):
+
+```yaml
+# 1 · Provider: the link to vCenter. MTV reads its inventory (VMs, networks, datastores) through it.
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Provider
+metadata: { name: ovedr-vcenter01, namespace: openshift-mtv }
+spec:
+  type: vsphere
+  url: https://vcenter01.demo.lab-paragonmicro.com/sdk
+  secret: { name: ovedr-vcenter01, namespace: openshift-mtv }   # user, password, the vCenter CA
+---
+# 2 · NetworkMap: vSphere port group → your VLAN's bridge on OpenShift, so the VM keeps its address
+apiVersion: forklift.konveyor.io/v1beta1
+kind: NetworkMap
+metadata: { name: ovedr-vcenter01-net-bridge, namespace: openshift-mtv }
+spec:
+  provider: { source: { name: ovedr-vcenter01, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
+  map:
+    - { source: { name: vm-network }, destination: { type: multus, name: vmnet23, namespace: default } }
+---
+# 3 · StorageMap: vSphere datastore → OpenShift storage class (ODF on site A)
+apiVersion: forklift.konveyor.io/v1beta1
+kind: StorageMap
+metadata: { name: ovedr-vcenter01-storage, namespace: openshift-mtv }
+spec:
+  provider: { source: { name: ovedr-vcenter01, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
+  map:
+    - { source: { name: coresan01_data00 }, destination: { storageClass: ocs-storagecluster-ceph-rbd-virtualization } }
+---
+# 4 · Plan: which VM, to which project, through which maps. Staged, not started.
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Plan
+metadata: { name: d1-win-pg-s01, namespace: openshift-mtv, labels: { ovedr/stage: plan, ovedr/type: cold } }
+spec:
+  warm: false
+  targetNamespace: student-01-0024-012
+  provider: { source: { name: ovedr-vcenter01, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
+  map:
+    network: { name: ovedr-vcenter01-net-bridge, namespace: openshift-mtv }
+    storage: { name: ovedr-vcenter01-storage,    namespace: openshift-mtv }
+  vms: [ { name: win-pg-s01 } ]
+```
+
+5 · **Migration**: the only object left to you. The console's **Start** creates it, as does the CLI box in 1.3.
+
+Read the live ones from your Web Terminal:
+
+```bash
+oc -n openshift-mtv get provider ovedr-vcenter01 -o yaml
+oc -n openshift-mtv get networkmap ovedr-vcenter01-net-bridge -o yaml
+oc -n openshift-mtv get storagemap ovedr-vcenter01-storage -o yaml
+oc -n openshift-mtv get plan d1-win-pg-s01 -o yaml
+```
+
+Field by field, with the console screens for each: [Lab S §S.5–S.8 and §S.12](setup-how-the-lab-is-built.md).
 
 ## Thank you
 
