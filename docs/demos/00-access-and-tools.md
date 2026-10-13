@@ -78,13 +78,12 @@ class needs only your browser. Paste the copied line into your terminal and pres
 Nothing to install. Use one of:
 
 - **The console's Web Terminal:** the **`>_`** icon at the top right of the console opens a terminal already signed
-  in as you. Click **Start** (leave the project as it is). It has `oc`, but **not** `psql` or the class commands.
-- **Your class terminal:** in your project, **Workloads → Pods → `sql-client-…` → Terminal**. It has `oc`, `psql`
-  and the class commands (`dblogin`, `mark`, `sql`, `verify`) ready, and already knows your VM's address and your
-  database login. Sign its `oc` in: type `oclogin` and a space, paste the copied line, and press Enter.
+  in as you. Click **Start** (leave the project as it is). It has `oc`; for your VM's database you use the one-line `oc exec` commands in 0.4.
+- **Your class terminal:** in your project, **Workloads → Pods → `sql-client-…` → Terminal**. It has `oc` and the
+  class commands (`dblogin`, `mark`, `sql`, `verify`) ready, and already knows your VM's address and your database
+  login. Sign its `oc` in: type `oclogin` and a space, paste the copied line, and press Enter.
 
-> ⚠ **Not the Windows VM's command prompt.** `psql` isn't on its path; everything in this lab runs in one of the two
-> terminals above.
+> ⚠ **Not the Windows VM's command prompt.** Everything in this lab runs in one of the two terminals above.
 
 > 📋 **Copy and paste:** paste with **right-click → Paste** (or Ctrl+Shift+V, ⌘V on a Mac); copy by selecting the text,
 > then **right-click → Copy**. **[verify: per browser]**
@@ -132,9 +131,7 @@ Every demo repeats steps 2 and 3 at each stage (for example `mark before-vmware-
 lists your messages in order as the class goes on.
 
 > 💡 **Tips.** Inside your class terminal (0.3) the same commands are just `dblogin`, `mark …`, `sql -c "…"` and `verify`.
-> If `mark` says *run: dblogin*, your class terminal restarted: do step 1 again. To open `psql` yourself:
-> `oc exec -it -n student-01-0024-012 deploy/sql-client -- psql -h 10.101.23.101 -U student_01 -d bcdr` (the login is
-> `student_01`, with an underscore; `no pg_hba.conf entry … user "student-01"` means you typed a hyphen).
+> If `mark` says *run: dblogin*, your class terminal restarted: do step 1 again.
 
 ✅ `oc get nodes` lists the nodes Ready, the read-back lists your `start-class` row, and `verify` shows `chain_ok = t`.
 
