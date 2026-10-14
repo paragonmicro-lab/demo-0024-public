@@ -1,27 +1,28 @@
 ---
 title: "Demo 2 — VMware to OpenShift Virtualization: warm migration"
 subtitle: "Inject · turn on Changed Block Tracking · start the warm plan while the VM runs · cut over · review on OpenShift · inject and read back"
-version: 2.1.1
+version: 2.2.0
 date: 2026-10-14
 ---
 
 # Demo 2: VMware to OpenShift Virtualization (warm migration)
 
-> **Version 2.1.1 · draft · 2026-10-14** · class/demos/02-vmware-to-ove-warm.md
+> **Version 2.2.0 · draft · 2026-10-14** · class/demos/02-vmware-to-ove-warm.md
 
 > ⚠ **Status, 2026-10-14: this demo can't run for now. VDDK is no longer available to us.**
 >
 > A warm migration needs the VMware **Virtual Disk Development Kit (VDDK)**: MTV uses it to read the blocks that
-> changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has **no other path**
-> for a warm migration from vSphere without it. So the staged warm plan `d2-<your VM>` stops at
-> **`VDDKInitImageUnavailable`** (2.1) and never completes.
+> changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has **no generally
+> available** warm migration path from vSphere without it: a VDDK-independent transfer is in **Developer Preview** only
+> (see [Without VDDK: the paths Red Hat offers](#without-vddk-the-paths-red-hat-offers)). So the staged warm plan
+> `d2-<your VM>` stops at **`VDDKInitImageUnavailable`** (2.1) and never completes.
 >
 > **What still works:** the **cold** migration in [Demo 1](01-vmware-to-ove-cold.md). Without VDDK, MTV reads the
 > disks over vCenter/ESXi HTTPS instead; it is slower, and the VM is down for its whole disk copy instead of a cutover
 > of a few minutes. The "move from VMware with near-zero downtime" story becomes "a scheduled cold migration".
 >
 > **In class:** do Demo 1 and its bonus labs, then Demo 1c, 1d and 4. Read this guide to learn how warm migration
-> works; the steps below stay as they are for when VDDK is available again.
+> works; the steps below stay as they are for when VDDK, or a supported path without it, is available again.
 
 ## What you will learn
 
@@ -343,6 +344,29 @@ the cutover.
 > and `win-pg-s01-warm` (running), with the same address. Never run both at once.
 
 ---
+
+## Without VDDK: the paths Red Hat offers
+
+Red Hat's current position (from Red Hat, 2026-10-14) on the VDDK dependency and the paths forward:
+
+| Path | Status | What it means |
+|---|---|---|
+| **An existing VDDK copy** | may remain a technical option | If you already have a VDDK package that matches your VMware environment, it may still work. **You** are responsible for confirming your right to keep and use the software; Red Hat can then assess its technical suitability. |
+| **Warm migration without VDDK** | **Developer Preview** | There is no generally available warm path without VDDK today. Red Hat is testing an additional **VDDK-independent transfer** in MTV, designed to give comparable function for **both warm and cold** migration. Developer Preview means controlled evaluation, **not production use**. |
+| **Cold migration without VDDK: storage copy offload** | **generally available** (MTV 2.11) | MTV copies the disks through the storage array instead of through VDDK. GA for **cold** migrations, with **supported storage appliances and configurations** only. |
+
+**What to do in your environment:** qualify your **datastore mix, storage design and timeline** with Red Hat to pick
+the right path. Storage copy offload depends on your array: check it against Red Hat's list of supported appliances
+before you plan on it. This lab's datastores are NFS and haven't been qualified for it, so the lab's cold migration
+(Demo 1) uses MTV's default path (disks read over vCenter/ESXi HTTPS, no VDDK, slower).
+
+**Public references:**
+
+- [MTV 2.11: Planning VMware migrations and storage copy offload](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv#con_about-storage-copy-offload_vmware)
+- [VMware Virtual Disk Development Kit overview (Broadcom)](https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest)
+- In the [MTV 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11): provider-specific requirements, migration troubleshooting, and the MTV 2.11 release notes **[verify link]**
+- MTV 2.12 release notes **[verify link]**
+- Red Hat Customer Portal: *Unable to download VMware VDDK images for MTV* **[verify link]**
 
 ## Bonus labs (optional)
 
