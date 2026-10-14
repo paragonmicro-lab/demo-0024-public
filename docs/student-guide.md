@@ -7,7 +7,7 @@ date: 2026-10-14
 
 # Student Guide
 
-> **Version 0.9.1 · draft · 2026-10-14** · class/student-guide.md
+> **Version 0.9.2 · draft · 2026-10-14** · class/student-guide.md
 
 ## What you will learn
 
