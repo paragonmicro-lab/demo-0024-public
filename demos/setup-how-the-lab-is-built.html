@@ -1296,7 +1296,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.0 · draft · 2026-10-13</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.6.1 · draft · 2026-10-14</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1588,10 +1588,9 @@ oc<span class="w"> </span>patch<span class="w"> </span>console.operator<span cla
   (MTV's disk copy), and the peer cluster's <code>api-int</code> 6443 and ingress 443.
 - On each tooled site, Secret + <strong><code>Provider/ovedr-vcenter0&lt;N&gt;</code></strong> (type <code>vsphere</code>, url <code>https://vcenter0&lt;N&gt;…/sdk</code>). It
   carries <code>user</code>, <code>password</code>, <code>url</code> and <strong><code>cacert</code></strong>: the certificate chain vCenter serves, so TLS is verified, never skipped.
-- <strong>VDDK:</strong> the step before (<code>vddk</code>) copies the lab's saved VDDK image into the cluster's registry, and the provider
-  gets <code>settings.vddkInitImage</code> pointing at it. Without it, migrations are <strong>cold only</strong> and slower. Warm migration
-  (Demo 2) needs it. Why the customer must supply it, and how to build it:
-  <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15</a>.</p>
+- <strong>VDDK: retired (2026-10-14).</strong> The lab has no VDDK image, so its migrations are <strong>cold</strong> (Demo 1). Warm migration
+  (Demo 2) is coming soon with <strong>storage copy offload</strong> on a SAN array instead; why the lab dropped VDDK:
+  <a href="02-vmware-to-ove-warm.html#why-this-lab-does-not-demo-vddk">Demo 2</a>. <a href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15</a> is kept for reference.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}  {.spec.url}{"\n"}'</span>
@@ -1839,7 +1838,7 @@ oc<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><sp
   <code>auto-import-secret</code> (site A's kubeconfig; ACM deletes it after use) and waits for <strong>Available</strong>. ⚠ demo-openshift
   now installs ACM on <strong>both</strong> clusters. A cluster that is itself a hub cannot simply be imported into another hub, so CI
   <strong>skips</strong> the import and the readiness table says so (BL-D11, an open decision).
-- A <strong>per-demo readiness table</strong> in the run summary: which demos this booking can run (for example, Demo 2 needs a VDDK image).</p>
+- A <strong>per-demo readiness table</strong> in the run summary: which demos this booking can run (for example, Demo 2 needs a SAN array with copy offload).</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>forkliftcontroller<span class="w"> </span>forklift-controller<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec}{"\n"}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                       </span><span class="c1"># local-cluster, and site A if imported</span>
@@ -2230,6 +2229,11 @@ Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_dat
 </tbody>
 </table>
 <h2 id="s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence">S.15 VDDK: the one piece the customer supplies (Broadcom licence)<a class="headerlink" href="#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>Retired, 2026-10-14.</strong> This lab no longer uses VDDK: it can't obtain the kit, and Demo 2 moves to storage copy
+offload (<a href="02-vmware-to-ove-warm.html#why-this-lab-does-not-demo-vddk">why</a>). This section stays as reference for a
+customer who already holds a VDDK copy and the right to use it.</p>
+</blockquote>
 <p><strong>What it is.</strong> The VMware <strong>Virtual Disk Development Kit (VDDK)</strong> is VMware's library for reading a VM's disks
 straight from ESXi. MTV uses it to copy disks, and for a <strong>warm</strong> migration to copy only the blocks that changed since
 the last pass (VMware's Changed Block Tracking, Demo 2). <strong>Warm migration needs it</strong>; a cold migration works without it,

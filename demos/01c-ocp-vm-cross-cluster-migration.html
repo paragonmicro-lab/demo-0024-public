@@ -1002,10 +1002,10 @@
 
 <h1 id="demo-1c-cross-cluster-migration-site-a-to-site-b-bonus">Demo 1c: cross-cluster migration, site A to site B (bonus)<a class="headerlink" href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.0.0 · draft · 2026-10-13</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
+<p><strong>Version 1.0.1 · draft · 2026-10-14</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
-<p>Your VM already runs on OpenShift: <a href="01-vmware-to-ove-cold.html">Demo 1</a> (cold) or <a href="02-vmware-to-ove-warm.html">Demo 2</a>
+<p>Your VM already runs on OpenShift: <a href="01-vmware-to-ove-cold.html">Demo 1</a> (cold) or, once it ships, <a href="02-vmware-to-ove-warm.html">Demo 2</a>
 (warm) moved it off VMware onto <strong>site A</strong>. Now you move it to a <strong>second OpenShift cluster</strong>, site B. Advanced
 Cluster Management (ACM) links the two clusters into one fleet, and MTV moves the VM between them. The two sites use
 different storage, so the move is also a <strong>storage migration</strong>: site A's disks on ODF are copied onto site B's NFS.
@@ -1246,7 +1246,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 (both written on site A) and <code>cross-cluster-migration-complete</code> (written on site B), in order, with <code>chain_ok = t</code>.</p>
 <p><strong>That is the end of Demo 1c.</strong> Your VM crossed from one OpenShift cluster to another, and from ODF to NFS, with every
 row it held.</p>
-<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next:</strong> <a href="02-vmware-to-ove-warm.html">Demo 2: warm migration</a>.</p>
+<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next:</strong> <a href="02-vmware-to-ove-warm.html">Demo 2: warm migration with storage copy offload</a> (🚧 coming soon: read only).</p>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a>: OpenShift-to-OpenShift migration, network and storage maps</li>
