@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.9.0
-date: 2026-10-13
+version: 0.9.1
+date: 2026-10-14
 ---
 
 # Student Guide
 
-> **Version 0.9.0 · draft · 2026-10-13** · class/student-guide.md
+> **Version 0.9.1 · draft · 2026-10-14** · class/student-guide.md
 
 ## What you will learn
 
@@ -68,7 +68,7 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 |---|---|---|---|---|
 | 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open a command line | 5 min | — |
 | 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 45 min | [1a: snapshot and restore](demos/01a-snapshot-restore.md) (25 min) · [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) · [1c: cross-cluster migration](demos/01c-ocp-vm-cross-cluster-migration.md) (45 min) · [1d: a cloud-native golden image](demos/01d-vm-cloudnative-golden-image.md) (30 min) |
-| 2 | [Warm migration](demos/02-vmware-to-ove-warm.md) | turn on CBT, start the warm plan while the VM runs, keep writing, cut over; inject, read back and measure the outage | 60 min | the Demo 1 bonus labs, on the warm copy |
+| 2 | [Warm migration](demos/02-vmware-to-ove-warm.md) | **can't run for now: VDDK is unavailable (read only)** · turn on CBT, start the warm plan while the VM runs, keep writing, cut over; inject, read back and measure the outage | 60 min | the Demo 1 bonus labs, on the warm copy |
 
 **Go deeper**, when your instructor offers it:
 

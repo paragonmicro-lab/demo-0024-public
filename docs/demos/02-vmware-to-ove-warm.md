@@ -1,13 +1,27 @@
 ---
 title: "Demo 2 — VMware to OpenShift Virtualization: warm migration"
 subtitle: "Inject · turn on Changed Block Tracking · start the warm plan while the VM runs · cut over · review on OpenShift · inject and read back"
-version: 2.1.0
-date: 2026-10-13
+version: 2.1.1
+date: 2026-10-14
 ---
 
 # Demo 2: VMware to OpenShift Virtualization (warm migration)
 
-> **Version 2.1.0 · draft · 2026-10-13** · class/demos/02-vmware-to-ove-warm.md
+> **Version 2.1.1 · draft · 2026-10-14** · class/demos/02-vmware-to-ove-warm.md
+
+> ⚠ **Status, 2026-10-14: this demo can't run for now. VDDK is no longer available to us.**
+>
+> A warm migration needs the VMware **Virtual Disk Development Kit (VDDK)**: MTV uses it to read the blocks that
+> changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has **no other path**
+> for a warm migration from vSphere without it. So the staged warm plan `d2-<your VM>` stops at
+> **`VDDKInitImageUnavailable`** (2.1) and never completes.
+>
+> **What still works:** the **cold** migration in [Demo 1](01-vmware-to-ove-cold.md). Without VDDK, MTV reads the
+> disks over vCenter/ESXi HTTPS instead; it is slower, and the VM is down for its whole disk copy instead of a cutover
+> of a few minutes. The "move from VMware with near-zero downtime" story becomes "a scheduled cold migration".
+>
+> **In class:** do Demo 1 and its bonus labs, then Demo 1c, 1d and 4. Read this guide to learn how warm migration
+> works; the steps below stay as they are for when VDDK is available again.
 
 ## What you will learn
 
@@ -80,7 +94,7 @@ Ready yet: expand your VM to see why.
 | Concern | What it means | Who fixes it |
 |---|---|---|
 | **VMMissingChangedBlockTracking** | your VM's disks don't have CBT on, so MTV can't copy only the changes | **you**, in 2.2 |
-| **VDDKInitImageUnavailable** | the provider has no VDDK image, the VMware library MTV needs to read changed blocks | the **instructor**: tell them and stop here (Lab S §S.15) |
+| **VDDKInitImageUnavailable** | the provider has no VDDK image, the VMware library MTV needs to read changed blocks | expected for now: VDDK is unavailable (see the status note at the top). Stop here |
 
 The same from the Web Terminal:
 
