@@ -1,17 +1,17 @@
 ---
 title: "Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus)"
 subtitle: "ACM links the clusters · MTV moves your VM from site A (ODF) to site B (NFS) · inject and read back"
-version: 1.0.0
-date: 2026-10-13
+version: 1.0.1
+date: 2026-10-14
 ---
 
 # Demo 1c: cross-cluster migration, site A to site B (bonus)
 
-> **Version 1.0.0 · draft · 2026-10-13** · class/demos/01c-ocp-vm-cross-cluster-migration.md
+> **Version 1.0.1 · draft · 2026-10-14** · class/demos/01c-ocp-vm-cross-cluster-migration.md
 
 ## What you will learn
 
-Your VM already runs on OpenShift: [Demo 1](01-vmware-to-ove-cold.md) (cold) or [Demo 2](02-vmware-to-ove-warm.md)
+Your VM already runs on OpenShift: [Demo 1](01-vmware-to-ove-cold.md) (cold) or, once it ships, [Demo 2](02-vmware-to-ove-warm.md)
 (warm) moved it off VMware onto **site A**. Now you move it to a **second OpenShift cluster**, site B. Advanced
 Cluster Management (ACM) links the two clusters into one fleet, and MTV moves the VM between them. The two sites use
 different storage, so the move is also a **storage migration**: site A's disks on ODF are copied onto site B's NFS.
@@ -234,7 +234,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 **That is the end of Demo 1c.** Your VM crossed from one OpenShift cluster to another, and from ODF to NFS, with every
 row it held.
 
-**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 2: warm migration](02-vmware-to-ove-warm.md).
+**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 2: warm migration with storage copy offload](02-vmware-to-ove-warm.md) (🚧 coming soon: read only).
 
 ## Thank you
 

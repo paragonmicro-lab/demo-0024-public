@@ -1,8 +1,8 @@
 ---
 title: "Start here — VMware to OpenShift Virtualization"
 subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
-version: 1.2.1
-date: 2026-10-13
+version: 1.2.2
+date: 2026-10-14
 ---
 
 <div class="pm-hero" markdown>
@@ -46,7 +46,7 @@ The [student guide](student-guide.md) explains how the class works and lists the
 ## What you will do today
 
 - Sign in once and reach vCenter and two OpenShift clusters with the same account
-- Migrate **your own** Windows + PostgreSQL VM from vSphere to OpenShift Virtualization, cold and warm
+- Migrate **your own** Windows + PostgreSQL VM from vSphere to OpenShift Virtualization (cold; warm migration with storage copy offload is coming soon)
 - Go deeper if your class does: disaster recovery, backup and restore, moving between clusters
 - Prove with your own data that nothing was lost, changed or reordered on any move
 - Bonus rounds for early finishers: live migration, snapshot restore, a hostile disaster-recovery failover
@@ -71,7 +71,7 @@ The [student guide](student-guide.md) explains how the class works and lists the
 | Welcome, and Kubernetes in a few ideas (this page) | 20 min |
 | Lab 0 · Demo 1 (cold migration) | 1 h 25 |
 | *Break* | 15 min |
-| Demo 2 (warm migration) | 1 h |
+| Bonus labs 1a–1d (Demo 2, warm migration, is coming soon) | 1 h |
 | Wrap-up: your rows read back, questions | 15 min |
 
 **Going deeper**, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), Backup
@@ -129,4 +129,4 @@ migrated VM keeps its address.
 
 ---
 
-> **Version 1.2.1 · draft · 2026-10-13** · class/welcome.md
+> **Version 1.2.2 · draft · 2026-10-14** · class/welcome.md

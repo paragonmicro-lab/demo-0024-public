@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — Snapshot, destroy the database, restore from the snapshot (bonus)"
 subtitle: "Snapshot your VM · write a row after it · drop the database · bring D: and L: back from the snapshot · read back"
-version: 1.0.0
-date: 2026-10-13
+version: 1.0.1
+date: 2026-10-14
 ---
 
 # Demo 1a: snapshot and restore (bonus)
 
-> **Version 1.0.0 · draft · 2026-10-13** · class/demos/01a-snapshot-restore.md
+> **Version 1.0.1 · draft · 2026-10-14** · class/demos/01a-snapshot-restore.md
 
 ## What you will learn
 
@@ -228,7 +228,7 @@ virtctl -n student-01-0024-012 start win-pg-s01
 the next demo, either restore the whole VM (above), or stop the VM and remove the old volumes in **Configuration →
 Storage** **[verify: BL-D11, a clean "post-bonus" state for demos 2-4]**.
 
-**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 2: warm migration](02-vmware-to-ove-warm.md).
+**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 2: warm migration with storage copy offload](02-vmware-to-ove-warm.md) (🚧 coming soon: read only).
 
 ## Thank you
 

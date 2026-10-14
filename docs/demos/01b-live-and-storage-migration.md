@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — Live migration and storage migration (bonus)"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 1.0.0
-date: 2026-10-13
+version: 1.0.1
+date: 2026-10-14
 ---
 
 # Demo 1b: live migration and storage migration (bonus)
 
-> **Version 1.0.0 · draft · 2026-10-13** · class/demos/01b-live-and-storage-migration.md
+> **Version 1.0.1 · draft · 2026-10-14** · class/demos/01b-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -131,7 +131,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 ✅ After Demo 1's rows: `before-live-migration`, `after-live-migration` and `after-storage-migration`, in order, with
 `chain_ok = t`. PostgreSQL kept running through both moves, so nothing between them is missing.
 
-**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 2: warm migration](02-vmware-to-ove-warm.md).
+**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 2: warm migration with storage copy offload](02-vmware-to-ove-warm.md) (🚧 coming soon: read only).
 
 ## Thank you
 

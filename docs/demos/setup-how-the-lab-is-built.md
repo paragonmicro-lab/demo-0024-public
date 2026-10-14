@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.6.0
-date: 2026-10-13
+version: 0.6.1
+date: 2026-10-14
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.6.0 · draft · 2026-10-13** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.6.1 · draft · 2026-10-14** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -330,10 +330,9 @@ oc patch console.operator cluster --type json -p "[{\"op\":\"add\",\"path\":\"/s
   (MTV's disk copy), and the peer cluster's `api-int` 6443 and ingress 443.
 - On each tooled site, Secret + **`Provider/ovedr-vcenter0<N>`** (type `vsphere`, url `https://vcenter0<N>…/sdk`). It
   carries `user`, `password`, `url` and **`cacert`**: the certificate chain vCenter serves, so TLS is verified, never skipped.
-- **VDDK:** the step before (`vddk`) copies the lab's saved VDDK image into the cluster's registry, and the provider
-  gets `settings.vddkInitImage` pointing at it. Without it, migrations are **cold only** and slower. Warm migration
-  (Demo 2) needs it. Why the customer must supply it, and how to build it:
-  [S.15](#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence).
+- **VDDK: retired (2026-10-14).** The lab has no VDDK image, so its migrations are **cold** (Demo 1). Warm migration
+  (Demo 2) is coming soon with **storage copy offload** on a SAN array instead; why the lab dropped VDDK:
+  [Demo 2](02-vmware-to-ove-warm.md#why-this-lab-does-not-demo-vddk). [S.15](#s15-vddk-the-one-piece-the-customer-supplies-broadcom-licence) is kept for reference.
 
 **Check:**
 
@@ -610,7 +609,7 @@ oc -n "$NS" set env deployment/toolbox PGHOST=<VM address> PGUSER=<login> PGDATA
   `auto-import-secret` (site A's kubeconfig; ACM deletes it after use) and waits for **Available**. ⚠ demo-openshift
   now installs ACM on **both** clusters. A cluster that is itself a hub cannot simply be imported into another hub, so CI
   **skips** the import and the readiness table says so (BL-D11, an open decision).
-- A **per-demo readiness table** in the run summary: which demos this booking can run (for example, Demo 2 needs a VDDK image).
+- A **per-demo readiness table** in the run summary: which demos this booking can run (for example, Demo 2 needs a SAN array with copy offload).
 
 **Check:**
 
@@ -953,6 +952,10 @@ Red Hat: [ODF Regional-DR](https://docs.redhat.com/en/documentation/red_hat_open
 | 3 · ODF replication link | ✅ when DR=on: `dr_fabric.sh` (MCG, MirrorPeer, DRClusters) + `dr_policy.sh` (DRPolicy 15m) | ODF on both sites (SSDs, BL-C20) |
 
 ## S.15 VDDK: the one piece the customer supplies (Broadcom licence)
+
+> **Retired, 2026-10-14.** This lab no longer uses VDDK: it can't obtain the kit, and Demo 2 moves to storage copy
+> offload ([why](02-vmware-to-ove-warm.md#why-this-lab-does-not-demo-vddk)). This section stays as reference for a
+> customer who already holds a VDDK copy and the right to use it.
 
 **What it is.** The VMware **Virtual Disk Development Kit (VDDK)** is VMware's library for reading a VM's disks
 straight from ESXi. MTV uses it to copy disks, and for a **warm** migration to copy only the blocks that changed since

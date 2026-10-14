@@ -1,53 +1,98 @@
 ---
-title: "Demo 2 — VMware to OpenShift Virtualization: warm migration"
-subtitle: "Inject · turn on Changed Block Tracking · start the warm plan while the VM runs · cut over · review on OpenShift · inject and read back"
-version: 2.2.0
+title: "Demo 2 — Coming soon: warm migration with storage copy offload"
+subtitle: "Why this lab doesn't demo VDDK · what a SAN with CSI and snapshots adds · inject · CBT · warm plan with the array doing the copy · cut over · snapshot on the array · read back"
+version: 3.0.0
 date: 2026-10-14
 ---
 
-# Demo 2: VMware to OpenShift Virtualization (warm migration)
+# Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)
 
-> **Version 2.2.0 · draft · 2026-10-14** · class/demos/02-vmware-to-ove-warm.md
+> **Version 3.0.0 · draft · 2026-10-14** · class/demos/02-vmware-to-ove-warm.md
 
-> ⚠ **Status, 2026-10-14: this demo can't run for now. VDDK is no longer available to us.**
+> 🚧 **Coming soon. You can't run this demo in this lab yet.**
 >
-> A warm migration needs the VMware **Virtual Disk Development Kit (VDDK)**: MTV uses it to read the blocks that
-> changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has **no generally
-> available** warm migration path from vSphere without it: a VDDK-independent transfer is in **Developer Preview** only
-> (see [Without VDDK: the paths Red Hat offers](#without-vddk-the-paths-red-hat-offers)). So the staged warm plan
-> `d2-<your VM>` stops at **`VDDKInitImageUnavailable`** (2.1) and never completes.
+> This demo is written for a lab that has a **supported SAN array** with its **CSI driver** and **snapshot**
+> support on OpenShift. This lab doesn't have one yet: its vSphere datastore is NFS and its OpenShift storage is ODF
+> and NFS. Read it to learn how a warm migration works when the array copies the disks; it runs once the SAN is in.
 >
-> **What still works:** the **cold** migration in [Demo 1](01-vmware-to-ove-cold.md). Without VDDK, MTV reads the
-> disks over vCenter/ESXi HTTPS instead; it is slower, and the VM is down for its whole disk copy instead of a cutover
-> of a few minutes. The "move from VMware with near-zero downtime" story becomes "a scheduled cold migration".
+> **What changed:** the earlier Demo 2 used VMware's VDDK library. VDDK is no longer available to this lab, and this
+> lab won't demo it again ([why](#why-this-lab-does-not-demo-vddk)). Demo 2 now follows the path Red Hat points to:
+> [**storage copy offload** in MTV](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv#con_about-storage-copy-offload_vmware),
+> with the VDDK-independent transfer Red Hat has in **preview** ([status](#where-red-hat-is-with-this-2026-10-14)).
 >
-> **In class:** do Demo 1 and its bonus labs, then Demo 1c, 1d and 4. Read this guide to learn how warm migration
-> works; the steps below stay as they are for when VDDK, or a supported path without it, is available again.
+> **In class today:** do [Demo 1](01-vmware-to-ove-cold.md) (cold migration, no VDDK needed) and its bonus labs,
+> then Demos 1c, 1d and 4.
+
+## Why this lab does not demo VDDK
+
+The **Virtual Disk Development Kit (VDDK)** is VMware's library for reading a VM's disks straight from ESXi. MTV used
+it to copy disks, and for a warm migration to copy only the blocks that changed while the VM ran. This lab built
+Demo 2 on it, and has stopped:
+
+1. **We can't get it.** Broadcom pulled the old VMware download links. VDDK now sits behind a Broadcom sign-in and
+   entitlement, and the lab couldn't obtain the kit it was built for (`vmware-vix-disklib-8.0.3`).
+2. **Nobody may hand it out.** VDDK's licence doesn't let Red Hat, Paragon Micro or a class redistribute it. Each
+   customer must download it under their own entitlement. A class built on it teaches a step most students can't
+   repeat at home.
+3. **Red Hat no longer leads with it.** Red Hat's position (2026-10-14): a customer who **already has** a VDDK copy
+   matching their VMware environment may still use it, once **they** confirm their right to keep and use the software;
+   Red Hat then assesses its technical suitability. That's a bridge for existing customers, not a path to teach.
+4. **There's a better path.** MTV can have the **storage array** copy the disks (storage copy offload), and Red Hat is
+   building a VDDK-independent transfer for both warm and cold migration. That is what this demo now teaches.
+
+**What still works without VDDK:** cold migration. MTV reads the disks over vCenter/ESXi HTTPS instead: it's slower,
+and the VM is down for its whole disk copy. That's [Demo 1](01-vmware-to-ove-cold.md), and it runs in this lab today.
+
+The VDDK version of this guide (2.2.0) stays in the repository's history. The lab's VDDK automation (job `vddk`,
+[Lab S §S.15](setup-how-the-lab-is-built.md)) is retired.
+
+## Where Red Hat is with this (2026-10-14)
+
+| Path | Status | Source |
+|---|---|---|
+| **Storage copy offload, cold** | generally available since MTV 2.11, with supported arrays and configurations | [MTV 2.11 planning guide](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv#con_about-storage-copy-offload_vmware) |
+| **Storage copy offload, warm** | Technology Preview in MTV 2.11; "fully supported" in MTV 2.12 (MTV-4562) | [MTV 2.12 release notes](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.12/html/release_notes/ref_rn-2-12_release-notes) |
+| **Warm migration without VDDK** | **Developer Preview**: Red Hat is testing a VDDK-independent transfer for warm and cold, "for controlled evaluation and not yet for production use" | Red Hat, 2026-10-14 |
+| **CSI volume import** (the array clones VVol/RDM disks itself) | Developer Preview in MTV 2.12.2 (MTV-5483) | MTV 2.12 release notes |
+| **An existing VDDK copy** | may remain a technical option; the customer confirms the right to use it | Red Hat, 2026-10-14 |
+
+**[verify] before this demo ships:** which of these the lab's MTV version gives, and whether a warm offload migration
+still needs VDDK for any step (for example the changed-block rounds). Confirm both with Red Hat for the chosen array.
 
 ## What you will learn
 
-You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization again, this time
-**warm**. A warm migration copies the disks while the VM keeps **running**: a first full copy, then every 5 minutes only
-the blocks that changed. The VM stops only for the **cutover**, a last small copy, so the outage is minutes instead of
-the whole copy. vSphere's **Changed Block Tracking** (CBT) is what tells MTV which blocks changed, so you turn it on
-first. You write rows before, during and after the move, read them all back, and measure the real outage from your
-VM's own heartbeat.
+You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization while it keeps
+**running**. This time the **SAN array** does the copying: MTV asks the array, through its API and its CSI driver, to
+copy each disk into a new OpenShift volume on the **same array**, so the data never crosses the network. vSphere's
+**Changed Block Tracking** (CBT) and snapshots tell MTV what changed between rounds. The VM stops only for the
+**cutover**. Then you snapshot the migrated VM **on the array**, through OpenShift.
 
-| Phase | Your VM | What MTV does |
+| Phase | Your VM | What happens |
 |---|---|---|
-| **Pre-copy 1** | running | snapshots each disk on vSphere and copies the **whole** disk |
-| **Pre-copy 2, 3, …** | running | every 5 minutes, copies **only the blocks changed** since the last round (CBT) |
-| **Cutover** | **stopped** | one last snapshot, copies the last small change, converts the drivers, starts the VM on OpenShift |
+| **Pre-copy 1** | running | MTV snapshots each disk on vSphere; ESXi sends **XCOPY** and the array copies the whole disk into the new volume |
+| **Pre-copy 2, 3, …** | running | every 5 minutes, only the blocks changed since the last round (CBT) |
+| **Cutover** | **stopped** | one last snapshot and copy, the drivers converted, the VM started on OpenShift |
+| **After** | running on OpenShift | a VM snapshot, taken by the array through the CSI driver |
 
-**Before you start:** do [Lab 0](00-access-and-tools.md). You are signed in to the **site A** console. Every command
-below runs in the console's **Web Terminal** (`>_`). Your VM must be **running on vSphere**:
+## What this demo needs (this lab doesn't have it yet)
 
-- **Straight after Lab 0:** it is. Go to 2.0.
-- **After Demo 1:** your VM runs on OpenShift and the vSphere original is powered off. Both use the same address, so
-  only one may run at a time. Stop the OpenShift copy first (**Virtualization → VirtualMachines → `win-pg-s01` →
-  Actions → Stop**), then power the original on in vCenter (**`win-pg-s01` → Actions → Power → Power On**). The
-  original holds your rows up to `start-cold-migration`. `cold-migration-complete` was written on the OpenShift copy,
-  so the original doesn't have it, and that's expected.
+| Piece | What it must be | In this lab today |
+|---|---|---|
+| **The SAN array** | one MTV supports for offload: Hitachi Vantara, NetApp ONTAP, Pure FlashArray, Dell PowerMax, PowerFlex or PowerStore, HPE 3PAR or Primera, Infinidat InfiniBox, IBM FlashSystem | none (coresan01 is a Linux iSCSI/NFS appliance: no offload plugin) |
+| **The source datastore** | **VMFS** on a LUN from that array, over **iSCSI or FC**, on every ESXi host | `coresan01_data00`, **NFS** |
+| **The CSI driver** | the array vendor's driver on site A, with a StorageClass on the **same** array (block volumes) | ODF and `nfs-csi` |
+| **Snapshots** | a **VolumeSnapshotClass** for that driver, so OpenShift VM snapshots are array snapshots | ODF's only |
+| **Array API credentials** | a Secret MTV uses to map new volumes to the ESXi hosts | — |
+| **vSphere privileges** | MTV's role plus Red Hat's `StorageOffloader` privileges (datastore browse and low-level file operations; host advanced settings, query patch, storage partition configuration; global settings) | MTV's role only |
+| **ESXi clone method** | **SSH** (Red Hat's recommendation; MTV makes the key) or the **VIB** on every host | — |
+| **MTV** | `feature_copy_offload` on (the default), and a version with warm offload (see above) | MTV 2.11 |
+
+The example below uses **NetApp ONTAP** with its **Trident** CSI driver. Any array in the list works the same way,
+with its own product name and Secret keys.
+
+**Before you start (once the SAN is in):** do [Lab 0](00-access-and-tools.md). You are signed in to the **site A**
+console, and every command runs in the console's **Web Terminal** (`>_`). Your VM must be **running on vSphere**,
+with its disks on the SAN datastore.
 
 > ⚠ **The commands are an example. Change these values to yours before you run them:**
 >
@@ -57,64 +102,60 @@ below runs in the console's **Web Terminal** (`>_`). Your VM must be **running o
 > | `win-pg-s01` | your VM (`s` + your student number); on OpenShift it lands as `win-pg-s01-warm` | your VM |
 > | `10.101.23.101` | your VM's address, the SQL server (it keeps it on OpenShift) | your VM's address, from Lab 0.1 |
 > | `vcenter01` / VLAN `23` | your booking's vCenter (`N` = 1) and VLAN (`22 + N`) | from your instructor's `N` |
+> | `san_vmfs01` · `ontap-san` · `ontap-snapclass` | the SAN datastore, its StorageClass and VolumeSnapshotClass | from your instructor |
 
-<!-- 🎬 video slot 02-vmware-to-ove-warm: one walk-through of the whole demo in the console -->
-<video controls preload="metadata" playsinline width="100%" poster="../.images/02-vmware-to-ove-warm.jpg">
-  <source src="../.images/02-vmware-to-ove-warm.mp4" type="video/mp4">
-  <a href="../.images/02-vmware-to-ove-warm.mp4">🎬 Video: Demo 2: warm migration</a>
-</video>
-<sub>🎬 *Demo 2: warm migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+<!-- 🎬 video slot 02-vmware-to-ove-warm: one walk-through of the whole demo in the console, once the SAN is in -->
 
 ---
 
 ## 2.0 Inject: the demo has started
 
 ```bash
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 2: warm migration');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 2: warm migration, storage copy offload');"
 ```
 
-✅ It prints the row it wrote, with stage `demo-started`. (If it says *First sign in … dblogin*, run Lab 0's step 1
-again. If it can't connect, your VM isn't running on vSphere yet: see **Before you start**.)
+✅ One row, `stage = demo-started`.
 
 ---
 
-## 2.1 Check the link to vCenter, and your warm plan
+## 2.1 Check the link to vCenter, the offload storage map, and your warm plan
 
 The lab staged a **warm** plan for you, ready but not started: **`d2-win-pg-s01`** (`d2-<your VM>`). It lands your
-VM on site A as **`win-pg-s01-warm`**, so it never collides with a Demo 1 copy.
+VM on site A as **`win-pg-s01-warm`**. What makes it an offload plan is its **storage map**.
 
-**Console (site A):** **Migration for Virtualization → Providers → `ovedr-vcenter01`**.
+**Console (site A):** **Migration for Virtualization → Providers → `ovedr-vcenter01`**. ✅ **Ready** and **Connected**.
 
-✅ Status **Ready**, and **Connected**.
+**Console:** **Migration for Virtualization → Storage maps → `ovedr-vcenter01-offload`**.
 
-**Console:** **Migration for Virtualization → Migration plans → `d2-win-pg-s01`**.
+✅ One row: source `san_vmfs01` → target `ontap-san`, **Offload plugin** `vSphere XCOPY`, **Storage product** `ontap`,
+and a **Storage secret**. Every row of a plan's storage map must use offload or none may: MTV won't mix the two.
 
-✅ Type **Warm**, source provider `ovedr-vcenter01`, your VM, target project **your class ID**. The status is **not**
-Ready yet: expand your VM to see why.
+**Console:** **Migration plans → `d2-win-pg-s01`**. ✅ Type **Warm**, your VM, the storage map
+`ovedr-vcenter01-offload`. The status is **not** Ready yet: expand your VM to see why.
 
 | Concern | What it means | Who fixes it |
 |---|---|---|
-| **VMMissingChangedBlockTracking** | your VM's disks don't have CBT on, so MTV can't copy only the changes | **you**, in 2.2 |
-| **VDDKInitImageUnavailable** | the provider has no VDDK image, the VMware library MTV needs to read changed blocks | expected for now: VDDK is unavailable (see the status note at the top). Stop here |
+| **VMMissingChangedBlockTracking** | your VM's disks don't have CBT on, so MTV can't find the changes | **you**, in 2.2 |
 
-The same from the Web Terminal:
+The same from the Web Terminal **[verify]**:
 
 ```bash
-oc -n openshift-mtv get provider ovedr-vcenter01 -o jsonpath='{.status.phase}  vddk={.spec.settings.vddkInitImage}{"\n"}'   # Ready  vddk=<an image>
+oc -n openshift-mtv get storagemap ovedr-vcenter01-offload -o jsonpath='{range .spec.map[*]}{.source.name}{" -> "}{.destination.storageClass}{"  "}{.offloadPlugin.vsphereXcopyConfig.storageVendorProduct}{"\n"}{end}'   # san_vmfs01 -> ontap-san  ontap
 oc -n openshift-mtv get plan d2-win-pg-s01 -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
 ```
 
-✅ The provider shows a `vddk=` image, and the plan's only concern is `VMMissingChangedBlockTracking`.
-
 ---
 
-## 2.2 Turn on Changed Block Tracking
+## 2.2 Turn on Changed Block Tracking, and clear old snapshots
 
 CBT is one switch for the VM (`ctkEnabled`) **plus** one for each disk (`scsi0:N.ctkEnabled`). vCenter accepts them
-only while the VM is **off**, and they take effect at the next power-on.
+only while the VM is **off**.
 
-**Shut it down.** **vCenter:** **VMs and Templates → datacenter01 → vms → students → `student-01-0024-012` →
-`win-pg-s01`** → **Actions → Power → Shut Down Guest OS**. Wait for **Powered Off**.
+**Shut it down.** **vCenter:** **`win-pg-s01` → Actions → Power → Shut Down Guest OS**. Wait for **Powered Off**.
+
+**Delete old snapshots.** **`win-pg-s01` → Snapshots → Manage Snapshots** → delete any you find. A VM that already has
+snapshots leaves a delta chain that stops the array from doing the copy (ESXi falls back to a slower software copy).
+The snapshots MTV takes during the warm rounds don't matter.
 
 **Add the four parameters.** **`win-pg-s01` → Edit Settings → Advanced Parameters**. For each row, type the
 **Attribute** and **Value**, then click **ADD**:
@@ -127,30 +168,18 @@ only while the VM is **off**, and they take effect at the next power-on.
 | `scsi0:2.ctkEnabled` | `true` |
 
 ![Adding ctkEnabled = true on the Advanced Parameters tab](../.images/02-cbt-advanced-params-add.png)
-*Adding a row: Attribute `ctkEnabled`, Value `true`, then **ADD**. The filter (funnel icon) set to `ctk` shows only the
-CBT rows.*
+*Adding a row: Attribute `ctkEnabled`, Value `true`, then **ADD**.*
 
 ![The Advanced Parameters list with all four ctkEnabled rows set to true](../.images/02-cbt-advanced-params.png)
 *All four rows set: the VM, plus `scsi0:0`, `scsi0:1` and `scsi0:2` for its three disks. Click **OK**.*
 
-<details markdown="1">
-<summary>Check your disks really are scsi0:0, 0:1 and 0:2</summary>
-
-**Edit Settings → Virtual Hardware**: expand each **Hard disk** and read its **Virtual Device Node**, for example
-`SCSI controller 0 : SCSI(0:1)`. The class VMs have three disks on one controller: 60 GB `C:`, 5 GB `L:` (WAL) and
-10 GB `D:` (data). If a node differs, use its number in the parameter name.
-
-</details>
-
 **Power it back on:** **Actions → Power → Power On**.
 
-✅ Within a minute or two the plan `d2-win-pg-s01` shows **Ready**, and the CBT concern is gone:
+✅ Within a minute or two the plan `d2-win-pg-s01` shows **Ready**:
 
 ```bash
 oc -n openshift-mtv get plan d2-win-pg-s01 -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'   # Ready=True
 ```
-
-If the concern stays, a disk is missing its `scsi0:N.ctkEnabled`, or the VM hasn't been powered on since you set it.
 
 Give Windows a minute to start PostgreSQL, then check that the shutdown lost nothing:
 
@@ -164,24 +193,25 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 
 ## 2.3 Start the warm migration, and keep writing
 
-**Console (site A):** **Migration for Virtualization → Migration plans → `d2-win-pg-s01`** → **Start** → confirm.
+**Console (site A):** **Migration plans → `d2-win-pg-s01`** → **Start** → confirm.
 
-Your VM **keeps running on vSphere**. Expand it on the plan's page: MTV takes a snapshot on vSphere and copies the
-whole of each disk (the first pre-copy). After that, every 5 minutes it copies only what changed. In vCenter, your
-VM's **Snapshots** show MTV's snapshot for each round.
+Your VM **keeps running on vSphere**. For each disk MTV creates a volume on `ontap-san` and a **populator** pod that
+asks ESXi to clone the disk into it; the array does the copy. The plan's page shows the transfer method as **storage
+copy offload**, not VDDK.
 
 ```bash
-oc -n openshift-mtv get plan d2-win-pg-s01 -w                        # EXECUTING True (Ctrl-C to stop watching)
+oc -n openshift-mtv get plan d2-win-pg-s01 -w                                   # EXECUTING True (Ctrl-C)
+oc -n student-01-0024-012 get pvc                                               # three volumes on ontap-san [verify]
+oc -n openshift-mtv get plan d2-win-pg-s01 -o yaml | grep -i xcopy              # xcopyUsed: the array did the copy [verify]
 ```
 
-**Give it something to copy.** The database is busy while it copies: write a burst of 500 rows now, and again
-after each pre-copy round if you like:
+**Give it something to copy.** Write 500 rows while the disks copy:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_load('student-01-0024-012', 'warm-precopy-load', 500);"
 ```
 
-✅ It prints `rows_written = 500`. Your VM is still serving its database in the middle of the migration.
+✅ `rows_written = 500`. Your VM is still serving its database in the middle of the migration.
 
 **Count the pre-copies:**
 
@@ -189,34 +219,28 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 oc -n openshift-mtv get plan d2-win-pg-s01 -o jsonpath='pre-copies done: {.status.migration.vms[0].warm.successes}  next: {.status.migration.vms[0].warm.nextPrecopyAt}{"\n"}'
 ```
 
-✅ Wait for **at least two** pre-copies. The first carries the whole disks; later ones carry only the changed
-blocks, so they're much quicker. That difference is CBT at work.
+✅ Wait for **at least two**. Compare how long the first took with a cold copy over the network in Demo 1.
 
 <details markdown="1">
-<summary>Or: create and start your own warm plan from the CLI (instead of the staged one)</summary>
+<summary>Or: create and start your own warm offload plan from the CLI (instead of the staged one)</summary>
 
-This builds a warm plan like your staged `d2-win-pg-s01`, under a **new name**, so the staged plan stays as the lab
-built it. Use **one** of them: a VM can be in only one running plan. If you start this one, skip the console's
-**Start** above, and cut over with the last command below instead of the console.
-
-Set the values once. Every command below reads them:
+A **new** plan, so the staged one stays as the lab built it. Use **one** of them: a VM can be in only one running plan.
 
 ```bash
 # your class ID: MTV creates your VM in this project on site A
 CLASS_ID=student-01-0024-012
 # your VM's name in vCenter
 VM=win-pg-s01
-# the provider that links site A to your booking's vCenter ("ovedr-vcenter0" + N), and its maps
+# the provider that links site A to your booking's vCenter ("ovedr-vcenter0" + N)
 SRC=ovedr-vcenter01
 # a NEW plan name, so this never touches the staged d2-win-pg-s01
 PLAN=$CLASS_ID-warm-cli
 ```
 
-Create the plan. `warm: true` is the only difference from a cold plan; `targetName` gives the copy on OpenShift its
-own name:
+The plan is a normal warm plan; the **offload** storage map is what makes the array do the copy:
 
 ```bash
-oc apply -f - <<EOF
+oc apply -f - <<EOT
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Plan
 metadata: { name: $PLAN, namespace: openshift-mtv }
@@ -228,27 +252,20 @@ spec:
     destination: { name: host, namespace: openshift-mtv }
   map:
     network: { name: $SRC-net-bridge, namespace: openshift-mtv }
-    storage: { name: $SRC-storage,    namespace: openshift-mtv }
+    storage: { name: $SRC-offload,    namespace: openshift-mtv }
   vms:
     - { name: $VM, targetName: $VM-warm-cli }
-EOF
+EOT
 oc -n openshift-mtv get plan $PLAN -w                # READY True (Ctrl-C)
-```
-
-Start it: a **Migration** is what the console's Start button creates. A warm migration pre-copies until it has a
-**cutover** time:
-
-```bash
-oc apply -f - <<EOF
+oc apply -f - <<EOT
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Migration
 metadata: { name: $PLAN-run1, namespace: openshift-mtv }
 spec: { plan: { name: $PLAN, namespace: openshift-mtv } }
-EOF
-oc -n openshift-mtv get plan $PLAN -w                # EXECUTING True (Ctrl-C)
+EOT
 ```
 
-In 2.4, after your `start-warm-migration` row, cut over by giving the Migration a cutover time of **now**:
+In 2.4, after your `start-warm-migration` row, cut over now:
 
 ```bash
 oc -n openshift-mtv patch migration $PLAN-run1 --type merge -p "{\"spec\":{\"cutover\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}}"
@@ -267,67 +284,61 @@ Write the "start" row while your VM still runs on vSphere. It must survive the c
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-warm-migration', 'on vSphere, before cutover');"
 ```
 
-**Console (site A):** **Migration plans → `d2-win-pg-s01`** → **Cutover** → keep the date and time it offers
-(**now**) → **Set cutover**.
+**Console (site A):** **Migration plans → `d2-win-pg-s01`** → **Cutover** → keep **now** → **Set cutover**.
 
-MTV now shuts your VM down on vSphere, takes one last snapshot, copies the small change since the last round,
-converts the drivers (`virt-v2v` installs virtio and the QEMU guest agent, and removes VMware Tools) and creates your VM
-on OpenShift.
+MTV shuts your VM down on vSphere, takes one last snapshot, copies the last change, converts the drivers (`virt-v2v`
+installs virtio and the QEMU guest agent, and removes VMware Tools) and creates your VM on OpenShift.
 
 ```bash
-oc -n openshift-mtv get plan d2-win-pg-s01 -w                        # SUCCEEDED True (Ctrl-C to stop watching)
+oc -n openshift-mtv get plan d2-win-pg-s01 -w                        # SUCCEEDED True (Ctrl-C)
 ```
 
-✅ The plan shows **Succeeded**.
+✅ **Succeeded**.
 
 ---
 
-## 2.5 Review your VM on OpenShift
+## 2.5 Review your VM on OpenShift, and snapshot it on the array
 
 **Console (site A):** **Virtualization → VirtualMachines**, project **`student-01-0024-012`** → **`win-pg-s01-warm`**.
 
 | Tab | What you see |
 |---|---|
-| **Configuration → Network** | one NIC on **`default/vmnet23`**: your VLAN's bridge, so it keeps its address |
-| **Configuration → Storage** | **three** disks on **`ocs-storagecluster-ceph-rbd-virtualization`** (ODF) |
-
-```bash
-oc -n student-01-0024-012 get vm win-pg-s01-warm -o jsonpath='{range .spec.template.spec.networks[*]}{.multus.networkName}{"\n"}{end}'   # default/vmnet23
-oc -n student-01-0024-012 get vmi win-pg-s01-warm -w                 # Running (Ctrl-C to stop watching)
-```
-
-Your VM was running on vSphere when it was cut over, so MTV starts it on OpenShift. If it shows **Stopped**, start
-it: **Actions → Start** **[verify]**.
-
-On the VM's **Overview**, the *Guest agent* shows as connected, and **IP addresses** shows `10.101.23.101`.
+| **Configuration → Network** | one NIC on **`default/vmnet23`**, so it keeps its address |
+| **Configuration → Storage** | **three** disks on **`ontap-san`**: the SAN volumes the array copied into |
 
 ✅ Running, guest agent connected, address `10.101.23.101`.
+
+**Snapshot it, on the array.** **Snapshots → Take snapshot** → name `after-warm` → **Save**. OpenShift asks the CSI
+driver, and the array takes the snapshot of each disk in place.
+
+```bash
+oc -n student-01-0024-012 get vmsnapshot                              # after-warm  Succeeded [verify]
+oc -n student-01-0024-012 get volumesnapshot -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName,READY:.status.readyToUse   # ontap-snapclass  true
+```
+
+✅ Three volume snapshots, class `ontap-snapclass`, ready. [Demo 1a](01a-snapshot-restore.md) shows what you can do
+with one.
 
 ---
 
 ## 2.6 Inject: the migration is complete, read back, and measure the outage
 
-Give Windows a minute to start PostgreSQL, then:
-
 ```bash
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'warm-migration-complete', 'on OpenShift site A');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'warm-migration-complete', 'on OpenShift site A, SAN');"
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 
-✅ The read-back ends with `demo-started`, the 500 `warm-precopy-load` rows (written **while** the disks copied),
-`start-warm-migration` (the last row on vSphere) and `warm-migration-complete` (written on OpenShift).
-`ovedr_verify` shows `chain_ok = t`: nothing written during the copy was lost, changed or reordered.
+✅ The read-back ends with `demo-started`, the 500 `warm-precopy-load` rows, `start-warm-migration` and
+`warm-migration-complete`. `chain_ok = t`: nothing written during the copy was lost, changed or reordered.
 
-**The real outage.** Your VM's heartbeat writer adds a row every 5 seconds, so the outage is the gap in it after
-your `start-warm-migration` row:
+**The real outage**, from your VM's heartbeat (a row every 5 seconds):
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT ts AS back_at, date_trunc('second', gap) AS outage FROM (SELECT ts, ts - lag(ts) OVER (ORDER BY id) AS gap FROM heartbeat) g WHERE gap > interval '10 seconds' AND ts > (SELECT max(ts) FROM marks WHERE student = 'student-01-0024-012' AND stage = 'start-warm-migration') ORDER BY ts;"
 ```
 
-✅ One row: the cutover outage. Compare it with how long the first pre-copy took. A cold migration would have
-been down for all of that copy.
+✅ One row: the cutover outage, minutes rather than the whole copy.
 
 **The guest tools were swapped:**
 
@@ -335,38 +346,12 @@ been down for all of that copy.
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -x -c "SELECT ts, platform, vmtools, qemu_ga, virtio FROM guest_tools ORDER BY id DESC LIMIT 1;"
 ```
 
-✅ `qemu_ga` is **Running**, `virtio` lists the network and disk drivers, and `vmtools` is not running.
+✅ `qemu_ga` **Running**, `virtio` drivers listed, `vmtools` not running.
 
-**That is the end of Demo 2.** Your VM moved to OpenShift Virtualization while it kept writing, and stopped only for
-the cutover.
-
-> 💡 **One copy on your VLAN at a time.** If you did Demo 1, your project now holds two VMs, `win-pg-s01` (stopped)
-> and `win-pg-s01-warm` (running), with the same address. Never run both at once.
+**That is the end of Demo 2.** Your VM moved while it kept writing, the array did the copying, and the array holds
+its first snapshot on OpenShift.
 
 ---
-
-## Without VDDK: the paths Red Hat offers
-
-Red Hat's current position (from Red Hat, 2026-10-14) on the VDDK dependency and the paths forward:
-
-| Path | Status | What it means |
-|---|---|---|
-| **An existing VDDK copy** | may remain a technical option | If you already have a VDDK package that matches your VMware environment, it may still work. **You** are responsible for confirming your right to keep and use the software; Red Hat can then assess its technical suitability. |
-| **Warm migration without VDDK** | **Developer Preview** | There is no generally available warm path without VDDK today. Red Hat is testing an additional **VDDK-independent transfer** in MTV, designed to give comparable function for **both warm and cold** migration. Developer Preview means controlled evaluation, **not production use**. |
-| **Cold migration without VDDK: storage copy offload** | **generally available** (MTV 2.11) | MTV copies the disks through the storage array instead of through VDDK. GA for **cold** migrations, with **supported storage appliances and configurations** only. |
-
-**What to do in your environment:** qualify your **datastore mix, storage design and timeline** with Red Hat to pick
-the right path. Storage copy offload depends on your array: check it against Red Hat's list of supported appliances
-before you plan on it. This lab's datastores are NFS and haven't been qualified for it, so the lab's cold migration
-(Demo 1) uses MTV's default path (disks read over vCenter/ESXi HTTPS, no VDDK, slower).
-
-**Public references:**
-
-- [MTV 2.11: Planning VMware migrations and storage copy offload](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv#con_about-storage-copy-offload_vmware)
-- [VMware Virtual Disk Development Kit overview (Broadcom)](https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest)
-- In the [MTV 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11): provider-specific requirements, migration troubleshooting, and the MTV 2.11 release notes **[verify link]**
-- MTV 2.12 release notes **[verify link]**
-- Red Hat Customer Portal: *Unable to download VMware VDDK images for MTV* **[verify link]**
 
 ## Bonus labs (optional)
 
@@ -374,32 +359,39 @@ The Demo 1 bonus labs work on this VM too: use **`win-pg-s01-warm`** wherever th
 
 | Bonus | What you do |
 |---|---|
-| [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot your VM, destroy the database, bring it back from the snapshot's disks |
-| [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the **running** VM to another node, then move its disks to another storage class, with no reboot |
-| [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
+| [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot, destroy the database, restore |
+| [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the running VM to another node, then to another storage class |
+| [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | site A → site B in ACM |
 
 **Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
 
-## Addendum: how the lab staged this demo, as code
+## Addendum: how the lab will stage this demo, as code
 
-The provider, the maps and the CI pipeline are the same as Demo 1's ([Demo 1 addendum](01-vmware-to-ove-cold.md#addendum-how-the-lab-staged-this-demo-as-code)).
-A warm migration needs three more things, and CI declares each one:
+Not built yet: it waits on the SAN. The provider, the network map and the CI pipeline stay as Demo 1's
+([Demo 1 addendum](01-vmware-to-ove-cold.md#addendum-how-the-lab-staged-this-demo-as-code)). Offload adds:
 
-| CI job | Code | What it declares for warm |
-|---|---|---|
-| `mtv-install` | Ansible role `mtv_operator` | the **pre-copy interval**: 5 minutes instead of MTV's default 60, so a class sees several rounds |
-| `vddk` | `automation/customize/vddk.sh` | the **VDDK image**: Broadcom's library, which can't be redistributed, built from the lab's private copy into the cluster's own registry, then set on the provider ([Lab S §S.15](setup-how-the-lab-is-built.md)) |
-| `stage` | `automation/customize/stage.sh` | the **warm plan** `d2-<vm>`, landing as `<vm>-warm`. Staged and reported, never fatal: it waits for CBT, which you turn on in 2.2 |
+| Piece | What it declares |
+|---|---|
+| the SAN fabric | a VMFS datastore on an array LUN for every ESXi host; the vendor's CSI driver, StorageClass and VolumeSnapshotClass on site A |
+| `mtv-install` | the 5-minute pre-copy interval, and `feature_copy_offload` on |
+| `mtv-fabric` | the `StorageOffloader` privileges on MTV's vSphere role; `esxiCloneMethod: ssh` on the provider; the array Secret; the **offload storage map** |
+| `stage` | the warm plan `d2-<vm>` on the offload map, landing as `<vm>-warm` |
 
 ```yaml
-# the pre-copy interval, on MTV's own controller
-apiVersion: forklift.konveyor.io/v1beta1
-kind: ForkliftController
-metadata: { name: forklift-controller, namespace: openshift-mtv }
-spec:
-  controller_precopy_interval: "5"        # minutes between pre-copy rounds
+# the array's API credentials, which MTV uses to map new volumes to ESXi (keys vary by vendor)
+apiVersion: v1
+kind: Secret
+metadata: { name: ovedr-san-offload, namespace: openshift-mtv }
+stringData:
+  GOVMOMI_HOSTNAME: vcenter01.demo.lab-paragonmicro.com
+  GOVMOMI_USERNAME: ovedr-mtv@vsphere.local
+  GOVMOMI_PASSWORD: <from the lab's secret store>
+  STORAGE_HOSTNAME: <the array's management address>
+  STORAGE_USERNAME: <array user>
+  STORAGE_PASSWORD: <from the lab's secret store>
+  ONTAP_SVM: <the SVM that serves the LUNs>          # NetApp only
 ---
-# the provider, plus the VDDK image (the only difference from Demo 1's)
+# the provider: the clone method is the only change from Demo 1's
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Provider
 metadata: { name: ovedr-vcenter01, namespace: openshift-mtv }
@@ -408,9 +400,23 @@ spec:
   url: https://vcenter01.demo.lab-paragonmicro.com/sdk
   secret: { name: ovedr-vcenter01, namespace: openshift-mtv }
   settings:
-    vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:8.0.3
+    esxiCloneMethod: ssh                              # or vib; no vddkInitImage
 ---
-# the staged warm plan: warm: true, and a target name so it never collides with Demo 1's copy
+# the offload storage map: the SAN datastore -> the SAN's StorageClass, copied by the array
+apiVersion: forklift.konveyor.io/v1beta1
+kind: StorageMap
+metadata: { name: ovedr-vcenter01-offload, namespace: openshift-mtv }
+spec:
+  provider:
+    source:      { name: ovedr-vcenter01, namespace: openshift-mtv }
+    destination: { name: host, namespace: openshift-mtv }
+  map:
+    - source: { name: san_vmfs01 }
+      destination: { storageClass: ontap-san }
+      offloadPlugin:
+        vsphereXcopyConfig: { secretRef: ovedr-san-offload, storageVendorProduct: ontap }
+---
+# the staged warm plan, on the offload map
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Plan
 metadata: { name: d2-win-pg-s01, namespace: openshift-mtv, labels: { ovedr/stage: plan, ovedr/type: warm } }
@@ -420,23 +426,23 @@ spec:
   provider: { source: { name: ovedr-vcenter01, namespace: openshift-mtv }, destination: { name: host, namespace: openshift-mtv } }
   map:
     network: { name: ovedr-vcenter01-net-bridge, namespace: openshift-mtv }
-    storage: { name: ovedr-vcenter01-storage,    namespace: openshift-mtv }
+    storage: { name: ovedr-vcenter01-offload,    namespace: openshift-mtv }
   vms: [ { name: win-pg-s01, targetName: win-pg-s01-warm } ]
 ```
 
-What stays a hands-on step, on purpose: **CBT** (2.2). It's a setting on the VMware VM, which the lab could set too
-(`govc vm.change -e ctkEnabled=TRUE …`), but turning it on yourself is the lesson. Then the **Migration** and its
-**cutover** (2.3, 2.4).
+The Secret, StorageMap and Provider fields follow Red Hat's guide and MTV's upstream populator; **[verify]** each one
+on the lab's MTV version and array.
 
-```bash
-oc -n openshift-mtv get plan d2-win-pg-s01 -o yaml
-oc -n openshift-mtv get provider ovedr-vcenter01 -o jsonpath='{.spec.settings}{"\n"}'
-```
+What stays hands-on, on purpose: **CBT** and clearing old snapshots (2.2), starting the plan and the **cutover**
+(2.3, 2.4), and the snapshot on the array (2.5).
 
 ## Thank you
 
-- [Migration Toolkit for Virtualization 2.11 documentation](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11): warm migration, VDDK and the pre-copy settings
+- [MTV 2.11: Planning VMware migrations, storage copy offload](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv#con_about-storage-copy-offload_vmware): how it works, the supported arrays, setup
+- [MTV 2.12 release notes](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.12/html/release_notes/ref_rn-2-12_release-notes): warm offload, CSI volume import (Developer Preview)
+- [MTV 2.11 release notes](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/release_notes/rn-2-11_release-notes)
+- [MTV upstream: the copy-offload populator](https://github.com/kubev2v/forklift/blob/main/cmd/vsphere-copy-offload-populator/README.md): the Secret keys per vendor, the SSH and VIB clone methods
+- [VMware Virtual Disk Development Kit overview (Broadcom)](https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest)
+- Red Hat Customer Portal: *Unable to download VMware VDDK images for MTV* **[verify link]**
 - [OpenShift Virtualization documentation (4.19)](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index)
-- [Lab S — how this lab was built](setup-how-the-lab-is-built.md): the provider, VDDK (§S.15), maps and plans, built by hand
 - [DO316: Managing Virtual Machines with Red Hat OpenShift Virtualization (course)](https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization)
-- [Red Hat interactive labs (free, in the browser)](https://www.redhat.com/en/interactive-labs)
