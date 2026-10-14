@@ -561,6 +561,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#without-vddk-the-paths-red-hat-offers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Without VDDK: the paths Red Hat offers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#bonus-labs-optional" class="md-nav__link">
     <span class="md-ellipsis">
       Bonus labs (optional)
@@ -995,6 +1004,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#without-vddk-the-paths-red-hat-offers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Without VDDK: the paths Red Hat offers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#bonus-labs-optional" class="md-nav__link">
     <span class="md-ellipsis">
       Bonus labs (optional)
@@ -1038,17 +1056,18 @@
 
 <h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration">Demo 2: VMware to OpenShift Virtualization (warm migration)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.1.1 · draft · 2026-10-14</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 2.2.0 · draft · 2026-10-14</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 <p>⚠ <strong>Status, 2026-10-14: this demo can't run for now. VDDK is no longer available to us.</strong></p>
 <p>A warm migration needs the VMware <strong>Virtual Disk Development Kit (VDDK)</strong>: MTV uses it to read the blocks that
-changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has <strong>no other path</strong>
-for a warm migration from vSphere without it. So the staged warm plan <code>d2-&lt;your VM&gt;</code> stops at
-<strong><code>VDDKInitImageUnavailable</code></strong> (2.1) and never completes.</p>
+changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has <strong>no generally
+available</strong> warm migration path from vSphere without it: a VDDK-independent transfer is in <strong>Developer Preview</strong> only
+(see <a href="#without-vddk-the-paths-red-hat-offers">Without VDDK: the paths Red Hat offers</a>). So the staged warm plan
+<code>d2-&lt;your VM&gt;</code> stops at <strong><code>VDDKInitImageUnavailable</code></strong> (2.1) and never completes.</p>
 <p><strong>What still works:</strong> the <strong>cold</strong> migration in <a href="01-vmware-to-ove-cold.html">Demo 1</a>. Without VDDK, MTV reads the
 disks over vCenter/ESXi HTTPS instead; it is slower, and the VM is down for its whole disk copy instead of a cutover
 of a few minutes. The "move from VMware with near-zero downtime" story becomes "a scheduled cold migration".</p>
 <p><strong>In class:</strong> do Demo 1 and its bonus labs, then Demo 1c, 1d and 4. Read this guide to learn how warm migration
-works; the steps below stay as they are for when VDDK is available again.</p>
+works; the steps below stay as they are for when VDDK, or a supported path without it, is available again.</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization again, this time
@@ -1364,6 +1383,46 @@ the cutover.</p>
 and <code>win-pg-s01-warm</code> (running), with the same address. Never run both at once.</p>
 </blockquote>
 <hr />
+<h2 id="without-vddk-the-paths-red-hat-offers">Without VDDK: the paths Red Hat offers<a class="headerlink" href="#without-vddk-the-paths-red-hat-offers" title="Permanent link">&para;</a></h2>
+<p>Red Hat's current position (from Red Hat, 2026-10-14) on the VDDK dependency and the paths forward:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Status</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>An existing VDDK copy</strong></td>
+<td>may remain a technical option</td>
+<td>If you already have a VDDK package that matches your VMware environment, it may still work. <strong>You</strong> are responsible for confirming your right to keep and use the software; Red Hat can then assess its technical suitability.</td>
+</tr>
+<tr>
+<td><strong>Warm migration without VDDK</strong></td>
+<td><strong>Developer Preview</strong></td>
+<td>There is no generally available warm path without VDDK today. Red Hat is testing an additional <strong>VDDK-independent transfer</strong> in MTV, designed to give comparable function for <strong>both warm and cold</strong> migration. Developer Preview means controlled evaluation, <strong>not production use</strong>.</td>
+</tr>
+<tr>
+<td><strong>Cold migration without VDDK: storage copy offload</strong></td>
+<td><strong>generally available</strong> (MTV 2.11)</td>
+<td>MTV copies the disks through the storage array instead of through VDDK. GA for <strong>cold</strong> migrations, with <strong>supported storage appliances and configurations</strong> only.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What to do in your environment:</strong> qualify your <strong>datastore mix, storage design and timeline</strong> with Red Hat to pick
+the right path. Storage copy offload depends on your array: check it against Red Hat's list of supported appliances
+before you plan on it. This lab's datastores are NFS and haven't been qualified for it, so the lab's cold migration
+(Demo 1) uses MTV's default path (disks read over vCenter/ESXi HTTPS, no VDDK, slower).</p>
+<p><strong>Public references:</strong></p>
+<ul>
+<li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv#con_about-storage-copy-offload_vmware">MTV 2.11: Planning VMware migrations and storage copy offload</a></li>
+<li><a href="https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest">VMware Virtual Disk Development Kit overview (Broadcom)</a></li>
+<li>In the <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">MTV 2.11 documentation</a>: provider-specific requirements, migration troubleshooting, and the MTV 2.11 release notes <strong>[verify link]</strong></li>
+<li>MTV 2.12 release notes <strong>[verify link]</strong></li>
+<li>Red Hat Customer Portal: <em>Unable to download VMware VDDK images for MTV</em> <strong>[verify link]</strong></li>
+</ul>
 <h2 id="bonus-labs-optional">Bonus labs (optional)<a class="headerlink" href="#bonus-labs-optional" title="Permanent link">&para;</a></h2>
 <p>The Demo 1 bonus labs work on this VM too: use <strong><code>win-pg-s01-warm</code></strong> wherever they say <code>win-pg-s01</code>.</p>
 <table>
