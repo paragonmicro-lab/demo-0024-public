@@ -1038,7 +1038,17 @@
 
 <h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration">Demo 2: VMware to OpenShift Virtualization (warm migration)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.1.0 · draft · 2026-10-13</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 2.1.1 · draft · 2026-10-14</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p>⚠ <strong>Status, 2026-10-14: this demo can't run for now. VDDK is no longer available to us.</strong></p>
+<p>A warm migration needs the VMware <strong>Virtual Disk Development Kit (VDDK)</strong>: MTV uses it to read the blocks that
+changed while the VM runs (vSphere's Changed Block Tracking). VDDK has been pulled, and Red Hat has <strong>no other path</strong>
+for a warm migration from vSphere without it. So the staged warm plan <code>d2-&lt;your VM&gt;</code> stops at
+<strong><code>VDDKInitImageUnavailable</code></strong> (2.1) and never completes.</p>
+<p><strong>What still works:</strong> the <strong>cold</strong> migration in <a href="01-vmware-to-ove-cold.html">Demo 1</a>. Without VDDK, MTV reads the
+disks over vCenter/ESXi HTTPS instead; it is slower, and the VM is down for its whole disk copy instead of a cutover
+of a few minutes. The "move from VMware with near-zero downtime" story becomes "a scheduled cold migration".</p>
+<p><strong>In class:</strong> do Demo 1 and its bonus labs, then Demo 1c, 1d and 4. Read this guide to learn how warm migration
+works; the steps below stay as they are for when VDDK is available again.</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization again, this time
@@ -1155,7 +1165,7 @@ Ready yet: expand your VM to see why.</p>
 <tr>
 <td><strong>VDDKInitImageUnavailable</strong></td>
 <td>the provider has no VDDK image, the VMware library MTV needs to read changed blocks</td>
-<td>the <strong>instructor</strong>: tell them and stop here (Lab S §S.15)</td>
+<td>expected for now: VDDK is unavailable (see the status note at the top). Stop here</td>
 </tr>
 </tbody>
 </table>
