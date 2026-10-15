@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.0
+version: 1.2.1
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.0 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.1 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -38,6 +38,15 @@ database rows from Lab 0 are there. Every command below runs in the console's **
 ---
 
 ## 1.0 Inject: the demo has started
+
+**Sign in to your VM's database first**, if you haven't since your class terminal started (Lab 0 step 1). It asks
+for your class password. Without it, every command below answers *First sign in to your VM's database … dblogin*:
+
+```bash
+oc exec -it -n student-01-0024-012 deploy/sql-client -- dblogin
+```
+
+Then write your first row, and read your rows back:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 1: cold migration');"
