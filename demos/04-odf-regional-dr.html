@@ -1536,7 +1536,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.0 · draft · 2026-10-15</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.5.1 · draft · 2026-10-15</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1586,6 +1586,12 @@ console steps behind the shared pieces.</p>
 <td>both</td>
 <td>§4.2</td>
 <td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide: Regional-DR</a></td>
+</tr>
+<tr>
+<td><strong>The same VLAN bridges on both sites</strong>: every <code>vmnet&lt;VLAN&gt;</code> your VMs use exists on site A <strong>and</strong> site B, same name, same VLAN. A Relocate or Failover brings back the VM's own definition, which names its bridge (<code>default/vmnet23</code>): without that bridge on the other site the VM doesn't start, and with it the VM keeps its address</td>
+<td>both</td>
+<td><code>oc --context site-a -n default get net-attach-def</code> and the same on <code>site-b</code>: the same <code>vmnet*</code> names</td>
+<td>demo-openshift's VLAN build on each site (BL-B29)</td>
 </tr>
 <tr>
 <td>The <strong>15-minute</strong> <code>DRPolicy</code> (<code>sync_interval=15m</code>)</td>
