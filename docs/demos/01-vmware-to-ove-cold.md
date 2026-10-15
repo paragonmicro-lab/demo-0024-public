@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.1.2
-date: 2026-10-14
+version: 1.2.0
+date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.1.2 · draft · 2026-10-14** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.0 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -41,9 +41,16 @@ database rows from Lab 0 are there. Every command below runs in the console's **
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 1: cold migration');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
-✅ It prints the row it wrote, with stage `demo-started`. (If it says *First sign in … dblogin*, run Lab 0's step 1 again.)
+✅ The first command prints the row it wrote, stage `demo-started`. The read-back lists every row you have written so
+far, oldest first: `start-class` from Lab 0, then `demo-started`. Each step of the class adds one, so the read-back is
+your progress through the class. (If it says *First sign in … dblogin*, run Lab 0's step 1 again.)
+
+> 💡 **`Error from server (NotFound): namespaces "student-01-0024-012" not found`** means you ran the example as it is.
+> Use **your** class ID (your sign-in name before the `@`, also shown by `oc whoami`) in every command. Its last part
+> is **your** booking, which changes from class to class (for example `student-01-0024-014`).
 
 ---
 
@@ -98,12 +105,14 @@ Your database lives **inside** the VM, so write the "start" row **before** you s
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cold-migration', 'on vSphere');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
 **vCenter:** **VMs and Templates → datacenter01 → vms → students → `student-01-0024-012` → `win-pg-s01`** →
 **Actions → Power → Shut Down Guest OS**. A clean guest shutdown flushes PostgreSQL to disk first.
 
-✅ The VM shows **Powered Off** in vCenter.
+✅ The read-back (before the shutdown) ends with `start-cold-migration`, the last row written on vSphere. The VM shows
+**Powered Off** in vCenter.
 
 ---
 

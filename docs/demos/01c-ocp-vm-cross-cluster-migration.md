@@ -1,13 +1,13 @@
 ---
 title: "Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus)"
 subtitle: "ACM links the clusters · MTV moves your VM from site A (ODF) to site B (NFS) · inject and read back"
-version: 1.0.1
-date: 2026-10-14
+version: 1.1.0
+date: 2026-10-15
 ---
 
 # Demo 1c: cross-cluster migration, site A to site B (bonus)
 
-> **Version 1.0.1 · draft · 2026-10-14** · class/demos/01c-ocp-vm-cross-cluster-migration.md
+> **Version 1.1.0 · draft · 2026-10-15** · class/demos/01c-ocp-vm-cross-cluster-migration.md
 
 ## What you will learn
 
@@ -42,6 +42,7 @@ run in each console's **Web Terminal** (`>_`); each step says which site.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1c: running on site A');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
 ---
@@ -92,6 +93,7 @@ Write the "start" row **before** the VM stops, while its database still answers:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
 **Console (site A):** **Virtualization → VirtualMachines → `win-pg-s01` → Actions → Stop**.

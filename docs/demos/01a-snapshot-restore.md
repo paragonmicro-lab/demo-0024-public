@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — Snapshot, destroy the database, restore from the snapshot (bonus)"
 subtitle: "Snapshot your VM · write a row after it · drop the database · bring D: and L: back from the snapshot · read back"
-version: 1.0.1
-date: 2026-10-14
+version: 1.1.0
+date: 2026-10-15
 ---
 
 # Demo 1a: snapshot and restore (bonus)
 
-> **Version 1.0.1 · draft · 2026-10-14** · class/demos/01a-snapshot-restore.md
+> **Version 1.1.0 · draft · 2026-10-15** · class/demos/01a-snapshot-restore.md
 
 ## What you will learn
 
@@ -40,6 +40,7 @@ VirtualMachines → your VM → Console**, then log in as `.\student-01` (your W
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
 **Console:** **Virtualization → VirtualMachines → `win-pg-s01` → Snapshots → Take snapshot**, name it
@@ -63,6 +64,7 @@ Now write a row **after** the snapshot. It exists only in the live database, so 
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'after-snapshot', 'this row must NOT come back');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
 ---

@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — Live migration and storage migration (bonus)"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 1.0.1
-date: 2026-10-14
+version: 1.1.0
+date: 2026-10-15
 ---
 
 # Demo 1b: live migration and storage migration (bonus)
 
-> **Version 1.0.1 · draft · 2026-10-14** · class/demos/01b-live-and-storage-migration.md
+> **Version 1.1.0 · draft · 2026-10-15** · class/demos/01b-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -34,6 +34,7 @@ in the site A console's **Web Terminal** (`>_`).
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'before-live-migration', 'running on one node');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 oc -n student-01-0024-012 get vmi win-pg-s01 -o jsonpath='{.status.nodeName}  LiveMigratable={.status.conditions[?(@.type=="LiveMigratable")].status}{"\n"}'
 ```
 
@@ -58,6 +59,7 @@ restart.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'after-live-migration', 'running on another node');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
 ```
 
 ---
