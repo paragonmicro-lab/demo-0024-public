@@ -1536,7 +1536,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.1 · draft · 2026-10-15</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.6.0 · draft · 2026-10-15</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1573,7 +1573,7 @@ console steps behind the shared pieces.</p>
 <td>ACM and cert-manager on both clusters (demo-openshift's base build, the same operators on both). DR runs from <strong>site B's hub</strong>, with site A imported as a managed cluster</td>
 <td>site B</td>
 <td><code>oc --context site-b get managedclusters</code></td>
-<td><a href="setup-how-the-lab-is-built.html">S.10</a> · <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13">ACM 2.13</a> <strong>[verify: BL-D11]</strong></td>
+<td><a href="setup-how-the-lab-is-built.html">S.10</a> · <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16">ACM 2.16</a></td>
 </tr>
 <tr>
 <td>ODF Multicluster Orchestrator and the DR hub operator (Ramen) on the hub, and the DR cluster operator on both sites</td>
@@ -1582,7 +1582,7 @@ console steps behind the shared pieces.</p>
 <td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide</a></td>
 </tr>
 <tr>
-<td>Submariner (the network tunnel Ceph mirrors over), the <code>MirrorPeer</code>, both <code>DRCluster</code>s</td>
+<td>Submariner with Globalnet (the network tunnel Ceph mirrors over), ODF's provider server exported on both sites, the <code>MirrorPeer</code>, both <code>DRCluster</code>s</td>
 <td>both</td>
 <td>§4.2</td>
 <td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide: Regional-DR</a></td>
@@ -1785,11 +1785,56 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drcluster<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,S3:.spec.s3ProfileName,VALIDATED:<span class="s1">'.status.conditions[?(@.type=="Validated")].status'</span>
 </code></pre></div>
-<p><strong>[verify]</strong> On ODF 4.19, check whether Submariner is deployed with <strong>Globalnet</strong> off (the clusters' pod and service
-CIDRs must not overlap; demo-openshift gives each cluster unique CIDRs) or on:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>-A<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.namespace}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span>
+<p>Both clusters use the same pod and service networks, so Submariner runs with <strong>Globalnet</strong> (each cluster gets its own
+virtual range), and each site exports ODF's provider server so the two Ceph clusters can find each other:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-broker<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span><span class="w">   </span><span class="c1"># true</span>
+<span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"== </span><span class="nv">$s</span><span class="s2">"</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>get<span class="w"> </span>storageclusterpeer<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,STATE:.status.state<span class="w">   </span><span class="c1"># Peered</span>
+<span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>get<span class="w"> </span>cephblockpoolradosnamespaces<span class="w"> </span>ocs-storagecluster-cephblockpool-builtin-implicit<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.mirroringStatus.summary}{"\n"}'</span><span class="w">                   </span><span class="c1"># "daemon_health":"OK", "health":"OK"</span>
+<span class="k">done</span>
 </code></pre></div>
+<details>
+<summary>Example code: how the lab built these layers (instructor)</summary>
+<p>The full commands, layer by layer, with the console path for each: <a href="setup-how-the-lab-is-built.html">Lab S §S.14</a>. CI runs
+them as <code>dr_fabric.sh</code> (Submariner with Globalnet, MCG, the provider-server export, the Orchestrator, the MirrorPeer) and
+<code>dr_policy.sh</code> (the 15-minute DRPolicy) on every booking with ODF on both sites.</p>
+</details>
+<details>
+<summary>Debug: a layer is missing or unhealthy</summary>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>Look at</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>no <code>mirrorpeer</code> or <code>drcluster</code> at all</td>
+<td>the booking's <code>dr-fabric</code> job</td>
+<td>the booking isn't ODF on both sites (<code>storage: odf</code>), or <code>dr-fabric</code> failed: its log names the step</td>
+</tr>
+<tr>
+<td>Submariner add-on not <code>AVAILABLE</code></td>
+<td><code>oc --context site-b -n &lt;cluster&gt; get managedclusteraddon submariner -o yaml</code></td>
+<td>Lab S §S.14 layer 2 debug: gateway node label, UDP 4500 between the gateway nodes</td>
+</tr>
+<tr>
+<td><code>storageclusterpeer</code> missing or not <code>Peered</code></td>
+<td><code>oc --context site-X -n openshift-storage get serviceexport ocs-provider-server -o yaml</code></td>
+<td>the provider-server export and StorageCluster annotation (Lab S §S.14 layer 3, step 2)</td>
+</tr>
+<tr>
+<td>mirroring <code>health</code> <code>WARNING</code></td>
+<td>wait: a new link takes up to 10 minutes</td>
+<td>still <code>WARNING</code>/<code>ERROR</code> after that: Lab S §S.14 layer 3 debug</td>
+</tr>
+</tbody>
+</table>
+</details>
 <h3 id="driver-the-15-minute-drpolicy">🧑‍🏫 Driver: the 15-minute DRPolicy<a class="headerlink" href="#driver-the-15-minute-drpolicy" title="Permanent link">&para;</a></h3>
 <p>The user-facing promise of this demo is <strong>"a checkpoint every 15 minutes"</strong>. That is the <code>schedulingInterval</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">POLICY</span><span class="o">=</span><span class="nv">$A</span>-<span class="nv">$B</span>-15m
@@ -1804,16 +1849,24 @@ cat<span class="w"> </span><span class="s">&lt;&lt;YAML | oc --context site-b ap
 <span class="s">  volumeSnapshotClassSelector: {}</span>
 <span class="s">YAML</span>
 </code></pre></div>
-<p><strong>[verify: dependency]</strong> The interval must be one the <code>MirrorPeer</code> offers (<code>spec.schedulingIntervals</code>). The lab's
-MirrorPeer offers <code>2m</code> and <code>5m</code> today, so <code>15m</code> has to be added to the MirrorPeer for this policy to validate.</p>
+<p>The interval must be one the <code>MirrorPeer</code> offers (<code>spec.schedulingIntervals</code>). The lab's MirrorPeer offers <code>2m</code>, <code>5m</code> and
+<code>15m</code>, and CI has usually created this policy already (<code>dr_policy.sh</code>), so the <code>apply</code> just confirms it.</p>
+<details>
+<summary>Debug: the DRPolicy stays <code>validated=False</code></summary>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drpolicy<span class="w"> </span><span class="s2">"</span><span class="nv">$POLICY</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.conditions[*]}{.type}={.status} {.reason}: {.message}{"\n"}{end}'</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>mirrorpeer<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].spec.schedulingIntervals}{"\n"}'</span><span class="w">      </span><span class="c1"># must include 15m</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drcluster<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,VALIDATED:<span class="s1">'.status.conditions[?(@.type=="Validated")].status'</span>
+</code></pre></div>
+<p>An interval the MirrorPeer doesn't offer, or a <code>drClusters</code> name that isn't a DRCluster (<code>ocp-&lt;A&gt;</code>, <code>local-cluster</code>), are
+the usual causes. One DRPolicy per interval; you can't edit an existing policy's interval (Red Hat ODF 4.19).</p>
+</details>
 <h3 id="check">Check<a class="headerlink" href="#check" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drpolicy<span class="w"> </span><span class="s2">"</span><span class="nv">$POLICY</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.schedulingInterval}{"  validated="}{.status.conditions[?(@.type=="Validated")].status}{"\n"}'</span>
 <span class="c1"># the per-interval replication classes the MirrorPeer created on each site</span>
 <span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"== </span><span class="nv">$s</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>volumereplicationclass<span class="p">;</span><span class="w"> </span><span class="k">done</span>
 </code></pre></div>
-<p>✅ <code>15m  validated=True</code>. ✅ Each site has a <code>VolumeReplicationClass</code> whose <code>schedulingInterval</code> is <code>15m</code>
-<strong>[verify: class naming, e.g. <code>rbd-volumereplicationclass-…</code>]</strong>.</p>
+<p>✅ <code>15m  validated=True</code>. ✅ Each site has a <code>VolumeReplicationClass</code> whose <code>schedulingInterval</code> is <code>15m</code>.</p>
 <p>📸 <code>04-drpolicy</code>: the DRPolicy validated at 15m.</p>
 <hr />
 <h2 id="43-protect-the-vm">4.3 Protect the VM<a class="headerlink" href="#43-protect-the-vm" title="Permanent link">&para;</a></h2>
