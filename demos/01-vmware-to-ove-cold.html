@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.2.1 · draft · 2026-10-15</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.2.2 · draft · 2026-10-15</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1080,7 +1080,7 @@ for your class password. Without it, every command below answers <em>First sign 
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p>✅ The first command prints the row it wrote, stage <code>demo-started</code>. The read-back lists every row you have written so
-far, oldest first: <code>start-class</code> from Lab 0, then <code>demo-started</code>. Each step of the class adds one, so the read-back is
+far, oldest first: <code>start-class</code> (if you injected it in Lab 0), then <code>demo-started</code>. Each step of the class adds one, so the read-back is
 your progress through the class. (If it says <em>First sign in … dblogin</em>, run Lab 0's step 1 again.)</p>
 <blockquote>
 <p>💡 <strong><code>Error from server (NotFound): namespaces "student-01-0024-012" not found</code></strong> means you ran the example as it is.
