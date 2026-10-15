@@ -1,13 +1,13 @@
 ---
 title: "Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus)"
 subtitle: "ACM links the clusters · MTV moves your VM from site A (ODF) to site B (NFS) · inject and read back"
-version: 1.1.0
+version: 1.1.1
 date: 2026-10-15
 ---
 
 # Demo 1c: cross-cluster migration, site A to site B (bonus)
 
-> **Version 1.1.0 · draft · 2026-10-15** · class/demos/01c-ocp-vm-cross-cluster-migration.md
+> **Version 1.1.1 · draft · 2026-10-15** · class/demos/01c-ocp-vm-cross-cluster-migration.md
 
 ## What you will learn
 
@@ -54,6 +54,9 @@ Site B runs the ACM **hub**, and site A is imported into it as a **managed clust
 **Console (site B):** switch the perspective at the top left to **All Clusters** → **Infrastructure → Clusters**.
 
 ✅ `ocp-lz1` (site A) shows **Ready**, next to `local-cluster` (site B itself).
+
+Site A's own console shows **no clusters** in this view, and that's by design: a cluster belongs to one hub only,
+and site A's belongs to site B's. The hub supervises; the sites aren't peers ([Demo 4](04-odf-regional-dr.md#who-is-in-charge-the-hub-supervises-the-sites-are-not-peers)).
 
 ```bash
 oc get managedclusters                              # ocp-lz1  JOINED True  AVAILABLE True

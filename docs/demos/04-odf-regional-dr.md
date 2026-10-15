@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.4.1
-date: 2026-10-12
+version: 0.5.0
+date: 2026-10-15
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.4.1 · draft · 2026-10-12** · class/demos/04-odf-regional-dr.md
+> **Version 0.5.0 · draft · 2026-10-15** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -37,6 +37,34 @@ console steps behind the shared pieces.
 | Your namespace with your browser terminal `sql-client` and your VM's Service (`<VM>-sql`); `ovedr-app` with the instructor's, on **both** sites | both | `oc --context site-b -n "$VMNS" get deploy,svc` | [S.9](setup-how-the-lab-is-built.md) |
 | **Your own VM** (`$VM`, e.g. `win-pg-s03`) running on site A, on ODF storage (`ocs-storagecluster-ceph-rbd-virtualization`), at **its own address `$VM_IP`** on the VLAN bridge (Demo 1's staged plan) | site A | `where` → `site-a Running` | [S.11](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) |
 | Your Windows login (`.\<WINUSER>`) and the PostgreSQL toolkit (`marks`, `ovedr_*`) inside your VM | your VM | `verify` | [S.11](setup-how-the-lab-is-built.md) |
+
+### Who is in charge: the hub supervises, the sites are not peers
+
+Two clusters, but they don't have equal roles. One ACM **hub** supervises both. Only the hub can protect a VM, run a
+Relocate or a Failover, or show the whole picture. In this lab the hub is on **site B** (`ocp-lz2` in the examples).
+
+| Cluster | Its role | What its console's **All Clusters → Clusters** shows |
+|---|---|---|
+| **Site B** (`ocp-lz2`) | the **hub** (ACM, ODF Multicluster Orchestrator, Ramen's DR hub operator), **and** a managed cluster (`local-cluster`), **and** the DR target | both clusters, Ready |
+| **Site A** (`ocp-lz1`) | a **managed** cluster only: runs the VMs, the DR cluster operator, and mirrors its disks to B | **nothing**, by design: ACM lets a cluster belong to only one hub, and site A's belongs to site B's |
+
+**What the hub knows while a site is down.** A hub can't see a cluster that is down. It shows that cluster as
+**Unknown** and keeps what it last heard: each protected namespace's DR state and its last completed sync. What
+failover needs is already on the surviving site: the disks' snapshots, mirrored there every interval, and the
+VM and volume definitions, which the DR operators keep in an object store on **each** site
+**[verify: Ramen's S3 metadata store on ODF 4.19]**.
+
+| What fails | Can you fail over? | What to do |
+|---|---|---|
+| **Site A** (the VMs' home) | ✅ yes: the hub on B is up | Failover to B from the hub (§4.8). When A is back, the hub sees it again, reverses replication, and you relocate home (§4.6). This is why the hub sits on B. |
+| **Site B** (the hub's site) | ❌ no: nothing can drive a failover | The VMs on A keep running, but replication to B stops and no Relocate or Failover can run. **Bring the hub back online first**: once it's up, it reconnects to A, replication resumes, and you can manage the other cluster again. |
+| **The hub, for good** | ❌ not until a hub exists again | Restore the hub's backup onto another cluster (ACM's hub backup and restore, with a passive hub kept ready), then carry on from it **[verify]**. |
+
+> ⚠ **A lab compromise.** Red Hat's supported Regional-DR layout has **three** clusters: the hub on its own, away from
+> both sites, usually with a passive standby hub. Then losing either site never costs you the hub. This lab has two
+> clusters, so the hub shares site B. That's fine for the disaster this demo shows (site A lost), but the
+> **first step of any recovery is getting the hub back**: it's the cluster you manage all the others from.
+> [ACM: hub backup and restore](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13/html/business_continuity/business-cont-overview) **[verify link]**.
 
 **What you do yourself:** inspect every DR layer, inject and verify data at every stage, read replication
 status at three levels, and run the moves when you are the driver.
