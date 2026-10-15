@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.5.0
+version: 0.5.1
 date: 2026-10-15
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.5.0 · draft · 2026-10-15** · class/demos/04-odf-regional-dr.md
+> **Version 0.5.1 · draft · 2026-10-15** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -33,6 +33,7 @@ console steps behind the shared pieces.
 | ACM and cert-manager on both clusters (demo-openshift's base build, the same operators on both). DR runs from **site B's hub**, with site A imported as a managed cluster | site B | `oc --context site-b get managedclusters` | [S.10](setup-how-the-lab-is-built.md) · [ACM 2.13](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13) **[verify: BL-D11]** |
 | ODF Multicluster Orchestrator and the DR hub operator (Ramen) on the hub, and the DR cluster operator on both sites | site B / both | §4.2 | [ODF DR guide](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
 | Submariner (the network tunnel Ceph mirrors over), the `MirrorPeer`, both `DRCluster`s | both | §4.2 | [ODF DR guide: Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
+| **The same VLAN bridges on both sites**: every `vmnet<VLAN>` your VMs use exists on site A **and** site B, same name, same VLAN. A Relocate or Failover brings back the VM's own definition, which names its bridge (`default/vmnet23`): without that bridge on the other site the VM doesn't start, and with it the VM keeps its address | both | `oc --context site-a -n default get net-attach-def` and the same on `site-b`: the same `vmnet*` names | demo-openshift's VLAN build on each site (BL-B29) |
 | The **15-minute** `DRPolicy` (`sync_interval=15m`) | site B | §4.2 | §4.2 |
 | Your namespace with your browser terminal `sql-client` and your VM's Service (`<VM>-sql`); `ovedr-app` with the instructor's, on **both** sites | both | `oc --context site-b -n "$VMNS" get deploy,svc` | [S.9](setup-how-the-lab-is-built.md) |
 | **Your own VM** (`$VM`, e.g. `win-pg-s03`) running on site A, on ODF storage (`ocs-storagecluster-ceph-rbd-virtualization`), at **its own address `$VM_IP`** on the VLAN bridge (Demo 1's staged plan) | site A | `where` → `site-a Running` | [S.11](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) |
