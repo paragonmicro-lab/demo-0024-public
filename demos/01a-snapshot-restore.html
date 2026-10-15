@@ -1002,7 +1002,7 @@
 
 <h1 id="demo-1a-snapshot-and-restore-bonus">Demo 1a: snapshot and restore (bonus)<a class="headerlink" href="#demo-1a-snapshot-and-restore-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.0.1 · draft · 2026-10-14</strong> · class/demos/01a-snapshot-restore.md</p>
+<p><strong>Version 1.1.0 · draft · 2026-10-15</strong> · class/demos/01a-snapshot-restore.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You take a snapshot of your running VM, destroy its database for real, then bring the data back by attaching the
@@ -1028,6 +1028,7 @@ freezes all disks at the same instant, so its <code>D:</code> and <code>L:</code
 <hr />
 <h2 id="1a1-inject-then-snapshot">1a.1 Inject, then snapshot<a class="headerlink" href="#1a1-inject-then-snapshot" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p><strong>Console:</strong> <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Snapshots → Take snapshot</strong>, name it
 <code>win-pg-s01-snap</code>. Or from the Web Terminal:</p>
@@ -1044,6 +1045,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span cla
 together.</p>
 <p>Now write a row <strong>after</strong> the snapshot. It exists only in the live database, so the restore must lose it:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'after-snapshot', 'this row must NOT come back');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
 <h2 id="1a2-destroy-the-database">1a.2 Destroy the database<a class="headerlink" href="#1a2-destroy-the-database" title="Permanent link">&para;</a></h2>

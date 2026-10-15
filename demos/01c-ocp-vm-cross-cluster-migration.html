@@ -1002,7 +1002,7 @@
 
 <h1 id="demo-1c-cross-cluster-migration-site-a-to-site-b-bonus">Demo 1c: cross-cluster migration, site A to site B (bonus)<a class="headerlink" href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.0.1 · draft · 2026-10-14</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
+<p><strong>Version 1.1.0 · draft · 2026-10-15</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Your VM already runs on OpenShift: <a href="01-vmware-to-ove-cold.html">Demo 1</a> (cold) or, once it ships, <a href="02-vmware-to-ove-warm.html">Demo 2</a>
@@ -1055,6 +1055,7 @@ run in each console's <strong>Web Terminal</strong> (<code>&gt;_</code>); each s
 <hr />
 <h2 id="1c0-inject-the-demo-has-started-site-a">1c.0 Inject: the demo has started (site A)<a class="headerlink" href="#1c0-inject-the-demo-has-started-site-a" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1c: running on site A');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
 <h2 id="1c1-acm-the-two-clusters-linked-site-b">1c.1 ACM: the two clusters, linked (site B)<a class="headerlink" href="#1c1-acm-the-two-clusters-linked-site-b" title="Permanent link">&para;</a></h2>
@@ -1097,6 +1098,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 <h2 id="1c3-inject-then-stop-your-vm-site-a">1c.3 Inject, then stop your VM (site A)<a class="headerlink" href="#1c3-inject-then-stop-your-vm-site-a" title="Permanent link">&para;</a></h2>
 <p>Write the "start" row <strong>before</strong> the VM stops, while its database still answers:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Actions → Stop</strong>.</p>
 <p>✅ The VM shows <strong>Stopped</strong>.</p>

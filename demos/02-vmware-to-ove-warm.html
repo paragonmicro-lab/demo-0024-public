@@ -1092,7 +1092,7 @@
 
 <h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration-storage-copy-offload">Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration-storage-copy-offload" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 3.0.0 · draft · 2026-10-14</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 3.1.0 · draft · 2026-10-15</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 <p>🚧 <strong>Coming soon. You can't run this demo in this lab yet.</strong></p>
 <p>This demo is written for a lab that has a <strong>supported SAN array</strong> with its <strong>CSI driver</strong> and <strong>snapshot</strong>
 support on OpenShift. This lab doesn't have one yet: its vSphere datastore is NFS and its OpenShift storage is ODF
@@ -1301,6 +1301,7 @@ with its disks on the SAN datastore.</p>
 <hr />
 <h2 id="20-inject-the-demo-has-started">2.0 Inject: the demo has started<a class="headerlink" href="#20-inject-the-demo-has-started" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 2: warm migration, storage copy offload');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p>✅ One row, <code>stage = demo-started</code>.</p>
 <hr />
@@ -1445,6 +1446,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 <h2 id="24-inject-then-cut-over">2.4 Inject, then cut over<a class="headerlink" href="#24-inject-then-cut-over" title="Permanent link">&para;</a></h2>
 <p>Write the "start" row while your VM still runs on vSphere. It must survive the cutover:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-warm-migration', 'on vSphere, before cutover');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p><strong>Console (site A):</strong> <strong>Migration plans → <code>d2-win-pg-s01</code></strong> → <strong>Cutover</strong> → keep <strong>now</strong> → <strong>Set cutover</strong>.</p>
 <p>MTV shuts your VM down on vSphere, takes one last snapshot, copies the last change, converts the drivers (<code>virt-v2v</code>
