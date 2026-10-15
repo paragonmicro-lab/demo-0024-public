@@ -1002,7 +1002,7 @@
 
 <h1 id="demo-1c-cross-cluster-migration-site-a-to-site-b-bonus">Demo 1c: cross-cluster migration, site A to site B (bonus)<a class="headerlink" href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.0 · draft · 2026-10-15</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
+<p><strong>Version 1.1.1 · draft · 2026-10-15</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Your VM already runs on OpenShift: <a href="01-vmware-to-ove-cold.html">Demo 1</a> (cold) or, once it ships, <a href="02-vmware-to-ove-warm.html">Demo 2</a>
@@ -1062,6 +1062,8 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 <p>Site B runs the ACM <strong>hub</strong>, and site A is imported into it as a <strong>managed cluster</strong>.</p>
 <p><strong>Console (site B):</strong> switch the perspective at the top left to <strong>All Clusters</strong> → <strong>Infrastructure → Clusters</strong>.</p>
 <p>✅ <code>ocp-lz1</code> (site A) shows <strong>Ready</strong>, next to <code>local-cluster</code> (site B itself).</p>
+<p>Site A's own console shows <strong>no clusters</strong> in this view, and that's by design: a cluster belongs to one hub only,
+and site A's belongs to site B's. The hub supervises; the sites aren't peers (<a href="04-odf-regional-dr.html#who-is-in-charge-the-hub-supervises-the-sites-are-not-peers">Demo 4</a>).</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                              </span><span class="c1"># ocp-lz1  JOINED True  AVAILABLE True</span>
 </code></pre></div>
 <p><strong>Your VM, seen from the hub:</strong> <strong>All Clusters → Infrastructure → Virtual machines</strong> <strong>[verify: ACM 2.13 fleet

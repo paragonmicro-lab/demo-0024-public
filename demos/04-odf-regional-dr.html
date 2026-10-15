@@ -572,6 +572,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How the lab is set up for this demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#who-is-in-charge-the-hub-supervises-the-sites-are-not-peers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Who is in charge: the hub supervises, the sites are not peers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1172,6 +1187,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How the lab is set up for this demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#who-is-in-charge-the-hub-supervises-the-sites-are-not-peers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Who is in charge: the hub supervises, the sites are not peers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1506,7 +1536,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.4.1 · draft · 2026-10-12</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.5.0 · draft · 2026-10-15</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1583,6 +1613,68 @@ console steps behind the shared pieces.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="who-is-in-charge-the-hub-supervises-the-sites-are-not-peers">Who is in charge: the hub supervises, the sites are not peers<a class="headerlink" href="#who-is-in-charge-the-hub-supervises-the-sites-are-not-peers" title="Permanent link">&para;</a></h3>
+<p>Two clusters, but they don't have equal roles. One ACM <strong>hub</strong> supervises both. Only the hub can protect a VM, run a
+Relocate or a Failover, or show the whole picture. In this lab the hub is on <strong>site B</strong> (<code>ocp-lz2</code> in the examples).</p>
+<table>
+<thead>
+<tr>
+<th>Cluster</th>
+<th>Its role</th>
+<th>What its console's <strong>All Clusters → Clusters</strong> shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Site B</strong> (<code>ocp-lz2</code>)</td>
+<td>the <strong>hub</strong> (ACM, ODF Multicluster Orchestrator, Ramen's DR hub operator), <strong>and</strong> a managed cluster (<code>local-cluster</code>), <strong>and</strong> the DR target</td>
+<td>both clusters, Ready</td>
+</tr>
+<tr>
+<td><strong>Site A</strong> (<code>ocp-lz1</code>)</td>
+<td>a <strong>managed</strong> cluster only: runs the VMs, the DR cluster operator, and mirrors its disks to B</td>
+<td><strong>nothing</strong>, by design: ACM lets a cluster belong to only one hub, and site A's belongs to site B's</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What the hub knows while a site is down.</strong> A hub can't see a cluster that is down. It shows that cluster as
+<strong>Unknown</strong> and keeps what it last heard: each protected namespace's DR state and its last completed sync. What
+failover needs is already on the surviving site: the disks' snapshots, mirrored there every interval, and the
+VM and volume definitions, which the DR operators keep in an object store on <strong>each</strong> site
+<strong>[verify: Ramen's S3 metadata store on ODF 4.19]</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>What fails</th>
+<th>Can you fail over?</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Site A</strong> (the VMs' home)</td>
+<td>✅ yes: the hub on B is up</td>
+<td>Failover to B from the hub (§4.8). When A is back, the hub sees it again, reverses replication, and you relocate home (§4.6). This is why the hub sits on B.</td>
+</tr>
+<tr>
+<td><strong>Site B</strong> (the hub's site)</td>
+<td>❌ no: nothing can drive a failover</td>
+<td>The VMs on A keep running, but replication to B stops and no Relocate or Failover can run. <strong>Bring the hub back online first</strong>: once it's up, it reconnects to A, replication resumes, and you can manage the other cluster again.</td>
+</tr>
+<tr>
+<td><strong>The hub, for good</strong></td>
+<td>❌ not until a hub exists again</td>
+<td>Restore the hub's backup onto another cluster (ACM's hub backup and restore, with a passive hub kept ready), then carry on from it <strong>[verify]</strong>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠ <strong>A lab compromise.</strong> Red Hat's supported Regional-DR layout has <strong>three</strong> clusters: the hub on its own, away from
+both sites, usually with a passive standby hub. Then losing either site never costs you the hub. This lab has two
+clusters, so the hub shares site B. That's fine for the disaster this demo shows (site A lost), but the
+<strong>first step of any recovery is getting the hub back</strong>: it's the cluster you manage all the others from.
+<a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13/html/business_continuity/business-cont-overview">ACM: hub backup and restore</a> <strong>[verify link]</strong>.</p>
+</blockquote>
 <p><strong>What you do yourself:</strong> inspect every DR layer, inject and verify data at every stage, read replication
 status at three levels, and run the moves when you are the driver.</p>
 <blockquote>
