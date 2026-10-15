@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.1
+version: 1.2.2
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.1 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.2 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -54,7 +54,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 ```
 
 ✅ The first command prints the row it wrote, stage `demo-started`. The read-back lists every row you have written so
-far, oldest first: `start-class` from Lab 0, then `demo-started`. Each step of the class adds one, so the read-back is
+far, oldest first: `start-class` (if you injected it in Lab 0), then `demo-started`. Each step of the class adds one, so the read-back is
 your progress through the class. (If it says *First sign in … dblogin*, run Lab 0's step 1 again.)
 
 > 💡 **`Error from server (NotFound): namespaces "student-01-0024-012" not found`** means you ran the example as it is.
