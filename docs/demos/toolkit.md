@@ -1,13 +1,13 @@
 ---
 title: "Toolkit — your class terminal, your data and your VM (used by every demo)"
 subtitle: "The browser terminal on both sites · the data-integrity commands · your file in the VM · the optional pod-network address · the proof table"
-version: 0.2.0
-date: 2026-10-12
+version: 0.2.1
+date: 2026-10-15
 ---
 
 # Toolkit: your class terminal, your data and your VM
 
-> **Version 0.2.0 · draft · 2026-10-12** · class/demos/toolkit.md
+> **Version 0.2.1 · draft · 2026-10-15** · class/demos/toolkit.md
 
 The reference every demo uses. [Lab 0](00-access-and-tools.md) signs you in and opens a command line; this page has
 the rest: your class terminal on both sites, the commands that write and prove your data, your file in the VM, and
@@ -170,8 +170,8 @@ verify                           # chain_ok = t, marks = 1
 [![🎬 Video: T.3 Your Windows VM, and your file in it. Watch it, then do the same in the console](../.images/toolkit-t-3-windows-vm-file.jpg)](../.images/toolkit-t-3-windows-vm-file.mp4)
 <sub>🎬 *T.3 Your Windows VM, and your file in it: a recording of this whole section, done in the console (placeholder until recorded: `class/.images/toolkit-t-3-windows-vm-file.mp4`).*</sub>
 
-Your VM runs Windows Server 2022 with PostgreSQL 16. The WAL (write-ahead log) is on **`L:`** (5 GB) and the data is
-on **`D:`** (10 GB).
+Your VM runs Windows Server 2022 with PostgreSQL 16. The WAL (write-ahead log) is on **`L:`** (256 MB) and the data is
+on **`D:`** (1 GB).
 
 - **While it is on vSphere:** in vCenter, select your VM and choose **Launch Web Console**.
 - **Once it is on OpenShift:** in the console, go to **Virtualization → VirtualMachines → your VM → Console**.

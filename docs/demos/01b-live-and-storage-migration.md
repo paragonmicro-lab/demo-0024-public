@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — Live migration and storage migration (bonus)"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 1.1.0
+version: 1.1.1
 date: 2026-10-15
 ---
 
 # Demo 1b: live migration and storage migration (bonus)
 
-> **Version 1.1.0 · draft · 2026-10-15** · class/demos/01b-live-and-storage-migration.md
+> **Version 1.1.1 · draft · 2026-10-15** · class/demos/01b-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -66,7 +66,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 
 ## 1b.3 Storage migration: move the data disk from ODF to NFS, while it runs [verify]
 
-Your VM's disks are on ODF (`ocs-storagecluster-ceph-rbd-virtualization`). Move the 10 GB **data** disk (`D:`) to
+Your VM's disks are on ODF (`ocs-storagecluster-ceph-rbd-virtualization`). Move the 1 GB **data** disk (`D:`) to
 `nfs-csi`, with the VM running. OpenShift Virtualization copies the disk in the background, then switches the VM to
 the new copy with a live migration.
 

@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.2
+version: 1.2.3
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.2 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.3 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -234,7 +234,7 @@ instructor before you delete or archive the plan.
 | Tab | What you see |
 |---|---|
 | **Configuration → Network** | one NIC on **`default/vmnet23`**: your VLAN's bridge, the same VLAN the VM had on vSphere (port group `vm-network`, VLAN 23) |
-| **Configuration → Storage** | **three** disks, now persistent volume claims on **`ocs-storagecluster-ceph-rbd-virtualization`** (ODF): 60 GB `C:`, 10 GB data, 5 GB WAL |
+| **Configuration → Storage** | **three** disks, now persistent volume claims on **`ocs-storagecluster-ceph-rbd-virtualization`** (ODF): 32 GB `C:`, 1 GB data, 256 MB WAL (60 GB / 10 GB / 5 GB on a VM built before 2026-10-15) |
 
 ```bash
 oc -n student-01-0024-012 get vm win-pg-s01 -o jsonpath='{range .spec.template.spec.networks[*]}{.multus.networkName}{"\n"}{end}'   # default/vmnet23

@@ -1,13 +1,13 @@
 ---
 title: "Lab 0 — Access and tools (5 minutes)"
 subtitle: "Sign in to vCenter and both OpenShift clusters · open a command line · reach the cluster and your VM's database"
-version: 1.1.0
-date: 2026-10-13
+version: 1.1.1
+date: 2026-10-15
 ---
 
 # Lab 0: Access and tools
 
-> **Version 1.1.0 · draft · 2026-10-13** · class/demos/00-access-and-tools.md
+> **Version 1.1.1 · draft · 2026-10-15** · class/demos/00-access-and-tools.md
 
 **About 5 minutes.** You sign in to the lab in your browser, open a command line, and prove you can reach the cluster
 and your own VM's database. One recording covers the whole lab: watch it, then do the same with the steps below.
@@ -47,7 +47,7 @@ addresses. The instructor gives you `N`, `A` and `B`; the examples below use `1`
 3. On its **Summary** tab, find **IP Addresses**. ✍️ **Write it down:** this is your VM's address (for example
    `10.101.23.103`). You use it in step 0.4, and your VM keeps it after every move.
 
-✅ Your VM is powered on, with three disks (60 GB, 5 GB and 10 GB).
+✅ Your VM is powered on, with three disks (32 GB, 256 MB and 1 GB; 60, 5 and 10 GB on a VM built before 2026-10-15).
 
 ---
 

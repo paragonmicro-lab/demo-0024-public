@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.6.1
-date: 2026-10-14
+version: 0.6.2
+date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.6.1 · draft · 2026-10-14** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.6.2 · draft · 2026-10-15** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -646,8 +646,8 @@ token*). 📸 `S-acm-import` · 📸 `S-acm-clusters`
 **What CI built** (`source_vm.sh`, `student_vms.sh`, `lib/vm.sh`, `windows/*.ps1`), entirely through vCenter's API (govc)
 and VMware guest operations:
 - **Instructor VM `win-pg-i01`** in `vms/ovedr`: Windows Server 2022 (BIOS, LSI Logic SAS, e1000e), installed unattended
-  from the lab ISO plus an answer ISO (VMware Tools included). Three disks: **C:** 60 GB, **L:** 5 GB (PostgreSQL **WAL**,
-  label `pg_wal`) and **D:** 10 GB (PostgreSQL **data**, label `pgdata`). Static address `10.101.<22+N>.62`.
+  from the lab ISO plus an answer ISO (VMware Tools included). Three thin disks: **C:** 32 GB, **L:** 256 MB (PostgreSQL **WAL**,
+  label `pg_wal`, `max_wal_size = 96MB`) and **D:** 1 GB (PostgreSQL **data**, label `pgdata`); small, so a copy moves little. Static address `10.101.<22+N>.62`.
   - PostgreSQL 16 runs as service `postgresql-16`, with `PGDATA=D:\pgdata` and WAL at `L:\pg_wal`.
   - The `bcdr` database holds the heartbeat writer (a startup task) and the **integrity toolkit**
     (`ovedr_mark/load/verify/checksum`).
@@ -678,10 +678,10 @@ Configure → Hardware (three disks). 📸 `S-vm-in-student-folder` · 📸 `S-v
 export GOVC_URL="https://vcenter0$N.$DOMAIN"                 # credentials from your vault
 F=/datacenter01/vm/vms/ovedr; POOL="/datacenter01/host/cluster-lz$N/Resources"; DS=coresan01_data00
 govc vm.create -on=false -folder "$F" -pool "$POOL" -ds "$DS" -c 4 -m 8192 -g windows2019srvNext_64Guest \
-  -firmware bios -net vm-network -net.adapter e1000e -disk.controller lsilogic-sas -disk 60GB \
+  -firmware bios -net vm-network -net.adapter e1000e -disk.controller lsilogic-sas -disk 32GB \
   -iso '<path of the Windows ISO>' -iso-datastore "$DS" my-win-pg
-govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/log  -size 5GB
-govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/data -size 10GB
+govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/log  -size 256MB
+govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/data -size 1GB
 # … install Windows + PostgreSQL (initdb -D D:\pgdata -X L:\pg_wal), then clone one per student:
 govc snapshot.create -vm my-win-pg -m=false golden
 govc vm.clone -vm my-win-pg -snapshot golden -link=false -on=false -folder "$F" -pool "$POOL" -ds "$DS" -c 2 -m 4096 my-win-pg-s01
@@ -689,7 +689,7 @@ govc object.mv "$F/my-win-pg-s01" '/datacenter01/vm/vms/students/<student ID>'
 ```
 
 **Console (vSphere Client):**
-1. **New Virtual Machine** → create → guest *Windows Server 2022*; add two hard disks (5 GB, 10 GB). 📸 `S-vsphere-newvm`
+1. **New Virtual Machine** → create → guest *Windows Server 2022*; add two hard disks (256 MB, 1 GB). 📸 `S-vsphere-newvm`
 2. Install Windows and PostgreSQL. In **Disk Management**, give `L:` (pg_wal) and `D:` (pgdata). 📸 `S-windows-disks`
 3. **Snapshots → Take Snapshot**; **Clone → Clone to Virtual Machine** from it. 📸 `S-vsphere-clone`
 4. Drag the clone into **vms → students → <ID>**; **Permissions → Add** for that student. 📸 `S-vsphere-move`
