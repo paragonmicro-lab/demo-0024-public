@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.2.0 · draft · 2026-10-15</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.2.1 · draft · 2026-10-15</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1071,6 +1071,11 @@ database rows from Lab 0 are there. Every command below runs in the console's <s
 <p><sub>🎬 <em>Demo 1: cold migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
 <h2 id="10-inject-the-demo-has-started">1.0 Inject: the demo has started<a class="headerlink" href="#10-inject-the-demo-has-started" title="Permanent link">&para;</a></h2>
+<p><strong>Sign in to your VM's database first</strong>, if you haven't since your class terminal started (Lab 0 step 1). It asks
+for your class password. Without it, every command below answers <em>First sign in to your VM's database … dblogin</em>:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>dblogin
+</code></pre></div>
+<p>Then write your first row, and read your rows back:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 1: cold migration');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
