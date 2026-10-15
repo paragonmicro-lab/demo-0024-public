@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.4
+version: 1.2.5
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.4 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.5 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -260,6 +260,9 @@ oc -n student-01-0024-012 get vmi win-pg-s01 -w                      # Schedulin
 
 On the VM's **Overview**, the *Guest agent* shows as connected, and **IP addresses** shows `10.101.23.101`: your VM
 kept its address, so your SQL server is still at the same `-h` as on vSphere.
+
+> ⚠️ **Leave the vSphere copy powered off.** Both copies have `10.101.23.101` on the same VLAN 23, so powering the
+> old one back on gives two machines one address and splits your writes between two databases.
 
 ✅ Running, guest agent connected, address `10.101.23.101`.
 
