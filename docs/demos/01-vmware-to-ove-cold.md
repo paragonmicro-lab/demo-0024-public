@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.3
+version: 1.2.4
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.3 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.4 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -246,6 +246,17 @@ oc -n student-01-0024-012 get pvc -o custom-columns=NAME:.metadata.name,SIZE:.sp
 ```bash
 oc -n student-01-0024-012 get vmi win-pg-s01 -w                      # Scheduling → Running (Ctrl-C to stop watching)
 ```
+
+> 🔄 **Windows reboots by itself two or three times on its first start: that is normal.** On the first boot, the
+> scripts `virt-v2v` left behind remove VMware Tools, finish the virtio driver install and start the QEMU guest
+> agent; each step can restart the guest. Watch it in **Console**; allow about 5–10 minutes, and don't stop or
+> restart the VM yourself. It's done when the login screen stays up and the *Guest agent* shows as connected.
+> To check from inside Windows (PowerShell):
+>
+> ```powershell
+> Get-Service QEMU-GA, VMTools -ErrorAction SilentlyContinue | Format-Table Name, Status   # QEMU-GA Running; no VMTools row
+> Get-PnpDevice -PresentOnly | Where-Object FriendlyName -match 'VirtIO|Red Hat' | Format-Table Status, FriendlyName
+> ```
 
 On the VM's **Overview**, the *Guest agent* shows as connected, and **IP addresses** shows `10.101.23.101`: your VM
 kept its address, so your SQL server is still at the same `-h` as on vSphere.
