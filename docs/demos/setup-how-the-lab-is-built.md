@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.6.2
+version: 0.7.0
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.6.2 · draft · 2026-10-15** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.0 · draft · 2026-10-15** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -789,128 +789,226 @@ The booking turns **READY** only when CI's last job passes every check, against 
 ## S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery
 
 Two clusters become one DR pair in **three layers**, and each layer needs the one before it. Demo 1c (moving a VM between
-clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR) needs all three layers.
+clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async replication) needs all three.
 
 ```
-  layer 1  ACM       one hub MANAGES both clusters        ManagedCluster, ManagedClusterSet
-  layer 2  Submariner the clusters' pod/service networks  submariner add-on, Broker, (Globalnet)
-           can reach each other
-  layer 3  ODF DR    Ceph RBD mirroring between the two   ODF Multicluster Orchestrator: MirrorPeer,
-           ODF clusters, driven from the hub              DRCluster, DRPolicy; per app: DRPlacementControl
+  layer 1  ACM        one hub MANAGES both clusters        ManagedCluster, ManagedClusterSet
+  layer 2  Submariner the clusters' pod/service networks   submariner add-on, Broker, Globalnet,
+           can reach each other                            ServiceExport of ODF's provider server
+  layer 3  ODF DR     Ceph RBD mirroring between the two   ODF Multicluster Orchestrator: MirrorPeer,
+           ODF clusters, driven from the hub               DRCluster, DRPolicy; per app: DRPlacementControl
 ```
 
-### What this lab has today (read live on 0024-008, 2026-10-08)
+### What the lab builds (lab standard since 2026-10-15)
 
-| | ocp-lzX (site A) | ocp-lzY (site B) |
+| | site A (`ocp-<A>`) | site B (`ocp-<B>`, the hub) |
 |---|---|---|
-| ACM | MultiClusterHub **2.16.6**, its own hub (manages only `local-cluster`) | the same: **its own hub** |
-| Joined to the other? | **no** | **no** |
-| Submariner add-on | available on the hub, not deployed | available, not deployed |
-| ODF | **ODF 4.19** (`ocs-storagecluster` Ready, 4 scratch SSDs) | none: NFS only (the lab has SSDs for one ODF site) |
-| Pod / service networks | `10.128.0.0/14` / `172.30.0.0/16` | **the same**: overlapping, so Submariner needs **Globalnet** |
+| ACM | MultiClusterHub **2.16**, booked `acm: managed`: it does not manage itself, site B's hub does | MultiClusterHub **2.16**: **the hub**; manages itself as `local-cluster` |
+| ODF | **ODF 4.19**, `ocs-storagecluster`, 1 scratch SSD per node | **the same**: ODF on both sites is the booking default (`storage: odf`) |
+| Pod / service networks | `10.128.0.0/14` / `172.30.0.0/16` | **the same**: overlapping, so Submariner runs with **Globalnet** |
+| Ingress certificates | Let's Encrypt | Let's Encrypt: publicly trusted, so the DR guide's SSL (`user-ca-bundle`) step is **not needed** |
 
-That was **before** `acm_join.sh`: on 0024-008 the clusters were not joined. From the next deploy, CI joins them on every
-deploy (layer 1 below). ODF replication (layer 3) also needs ODF on **both** sites, which waits on more SSDs.
+A booking with `storage: odf` turns DR on: CI's `dr-fabric` and `dr-policy` jobs build layers 2 and 3 **alongside** the class
+staging, and the healthcheck waits for a Validated DRPolicy. `odf-site-a` or `na` leaves DR off.
+
+Set these once in your terminal; every command below reads them:
+
+```bash
+A=lz1; B=lz2                       # your booking's two OpenShift slots (site A, site B)
+A_NAME="ocp-$A"                    # site A as the hub knows it
+B_NAME=local-cluster               # site B is the hub, so it manages itself under this name
+# contexts site-a / site-b: Lab S §S.1
+```
 
 ### Layer 1: one hub manages both clusters (ACM)
 
-**Automated on every deploy:** CI's `demo-prep` job runs `automation/customize/acm_join.sh`. The commands below are
-what it does, so you can do the same by hand.
+**Automated on every deploy:** `acm_join.sh` (CI's `demo-prep` job). Site A is booked `acm: managed`, so its own hub
+releases itself and site B's hub imports it. Both go into the cluster set `ovedr`, which DR selects clusters by.
 
-**Design for this lab:** site B is the hub, and site A is imported into it as a managed cluster. Site B's own `local-cluster`
-is the second managed cluster. Because site A also runs a hub, its self-management must be turned off first
-**[verify: importing a cluster that runs a MultiClusterHub into another hub, ACM 2.16; the supported alternative is
-Multicluster Global Hub]**. That is a change to how demo-openshift built site A's ACM, so it waits on their agreement (BL-D11).
+**Console:** site B → **All Clusters** (top-left switcher) → **Infrastructure → Clusters → Import cluster**: name `ocp-<A>`,
+cluster set `ovedr`, import mode **Kubeconfig** (paste site A's), **Import**. Then **Cluster sets → `ovedr`** holds both.
+📸 `S-acm-import` · 📸 `S-acm-clusters`.
 
-**CLI** (instructor; on the hub `site-b` unless noted):
+<details markdown="1">
+<summary>Example code: import site A into site B's hub</summary>
 
 ```bash
-A_NAME="ocp-$A"
-# 1. site A's hub does not manage itself: done at BUILD time by demo-openshift's member option acm=managed (this
-#    demo books site A that way). By hand on a standalone cluster it is this one field:
-#    oc --context site-a patch mch multiclusterhub -n open-cluster-management --type merge -p '{"spec":{"disableHubSelfManagement":true}}'
+# 1. site A's hub does not manage itself (demo-openshift's acm=managed does this at build time)
 oc --context site-a get mch -A -o jsonpath='{.items[0].spec.disableHubSelfManagement}{"\n"}'      # true
+#    by hand on a standalone cluster:
+#    oc --context site-a patch mch multiclusterhub -n open-cluster-management --type merge -p '{"spec":{"disableHubSelfManagement":true}}'
+
 # 2. on the hub: a namespace + ManagedCluster for site A, and a one-time auto-import secret with site A's kubeconfig
 oc --context site-b create namespace "$A_NAME" --dry-run=client -o yaml | oc --context site-b apply -f -
-oc --context site-b apply -f - <<EOF
+oc --context site-b apply -f - <<YAML
 apiVersion: cluster.open-cluster-management.io/v1
 kind: ManagedCluster
-metadata: { name: $A_NAME, labels: { cloud: auto-detect, vendor: auto-detect, cluster.open-cluster-management.io/clusterset: ovedr } }
+metadata:
+  name: $A_NAME
+  labels: { cloud: auto-detect, vendor: auto-detect, cluster.open-cluster-management.io/clusterset: ovedr }
 spec: { hubAcceptsClient: true }
-EOF
+YAML
 oc --context site-b -n "$A_NAME" create secret generic auto-import-secret \
   --from-literal=autoImportRetry=5 --from-file=kubeconfig="$HOME/.kube/site-a.kubeconfig"   # ACM deletes it after import
-# 3. a cluster set holding both clusters (DR policies select clusters by set)
-oc --context site-b apply -f - <<EOF
+
+# 3. the cluster set holding both
+oc --context site-b apply -f - <<YAML
 apiVersion: cluster.open-cluster-management.io/v1beta2
 kind: ManagedClusterSet
 metadata: { name: ovedr }
-EOF
-oc --context site-b label managedcluster local-cluster cluster.open-cluster-management.io/clusterset=ovedr --overwrite
+YAML
+oc --context site-b label managedcluster "$B_NAME" cluster.open-cluster-management.io/clusterset=ovedr --overwrite
+```
+
+</details>
+
+**Check:**
+
+```bash
 oc --context site-b get managedclusters          # local-cluster and ocp-<A>: JOINED True, AVAILABLE True
 ```
 
-**Console:** site B → **All Clusters** (top-left switcher) → **Infrastructure → Clusters → Import cluster**: name `ocp-<A>`,
-cluster set `ovedr`, import mode **Kubeconfig** (paste site A's), **Import**. Then **Cluster sets → Create cluster set**
-`ovedr` and add both clusters.
-📸 `S-acm-import` · 📸 `S-acm-clusters`.
-Red Hat: [Importing a managed cluster](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index) [verify link] ·
-[Managed cluster sets](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index) [verify link].
+<details markdown="1">
+<summary>Debug: site A never shows JOINED / AVAILABLE</summary>
 
-### Layer 2: the clusters' networks reach each other (Submariner)
+| What you see | Why | Fix |
+|---|---|---|
+| `ocp-<A>` stays `JOINED Unknown` | the import agent never started on site A | `oc --context site-a -n open-cluster-management-agent get pods`: `klusterlet-*` must be Running. `oc --context site-b -n "$A_NAME" get secret auto-import-secret`: if it is still there, the import failed; read `oc --context site-b -n "$A_NAME" get managedcluster "$A_NAME" -o yaml` conditions |
+| site A still lists `local-cluster` | its own hub still manages itself | the `disableHubSelfManagement` patch above, then wait for `oc --context site-a get managedcluster local-cluster` to say NotFound |
+| `AVAILABLE False` after it joined | the agent lost the hub's API | `oc --context site-a -n open-cluster-management-agent logs deploy/klusterlet-registration-agent \| tail` |
 
-ODF mirrors Ceph images over the clusters' **pod/service networks**. Here both clusters use the same CIDRs, so Submariner
-runs with **Globalnet**, which gives each cluster a non-overlapping virtual range.
+</details>
+
+Red Hat: [ACM 2.16 Clusters: importing a managed cluster, cluster sets](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index).
+
+### Layer 2: the clusters' networks reach each other (Submariner, with Globalnet)
+
+ODF mirrors Ceph images over the clusters' **pod/service networks**. Both clusters use the same CIDRs, so Submariner runs
+with **Globalnet**, which gives each cluster its own virtual range. Each site needs one **gateway node** that carries the
+tunnel (IPsec, UDP 4500 between the two gateway nodes). On bare metal, nobody picks it for you: label one node per site.
 
 **Console:** hub → **Infrastructure → Clusters → Cluster sets → `ovedr` → Submariner add-ons → Install Submariner add-ons**,
 select both clusters, **enable Globalnet**, keep the defaults, **Install**. Wait until both show *Healthy* (connection and agent).
 📸 `S-submariner-install` · 📸 `S-submariner-healthy`.
 
-**CLI** (the add-on is a ManagedClusterAddOn per cluster plus a broker in the set's namespace) **[verify: field names, ACM 2.16]**:
+<details markdown="1">
+<summary>Example code: gateway nodes, the broker and the add-on (what <code>dr_fabric.sh</code> step 2 applies)</summary>
 
 ```bash
-oc --context site-b apply -f - <<EOF
+# a gateway node on each site (keeps an existing choice)
+for s in site-a site-b; do
+  oc --context $s get nodes -l submariner.io/gateway=true -o name | grep -q . || \
+    oc --context $s label node "$(oc --context $s get nodes -o jsonpath='{.items[0].metadata.name}')" submariner.io/gateway=true
+done
+
+# the broker lives in the cluster set's namespace on the hub; Globalnet on
+oc --context site-b apply -f - <<YAML
 apiVersion: submariner.io/v1alpha1
 kind: Broker
 metadata: { name: submariner-broker, namespace: ovedr-broker }
 spec: { globalnetEnabled: true }
-EOF
-for c in local-cluster "ocp-$A"; do
-  oc --context site-b apply -f - <<EOF
+YAML
+
+# the add-on on each managed cluster
+for c in "$A_NAME" "$B_NAME"; do
+  oc --context site-b apply -f - <<YAML
 apiVersion: addon.open-cluster-management.io/v1alpha1
 kind: ManagedClusterAddOn
 metadata: { name: submariner, namespace: $c }
 spec: { installNamespace: submariner-operator }
-EOF
+YAML
 done
-oc --context site-b get managedclusteraddon -A | grep submariner     # AVAILABLE True on both
 ```
 
-Red Hat: [Submariner networking service](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/networking/index) [verify link].
+</details>
 
-### Layer 3: linking ODF for replication (Demo 4)
-
-Each site runs its **own** Ceph cluster (ODF). Replication links the two so every protected RBD image (a VM disk) on the
-primary is **mirrored** to the other site as snapshots on a schedule. The link has four parts, all created from the hub:
-
-| Part | What it is | Created by |
-|---|---|---|
-| **MCG (NooBaa) on both sites** | object storage where Ramen keeps each protected app's DR metadata | `dr_fabric.sh` step 1 (ODF ships it off here) |
-| **MirrorPeer** | pairs the two StorageClusters: exchanges Ceph keys/endpoints, turns on RBD mirroring (`rbd-mirror` daemons) between them, over Submariner | `dr_fabric.sh` step 3 (or the console's DRPolicy wizard) |
-| **DRCluster** × 2 | the hub's view of each site as a DR peer (its S3 profile, fencing state) | ODF Multicluster Orchestrator, from the MirrorPeer |
-| **DRPolicy** | "these two clusters, async, every **15m**" | `dr_policy.sh` (`<A>-<B>-15m`) |
-
-Then each protected application (Demo 4: the `ovedr-app` + student namespaces) gets a **DRPlacementControl** on the hub,
-which tells Ramen which cluster is primary and drives Failover/Relocate.
-
-**Prerequisites, in order:** both clusters managed by the hub (layer 1) · Submariner connected (layer 2) · ODF **Ready on both**
-sites · then the parts above.
-
-**CLI** (hub = site B; what `dr_fabric.sh` / `dr_policy.sh` apply) **[verify on first ODF-on-both booking]**:
+**Check:**
 
 ```bash
-A_NAME="ocp-$A"; B_NAME=local-cluster
-oc --context site-b apply -f - <<EOF
+oc --context site-b get managedclusteraddon -A | grep -E 'NAME|submariner'          # AVAILABLE True on both
+for c in "$A_NAME" "$B_NAME"; do
+  oc --context site-b -n $c get managedclusteraddon submariner \
+    -o jsonpath='{.metadata.namespace}{"  connection-degraded="}{.status.conditions[?(@.type=="SubmarinerConnectionDegraded")].status}{"\n"}'
+done                                                                                 # False on both
+oc --context site-b -n ovedr-broker get broker submariner-broker -o jsonpath='{.spec.globalnetEnabled}{"\n"}'   # true
+```
+
+<details markdown="1">
+<summary>Debug: Submariner installed but not connected</summary>
+
+| What you see | Why | Fix |
+|---|---|---|
+| `SubmarinerConnectionDegraded True` and the gateway pod logs `no gateway nodes` | no node carries `submariner.io/gateway=true` | label one node per site (example code above) |
+| gateways up, connection stays `connecting` / `error` | the two gateway nodes can't reach each other on **UDP 4500** (site A's nodes and site B's nodes sit on different VLANs, so this crosses the lab router) | `oc --context site-a -n submariner-operator get gateways -o yaml` shows each side's endpoint IP and the last error. The router must allow UDP 4500 (and 4490) between the two gateway node IPs |
+| connected, but `*.svc.clusterset.local` names don't resolve | Lighthouse DNS (the add-on's service discovery) isn't up | `oc --context site-a -n submariner-operator get pods \| grep lighthouse`: both agents Running |
+| a pod on one site can't reach a service exported from the other | Globalnet hasn't given that service a global IP yet | `oc --context site-a get globalingressip -A`: the exported service has an allocated IP |
+
+`subctl` (Submariner's CLI, from the Red Hat downloads) runs every one of these checks at once: `subctl show all` and
+`subctl diagnose all` with each site's kubeconfig.
+
+</details>
+
+Red Hat: [ACM 2.16 Networking: Submariner multicluster networking and service discovery](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/networking/index).
+
+### Layer 3: linking ODF for asynchronous replication (Demo 4)
+
+Each site runs its **own** Ceph cluster (ODF). Replication links the two, so every protected RBD image (a VM disk) on the
+primary is **mirrored** to the other site as snapshots on a schedule (**async**: every 15 minutes in Demo 4). The order follows
+Red Hat's ODF 4.19 Regional-DR workflow:
+
+| Step | What it is | Built by |
+|---|---|---|
+| ODF on both sites | a Ready `ocs-storagecluster` on each | demo-openshift (`storage: odf`) |
+| **MCG (NooBaa) on both sites** | object storage where Ramen keeps each protected app's DR metadata (its S3 store) | `dr_fabric.sh` step 1 (demo-openshift ships MCG off) |
+| **Export ODF's provider server** (Globalnet only) | a `ServiceExport` of `ocs-provider-server` on each site, and the StorageCluster annotated with its exported name, so the peers find each other through Submariner | `dr_fabric.sh` step 2b |
+| **ODF Multicluster Orchestrator** on the hub | the operator that links ODF clusters; it brings the DR hub operator (Ramen) | `dr_fabric.sh` step 3 |
+| **MirrorPeer** | pairs the two StorageClusters: exchanges Ceph keys and endpoints, turns on RBD mirroring (`rbd-mirror`) and creates the S3 profiles | `dr_fabric.sh` step 3 (or the console's DRPolicy wizard) |
+| **DRCluster** × 2 | the hub's view of each site as a DR peer (its S3 profile, fencing state) | the Orchestrator, from the MirrorPeer |
+| **DRPolicy** | "these two clusters, async, every **15m**" | `dr_policy.sh` (`ocp-<A>-local-cluster-15m`) |
+
+Then each protected application (Demo 4: your namespace) gets a **DRPlacementControl** on the hub, which tells Ramen which
+cluster is primary and drives Failover and Relocate (Demo 4 §4.3).
+
+**Console** (after layers 1 and 2): hub → **All Clusters → Data Services → Disaster recovery → Create DRPolicy**: select
+both clusters; replication is set to **Asynchronous**; sync schedule **15m**; **Create**. The wizard creates the MirrorPeer
+and both DRClusters. One DRPolicy per interval: a `5m` policy is a second DRPolicy with its own name.
+📸 `S-drpolicy-create` · 📸 `S-drpolicy-validated`.
+
+<details markdown="1">
+<summary>Example code: MCG, provider-server export, Orchestrator, MirrorPeer and DRPolicy (what <code>dr_fabric.sh</code> and <code>dr_policy.sh</code> apply)</summary>
+
+```bash
+# 1. MCG on both sites (Ramen keeps DR metadata in S3 buckets there)
+for s in site-a site-b; do
+  oc --context $s -n openshift-storage patch storagecluster ocs-storagecluster --type merge \
+    -p '{"spec":{"multiCloudGateway":{"reconcileStrategy":"manage"}}}'
+done
+oc --context site-a -n openshift-storage get noobaa noobaa -o jsonpath='{.status.phase}{"\n"}'   # Ready (both sites)
+
+# 2. Globalnet: export each site's ODF provider server, and tell its StorageCluster the exported name
+for pair in "site-a:$A_NAME" "site-b:$B_NAME"; do
+  s=${pair%%:*}; c=${pair#*:}
+  oc --context $s apply -f - <<'YAML'
+apiVersion: multicluster.x-k8s.io/v1alpha1
+kind: ServiceExport
+metadata: { name: ocs-provider-server, namespace: openshift-storage }
+YAML
+  oc --context $s -n openshift-storage annotate storagecluster ocs-storagecluster --overwrite \
+    "ocs.openshift.io/api-server-exported-address=$c.ocs-provider-server.openshift-storage.svc.clusterset.local:50051"
+done
+
+# 3. the Orchestrator on the hub (brings Ramen, the DR hub operator)
+oc --context site-b apply -f - <<'YAML'
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata: { name: odf-multicluster-orchestrator, namespace: openshift-operators }
+spec: { name: odf-multicluster-orchestrator, channel: stable-4.19, source: redhat-operators,
+        sourceNamespace: openshift-marketplace, installPlanApproval: Automatic }
+YAML
+oc --context site-b -n openshift-operators get pods | grep -E 'odfmo-controller|ramen-hub|odf-multicluster-console'
+
+# 4. the MirrorPeer: async, offering every interval the class can book
+oc --context site-b apply -f - <<YAML
 apiVersion: multicluster.odf.openshift.io/v1alpha1
 kind: MirrorPeer
 metadata: { name: ovedr-$A-$B }
@@ -921,35 +1019,71 @@ spec:
   items:
     - { clusterName: $A_NAME, storageClusterRef: { name: ocs-storagecluster, namespace: openshift-storage } }
     - { clusterName: $B_NAME, storageClusterRef: { name: ocs-storagecluster, namespace: openshift-storage } }
-EOF
-oc --context site-b get mirrorpeer,drcluster                                       # DRClusters Validated=True
-oc --context site-b apply -f - <<EOF
+YAML
+
+# 5. the DRPolicy: these two clusters, every 15 minutes
+oc --context site-b apply -f - <<YAML
 apiVersion: ramendr.openshift.io/v1alpha1
 kind: DRPolicy
-metadata: { name: ocp-$A-ocp-$B-15m }
-spec: { drClusters: [ $A_NAME, $B_NAME ], schedulingInterval: 15m }
-EOF
-oc --context site-b get drpolicy -o wide                                          # Validated=True
-# the link itself, seen from each Ceph cluster (instructor: rook-ceph-tools)
-oc --context site-a -n openshift-storage rsh deploy/rook-ceph-tools rbd mirror pool status ocs-storagecluster-cephblockpool
+metadata: { name: $A_NAME-$B_NAME-15m }
+spec:
+  drClusters: [ $A_NAME, $B_NAME ]
+  schedulingInterval: 15m
+  replicationClassSelector: {}
+  volumeSnapshotClassSelector: {}
+YAML
 ```
 
-**Console:** hub → **All Clusters → Data Services → Disaster recovery → Create DRPolicy**: select both clusters,
-replication **Asynchronous**, interval **15m**, **Create**. The wizard creates the MirrorPeer and DRClusters for you.
-📸 `S-drpolicy-create` · 📸 `S-drpolicy-validated`.
+</details>
 
-Requires ODF on **both** sites, which waits on more scratch SSDs (BL-C20). CI runs `dr-fabric` and `dr-policy` when a booking
-sets DR=on.
-Red Hat: [ODF Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) [verify link].
+**Check, from the top down:**
 
-### What CI automates, and what waits on a decision
+```bash
+oc --context site-b get mirrorpeer -o custom-columns=NAME:.metadata.name,TYPE:.spec.type,PHASE:.status.phase
+oc --context site-b get drcluster \
+  -o custom-columns=NAME:.metadata.name,S3:.spec.s3ProfileName,VALIDATED:'.status.conditions[?(@.type=="Validated")].status'
+oc --context site-b get drpolicy -o custom-columns=NAME:.metadata.name,INTERVAL:.spec.schedulingInterval,VALIDATED:'.status.conditions[?(@.type=="Validated")].status'
+for s in site-a site-b; do
+  echo "== $s"
+  oc --context $s -n openshift-storage get storageclusterpeer -o custom-columns=NAME:.metadata.name,STATE:.status.state   # Peered
+  oc --context $s -n openshift-storage get cephblockpoolradosnamespaces ocs-storagecluster-cephblockpool-builtin-implicit \
+    -o jsonpath='{.status.mirroringStatus.summary}{"\n"}'                     # "daemon_health":"OK", "health":"OK"
+  oc --context $s get volumereplicationclass                                 # one per interval (2m, 5m, 15m)
+done
+```
 
-| Layer | Automated | Waits on |
+✅ DRClusters and the DRPolicy `Validated True`, both peers `Peered`, mirroring health `OK` on both sites. A fresh link
+can show `WARNING` for up to 10 minutes before it settles at `OK`.
+
+<details markdown="1">
+<summary>Debug: the MirrorPeer, DRClusters or DRPolicy never validate</summary>
+
+| What you see | Why | Fix |
 |---|---|---|
-| MTV between the clusters (Demo 1c) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | — |
-| 1 · ACM join | ✅ **every deploy**: site A booked `acm: managed` (demo-openshift's member option), then `acm_join.sh` (demo-prep) imports it into site B's hub; both in set `ovedr` | first proof on the next booking **[verify]** |
-| 2 · Submariner (Globalnet) | ✅ when DR=on: `dr_fabric.sh` | ODF on both sites |
-| 3 · ODF replication link | ✅ when DR=on: `dr_fabric.sh` (MCG, MirrorPeer, DRClusters) + `dr_policy.sh` (DRPolicy 15m) | ODF on both sites (SSDs, BL-C20) |
+| MirrorPeer `PHASE` empty or `ExchangingSecret` for minutes | the Orchestrator can't reach a site's StorageCluster, or MCG isn't Ready | `oc --context site-b -n openshift-operators logs deploy/odfmo-controller-manager \| tail -30`; `oc --context site-X -n openshift-storage get noobaa` must be `Ready` |
+| DRCluster `Validated False`, message about S3 | Ramen can't reach a site's S3 store (MCG route) | `oc --context site-b -n openshift-operators get cm ramen-hub-operator-config -o yaml`: an `s3StoreProfiles` entry per site; `curl -sI` its `s3CompatibleEndpoint` from your terminal must answer |
+| StorageClusterPeer not `Peered` | the peers can't reach each other's provider server across Submariner | the step 2 annotation is on both StorageClusters; `oc --context site-a -n openshift-storage get serviceexport ocs-provider-server -o yaml` shows `Valid True`; Layer 2's debug table |
+| mirroring `health` stays `WARNING` / `ERROR` | `rbd-mirror` can't reach the peer's Ceph monitors/OSDs | `oc --context site-X -n openshift-storage get pods \| grep rbd-mirror` Running; instructor: `oc --context site-X -n openshift-storage rsh deploy/rook-ceph-tools rbd mirror pool status ocs-storagecluster-cephblockpool --verbose` names the failing peer |
+| DRPolicy `Validated False`: interval not supported | the MirrorPeer doesn't offer that interval | add it to the MirrorPeer's `schedulingIntervals`, wait for the new `VolumeReplicationClass` on both sites |
+| DRPolicy `Validated False`: clusters not found | a `drClusters` name isn't a DRCluster | `oc --context site-b get drcluster`: the names are the managed-cluster names (`ocp-<A>`, `local-cluster`) |
+
+Gather it all for a support case: `oc adm must-gather --image=registry.redhat.io/odf4/odf-must-gather-rhel9:v4.19` on each
+cluster (the hub included).
+
+</details>
+
+Red Hat: [ODF 4.19: Configuring disaster recovery for OpenShift workloads, Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) ·
+[Protecting OpenShift Virtualization VMs with Regional-DR](https://access.redhat.com/articles/7053115).
+
+### What CI automates
+
+| Layer | Automated | Proven |
+|---|---|---|
+| MTV between the clusters (Demo 1c) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | ✅ |
+| 1 · ACM join | ✅ every deploy: site A booked `acm: managed`, then `acm_join.sh` (`demo-prep`) imports it into site B's hub; both in set `ovedr` | ⏳ checked again on the first ODF-on-both booking |
+| 2 · Submariner (Globalnet) | ✅ when DR is on (`storage: odf`): `dr_fabric.sh` | ⏳ first ODF-on-both booking |
+| 3 · ODF replication link | ✅ when DR is on: `dr_fabric.sh` (MCG, provider-server export, MirrorPeer, DRClusters, peering + mirror health) + `dr_policy.sh` (DRPolicy 15m) | ⏳ first ODF-on-both booking |
+
 
 ## S.15 VDDK: the one piece the customer supplies (Broadcom licence)
 
