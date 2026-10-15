@@ -948,7 +948,7 @@
 
 <h1 id="demo-1b-live-migration-and-storage-migration-bonus">Demo 1b: live migration and storage migration (bonus)<a class="headerlink" href="#demo-1b-live-migration-and-storage-migration-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.0 · draft · 2026-10-15</strong> · class/demos/01b-live-and-storage-migration.md</p>
+<p><strong>Version 1.1.1 · draft · 2026-10-15</strong> · class/demos/01b-live-and-storage-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Two moves on a <strong>running</strong> VM, with no reboot: a <strong>live migration</strong> moves its memory and CPU to another node, and
@@ -989,7 +989,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 </code></pre></div>
 <hr />
 <h2 id="1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs-verify">1b.3 Storage migration: move the data disk from ODF to NFS, while it runs [verify]<a class="headerlink" href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs-verify" title="Permanent link">&para;</a></h2>
-<p>Your VM's disks are on ODF (<code>ocs-storagecluster-ceph-rbd-virtualization</code>). Move the 10 GB <strong>data</strong> disk (<code>D:</code>) to
+<p>Your VM's disks are on ODF (<code>ocs-storagecluster-ceph-rbd-virtualization</code>). Move the 1 GB <strong>data</strong> disk (<code>D:</code>) to
 <code>nfs-csi</code>, with the VM running. OpenShift Virtualization copies the disk in the background, then switches the VM to
 the new copy with a live migration.</p>
 <p><strong>[verify: storage live migration on OpenShift Virtualization 4.19 (<code>spec.updateVolumesStrategy: Migration</code>,
