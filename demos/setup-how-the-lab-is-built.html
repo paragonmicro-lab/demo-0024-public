@@ -1296,7 +1296,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.7.1 · draft · 2026-10-16</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.7.2 · draft · 2026-10-16</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1475,10 +1475,12 @@ any VM lands there. The demos work the same on any of them: they are about migra
 <span class="k">done</span>
 </code></pre></div>
 <p><strong>What this booking's build has today:</strong>
-- <strong>Site A</strong>: OpenShift Data Foundation (ODF), Ceph on the four scratch SSDs. VMs use the storage class
+- <strong>Site A</strong>: OpenShift Data Foundation (ODF), Ceph on one scratch SSD per host. VMs use the storage class
   <code>ocs-storagecluster-ceph-rbd-virtualization</code> (block, RWX, so live migration works). Built by demo-openshift
   (<code>storage: odf</code>); core-web reserves the SSDs for the booking.
-- <strong>Site B</strong>: <code>nfs-csi</code> on the lab NFS server (demo-openshift's default).
+- <strong>Site B</strong>: <strong>the same</strong> on the lab standard (<code>storage: odf</code>, ODF on the second SSD per host). A booking with
+  <code>odf-site-a</code> gives site B only <code>nfs-csi</code> on the lab NFS server, and has no Demo 4.
+- <strong>Both sites</strong> also have <code>nfs-csi</code> (the cluster's default class; VMs default to the ODF virtualization class).
 - <strong>Snapshot classes</strong> come with the storage, from demo-openshift: <code>nfs-csi-snapclass</code> (driver <code>nfs.csi.k8s.io</code>) and
   ODF's own. Demo 1's snapshot bonus needs one. CI's <code>demo-prep</code> only reports a VM storage driver without one.</p>
 <p><strong>Check:</strong></p>
@@ -2059,7 +2061,9 @@ clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async repli
 </tbody>
 </table>
 <p>A booking with <code>storage: odf</code> turns DR on: CI's <code>dr-fabric</code> and <code>dr-policy</code> jobs build layers 2 and 3 <strong>alongside</strong> the class
-staging, and the healthcheck waits for a Validated DRPolicy. <code>odf-site-a</code> or <code>na</code> leaves DR off.</p>
+staging. The healthcheck runs whatever they did and checks the DRPolicy only once <code>dr-policy</code> succeeded, so a DR
+failure never hides the class's own health; <code>build-verified</code> (the booking's READY) needs both DR jobs green.
+<code>odf-site-a</code> or <code>na</code> leaves DR off.</p>
 <p>Set these once in your terminal; every command below reads them:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">A</span><span class="o">=</span>lz1<span class="p">;</span><span class="w"> </span><span class="nv">B</span><span class="o">=</span>lz2<span class="w">                       </span><span class="c1"># your booking's two OpenShift slots (site A, site B)</span>
 <span class="nv">A_NAME</span><span class="o">=</span><span class="s2">"ocp-</span><span class="nv">$A</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># site A as the hub knows it</span>
