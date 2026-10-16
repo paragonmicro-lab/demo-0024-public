@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.7.2
+version: 0.7.3
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.7.2 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.3 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -708,14 +708,15 @@ govc object.mv "$F/my-win-pg-s01" '/datacenter01/vm/vms/students/<student ID>'
 
 | Site | Plan | Moves |
 |---|---|---|
-| site A | **`d1-<vm>`** | vSphere → site A, cold (Demo 1) |
-| site A | **`d2-<vm>`** | vSphere → site A, **warm** (Demo 2): lands as `<vm>-warm`. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking) |
+| site A and site B | **`d1-<vm>`** | vSphere → that site, cold (Demo 1) |
+| site A and site B | **`d2-<vm>`** | vSphere → that site, **warm** (Demo 2): lands as `<vm>-warm`. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking) |
 
 Each plan targets **its VM's owner's namespace**: a student's VM lands in that student's own namespace (their class ID,
 `$VMNS`), the instructor's `win-pg-i01` in `ovedr-app`. It uses the **bridge** network map when it exists (your VM keeps its own address), plus the
 site's storage map. CI waits until every plan is **Ready**: MTV found the VM and the maps validate. **No plan is started.**
-That is the one step left to you (Demo 1, Demo 2). Site B gets no vSphere plans (since 2026-10-13): your VM reaches
-site B from site A in Demo 1c, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.
+That is the one step left to you (Demo 1, Demo 2). Both sites are staged the same (since 2026-10-16), but **the demos
+start site A's plan only**: both sites share the VM's VLAN, so starting a plan on both would bring up two copies of
+your VM at one address. Your VM reaches site B from site A in Demo 1c, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.
 
 **Check:**
 

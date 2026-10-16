@@ -1,12 +1,12 @@
 ---
 title: "Lab diagram — demo-0024 (VMware → OpenShift Virtualization, OVE ⇄ OVE, ODF DR)"
-version: 0.5.0
+version: 0.5.1
 date: 2026-10-13
 ---
 
 # Lab diagram
 
-> **Version 0.5.0 · draft · 2026-10-16** · class/demos/lab-diagram.md
+> **Version 0.5.1 · draft · 2026-10-16** · class/demos/lab-diagram.md
 
 One booking reserves **three environments** together: a vSphere landing zone (`lzN`) and two OpenShift clusters
 (`ocp-lzX` = **site A**, `ocp-lzY` = **site B**). They all run as VMs on the same four physical hosts
@@ -42,7 +42,7 @@ flowchart TB
   subgraph B["③ Site B · OpenShift ocp-lzY"]
     direction LR
     B1["OpenShift Virtualization · ACM · cert-manager<br/>the same bridges / NADs"]
-    B2["MTV + console menu<br/>providers ovedr-vcenter0N · ovedr-ocp-lzX<br/>no staged plans: Demo 1c builds its own"]
+    B2["MTV + console menu<br/>providers ovedr-vcenter0N · ovedr-ocp-lzX<br/>staged plans d1-&lt;vm&gt; cold · d2-&lt;vm&gt; warm (not started; demos use site A's)"]
     B3[("ODF (the second SSD per host)<br/>ceph-rbd-virtualization · nfs-csi")]
     B4["one namespace per student (admin)<br/>with their browser terminal sql-client<br/>+ ovedr-app"]
     B1 --- B2 --- B3 --- B4
