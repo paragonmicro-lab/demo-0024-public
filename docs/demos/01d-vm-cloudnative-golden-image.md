@@ -1,13 +1,13 @@
 ---
 title: "Demo 1d — A cloud-native golden image: a new Linux database server, built from code (bonus)"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 1.0.0
-date: 2026-10-13
+version: 1.0.1
+date: 2026-10-16
 ---
 
 # Demo 1d: a cloud-native golden image (bonus)
 
-> **Version 1.0.0 · draft · 2026-10-13** · class/demos/01d-vm-cloudnative-golden-image.md
+> **Version 1.0.1 · draft · 2026-10-16** · class/demos/01d-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -51,13 +51,24 @@ class terminal is signed in to the database (`dblogin`, once). Your Windows VM c
 
 ## 1d.1 Look at the golden image: it's code
 
-The lab published the customer's Template, **`ovedr-centos10-postgres`**, on both clusters.
+The lab published the customer's Template, **`ovedr-centos10-postgres`**, on both clusters. It lives in the
+**`openshift`** project, the shared one, so every project's catalog offers it.
 
-**Console (site A):** **Virtualization → Catalog → Template catalog**. Find **CentOS Stream 10 + PostgreSQL 16
-(class)** (filter on *PostgreSQL*; it is a user template, not a Red Hat one) **[verify]**. Open it: the boot source is Red Hat's **CentOS Stream 10**, with three disks and
-your VLAN's network.
+**Console (site A):** first set the **Project** dropdown at the top to **your** project (`student-01-0024-012`),
+then open **Virtualization → Catalog → Template catalog**. Find **CentOS Stream 10 + PostgreSQL 16 (class)**
+(filter on *PostgreSQL*; it is a user template, not a Red Hat one). Open it: the boot source is Red Hat's
+**CentOS Stream 10**, with three disks and your VLAN's network.
 
-The same from the Web Terminal: what it asks for, and the code itself:
+> ⚠ **"No Templates found"?** Check the **Project** dropdown. On **Virtualization → Templates** the list shows
+> only the project you have selected, and the Template is not in `openshift-mtv` or your own project: switch
+> it to **`openshift`** (or **All projects**). The Template catalog does not have this problem, because it
+> always adds the `openshift` project's Templates to yours.
+
+The same from the Web Terminal: what it asks for, and the code itself. **`oc process`** is how a Template is
+used from the command line. A Template is YAML with blanks in it (`${NAME}`, `${IP}`, …):
+`oc process --parameters` lists the blanks, which are the same fields the console's form asks for.
+`oc process -p NAME=…` fills them in and prints the finished VM; it creates nothing until you pipe it to
+`oc apply` (1d.2).
 
 ```bash
 oc process --parameters -n openshift ovedr-centos10-postgres
@@ -93,7 +104,9 @@ Do **one** of the two. Both create the same VM.
 
 Then **Create VirtualMachine**.
 
-**Or, the Web Terminal: the whole server is one command.** It asks for your password, so it never appears on screen:
+**Or, the Web Terminal: the whole server is one command.** `oc process` fills in the Template's blanks, exactly
+as the form did, and `oc apply` creates the result in your project. It asks for your password, so it never
+appears on screen:
 
 ```bash
 read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos10-postgres -p NAME=pg-s01-centos10 -p VLAN=23 -p IP=10.101.23.151 -p OS_USER=student-01 -p DB_USER=student_01 -p DB_PASSWORD="$PW" | oc apply -n student-01-0024-012 -f -; unset PW
