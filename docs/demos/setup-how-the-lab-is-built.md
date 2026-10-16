@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.7.3
+version: 0.7.4
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.7.3 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.4 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -22,7 +22,7 @@ ask you to do the **last step** yourself (start your migration). This guide is h
 
 | Built by | What | Where |
 |---|---|---|
-| **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts, the shared NFS datastore `coresan01_data00`, port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
+| **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts, the shared NFS datastore `coresan01_data00` (the class VMs live there, or on **vSAN** when the booking sets `vmware_storage: vsan`), port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
 | **demo-openshift** (core-web dispatches it, twice) | OpenShift 4.19, OpenShift Virtualization (`ove: cnv`), ACM and cert-manager, NMState bridges + NADs per VLAN, `nfs-csi` storage; **ODF on site A only** | site A `<A>` and site B `<B>` |
 | **this demo's CI** (`customize`, sections S.5–S.12) | MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans | all three |
 | **you** | start your own migration plan (Demo 1 / 1b), then everything in the demo guides | |
@@ -445,7 +445,7 @@ service-account token, CA certificate. 📸 `S-mtv-provider-ocp`
 |---|---|---|
 | `ovedr-vcenter0<N>-net` | vSphere `vm-network` → **pod** network | works everywhere; the VM gets a new, cluster-internal address |
 | `ovedr-vcenter0<N>-net-bridge` | vSphere `vm-network` → **multus** `default/vmnet<22+N>` | the VM stays on its VLAN and **keeps its own address**. Created only when the NAD's bridge is **Available** |
-| `ovedr-vcenter0<N>-storage` | datastore `coresan01_data00` → **this site's** class | site A: `ocs-storagecluster-ceph-rbd-virtualization`; site B: `nfs-csi` |
+| `ovedr-vcenter0<N>-storage` | datastore `coresan01_data00`, plus the **vSAN** datastore on a `vmware_storage: vsan` booking → **this site's** class | site A: `ocs-storagecluster-ceph-rbd-virtualization`; site B: `nfs-csi` |
 | `ovedr-ocp-<peer>-net` | pod → pod, plus each VLAN NAD present on **both** sites → the same NAD | OVE ⇄ OVE |
 | `ovedr-ocp-<peer>-storage` | **the peer's** class → **this** site's class | OVE ⇄ OVE converts ODF ⇄ NFS: the disks are copied into the destination's storage |
 
@@ -678,10 +678,11 @@ Configure → Hardware (three disks). 📸 `S-vm-in-student-folder` · 📸 `S-v
 
 ```bash
 export GOVC_URL="https://vcenter0$N.$DOMAIN"                 # credentials from your vault
-F=/datacenter01/vm/vms/ovedr; POOL="/datacenter01/host/cluster-lz$N/Resources"; DS=coresan01_data00
+F=/datacenter01/vm/vms/ovedr; POOL="/datacenter01/host/cluster-lz$N/Resources"; ISO_DS=coresan01_data00
+DS=coresan01_data00            # the VM's datastore: on a vmware_storage=vsan booking, the vSAN one (govc datastore.info)
 govc vm.create -on=false -folder "$F" -pool "$POOL" -ds "$DS" -c 4 -m 8192 -g windows2019srvNext_64Guest \
   -firmware bios -net vm-network -net.adapter e1000e -disk.controller lsilogic-sas -disk 32GB \
-  -iso '<path of the Windows ISO>' -iso-datastore "$DS" my-win-pg
+  -iso '<path of the Windows ISO>' -iso-datastore "$ISO_DS" my-win-pg
 govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/log  -size 256MB
 govc vm.disk.create -vm my-win-pg -ds "$DS" -name my-win-pg/data -size 1GB
 # … install Windows + PostgreSQL (initdb -D D:\pgdata -X L:\pg_wal), then clone one per student:
