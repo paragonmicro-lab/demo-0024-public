@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.9.2
+version: 0.9.3
 date: 2026-10-14
 ---
 
 # Student Guide
 
-> **Version 0.9.2 · draft · 2026-10-14** · class/student-guide.md
+> **Version 0.9.3 · draft · 2026-10-16** · class/student-guide.md
 
 ## What you will learn
 
@@ -67,7 +67,7 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 | # | Guide | You will | Time | Bonus (optional) |
 |---|---|---|---|---|
 | 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open a command line | 5 min | — |
-| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 1 h 30 (the copy alone is about 1 h) | [1a: snapshot and restore](demos/01a-snapshot-restore.md) (25 min) · [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) · [1c: cross-cluster migration](demos/01c-ocp-vm-cross-cluster-migration.md) (45 min) · [1d: a cloud-native golden image](demos/01d-vm-cloudnative-golden-image.md) (30 min) |
+| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 2 h 15 (the copy alone is about 1 h 45) | [1a: snapshot and restore](demos/01a-snapshot-restore.md) (25 min) · [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) · [1c: cross-cluster migration](demos/01c-ocp-vm-cross-cluster-migration.md) (45 min) · [1d: a cloud-native golden image](demos/01d-vm-cloudnative-golden-image.md) (30 min) |
 | 2 | [Warm migration with storage copy offload](demos/02-vmware-to-ove-warm.md) | **🚧 coming soon (read only): needs a SAN array this lab doesn't have yet.** Why the lab dropped VDDK; the array copies the disks while the VM runs; cut over; snapshot on the array | — | — |
 
 **Go deeper**, when your instructor offers it:

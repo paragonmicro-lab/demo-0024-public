@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.10
+version: 1.2.11
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.10 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.11 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -146,9 +146,10 @@ oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
   | jq -r '.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'
 ```
 
-⏱️ **Plan on about an hour.** This lab copies the disks through vCenter (no VDDK), so the last measured run took
-**1 h 04 min**: DiskTransfer about 22 min, then ImageConversion about 41 min, while `virt-v2v` reads the guest from
-vCenter and installs the drivers. A progress bar that sits still for a few minutes is normal: vCenter retries a slow
+⏱️ **Plan on about 1 h 45 min.** This lab copies the disks through vCenter (no VDDK). The last measured run
+(`win-pg-s01`, 2026-10-16) took **1 h 43 min**: DiskAllocation 1 min, ImageConversion **67 min** while `virt-v2v`
+reads the guest from vCenter and installs the drivers (no MB counter moves here), then DiskTransferV2v **35 min**
+for the 34 GB, and VirtualMachineCreation in a second. A progress bar that sits still for a few minutes is normal: vCenter retries a slow
 read (an `HTTP 500` in the conversion pod's log, then it carries on). Use the wait for the reading at the end of this
 step, or start a bonus lab's reading.
 
