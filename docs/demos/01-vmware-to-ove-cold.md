@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.8
+version: 1.2.9
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.8 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.9 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -252,7 +252,7 @@ site B instead.
 3. Carry on from 1.3's watch and 1.4 in the **site B** console and Web Terminal.
 
 Demos 1a and 1b work the same on site B. Demo 1c and Demo 4 start from **site A**, so tell your instructor before
-those; they re-run your site A plan once site A is fixed.
+those ([Demo 4: two identical sites](04-odf-regional-dr.md#two-identical-sites-and-the-one-step-ci-runs-across-both)).
 
 </details>
 

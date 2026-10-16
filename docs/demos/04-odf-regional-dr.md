@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.6.1
+version: 0.6.2
 date: 2026-10-15
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.6.1 · draft · 2026-10-16** · class/demos/04-odf-regional-dr.md
+> **Version 0.6.2 · draft · 2026-10-16** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -38,6 +38,21 @@ console steps behind the shared pieces.
 | Your namespace with your browser terminal `sql-client` and your VM's Service (`<VM>-sql`); `ovedr-app` with the instructor's, on **both** sites | both | `oc --context site-b -n "$VMNS" get deploy,svc` | [S.9](setup-how-the-lab-is-built.md) |
 | **Your own VM** (`$VM`, e.g. `win-pg-s03`) running on site A, on ODF storage (`ocs-storagecluster-ceph-rbd-virtualization`), at **its own address `$VM_IP`** on the VLAN bridge (Demo 1's staged plan) | site A | `where` → `site-a Running` | [S.11](setup-how-the-lab-is-built.md) · [S.12](setup-how-the-lab-is-built.md) |
 | Your Windows login (`.\<WINUSER>`) and the PostgreSQL toolkit (`marks`, `ovedr_*`) inside your VM | your VM | `verify` | [S.11](setup-how-the-lab-is-built.md) |
+
+### Two identical sites, and the one step CI runs across both
+
+CI's customization builds **site A and site B the same**, each site on its own: migration tools, the vSphere provider
+and maps, the staged plans `d1-<vm>` / `d2-<vm>`, your namespace and `sql-client`, the VLAN bridges. That's why
+Demo 1 can fall back to site B when site A has a problem ([Demo 1 §1.3](01-vmware-to-ove-cold.md)).
+
+The **ODF DR clustering is the one workflow that can't run on each site in parallel**, because it joins the two:
+`demo-prep` imports site A into site B's ACM hub, then `dr-fabric` turns on the object gateway (MCG) on both sites,
+links their networks with Submariner, and pairs the two Ceph clusters (`MirrorPeer` → both `DRCluster`s), and
+`dr-policy` adds the 15-minute `DRPolicy`. It runs once, after both sites are built, from the hub. [Lab S §S.14](setup-how-the-lab-is-built.md) has each step as code.
+
+**This demo starts from site A, the first deploy.** Your VM is protected where Demo 1 put it, on site A, and
+replicates to B. If you fell back to site B in Demo 1, tell your instructor before §4.0: they halt your site B copy
+(both sites share your VLAN and address) and re-run your site A plan, so `where` shows `site-a Running`.
 
 ### Who is in charge: the hub supervises, the sites are not peers
 
