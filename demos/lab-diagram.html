@@ -856,7 +856,7 @@
 
 <h1 id="lab-diagram">Lab diagram<a class="headerlink" href="#lab-diagram" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.0 · draft · 2026-10-16</strong> · class/demos/lab-diagram.md</p>
+<p><strong>Version 0.5.1 · draft · 2026-10-16</strong> · class/demos/lab-diagram.md</p>
 </blockquote>
 <p>One booking reserves <strong>three environments</strong> together: a vSphere landing zone (<code>lzN</code>) and two OpenShift clusters
 (<code>ocp-lzX</code> = <strong>site A</strong>, <code>ocp-lzY</code> = <strong>site B</strong>). They all run as VMs on the same four physical hosts
@@ -889,7 +889,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
   subgraph B["③ Site B · OpenShift ocp-lzY"]
     direction LR
     B1["OpenShift Virtualization · ACM · cert-manager&lt;br/&gt;the same bridges / NADs"]
-    B2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzX&lt;br/&gt;no staged plans: Demo 1c builds its own"]
+    B2["MTV + console menu&lt;br/&gt;providers ovedr-vcenter0N · ovedr-ocp-lzX&lt;br/&gt;staged plans d1-&amp;lt;vm&amp;gt; cold · d2-&amp;lt;vm&amp;gt; warm (not started; demos use site A's)"]
     B3[("ODF (the second SSD per host)&lt;br/&gt;ceph-rbd-virtualization · nfs-csi")]
     B4["one namespace per student (admin)&lt;br/&gt;with their browser terminal sql-client&lt;br/&gt;+ ovedr-app"]
     B1 --- B2 --- B3 --- B4
