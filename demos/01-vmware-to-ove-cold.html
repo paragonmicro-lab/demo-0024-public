@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.2.5 · draft · 2026-10-15</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.2.6 · draft · 2026-10-16</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1165,6 +1165,11 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 </ol>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-w<span class="w">                        </span><span class="c1"># Executing → Succeeded (Ctrl-C to stop watching)</span>
 </code></pre></div>
+<p>⏱️ <strong>Plan on about an hour.</strong> This lab copies the disks through vCenter (no VDDK), so the last measured run took
+<strong>1 h 04 min</strong>: DiskTransfer about 22 min, then ImageConversion about 41 min, while <code>virt-v2v</code> reads the guest from
+vCenter and installs the drivers. A progress bar that sits still for a few minutes is normal: vCenter retries a slow
+read (an <code>HTTP 500</code> in the conversion pod's log, then it carries on). Use the wait for the reading at the end of this
+step, or start a bonus lab's reading.</p>
 <p>✅ The plan shows <strong>Succeeded</strong>.</p>
 <details>
 <summary>Or: create and start your own cold plan from the CLI (instead of the staged one)</summary>
@@ -1272,6 +1277,16 @@ kept its address, so your SQL server is still at the same <code>-h</code> as on 
 old one back on gives two machines one address and splits your writes between two databases.</p>
 </blockquote>
 <p>✅ Running, guest agent connected, address <code>10.101.23.101</code>.</p>
+<blockquote>
+<p>⚠️ <strong>Known issue on the current lab build: the migrated VM can't reach the network yet.</strong> It runs and reports its
+address, but the OpenShift nodes' VM network isn't connected to the lab's VLAN 23, so nothing outside the VM
+reaches <code>10.101.23.101</code>, and step 1.5's commands time out. The fix is in the lab's node build and comes with the
+next lab rebuild. Until then, your instructor shows step 1.5 from its 🎬 recording. You can still check your rows
+from <strong>inside</strong> the VM: open its <strong>Console</strong>, sign in to Windows, and run this in PowerShell (your database user is
+<code>student_NN</code>, as in <code>dblogin</code>; it asks for your class password):</p>
+<div class="highlight"><pre><span></span><code><span class="p">&amp;</span> <span class="s1">'C:\Program Files\PostgreSQL\16\bin\psql.exe'</span> <span class="n">-h</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="n">-U</span> <span class="n">student_01</span> <span class="n">-d</span> <span class="n">bcdr</span> <span class="n">-c</span> <span class="s2">"SELECT id, ts, stage FROM marks ORDER BY id;"</span>
+</code></pre></div>
+</blockquote>
 <hr />
 <h2 id="15-inject-the-migration-is-complete-and-read-your-rows-back">1.5 Inject: the migration is complete, and read your rows back<a class="headerlink" href="#15-inject-the-migration-is-complete-and-read-your-rows-back" title="Permanent link">&para;</a></h2>
 <p>Give Windows a minute to start PostgreSQL, then:</p>
