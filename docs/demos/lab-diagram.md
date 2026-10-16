@@ -1,12 +1,12 @@
 ---
 title: "Lab diagram — demo-0024 (VMware → OpenShift Virtualization, OVE ⇄ OVE, ODF DR)"
-version: 0.5.3
+version: 0.5.4
 date: 2026-10-13
 ---
 
 # Lab diagram
 
-> **Version 0.5.3 · draft · 2026-10-16** · class/demos/lab-diagram.md
+> **Version 0.5.4 · draft · 2026-10-16** · class/demos/lab-diagram.md
 
 One booking reserves **three environments** together: a vSphere landing zone (`lzN`) and two OpenShift clusters
 (`ocp-lzX` = **site A**, `ocp-lzY` = **site B**). They all run as VMs on the same four physical hosts
@@ -70,7 +70,7 @@ password to vCenter, both clusters and the Windows VMs.
 |---|---|---|---|
 | Built by | demo-vmware (core-web dispatches) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) |
 | Customized by this demo | the instructor's `win-pg-i01` (`vms/ovedr`, `.62`) and **one full clone per student** `win-pg-sNN` in **that student's own folder** `vms/students/<class ID>` (`.100+NN`), each with PostgreSQL (WAL on `L:`, data on `D:`), the toolkit, Windows logins and WinRM; each student may power, open the console, Edit Settings (CBT) and snapshot **their own** VM | MTV with its console menu, providers + maps, **staged plans `d1-<vm>` (cold) and `d2-<vm>` (warm) per class VM (not started)** landing each student's VM in **that student's own namespace** (their class ID, where they are admin), `ovedr-app` with `sql-client` and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class) | the same as A without staged plans (Demo 1c builds its own from site A), plus the ACM hub role and DR (Demo 4) |
-| Storage | NFS datastore `coresan01_data00`; on a `vmware_storage: vsan` booking the class VMs sit on **vSAN** (one scratch SSD per host as cache); on `local`, each on its own host's SSD datastore `esxiNN-vmfs00` (student NN → host NN, wrapping after 4) | **ODF** on one scratch SSD per host (`ocs-storagecluster-ceph-rbd-virtualization`, the VM default), plus `nfs-csi` | **the same**: ODF on the second SSD per host, plus `nfs-csi` |
+| Storage | NFS datastore `coresan01_data00`; on a `vmware_storage: vsan` booking the class VMs sit on **vSAN** (one scratch SSD per host as cache); on `local`, each on its own host's SSD datastore `esxi-lzN-NN-vmfs00` (student NN → host NN, wrapping after 4) | **ODF** on one scratch SSD per host (`ocs-storagecluster-ceph-rbd-virtualization`, the VM default), plus `nfs-csi` | **the same**: ODF on the second SSD per host, plus `nfs-csi` |
 | Network | port group `vm-network`, VLAN 22+N; every class VM its own static address | NMState bridge onto VLAN 22+N (`vmnet<VLAN>`), plus the pod network | the same VLAN bridges, plus the pod network |
 | Demos | 1, 2 (source) | 1, 2 (target) · 1c (source) · 4 (primary) | 1c (target) · 4 (DR site, hub) |
 
