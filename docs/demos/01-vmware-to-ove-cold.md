@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.9
+version: 1.2.10
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.9 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.10 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -131,13 +131,19 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 
 Watch it on the plan's page: expand your VM to see each step with a progress bar.
 
-1. **Initialize** and **PreflightInspection**
-2. **DiskTransfer**: three disks (`C:`, `D:` data, `L:` WAL), copied from vSphere
-3. **ImageConversion**: `virt-v2v` installs the virtio drivers and the QEMU guest agent, and removes VMware Tools
-4. **VirtualMachineCreation**
+1. **Initialize** (seconds)
+2. **DiskAllocation**: three empty disks (`C:`, `D:` data, `L:` WAL) are created on ODF in your project (about a
+   minute)
+3. **ImageConversion**: a conversion pod in your project runs `virt-v2v`, which opens your VM's disks through vCenter,
+   installs the virtio drivers and the QEMU guest agent, and removes VMware Tools
+4. **DiskTransferV2v**: `virt-v2v` writes the converted disks into the three new ones (MB done of the total)
+5. **VirtualMachineCreation**
 
 ```bash
 oc -n openshift-mtv get plan d1-win-pg-s01 -w                        # Executing → Succeeded (Ctrl-C to stop watching)
+# each step, its state and progress
+oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
+  | jq -r '.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'
 ```
 
 ⏱️ **Plan on about an hour.** This lab copies the disks through vCenter (no VDDK), so the last measured run took
