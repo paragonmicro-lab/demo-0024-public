@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.11
+version: 1.2.12
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.11 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.12 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -298,6 +298,19 @@ oc -n student-01-0024-012 get vmi win-pg-s01 -w                      # Schedulin
 
 On the VM's **Overview**, the *Guest agent* shows as connected, and **IP addresses** shows `10.101.23.101`: your VM
 kept its address, so your SQL server is still at the same `-h` as on vSphere.
+
+**Check the guest tools swap: VMware Tools out, the QEMU guest agent in.** OpenShift reads this from the agent
+running inside Windows, through the VM's virtual hardware rather than the network, so it works even when the VM
+can't be reached:
+
+```bash
+oc -n student-01-0024-012 get vmi win-pg-s01 -o jsonpath='{range .status.conditions[?(@.type=="AgentConnected")]}AgentConnected={.status}{"\n"}{end}{.status.guestOSInfo.prettyName}{"\n"}{range .status.interfaces[*]}{.interfaceName} {.ipAddress} ({.infoSource}){"\n"}{end}'
+```
+
+✅ `AgentConnected=True`, `Windows Server 2022 Standard`, and `Ethernet 10.101.23.101` with `guest-agent` in its
+source (a `Loopback … 127.0.0.1` line follows; ignore it). Only a running agent can report the OS name and the address Windows holds, so this proves the QEMU guest
+agent is working. VMware Tools is gone because `virt-v2v` removes it; to see that for yourself, run the PowerShell
+check above in the VM's **Console**: `QEMU-GA` is **Running** and there is **no** `VMTools` row.
 
 > ⚠️ **Leave the vSphere copy powered off.** Both copies have `10.101.23.101` on the same VLAN 23, so powering the
 > old one back on gives two machines one address and splits your writes between two databases.
