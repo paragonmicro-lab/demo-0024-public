@@ -939,9 +939,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#layer-2-the-clusters-networks-reach-each-other-submariner-with-globalnet" class="md-nav__link">
+  <a href="#layer-2-the-clusters-networks-reach-each-other-submariner" class="md-nav__link">
     <span class="md-ellipsis">
-      Layer 2: the clusters' networks reach each other (Submariner, with Globalnet)
+      Layer 2: the clusters' networks reach each other (Submariner)
     </span>
   </a>
   
@@ -1230,9 +1230,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#layer-2-the-clusters-networks-reach-each-other-submariner-with-globalnet" class="md-nav__link">
+  <a href="#layer-2-the-clusters-networks-reach-each-other-submariner" class="md-nav__link">
     <span class="md-ellipsis">
-      Layer 2: the clusters' networks reach each other (Submariner, with Globalnet)
+      Layer 2: the clusters' networks reach each other (Submariner)
     </span>
   </a>
   
@@ -1296,7 +1296,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.7.0 · draft · 2026-10-15</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.7.1 · draft · 2026-10-16</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -2048,8 +2048,8 @@ clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async repli
 </tr>
 <tr>
 <td>Pod / service networks</td>
-<td><code>10.128.0.0/14</code> / <code>172.30.0.0/16</code></td>
-<td><strong>the same</strong>: overlapping, so Submariner runs with <strong>Globalnet</strong></td>
+<td>dual-stack: <code>10.128.0.0/14</code>, <code>fd02::/48</code> / <code>172.30.0.0/16</code>, <code>fd03::/112</code></td>
+<td>⛔ <strong>the same today.</strong> Globalnet can only translate the IPv4 half, so Submariner can't link the sites until each site has its own ranges (demo-openshift, 2026-10-16). The planned ranges don't overlap at all, so Submariner then runs <strong>without Globalnet</strong></td>
 </tr>
 <tr>
 <td>Ingress certificates</td>
@@ -2134,12 +2134,18 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 </table>
 </details>
 <p>Red Hat: <a href="https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index">ACM 2.16 Clusters: importing a managed cluster, cluster sets</a>.</p>
-<h3 id="layer-2-the-clusters-networks-reach-each-other-submariner-with-globalnet">Layer 2: the clusters' networks reach each other (Submariner, with Globalnet)<a class="headerlink" href="#layer-2-the-clusters-networks-reach-each-other-submariner-with-globalnet" title="Permanent link">&para;</a></h3>
-<p>ODF mirrors Ceph images over the clusters' <strong>pod/service networks</strong>. Both clusters use the same CIDRs, so Submariner runs
-with <strong>Globalnet</strong>, which gives each cluster its own virtual range. Each site needs one <strong>gateway node</strong> that carries the
-tunnel (IPsec, UDP 4500 between the two gateway nodes). On bare metal, nobody picks it for you: label one node per site.</p>
+<h3 id="layer-2-the-clusters-networks-reach-each-other-submariner">Layer 2: the clusters' networks reach each other (Submariner)<a class="headerlink" href="#layer-2-the-clusters-networks-reach-each-other-submariner" title="Permanent link">&para;</a></h3>
+<p>ODF mirrors Ceph images over the clusters' <strong>pod/service networks</strong>, so Submariner joins them. Submariner refuses a peer
+whose ranges overlap its own, <strong>in either IP family</strong>. Separate ranges are Red Hat's preferred layout and need nothing
+extra. <strong>Globalnet</strong>, which gives each cluster a virtual IPv4 range, covers only an IPv4 overlap. CI reads both sites'
+ranges first (<code>oc get network.config cluster</code>), turns Globalnet on only for an IPv4-only overlap, and stops straight
+away if the IPv6 ranges overlap.</p>
+<p>Each site needs one <strong>gateway node</strong> that carries the tunnel (IPsec, UDP 4500 between the two gateway nodes). On bare
+metal nobody picks it for you, so label one node per site. Also pin its endpoint to its own node IPs. Left alone, it
+asks internet resolvers for a public IP in each family. On these dual-stack nodes the IPv6 lookup finds nothing and the
+gateway crash-loops.</p>
 <p><strong>Console:</strong> hub → <strong>Infrastructure → Clusters → Cluster sets → <code>ovedr</code> → Submariner add-ons → Install Submariner add-ons</strong>,
-select both clusters, <strong>enable Globalnet</strong>, keep the defaults, <strong>Install</strong>. Wait until both show <em>Healthy</em> (connection and agent).
+select both clusters, enable <strong>Globalnet</strong> only if the sites' IPv4 ranges overlap, keep the defaults, <strong>Install</strong>. Wait until both show <em>Healthy</em> (connection and agent).
 📸 <code>S-submariner-install</code> · 📸 <code>S-submariner-healthy</code>.</p>
 <details>
 <summary>Example code: gateway nodes, the broker and the add-on (what <code>dr_fabric.sh</code> step 2 applies)</summary>
@@ -2149,12 +2155,21 @@ select both clusters, <strong>enable Globalnet</strong>, keep the defaults, <str
 <span class="w">    </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.name}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span>submariner.io/gateway<span class="o">=</span><span class="nb">true</span>
 <span class="k">done</span>
 
-<span class="c1"># the broker lives in the cluster set's namespace on the hub; Globalnet on</span>
+<span class="c1"># pin each gateway's endpoint to its node IPs (no internet lookup; dual-stack needs the ipv6: entry)</span>
+<span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span>gw<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-l<span class="w"> </span>submariner.io/gateway<span class="o">=</span><span class="nb">true</span><span class="w"> </span>-o<span class="w"> </span>name<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">ips</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>get<span class="w"> </span><span class="nv">$gw</span><span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'[.status.addresses[] | select(.type=="InternalIP") | .address</span>
+<span class="s1">            | (if test(":") then "ipv6:" else "ipv4:" end) + .] | join(",")'</span><span class="k">)</span>
+<span class="w">    </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>annotate<span class="w"> </span><span class="nv">$gw</span><span class="w"> </span>--overwrite<span class="w"> </span>gateway.submariner.io/public-ip<span class="o">=</span><span class="s2">"</span><span class="nv">$ips</span><span class="s2">"</span>
+<span class="w">  </span><span class="k">done</span>
+<span class="k">done</span>
+
+<span class="c1"># the broker lives in the cluster set's namespace on the hub; Globalnet only for an IPv4-only overlap</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
 <span class="s">apiVersion: submariner.io/v1alpha1</span>
 <span class="s">kind: Broker</span>
 <span class="s">metadata: { name: submariner-broker, namespace: ovedr-broker }</span>
-<span class="s">spec: { globalnetEnabled: true }</span>
+<span class="s">spec: { globalnetEnabled: false }</span>
 <span class="s">YAML</span>
 
 <span class="c1"># the add-on on each managed cluster</span>
@@ -2174,7 +2189,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span><span class="nv">$c</span><span class="w"> </span>get<span class="w"> </span>managedclusteraddon<span class="w"> </span>submariner<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.metadata.namespace}{"  connection-degraded="}{.status.conditions[?(@.type=="SubmarinerConnectionDegraded")].status}{"\n"}'</span>
 <span class="k">done</span><span class="w">                                                                                 </span><span class="c1"># False on both</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-broker<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span><span class="w">   </span><span class="c1"># true</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-broker<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span><span class="w">   </span><span class="c1"># false (true only for an IPv4-only overlap)</span>
 </code></pre></div>
 <details>
 <summary>Debug: Submariner installed but not connected</summary>
@@ -2191,6 +2206,16 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <td><code>SubmarinerConnectionDegraded True</code> and the gateway pod logs <code>no gateway nodes</code></td>
 <td>no node carries <code>submariner.io/gateway=true</code></td>
 <td>label one node per site (example code above)</td>
+</tr>
+<tr>
+<td>gateway pod in <code>CrashLoopBackOff</code>, log ends <code>could not determine public IPv6</code></td>
+<td>dual-stack node, no <code>public-ip</code> pin, so it asked internet resolvers for an IPv6 address</td>
+<td>annotate the gateway node with its own IPs (example code above), then delete the gateway pod (0024-015)</td>
+</tr>
+<tr>
+<td>gateways <code>Running</code>, no connection, log says <code>Skip processing the remote endpoint … as subnets are overlapping</code></td>
+<td>the two sites share a pod/service range. With Globalnet on, it's the IPv6 half (<code>fd02::/48</code>, <code>fd03::/112</code>), which Globalnet can't translate</td>
+<td>not fixable on a built cluster: the member build gives each site its own ranges, then a fresh deploy (0024-015, BL-D18)</td>
 </tr>
 <tr>
 <td>gateways up, connection stays <code>connecting</code> / <code>error</code></td>
@@ -2237,7 +2262,7 @@ Red Hat's ODF 4.19 Regional-DR workflow:</p>
 <td><code>dr_fabric.sh</code> step 1 (demo-openshift ships MCG off)</td>
 </tr>
 <tr>
-<td><strong>Export ODF's provider server</strong> (Globalnet only)</td>
+<td><strong>Export ODF's provider server</strong> (only when Globalnet is on)</td>
 <td>a <code>ServiceExport</code> of <code>ocs-provider-server</code> on each site, and the StorageCluster annotated with its exported name, so the peers find each other through Submariner</td>
 <td><code>dr_fabric.sh</code> step 2b</td>
 </tr>
@@ -2411,9 +2436,9 @@ cluster (the hub included).</p>
 <td>⏳ checked again on the first ODF-on-both booking</td>
 </tr>
 <tr>
-<td>2 · Submariner (Globalnet)</td>
+<td>2 · Submariner (Globalnet only for an IPv4 overlap)</td>
 <td>✅ when DR is on (<code>storage: odf</code>): <code>dr_fabric.sh</code></td>
-<td>⏳ first ODF-on-both booking</td>
+<td>⛔ 0024-015: gateways up after the public-IP pin; sites share IPv6 ranges, waiting on demo-openshift (BL-D18)</td>
 </tr>
 <tr>
 <td>3 · ODF replication link</td>

@@ -1536,7 +1536,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.0 · draft · 2026-10-15</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.6.1 · draft · 2026-10-16</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1547,7 +1547,7 @@ In the bonus round you break the replication link, force a failover and measure 
 disaster costs (the RPO).</p>
 <h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>How the two clusters are joined</strong> (ACM hub, Submariner with Globalnet, then ODF's MirrorPeer/DRPolicy), what this lab
+<p><strong>How the two clusters are joined</strong> (ACM hub, Submariner, then ODF's MirrorPeer/DRPolicy), what this lab
 has today and what CI automates: <a href="setup-how-the-lab-is-built.html">Lab S §S.14</a>. Read it first: this demo depends on all three layers.</p>
 </blockquote>
 <p>The booking's CI customization (the <code>dr-fabric</code> and <code>dr-policy</code> jobs, which run when DR is on) built all of this
@@ -1582,7 +1582,7 @@ console steps behind the shared pieces.</p>
 <td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide</a></td>
 </tr>
 <tr>
-<td>Submariner with Globalnet (the network tunnel Ceph mirrors over), ODF's provider server exported on both sites, the <code>MirrorPeer</code>, both <code>DRCluster</code>s</td>
+<td>Submariner (the network tunnel Ceph mirrors over; Globalnet and the provider-server export only if the sites' IPv4 ranges overlap), the <code>MirrorPeer</code>, both <code>DRCluster</code>s</td>
 <td>both</td>
 <td>§4.2</td>
 <td><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index">ODF DR guide: Regional-DR</a></td>
@@ -1785,9 +1785,10 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>drcluster<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,S3:.spec.s3ProfileName,VALIDATED:<span class="s1">'.status.conditions[?(@.type=="Validated")].status'</span>
 </code></pre></div>
-<p>Both clusters use the same pod and service networks, so Submariner runs with <strong>Globalnet</strong> (each cluster gets its own
-virtual range), and each site exports ODF's provider server so the two Ceph clusters can find each other:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-broker<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span><span class="w">   </span><span class="c1"># true</span>
+<p>Submariner links the two sites' pod and service networks. If the sites have separate ranges (the plan), it runs without
+<strong>Globalnet</strong>. If only their IPv4 ranges overlap, it runs with Globalnet, and each site exports ODF's provider server so
+the two Ceph clusters can find each other (Lab S §S.14 layer 2):</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>ovedr-broker<span class="w"> </span>get<span class="w"> </span>broker<span class="w"> </span>submariner-broker<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec.globalnetEnabled}{"\n"}'</span><span class="w">   </span><span class="c1"># false (true only for an IPv4 overlap)</span>
 <span class="k">for</span><span class="w"> </span>s<span class="w"> </span><span class="k">in</span><span class="w"> </span>site-a<span class="w"> </span>site-b<span class="p">;</span><span class="w"> </span><span class="k">do</span>
 <span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"== </span><span class="nv">$s</span><span class="s2">"</span>
 <span class="w">  </span>oc<span class="w"> </span>--context<span class="w"> </span><span class="nv">$s</span><span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>get<span class="w"> </span>storageclusterpeer<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,STATE:.status.state<span class="w">   </span><span class="c1"># Peered</span>
@@ -1798,7 +1799,7 @@ virtual range), and each site exports ODF's provider server so the two Ceph clus
 <details>
 <summary>Example code: how the lab built these layers (instructor)</summary>
 <p>The full commands, layer by layer, with the console path for each: <a href="setup-how-the-lab-is-built.html">Lab S §S.14</a>. CI runs
-them as <code>dr_fabric.sh</code> (Submariner with Globalnet, MCG, the provider-server export, the Orchestrator, the MirrorPeer) and
+them as <code>dr_fabric.sh</code> (Submariner, MCG, the provider-server export when Globalnet is on, the Orchestrator, the MirrorPeer) and
 <code>dr_policy.sh</code> (the 15-minute DRPolicy) on every booking with ODF on both sites.</p>
 </details>
 <details>
