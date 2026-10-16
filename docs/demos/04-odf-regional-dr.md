@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.6.0
+version: 0.6.1
 date: 2026-10-15
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.6.0 · draft · 2026-10-15** · class/demos/04-odf-regional-dr.md
+> **Version 0.6.1 · draft · 2026-10-16** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -20,7 +20,7 @@ disaster costs (the RPO).
 
 ## How the lab is set up for this demo
 
-> **How the two clusters are joined** (ACM hub, Submariner with Globalnet, then ODF's MirrorPeer/DRPolicy), what this lab
+> **How the two clusters are joined** (ACM hub, Submariner, then ODF's MirrorPeer/DRPolicy), what this lab
 > has today and what CI automates: [Lab S §S.14](setup-how-the-lab-is-built.md). Read it first: this demo depends on all three layers.
 
 The booking's CI customization (the `dr-fabric` and `dr-policy` jobs, which run when DR is on) built all of this
@@ -32,7 +32,7 @@ console steps behind the shared pieces.
 | **ODF on BOTH sites** (`storage: odf` on site A **and** site B, an operator toggle on the booking) | site A, site B | `oc --context site-X -n openshift-storage get storagecluster` → `Ready` on both | [S.4](setup-how-the-lab-is-built.md) · [ODF 4.19](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19) |
 | ACM and cert-manager on both clusters (demo-openshift's base build, the same operators on both). DR runs from **site B's hub**, with site A imported as a managed cluster | site B | `oc --context site-b get managedclusters` | [S.10](setup-how-the-lab-is-built.md) · [ACM 2.16](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16) |
 | ODF Multicluster Orchestrator and the DR hub operator (Ramen) on the hub, and the DR cluster operator on both sites | site B / both | §4.2 | [ODF DR guide](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
-| Submariner with Globalnet (the network tunnel Ceph mirrors over), ODF's provider server exported on both sites, the `MirrorPeer`, both `DRCluster`s | both | §4.2 | [ODF DR guide: Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
+| Submariner (the network tunnel Ceph mirrors over; Globalnet and the provider-server export only if the sites' IPv4 ranges overlap), the `MirrorPeer`, both `DRCluster`s | both | §4.2 | [ODF DR guide: Regional-DR](https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index) |
 | **The same VLAN bridges on both sites**: every `vmnet<VLAN>` your VMs use exists on site A **and** site B, same name, same VLAN. A Relocate or Failover brings back the VM's own definition, which names its bridge (`default/vmnet23`): without that bridge on the other site the VM doesn't start, and with it the VM keeps its address | both | `oc --context site-a -n default get net-attach-def` and the same on `site-b`: the same `vmnet*` names | demo-openshift's VLAN build on each site (BL-B29) |
 | The **15-minute** `DRPolicy` (`sync_interval=15m`) | site B | §4.2 | §4.2 |
 | Your namespace with your browser terminal `sql-client` and your VM's Service (`<VM>-sql`); `ovedr-app` with the instructor's, on **both** sites | both | `oc --context site-b -n "$VMNS" get deploy,svc` | [S.9](setup-how-the-lab-is-built.md) |
@@ -164,11 +164,12 @@ oc --context site-b get drcluster \
   -o custom-columns=NAME:.metadata.name,S3:.spec.s3ProfileName,VALIDATED:'.status.conditions[?(@.type=="Validated")].status'
 ```
 
-Both clusters use the same pod and service networks, so Submariner runs with **Globalnet** (each cluster gets its own
-virtual range), and each site exports ODF's provider server so the two Ceph clusters can find each other:
+Submariner links the two sites' pod and service networks. If the sites have separate ranges (the plan), it runs without
+**Globalnet**. If only their IPv4 ranges overlap, it runs with Globalnet, and each site exports ODF's provider server so
+the two Ceph clusters can find each other (Lab S §S.14 layer 2):
 
 ```bash
-oc --context site-b -n ovedr-broker get broker submariner-broker -o jsonpath='{.spec.globalnetEnabled}{"\n"}'   # true
+oc --context site-b -n ovedr-broker get broker submariner-broker -o jsonpath='{.spec.globalnetEnabled}{"\n"}'   # false (true only for an IPv4 overlap)
 for s in site-a site-b; do
   echo "== $s"
   oc --context $s -n openshift-storage get storageclusterpeer -o custom-columns=NAME:.metadata.name,STATE:.status.state   # Peered
@@ -181,7 +182,7 @@ done
 <summary>Example code: how the lab built these layers (instructor)</summary>
 
 The full commands, layer by layer, with the console path for each: [Lab S §S.14](setup-how-the-lab-is-built.md). CI runs
-them as `dr_fabric.sh` (Submariner with Globalnet, MCG, the provider-server export, the Orchestrator, the MirrorPeer) and
+them as `dr_fabric.sh` (Submariner, MCG, the provider-server export when Globalnet is on, the Orchestrator, the MirrorPeer) and
 `dr_policy.sh` (the 15-minute DRPolicy) on every booking with ODF on both sites.
 
 </details>

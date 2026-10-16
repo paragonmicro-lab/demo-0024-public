@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.7.0
+version: 0.7.1
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.7.0 · draft · 2026-10-15** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.1 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -805,7 +805,7 @@ clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async repli
 |---|---|---|
 | ACM | MultiClusterHub **2.16**, booked `acm: managed`: it does not manage itself, site B's hub does | MultiClusterHub **2.16**: **the hub**; manages itself as `local-cluster` |
 | ODF | **ODF 4.19**, `ocs-storagecluster`, 1 scratch SSD per node | **the same**: ODF on both sites is the booking default (`storage: odf`) |
-| Pod / service networks | `10.128.0.0/14` / `172.30.0.0/16` | **the same**: overlapping, so Submariner runs with **Globalnet** |
+| Pod / service networks | dual-stack: `10.128.0.0/14`, `fd02::/48` / `172.30.0.0/16`, `fd03::/112` | ⛔ **the same today.** Globalnet can only translate the IPv4 half, so Submariner can't link the sites until each site has its own ranges (demo-openshift, 2026-10-16). The planned ranges don't overlap at all, so Submariner then runs **without Globalnet** |
 | Ingress certificates | Let's Encrypt | Let's Encrypt: publicly trusted, so the DR guide's SSL (`user-ca-bundle`) step is **not needed** |
 
 A booking with `storage: odf` turns DR on: CI's `dr-fabric` and `dr-policy` jobs build layers 2 and 3 **alongside** the class
@@ -881,14 +881,21 @@ oc --context site-b get managedclusters          # local-cluster and ocp-<A>: JO
 
 Red Hat: [ACM 2.16 Clusters: importing a managed cluster, cluster sets](https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.16/html/clusters/index).
 
-### Layer 2: the clusters' networks reach each other (Submariner, with Globalnet)
+### Layer 2: the clusters' networks reach each other (Submariner)
 
-ODF mirrors Ceph images over the clusters' **pod/service networks**. Both clusters use the same CIDRs, so Submariner runs
-with **Globalnet**, which gives each cluster its own virtual range. Each site needs one **gateway node** that carries the
-tunnel (IPsec, UDP 4500 between the two gateway nodes). On bare metal, nobody picks it for you: label one node per site.
+ODF mirrors Ceph images over the clusters' **pod/service networks**, so Submariner joins them. Submariner refuses a peer
+whose ranges overlap its own, **in either IP family**. Separate ranges are Red Hat's preferred layout and need nothing
+extra. **Globalnet**, which gives each cluster a virtual IPv4 range, covers only an IPv4 overlap. CI reads both sites'
+ranges first (`oc get network.config cluster`), turns Globalnet on only for an IPv4-only overlap, and stops straight
+away if the IPv6 ranges overlap.
+
+Each site needs one **gateway node** that carries the tunnel (IPsec, UDP 4500 between the two gateway nodes). On bare
+metal nobody picks it for you, so label one node per site. Also pin its endpoint to its own node IPs. Left alone, it
+asks internet resolvers for a public IP in each family. On these dual-stack nodes the IPv6 lookup finds nothing and the
+gateway crash-loops.
 
 **Console:** hub → **Infrastructure → Clusters → Cluster sets → `ovedr` → Submariner add-ons → Install Submariner add-ons**,
-select both clusters, **enable Globalnet**, keep the defaults, **Install**. Wait until both show *Healthy* (connection and agent).
+select both clusters, enable **Globalnet** only if the sites' IPv4 ranges overlap, keep the defaults, **Install**. Wait until both show *Healthy* (connection and agent).
 📸 `S-submariner-install` · 📸 `S-submariner-healthy`.
 
 <details markdown="1">
@@ -901,12 +908,21 @@ for s in site-a site-b; do
     oc --context $s label node "$(oc --context $s get nodes -o jsonpath='{.items[0].metadata.name}')" submariner.io/gateway=true
 done
 
-# the broker lives in the cluster set's namespace on the hub; Globalnet on
+# pin each gateway's endpoint to its node IPs (no internet lookup; dual-stack needs the ipv6: entry)
+for s in site-a site-b; do
+  for gw in $(oc --context $s get nodes -l submariner.io/gateway=true -o name); do
+    ips=$(oc --context $s get $gw -o json | jq -r '[.status.addresses[] | select(.type=="InternalIP") | .address
+            | (if test(":") then "ipv6:" else "ipv4:" end) + .] | join(",")')
+    oc --context $s annotate $gw --overwrite gateway.submariner.io/public-ip="$ips"
+  done
+done
+
+# the broker lives in the cluster set's namespace on the hub; Globalnet only for an IPv4-only overlap
 oc --context site-b apply -f - <<YAML
 apiVersion: submariner.io/v1alpha1
 kind: Broker
 metadata: { name: submariner-broker, namespace: ovedr-broker }
-spec: { globalnetEnabled: true }
+spec: { globalnetEnabled: false }
 YAML
 
 # the add-on on each managed cluster
@@ -930,7 +946,7 @@ for c in "$A_NAME" "$B_NAME"; do
   oc --context site-b -n $c get managedclusteraddon submariner \
     -o jsonpath='{.metadata.namespace}{"  connection-degraded="}{.status.conditions[?(@.type=="SubmarinerConnectionDegraded")].status}{"\n"}'
 done                                                                                 # False on both
-oc --context site-b -n ovedr-broker get broker submariner-broker -o jsonpath='{.spec.globalnetEnabled}{"\n"}'   # true
+oc --context site-b -n ovedr-broker get broker submariner-broker -o jsonpath='{.spec.globalnetEnabled}{"\n"}'   # false (true only for an IPv4-only overlap)
 ```
 
 <details markdown="1">
@@ -939,6 +955,8 @@ oc --context site-b -n ovedr-broker get broker submariner-broker -o jsonpath='{.
 | What you see | Why | Fix |
 |---|---|---|
 | `SubmarinerConnectionDegraded True` and the gateway pod logs `no gateway nodes` | no node carries `submariner.io/gateway=true` | label one node per site (example code above) |
+| gateway pod in `CrashLoopBackOff`, log ends `could not determine public IPv6` | dual-stack node, no `public-ip` pin, so it asked internet resolvers for an IPv6 address | annotate the gateway node with its own IPs (example code above), then delete the gateway pod (0024-015) |
+| gateways `Running`, no connection, log says `Skip processing the remote endpoint … as subnets are overlapping` | the two sites share a pod/service range. With Globalnet on, it's the IPv6 half (`fd02::/48`, `fd03::/112`), which Globalnet can't translate | not fixable on a built cluster: the member build gives each site its own ranges, then a fresh deploy (0024-015, BL-D18) |
 | gateways up, connection stays `connecting` / `error` | the two gateway nodes can't reach each other on **UDP 4500** (site A's nodes and site B's nodes sit on different VLANs, so this crosses the lab router) | `oc --context site-a -n submariner-operator get gateways -o yaml` shows each side's endpoint IP and the last error. The router must allow UDP 4500 (and 4490) between the two gateway node IPs |
 | connected, but `*.svc.clusterset.local` names don't resolve | Lighthouse DNS (the add-on's service discovery) isn't up | `oc --context site-a -n submariner-operator get pods \| grep lighthouse`: both agents Running |
 | a pod on one site can't reach a service exported from the other | Globalnet hasn't given that service a global IP yet | `oc --context site-a get globalingressip -A`: the exported service has an allocated IP |
@@ -960,7 +978,7 @@ Red Hat's ODF 4.19 Regional-DR workflow:
 |---|---|---|
 | ODF on both sites | a Ready `ocs-storagecluster` on each | demo-openshift (`storage: odf`) |
 | **MCG (NooBaa) on both sites** | object storage where Ramen keeps each protected app's DR metadata (its S3 store) | `dr_fabric.sh` step 1 (demo-openshift ships MCG off) |
-| **Export ODF's provider server** (Globalnet only) | a `ServiceExport` of `ocs-provider-server` on each site, and the StorageCluster annotated with its exported name, so the peers find each other through Submariner | `dr_fabric.sh` step 2b |
+| **Export ODF's provider server** (only when Globalnet is on) | a `ServiceExport` of `ocs-provider-server` on each site, and the StorageCluster annotated with its exported name, so the peers find each other through Submariner | `dr_fabric.sh` step 2b |
 | **ODF Multicluster Orchestrator** on the hub | the operator that links ODF clusters; it brings the DR hub operator (Ramen) | `dr_fabric.sh` step 3 |
 | **MirrorPeer** | pairs the two StorageClusters: exchanges Ceph keys and endpoints, turns on RBD mirroring (`rbd-mirror`) and creates the S3 profiles | `dr_fabric.sh` step 3 (or the console's DRPolicy wizard) |
 | **DRCluster** × 2 | the hub's view of each site as a DR peer (its S3 profile, fencing state) | the Orchestrator, from the MirrorPeer |
@@ -1081,7 +1099,7 @@ Red Hat: [ODF 4.19: Configuring disaster recovery for OpenShift workloads, Regio
 |---|---|---|
 | MTV between the clusters (Demo 1c) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | ✅ |
 | 1 · ACM join | ✅ every deploy: site A booked `acm: managed`, then `acm_join.sh` (`demo-prep`) imports it into site B's hub; both in set `ovedr` | ⏳ checked again on the first ODF-on-both booking |
-| 2 · Submariner (Globalnet) | ✅ when DR is on (`storage: odf`): `dr_fabric.sh` | ⏳ first ODF-on-both booking |
+| 2 · Submariner (Globalnet only for an IPv4 overlap) | ✅ when DR is on (`storage: odf`): `dr_fabric.sh` | ⛔ 0024-015: gateways up after the public-IP pin; sites share IPv6 ranges, waiting on demo-openshift (BL-D18) |
 | 3 · ODF replication link | ✅ when DR is on: `dr_fabric.sh` (MCG, provider-server export, MirrorPeer, DRClusters, peering + mirror health) + `dr_policy.sh` (DRPolicy 15m) | ⏳ first ODF-on-both booking |
 
 
