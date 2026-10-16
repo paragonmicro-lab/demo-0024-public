@@ -69,7 +69,7 @@ The [student guide](student-guide.md) explains how the class works and lists the
 | Block | Time |
 |---|---|
 | Welcome, and Kubernetes in a few ideas (this page) | 20 min |
-| Lab 0 · Demo 1 (cold migration) | 1 h 25 |
+| Lab 0 · Demo 1 (cold migration: the copy alone is about 1 h) | 1 h 40 |
 | *Break* | 15 min |
 | Bonus labs 1a–1d (Demo 2, warm migration, is coming soon) | 1 h |
 | Wrap-up: your rows read back, questions | 15 min |

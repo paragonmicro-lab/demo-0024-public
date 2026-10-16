@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.5
+version: 1.2.6
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.5 · draft · 2026-10-15** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.6 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -140,6 +140,12 @@ Watch it on the plan's page: expand your VM to see each step with a progress bar
 oc -n openshift-mtv get plan d1-win-pg-s01 -w                        # Executing → Succeeded (Ctrl-C to stop watching)
 ```
 
+⏱️ **Plan on about an hour.** This lab copies the disks through vCenter (no VDDK), so the last measured run took
+**1 h 04 min**: DiskTransfer about 22 min, then ImageConversion about 41 min, while `virt-v2v` reads the guest from
+vCenter and installs the drivers. A progress bar that sits still for a few minutes is normal: vCenter retries a slow
+read (an `HTTP 500` in the conversion pod's log, then it carries on). Use the wait for the reading at the end of this
+step, or start a bonus lab's reading.
+
 ✅ The plan shows **Succeeded**.
 
 <details markdown="1">
@@ -265,6 +271,17 @@ kept its address, so your SQL server is still at the same `-h` as on vSphere.
 > old one back on gives two machines one address and splits your writes between two databases.
 
 ✅ Running, guest agent connected, address `10.101.23.101`.
+
+> ⚠️ **Known issue on the current lab build: the migrated VM can't reach the network yet.** It runs and reports its
+> address, but the OpenShift nodes' VM network isn't connected to the lab's VLAN 23, so nothing outside the VM
+> reaches `10.101.23.101`, and step 1.5's commands time out. The fix is in the lab's node build and comes with the
+> next lab rebuild. Until then, your instructor shows step 1.5 from its 🎬 recording. You can still check your rows
+> from **inside** the VM: open its **Console**, sign in to Windows, and run this in PowerShell (your database user is
+> `student_NN`, as in `dblogin`; it asks for your class password):
+>
+> ```powershell
+> & 'C:\Program Files\PostgreSQL\16\bin\psql.exe' -h 127.0.0.1 -U student_01 -d bcdr -c "SELECT id, ts, stage FROM marks ORDER BY id;"
+> ```
 
 ---
 
