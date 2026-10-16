@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.2.6 · draft · 2026-10-16</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.2.7 · draft · 2026-10-16</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1281,7 +1281,7 @@ old one back on gives two machines one address and splits your writes between tw
 <p>⚠️ <strong>Known issue on the current lab build: the migrated VM can't reach the network yet.</strong> It runs and reports its
 address, but the OpenShift nodes' VM network isn't connected to the lab's VLAN 23, so nothing outside the VM
 reaches <code>10.101.23.101</code>, and step 1.5's commands time out. The fix is in the lab's node build and comes with the
-next lab rebuild. Until then, your instructor shows step 1.5 from its 🎬 recording. You can still check your rows
+next lab rebuild. Until then, skip step 1.5's commands. You can still check that your rows survived the move,
 from <strong>inside</strong> the VM: open its <strong>Console</strong>, sign in to Windows, and run this in PowerShell (your database user is
 <code>student_NN</code>, as in <code>dblogin</code>; it asks for your class password):</p>
 <div class="highlight"><pre><span></span><code><span class="p">&amp;</span> <span class="s1">'C:\Program Files\PostgreSQL\16\bin\psql.exe'</span> <span class="n">-h</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="n">-U</span> <span class="n">student_01</span> <span class="n">-d</span> <span class="n">bcdr</span> <span class="n">-c</span> <span class="s2">"SELECT id, ts, stage FROM marks ORDER BY id;"</span>
