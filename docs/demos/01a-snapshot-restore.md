@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — Snapshot, destroy the database, restore from the snapshot (bonus)"
 subtitle: "Snapshot your VM · write a row after it · drop the database · bring D: and L: back from the snapshot · read back"
-version: 1.1.0
+version: 1.1.1
 date: 2026-10-15
 ---
 
 # Demo 1a: snapshot and restore (bonus)
 
-> **Version 1.1.0 · draft · 2026-10-15** · class/demos/01a-snapshot-restore.md
+> **Version 1.1.1 · draft · 2026-10-16** · class/demos/01a-snapshot-restore.md
 
 ## What you will learn
 
@@ -21,6 +21,10 @@ VirtualMachines → your VM → Console**, then log in as `.\student-01` (your W
 
 > ⚠ **The commands are an example** for `student-01-0024-012`, VM `win-pg-s01` at `10.101.23.101`. Change them to
 > your class ID, your VM and its address before you run them.
+
+> ⚠️ **Known issue on the current lab build:** the migrated VM can't reach the network yet (see Demo 1, step 1.4), so
+> the `ovedr_mark` and read-back commands in this demo time out. Everything on the OpenShift side works and was proven
+> on 0024-015 on 2026-10-16. Skip those commands, or check your rows from inside the VM, as in Demo 1.
 
 > ⚠️ **Data and WAL go together.** PostgreSQL keeps its data on `D:` and its write-ahead log on `L:`. If you restore
 > only `D:` and keep today's `L:`, PostgreSQL replays the newer WAL on start, including the `DROP DATABASE`, and you
@@ -123,8 +127,9 @@ VM=win-pg-s01
 SNAP=$VM-snap
 ```
 
-The snapshot holds one **VolumeSnapshot** per disk. List them, and note the **10Gi** (`D:`, data) and **5Gi** (`L:`,
-WAL) rows:
+The snapshot holds one **VolumeSnapshot** per disk. List them. Sizes print in **bytes**: note the **1 GiB** row
+(`1073741824`, `D:`, data) and the **256 MiB** row (`268435456`, `L:`, WAL). The 32 GiB row is `C:`. A disk can show a
+little more than its round size; go by the order, largest to smallest: `C:`, `D:`, `L:`.
 
 ```bash
 CONTENT=$(oc -n $CLASS_ID get vmsnapshot $SNAP -o jsonpath='{.status.virtualMachineSnapshotContentName}')
@@ -135,11 +140,11 @@ oc -n $CLASS_ID get vmsnapshotcontent "$CONTENT" \
 Copy four names from that list:
 
 ```bash
-# the 10Gi row: your data disk (D:) and its VolumeSnapshot
-DATA_PVC='<10Gi pvc>'
+# the 1 GiB row (1073741824): your data disk (D:) and its VolumeSnapshot
+DATA_PVC='<1 GiB pvc>'
 DATA_SNAP='<its volumesnapshot>'
-# the 5Gi row: your WAL disk (L:) and its VolumeSnapshot, from the SAME snapshot so data and WAL match
-WAL_PVC='<5Gi pvc>'
+# the 256 MiB row (268435456): your WAL disk (L:) and its VolumeSnapshot, from the SAME snapshot so data and WAL match
+WAL_PVC='<256 MiB pvc>'
 WAL_SNAP='<its volumesnapshot>'
 ```
 
@@ -167,7 +172,8 @@ virtctl -n $CLASS_ID addvolume $VM --volume-name=$VM-restored-wal  --serial=wal 
 oc -n $CLASS_ID get vmi $VM -o jsonpath='{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'
 ```
 
-✅ Both restored volumes show `Ready` **[verify: hot-plug on this cluster, and the `vioscsi` driver in the guest]**.
+✅ Both restored volumes show `Ready`. (Proven on this cluster on 0024-015: snapshot, a volume from it, hot-plug into the
+running VM, and the restored disk held the snapshot-time data.) **[verify: the `vioscsi` driver in the Windows guest]**
 
 ---
 

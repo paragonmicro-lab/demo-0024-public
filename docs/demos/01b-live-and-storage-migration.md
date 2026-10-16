@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — Live migration and storage migration (bonus)"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 1.1.1
+version: 1.1.2
 date: 2026-10-15
 ---
 
 # Demo 1b: live migration and storage migration (bonus)
 
-> **Version 1.1.1 · draft · 2026-10-15** · class/demos/01b-live-and-storage-migration.md
+> **Version 1.1.2 · draft · 2026-10-16** · class/demos/01b-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -29,6 +29,10 @@ in the site A console's **Web Terminal** (`>_`).
 <sub>🎬 *Demo 1b: live migration and storage migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
 
 ---
+
+> ⚠️ **Known issue on the current lab build:** the migrated VM can't reach the network yet (see Demo 1, step 1.4), so
+> the `ovedr_mark` and read-back commands in this demo time out. Everything on the OpenShift side works and was proven
+> on 0024-015 on 2026-10-16. Skip those commands, or check your rows from inside the VM, as in Demo 1.
 
 ## 1b.1 Inject, and check the VM can live-migrate
 
@@ -64,17 +68,25 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 
 ---
 
-## 1b.3 Storage migration: move the data disk from ODF to NFS, while it runs [verify]
+## 1b.3 Storage migration: move the data disk from ODF to NFS, while it runs
 
 Your VM's disks are on ODF (`ocs-storagecluster-ceph-rbd-virtualization`). Move the 1 GB **data** disk (`D:`) to
 `nfs-csi`, with the VM running. OpenShift Virtualization copies the disk in the background, then switches the VM to
 the new copy with a live migration.
 
-**[verify: storage live migration on OpenShift Virtualization 4.19 (`spec.updateVolumesStrategy: Migration`,
-`vmRolloutStrategy: LiveUpdate` is set on this cluster); ODF block → NFS filesystem; whether the console's
-**Actions → Migrate → Storage** offers the same]**
+Proven on this cluster (0024-015, 2026-10-16): a 1 GiB disk moved from ODF (block) to `nfs-csi` (filesystem) in
+46 seconds, the VM never restarted, and its data was intact. **[verify: whether the console's **Actions → Migrate →
+Storage** offers the same]**
 
-Find the data disk's volume (the 10Gi one):
+First check the VM allows it:
+
+```bash
+oc -n student-01-0024-012 get vm win-pg-s01 -o jsonpath='StorageLiveMigratable={.status.conditions[?(@.type=="StorageLiveMigratable")].status}{"\n"}'
+```
+
+✅ `StorageLiveMigratable=True`.
+
+Find the data disk's volume (the 1 GiB one):
 
 ```bash
 oc -n student-01-0024-012 get vm win-pg-s01 -o json | jq -r '.spec.template.spec.volumes[] | "\(.name)  \(.persistentVolumeClaim.claimName // .dataVolume.name)"'
@@ -84,11 +96,11 @@ oc -n student-01-0024-012 get pvc -o custom-columns=NAME:.metadata.name,SIZE:.sp
 Set the one value this step needs, from the list above:
 
 ```bash
-# the data disk's current volume (the 10Gi one on ODF): the disk you are moving
-OLD='<the 10Gi pvc from the list above>'
+# the data disk's current volume (the 1 GiB one on ODF): the disk you are moving
+OLD='<the 1 GiB pvc from the list above>'
 ```
 
-Create an empty 10Gi target volume on `nfs-csi`:
+Create an empty 1Gi target volume on `nfs-csi`, the same size as the disk you move:
 
 ```bash
 oc apply -f - <<EOF
@@ -100,7 +112,7 @@ spec:
   storage:
     storageClassName: nfs-csi
     accessModes: [ ReadWriteMany ]
-    resources: { requests: { storage: 10Gi } }
+    resources: { requests: { storage: 1Gi } }
 EOF
 oc -n student-01-0024-012 get dv win-pg-s01-data-nfs -w                # Succeeded (Ctrl-C)
 ```
@@ -112,7 +124,9 @@ oc -n student-01-0024-012 get vm win-pg-s01 -o json | jq --arg old "$OLD" '
   .spec.updateVolumesStrategy = "Migration"
   | .spec.template.spec.volumes |= map(
       if ((.persistentVolumeClaim.claimName // .dataVolume.name) == $old)
-      then {name: .name, dataVolume: {name: "win-pg-s01-data-nfs"}} else . end)' | oc replace -f -
+      then {name: .name, dataVolume: {name: "win-pg-s01-data-nfs"}} else . end)
+  | if .spec.dataVolumeTemplates then .spec.dataVolumeTemplates |= map(select(.metadata.name != $old)) else . end' \
+  | oc replace -f -
 oc -n student-01-0024-012 get vmim -w                                 # a migration runs and Succeeds (Ctrl-C)
 oc -n student-01-0024-012 get vmi win-pg-s01 -o jsonpath='{range .status.volumeStatus[*]}{.name}  {.persistentVolumeClaimInfo.claimName}{"\n"}{end}'
 ```
