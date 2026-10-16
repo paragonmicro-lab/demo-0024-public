@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.7
+version: 1.2.8
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.7 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.8 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -228,6 +228,31 @@ oc -n student-01-0024-012 logs "$POD" | grep -E 'virt-v2v: error|error:|HTTP' | 
 Read the log **bottom up**: the last `virt-v2v: error:` line is the verdict, and the lines above it are the cause.
 For example, `HTTP 404` on a `…-flat.vmdk` URL means MTV could not read the VM's disk from vCenter. Show your
 instructor before you delete or archive the plan.
+
+</details>
+
+<details markdown="1">
+<summary>Site A can't finish your migration: fall back to site B (your instructor decides)</summary>
+
+Site B is staged exactly like site A: the same provider, maps and plan `d1-win-pg-s01`, into your namespace of the
+same name. If site A has a problem your instructor can't fix in class time, they tell you to run your migration on
+site B instead.
+
+1. **Make sure no copy of your VM runs on site A.** Both sites share your VM's VLAN, so two running copies would
+   fight over `10.101.23.101`. **Console (site A):** **Virtualization → VirtualMachines**, project your class ID: if
+   `win-pg-s01` is listed and not *Stopped*, **Actions → Stop**. Not listed is fine: the plan never created it.
+   **Web Terminal (site A):**
+
+   ```bash
+   oc -n student-01-0024-012 get vm win-pg-s01 && { virtctl -n student-01-0024-012 stop win-pg-s01 \
+     || oc -n student-01-0024-012 patch vm win-pg-s01 --type merge -p '{"spec":{"runStrategy":"Halted"}}'; }
+   ```
+2. **Start the same plan on site B.** In the **site B** console: **Migration for Virtualization → Migration plans →
+   `d1-win-pg-s01`** → **Start**. Your vSphere VM is already off, which is what a cold migration wants.
+3. Carry on from 1.3's watch and 1.4 in the **site B** console and Web Terminal.
+
+Demos 1a and 1b work the same on site B. Demo 1c and Demo 4 start from **site A**, so tell your instructor before
+those; they re-run your site A plan once site A is fixed.
 
 </details>
 
