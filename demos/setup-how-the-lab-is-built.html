@@ -1296,7 +1296,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.7.4 · draft · 2026-10-16</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.7.5 · draft · 2026-10-16</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1317,7 +1317,7 @@ ask you to do the <strong>last step</strong> yourself (start your migration). Th
 <tbody>
 <tr>
 <td><strong>demo-vmware</strong> (core-web dispatches it)</td>
-<td>vCenter <code>vcenter0&lt;N&gt;</code>, 4 nested ESXi hosts, the shared NFS datastore <code>coresan01_data00</code> (the class VMs live there, or on <strong>vSAN</strong> when the booking sets <code>vmware_storage: vsan</code>), port group <code>vm-network</code> on VLAN 22+N, your vCenter folder <code>vms/students/&lt;your ID&gt;</code></td>
+<td>vCenter <code>vcenter0&lt;N&gt;</code>, 4 nested ESXi hosts, the shared NFS datastore <code>coresan01_data00</code> (the class VMs live there; on <strong>vSAN</strong> when the booking sets <code>vmware_storage: vsan</code>; with <code>vmware_storage: local</code>, each VM on <strong>its own ESXi host's</strong> SSD datastore <code>esxiNN-vmfs00</code>: student01 on <code>esxi01</code>, student02 on <code>esxi02</code>, …, the instructor's on the last host), port group <code>vm-network</code> on VLAN 22+N, your vCenter folder <code>vms/students/&lt;your ID&gt;</code></td>
 <td>vSphere <code>lzN</code></td>
 </tr>
 <tr>
@@ -1698,7 +1698,7 @@ service-account token, CA certificate. 📸 <code>S-mtv-provider-ocp</code></p>
 </tr>
 <tr>
 <td><code>ovedr-vcenter0&lt;N&gt;-storage</code></td>
-<td>datastore <code>coresan01_data00</code>, plus the <strong>vSAN</strong> datastore on a <code>vmware_storage: vsan</code> booking → <strong>this site's</strong> class</td>
+<td>datastore <code>coresan01_data00</code>, plus the <strong>vSAN</strong> datastore (<code>vmware_storage: vsan</code>) or every host's <code>esxiNN-vmfs00</code> (<code>vmware_storage: local</code>) → <strong>this site's</strong> class</td>
 <td>site A: <code>ocs-storagecluster-ceph-rbd-virtualization</code>; site B: <code>nfs-csi</code></td>
 </tr>
 <tr>
@@ -1890,7 +1890,7 @@ Configure → Hardware (three disks). 📸 <code>S-vm-in-student-folder</code> �
 <p><strong>Do it yourself (CLI, condensed from the CI scripts):</strong></p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">GOVC_URL</span><span class="o">=</span><span class="s2">"https://vcenter0</span><span class="nv">$N</span><span class="s2">.</span><span class="nv">$DOMAIN</span><span class="s2">"</span><span class="w">                 </span><span class="c1"># credentials from your vault</span>
 <span class="nv">F</span><span class="o">=</span>/datacenter01/vm/vms/ovedr<span class="p">;</span><span class="w"> </span><span class="nv">POOL</span><span class="o">=</span><span class="s2">"/datacenter01/host/cluster-lz</span><span class="nv">$N</span><span class="s2">/Resources"</span><span class="p">;</span><span class="w"> </span><span class="nv">ISO_DS</span><span class="o">=</span>coresan01_data00
-<span class="nv">DS</span><span class="o">=</span>coresan01_data00<span class="w">            </span><span class="c1"># the VM's datastore: on a vmware_storage=vsan booking, the vSAN one (govc datastore.info)</span>
+<span class="nv">DS</span><span class="o">=</span>coresan01_data00<span class="w">            </span><span class="c1"># the VM's datastore: vsan → the vSAN one; local → its host's esxiNN-vmfs00 (add -host)</span>
 govc<span class="w"> </span>vm.create<span class="w"> </span>-on<span class="o">=</span><span class="nb">false</span><span class="w"> </span>-folder<span class="w"> </span><span class="s2">"</span><span class="nv">$F</span><span class="s2">"</span><span class="w"> </span>-pool<span class="w"> </span><span class="s2">"</span><span class="nv">$POOL</span><span class="s2">"</span><span class="w"> </span>-ds<span class="w"> </span><span class="s2">"</span><span class="nv">$DS</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="m">4</span><span class="w"> </span>-m<span class="w"> </span><span class="m">8192</span><span class="w"> </span>-g<span class="w"> </span>windows2019srvNext_64Guest<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-firmware<span class="w"> </span>bios<span class="w"> </span>-net<span class="w"> </span>vm-network<span class="w"> </span>-net.adapter<span class="w"> </span>e1000e<span class="w"> </span>-disk.controller<span class="w"> </span>lsilogic-sas<span class="w"> </span>-disk<span class="w"> </span>32GB<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-iso<span class="w"> </span><span class="s1">'&lt;path of the Windows ISO&gt;'</span><span class="w"> </span>-iso-datastore<span class="w"> </span><span class="s2">"</span><span class="nv">$ISO_DS</span><span class="s2">"</span><span class="w"> </span>my-win-pg

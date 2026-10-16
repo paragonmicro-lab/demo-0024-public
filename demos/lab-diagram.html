@@ -856,7 +856,7 @@
 
 <h1 id="lab-diagram">Lab diagram<a class="headerlink" href="#lab-diagram" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.5.2 · draft · 2026-10-16</strong> · class/demos/lab-diagram.md</p>
+<p><strong>Version 0.5.3 · draft · 2026-10-16</strong> · class/demos/lab-diagram.md</p>
 </blockquote>
 <p>One booking reserves <strong>three environments</strong> together: a vSphere landing zone (<code>lzN</code>) and two OpenShift clusters
 (<code>ocp-lzX</code> = <strong>site A</strong>, <code>ocp-lzY</code> = <strong>site B</strong>). They all run as VMs on the same four physical hosts
@@ -934,7 +934,7 @@ password to vCenter, both clusters and the Windows VMs.</p>
 </tr>
 <tr>
 <td>Storage</td>
-<td>NFS datastore <code>coresan01_data00</code>; on a <code>vmware_storage: vsan</code> booking the class VMs sit on <strong>vSAN</strong> (one scratch SSD per host as cache)</td>
+<td>NFS datastore <code>coresan01_data00</code>; on a <code>vmware_storage: vsan</code> booking the class VMs sit on <strong>vSAN</strong> (one scratch SSD per host as cache); on <code>local</code>, each on its own host's SSD datastore <code>esxiNN-vmfs00</code> (student NN → host NN, wrapping after 4)</td>
 <td><strong>ODF</strong> on one scratch SSD per host (<code>ocs-storagecluster-ceph-rbd-virtualization</code>, the VM default), plus <code>nfs-csi</code></td>
 <td><strong>the same</strong>: ODF on the second SSD per host, plus <code>nfs-csi</code></td>
 </tr>
