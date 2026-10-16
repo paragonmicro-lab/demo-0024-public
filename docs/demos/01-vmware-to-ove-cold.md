@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.6
+version: 1.2.7
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.6 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.7 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -275,7 +275,7 @@ kept its address, so your SQL server is still at the same `-h` as on vSphere.
 > ⚠️ **Known issue on the current lab build: the migrated VM can't reach the network yet.** It runs and reports its
 > address, but the OpenShift nodes' VM network isn't connected to the lab's VLAN 23, so nothing outside the VM
 > reaches `10.101.23.101`, and step 1.5's commands time out. The fix is in the lab's node build and comes with the
-> next lab rebuild. Until then, your instructor shows step 1.5 from its 🎬 recording. You can still check your rows
+> next lab rebuild. Until then, skip step 1.5's commands. You can still check that your rows survived the move,
 > from **inside** the VM: open its **Console**, sign in to Windows, and run this in PowerShell (your database user is
 > `student_NN`, as in `dblogin`; it asks for your class password):
 >
