@@ -1002,7 +1002,7 @@
 
 <h1 id="demo-1a-snapshot-and-restore-bonus">Demo 1a: snapshot and restore (bonus)<a class="headerlink" href="#demo-1a-snapshot-and-restore-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.0 · draft · 2026-10-15</strong> · class/demos/01a-snapshot-restore.md</p>
+<p><strong>Version 1.1.1 · draft · 2026-10-16</strong> · class/demos/01a-snapshot-restore.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You take a snapshot of your running VM, destroy its database for real, then bring the data back by attaching the
@@ -1014,6 +1014,9 @@ VirtualMachines → your VM → Console</strong>, then log in as <code>.\student
 <blockquote>
 <p>⚠ <strong>The commands are an example</strong> for <code>student-01-0024-012</code>, VM <code>win-pg-s01</code> at <code>10.101.23.101</code>. Change them to
 your class ID, your VM and its address before you run them.</p>
+<p>⚠️ <strong>Known issue on the current lab build:</strong> the migrated VM can't reach the network yet (see Demo 1, step 1.4), so
+the <code>ovedr_mark</code> and read-back commands in this demo time out. Everything on the OpenShift side works and was proven
+on 0024-015 on 2026-10-16. Skip those commands, or check your rows from inside the VM, as in Demo 1.</p>
 <p>⚠️ <strong>Data and WAL go together.</strong> PostgreSQL keeps its data on <code>D:</code> and its write-ahead log on <code>L:</code>. If you restore
 only <code>D:</code> and keep today's <code>L:</code>, PostgreSQL replays the newer WAL on start, including the <code>DROP DATABASE</code>, and you
 lose the database again. Restore <strong>both</strong> disks from the <strong>same</strong> snapshot. A VM snapshot with the guest agent
@@ -1081,18 +1084,19 @@ oc<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </
 <span class="nv">VM</span><span class="o">=</span>win-pg-s01
 <span class="nv">SNAP</span><span class="o">=</span><span class="nv">$VM</span>-snap
 </code></pre></div>
-<p>The snapshot holds one <strong>VolumeSnapshot</strong> per disk. List them, and note the <strong>10Gi</strong> (<code>D:</code>, data) and <strong>5Gi</strong> (<code>L:</code>,
-WAL) rows:</p>
+<p>The snapshot holds one <strong>VolumeSnapshot</strong> per disk. List them. Sizes print in <strong>bytes</strong>: note the <strong>1 GiB</strong> row
+(<code>1073741824</code>, <code>D:</code>, data) and the <strong>256 MiB</strong> row (<code>268435456</code>, <code>L:</code>, WAL). The 32 GiB row is <code>C:</code>. A disk can show a
+little more than its round size; go by the order, largest to smallest: <code>C:</code>, <code>D:</code>, <code>L:</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">CONTENT</span><span class="o">=</span><span class="k">$(</span>oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>vmsnapshot<span class="w"> </span><span class="nv">$SNAP</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.virtualMachineSnapshotContentName}'</span><span class="k">)</span>
 oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>vmsnapshotcontent<span class="w"> </span><span class="s2">"</span><span class="nv">$CONTENT</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .spec.volumeBackups[*]}{.persistentVolumeClaim.metadata.name}{"  "}{.persistentVolumeClaim.spec.resources.requests.storage}{"  "}{.volumeSnapshotName}{"\n"}{end}'</span>
 </code></pre></div>
 <p>Copy four names from that list:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># the 10Gi row: your data disk (D:) and its VolumeSnapshot</span>
-<span class="nv">DATA_PVC</span><span class="o">=</span><span class="s1">'&lt;10Gi pvc&gt;'</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># the 1 GiB row (1073741824): your data disk (D:) and its VolumeSnapshot</span>
+<span class="nv">DATA_PVC</span><span class="o">=</span><span class="s1">'&lt;1 GiB pvc&gt;'</span>
 <span class="nv">DATA_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
-<span class="c1"># the 5Gi row: your WAL disk (L:) and its VolumeSnapshot, from the SAME snapshot so data and WAL match</span>
-<span class="nv">WAL_PVC</span><span class="o">=</span><span class="s1">'&lt;5Gi pvc&gt;'</span>
+<span class="c1"># the 256 MiB row (268435456): your WAL disk (L:) and its VolumeSnapshot, from the SAME snapshot so data and WAL match</span>
+<span class="nv">WAL_PVC</span><span class="o">=</span><span class="s1">'&lt;256 MiB pvc&gt;'</span>
 <span class="nv">WAL_SNAP</span><span class="o">=</span><span class="s1">'&lt;its volumesnapshot&gt;'</span>
 </code></pre></div>
 <p>Create a volume <strong>from</strong> each VolumeSnapshot, with the same class, mode and size as the original:</p>
@@ -1113,7 +1117,8 @@ oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</
 virtctl<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>addvolume<span class="w"> </span><span class="nv">$VM</span><span class="w"> </span>--volume-name<span class="o">=</span><span class="nv">$VM</span>-restored-wal<span class="w">  </span>--serial<span class="o">=</span>wal<span class="w">  </span>--persist
 oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span><span class="nv">$VM</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.volumeStatus[*]}{.name}{"  "}{.phase}{"\n"}{end}'</span>
 </code></pre></div>
-<p>✅ Both restored volumes show <code>Ready</code> <strong>[verify: hot-plug on this cluster, and the <code>vioscsi</code> driver in the guest]</strong>.</p>
+<p>✅ Both restored volumes show <code>Ready</code>. (Proven on this cluster on 0024-015: snapshot, a volume from it, hot-plug into the
+running VM, and the restored disk held the snapshot-time data.) <strong>[verify: the <code>vioscsi</code> driver in the Windows guest]</strong></p>
 <hr />
 <h2 id="1a5-bring-the-restored-disks-online-as-d-and-l-start-postgresql">1a.5 Bring the restored disks online as <code>D:</code> and <code>L:</code>, start PostgreSQL<a class="headerlink" href="#1a5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="nb">Update-HostStorageCache</span>

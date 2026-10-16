@@ -453,9 +453,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs-verify" class="md-nav__link">
+  <a href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.3 Storage migration: move the data disk from ODF to NFS, while it runs [verify]
+      1b.3 Storage migration: move the data disk from ODF to NFS, while it runs
     </span>
   </a>
   
@@ -905,9 +905,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs-verify" class="md-nav__link">
+  <a href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.3 Storage migration: move the data disk from ODF to NFS, while it runs [verify]
+      1b.3 Storage migration: move the data disk from ODF to NFS, while it runs
     </span>
   </a>
   
@@ -948,7 +948,7 @@
 
 <h1 id="demo-1b-live-migration-and-storage-migration-bonus">Demo 1b: live migration and storage migration (bonus)<a class="headerlink" href="#demo-1b-live-migration-and-storage-migration-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.1 · draft · 2026-10-15</strong> · class/demos/01b-live-and-storage-migration.md</p>
+<p><strong>Version 1.1.2 · draft · 2026-10-16</strong> · class/demos/01b-live-and-storage-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Two moves on a <strong>running</strong> VM, with no reboot: a <strong>live migration</strong> moves its memory and CPU to another node, and
@@ -967,6 +967,11 @@ your class ID, your VM and its address before you run them.</p>
 </video>
 <p><sub>🎬 <em>Demo 1b: live migration and storage migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
+<blockquote>
+<p>⚠️ <strong>Known issue on the current lab build:</strong> the migrated VM can't reach the network yet (see Demo 1, step 1.4), so
+the <code>ovedr_mark</code> and read-back commands in this demo time out. Everything on the OpenShift side works and was proven
+on 0024-015 on 2026-10-16. Skip those commands, or check your rows from inside the VM, as in Demo 1.</p>
+</blockquote>
 <h2 id="1b1-inject-and-check-the-vm-can-live-migrate">1b.1 Inject, and check the VM can live-migrate<a class="headerlink" href="#1b1-inject-and-check-the-vm-can-live-migrate" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-live-migration', 'running on one node');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
@@ -988,22 +993,26 @@ restart.</p>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
-<h2 id="1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs-verify">1b.3 Storage migration: move the data disk from ODF to NFS, while it runs [verify]<a class="headerlink" href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs-verify" title="Permanent link">&para;</a></h2>
+<h2 id="1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs">1b.3 Storage migration: move the data disk from ODF to NFS, while it runs<a class="headerlink" href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs" title="Permanent link">&para;</a></h2>
 <p>Your VM's disks are on ODF (<code>ocs-storagecluster-ceph-rbd-virtualization</code>). Move the 1 GB <strong>data</strong> disk (<code>D:</code>) to
 <code>nfs-csi</code>, with the VM running. OpenShift Virtualization copies the disk in the background, then switches the VM to
 the new copy with a live migration.</p>
-<p><strong>[verify: storage live migration on OpenShift Virtualization 4.19 (<code>spec.updateVolumesStrategy: Migration</code>,
-<code>vmRolloutStrategy: LiveUpdate</code> is set on this cluster); ODF block → NFS filesystem; whether the console's
-</strong>Actions → Migrate → Storage<strong> offers the same]</strong></p>
-<p>Find the data disk's volume (the 10Gi one):</p>
+<p>Proven on this cluster (0024-015, 2026-10-16): a 1 GiB disk moved from ODF (block) to <code>nfs-csi</code> (filesystem) in
+46 seconds, the VM never restarted, and its data was intact. <strong>[verify: whether the console's </strong>Actions → Migrate →
+Storage<strong> offers the same]</strong></p>
+<p>First check the VM allows it:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'StorageLiveMigratable={.status.conditions[?(@.type=="StorageLiveMigratable")].status}{"\n"}'</span>
+</code></pre></div>
+<p>✅ <code>StorageLiveMigratable=True</code>.</p>
+<p>Find the data disk's volume (the 1 GiB one):</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.spec.template.spec.volumes[] | "\(.name)  \(.persistentVolumeClaim.claimName // .dataVolume.name)"'</span>
 oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,SIZE:.spec.resources.requests.storage,CLASS:.spec.storageClassName
 </code></pre></div>
 <p>Set the one value this step needs, from the list above:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># the data disk's current volume (the 10Gi one on ODF): the disk you are moving</span>
-<span class="nv">OLD</span><span class="o">=</span><span class="s1">'&lt;the 10Gi pvc from the list above&gt;'</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># the data disk's current volume (the 1 GiB one on ODF): the disk you are moving</span>
+<span class="nv">OLD</span><span class="o">=</span><span class="s1">'&lt;the 1 GiB pvc from the list above&gt;'</span>
 </code></pre></div>
-<p>Create an empty 10Gi target volume on <code>nfs-csi</code>:</p>
+<p>Create an empty 1Gi target volume on <code>nfs-csi</code>, the same size as the disk you move:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 <span class="s">apiVersion: cdi.kubevirt.io/v1beta1</span>
 <span class="s">kind: DataVolume</span>
@@ -1013,7 +1022,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span cla
 <span class="s">  storage:</span>
 <span class="s">    storageClassName: nfs-csi</span>
 <span class="s">    accessModes: [ ReadWriteMany ]</span>
-<span class="s">    resources: { requests: { storage: 10Gi } }</span>
+<span class="s">    resources: { requests: { storage: 1Gi } }</span>
 <span class="s">EOF</span>
 oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>dv<span class="w"> </span>win-pg-s01-data-nfs<span class="w"> </span>-w<span class="w">                </span><span class="c1"># Succeeded (Ctrl-C)</span>
 </code></pre></div>
@@ -1022,7 +1031,9 @@ oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span cla
 <span class="s1">  .spec.updateVolumesStrategy = "Migration"</span>
 <span class="s1">  | .spec.template.spec.volumes |= map(</span>
 <span class="s1">      if ((.persistentVolumeClaim.claimName // .dataVolume.name) == $old)</span>
-<span class="s1">      then {name: .name, dataVolume: {name: "win-pg-s01-data-nfs"}} else . end)'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>replace<span class="w"> </span>-f<span class="w"> </span>-
+<span class="s1">      then {name: .name, dataVolume: {name: "win-pg-s01-data-nfs"}} else . end)</span>
+<span class="s1">  | if .spec.dataVolumeTemplates then .spec.dataVolumeTemplates |= map(select(.metadata.name != $old)) else . end'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>replace<span class="w"> </span>-f<span class="w"> </span>-
 oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                                 </span><span class="c1"># a migration runs and Succeeds (Ctrl-C)</span>
 oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.volumeStatus[*]}{.name}  {.persistentVolumeClaimInfo.claimName}{"\n"}{end}'</span>
 </code></pre></div>
