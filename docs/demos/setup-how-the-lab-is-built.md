@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.7.1
+version: 0.7.2
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.7.1 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.2 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -193,10 +193,12 @@ done
 ```
 
 **What this booking's build has today:**
-- **Site A**: OpenShift Data Foundation (ODF), Ceph on the four scratch SSDs. VMs use the storage class
+- **Site A**: OpenShift Data Foundation (ODF), Ceph on one scratch SSD per host. VMs use the storage class
   `ocs-storagecluster-ceph-rbd-virtualization` (block, RWX, so live migration works). Built by demo-openshift
   (`storage: odf`); core-web reserves the SSDs for the booking.
-- **Site B**: `nfs-csi` on the lab NFS server (demo-openshift's default).
+- **Site B**: **the same** on the lab standard (`storage: odf`, ODF on the second SSD per host). A booking with
+  `odf-site-a` gives site B only `nfs-csi` on the lab NFS server, and has no Demo 4.
+- **Both sites** also have `nfs-csi` (the cluster's default class; VMs default to the ODF virtualization class).
 - **Snapshot classes** come with the storage, from demo-openshift: `nfs-csi-snapclass` (driver `nfs.csi.k8s.io`) and
   ODF's own. Demo 1's snapshot bonus needs one. CI's `demo-prep` only reports a VM storage driver without one.
 
@@ -809,7 +811,9 @@ clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async repli
 | Ingress certificates | Let's Encrypt | Let's Encrypt: publicly trusted, so the DR guide's SSL (`user-ca-bundle`) step is **not needed** |
 
 A booking with `storage: odf` turns DR on: CI's `dr-fabric` and `dr-policy` jobs build layers 2 and 3 **alongside** the class
-staging, and the healthcheck waits for a Validated DRPolicy. `odf-site-a` or `na` leaves DR off.
+staging. The healthcheck runs whatever they did and checks the DRPolicy only once `dr-policy` succeeded, so a DR
+failure never hides the class's own health; `build-verified` (the booking's READY) needs both DR jobs green.
+`odf-site-a` or `na` leaves DR off.
 
 Set these once in your terminal; every command below reads them:
 

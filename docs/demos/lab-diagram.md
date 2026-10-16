@@ -1,12 +1,12 @@
 ---
 title: "Lab diagram — demo-0024 (VMware → OpenShift Virtualization, OVE ⇄ OVE, ODF DR)"
-version: 0.4.0
+version: 0.5.0
 date: 2026-10-13
 ---
 
 # Lab diagram
 
-> **Version 0.4.0 · draft · 2026-10-13** · class/demos/lab-diagram.md
+> **Version 0.5.0 · draft · 2026-10-16** · class/demos/lab-diagram.md
 
 One booking reserves **three environments** together: a vSphere landing zone (`lzN`) and two OpenShift clusters
 (`ocp-lzX` = **site A**, `ocp-lzY` = **site B**). They all run as VMs on the same four physical hosts
@@ -34,7 +34,7 @@ flowchart TB
     direction LR
     A1["OpenShift Virtualization · ACM · cert-manager<br/>bridge → NAD vmnet(22+N)"]
     A2["MTV + console menu<br/>providers ovedr-vcenter0N · ovedr-ocp-lzY<br/>staged plans d1-&lt;vm&gt; cold · d2-&lt;vm&gt; warm (not started)"]
-    A3[("ODF (4 scratch SSDs)<br/>ceph-rbd-virtualization")]
+    A3[("ODF (1 scratch SSD per host)<br/>ceph-rbd-virtualization · nfs-csi")]
     A4["one namespace per student (admin)<br/>with their browser terminal sql-client<br/>+ ovedr-app"]
     A1 --- A2 --- A3 --- A4
   end
@@ -43,7 +43,7 @@ flowchart TB
     direction LR
     B1["OpenShift Virtualization · ACM · cert-manager<br/>the same bridges / NADs"]
     B2["MTV + console menu<br/>providers ovedr-vcenter0N · ovedr-ocp-lzX<br/>no staged plans: Demo 1c builds its own"]
-    B3[("NFS · nfs-csi<br/>(ODF when more SSDs land)")]
+    B3[("ODF (the second SSD per host)<br/>ceph-rbd-virtualization · nfs-csi")]
     B4["one namespace per student (admin)<br/>with their browser terminal sql-client<br/>+ ovedr-app"]
     B1 --- B2 --- B3 --- B4
   end
@@ -59,8 +59,8 @@ flowchart TB
 
 </details>
 
-**Shared underneath all three:** the four physical hosts `demosvr01`-`04` (one scratch SSD each, which is why only one
-site can run ODF today), lab DNS (`dns01`/`dns02`), the NFS export `coresan01_data00` (shared by every vSphere zone,
+**Shared underneath all three:** the four physical hosts `demosvr01`-`04` (two scratch SSDs each since 2026-10-15: one
+per site's ODF), lab DNS (`dns01`/`dns02`), the NFS export `coresan01_data00` (shared by every vSphere zone,
 so every class VM's folder carries its zone: `ovedr-lzN-<vm>`), and core-sso, which provisions the same roster and
 password to vCenter, both clusters and the Windows VMs.
 
@@ -68,11 +68,12 @@ password to vCenter, both clusters and the Windows VMs.
 
 | | vSphere `lzN` | Site A `ocp-lzX` | Site B `ocp-lzY` |
 |---|---|---|---|
-| Built by | demo-vmware (core-web dispatches) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) | demo-openshift (`ove: cnv`, `storage: na`, ACM, cert-manager) |
+| Built by | demo-vmware (core-web dispatches) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) |
 | Customized by this demo | the instructor's `win-pg-i01` (`vms/ovedr`, `.62`) and **one full clone per student** `win-pg-sNN` in **that student's own folder** `vms/students/<class ID>` (`.100+NN`), each with PostgreSQL (WAL on `L:`, data on `D:`), the toolkit, Windows logins and WinRM; each student may power, open the console, Edit Settings (CBT) and snapshot **their own** VM | MTV with its console menu, providers + maps, **staged plans `d1-<vm>` (cold) and `d2-<vm>` (warm) per class VM (not started)** landing each student's VM in **that student's own namespace** (their class ID, where they are admin), `ovedr-app` with `sql-client` and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class) | the same as A without staged plans (Demo 1c builds its own from site A), plus the ACM hub role and DR (Demo 4) |
-| Storage | NFS datastore `coresan01_data00` | **ODF** on the 4 scratch SSDs (`ocs-storagecluster-ceph-rbd-virtualization`) | **NFS** (`nfs-csi`); ODF once more SSDs are installed |
+| Storage | NFS datastore `coresan01_data00` | **ODF** on one scratch SSD per host (`ocs-storagecluster-ceph-rbd-virtualization`, the VM default), plus `nfs-csi` | **the same**: ODF on the second SSD per host, plus `nfs-csi` |
 | Network | port group `vm-network`, VLAN 22+N; every class VM its own static address | NMState bridge onto VLAN 22+N (`vmnet<VLAN>`), plus the pod network | the same VLAN bridges, plus the pod network |
 | Demos | 1, 2 (source) | 1, 2 (target) · 1c (source) · 4 (primary) | 1c (target) · 4 (DR site, hub) |
 
-The operators are the **same on both clusters**; the one deliberate difference today is storage (one ODF site,
-because the lab's four scratch SSDs fit one ODF cluster). The customize healthcheck reports any other difference.
+The operators are the **same on both clusters**, storage included: ODF on both sites is the lab standard
+(`storage: odf`), which is what lets Demo 4 mirror between them. A booking can still choose `odf-site-a` (ODF on site A
+only, site B on `nfs-csi`, no Demo 4) or `na`. The customize healthcheck reports any other difference.
