@@ -948,7 +948,7 @@
 
 <h1 id="demo-1b-live-migration-and-storage-migration-bonus">Demo 1b: live migration and storage migration (bonus)<a class="headerlink" href="#demo-1b-live-migration-and-storage-migration-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.2 · draft · 2026-10-16</strong> · class/demos/01b-live-and-storage-migration.md</p>
+<p><strong>Version 1.1.3 · draft · 2026-10-17</strong> · class/demos/01b-live-and-storage-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Two moves on a <strong>running</strong> VM, with no reboot: a <strong>live migration</strong> moves its memory and CPU to another node, and
@@ -967,11 +967,6 @@ your class ID, your VM and its address before you run them.</p>
 </video>
 <p><sub>🎬 <em>Demo 1b: live migration and storage migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
-<blockquote>
-<p>⚠️ <strong>Known issue on the current lab build:</strong> the migrated VM can't reach the network yet (see Demo 1, step 1.4), so
-the <code>ovedr_mark</code> and read-back commands in this demo time out. Everything on the OpenShift side works and was proven
-on 0024-015 on 2026-10-16. Skip those commands, or check your rows from inside the VM, as in Demo 1.</p>
-</blockquote>
 <h2 id="1b1-inject-and-check-the-vm-can-live-migrate">1b.1 Inject, and check the VM can live-migrate<a class="headerlink" href="#1b1-inject-and-check-the-vm-can-live-migrate" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-live-migration', 'running on one node');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>

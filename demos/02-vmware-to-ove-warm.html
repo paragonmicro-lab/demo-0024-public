@@ -1092,8 +1092,11 @@
 
 <h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration-storage-copy-offload">Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration-storage-copy-offload" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 3.1.0 · draft · 2026-10-15</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 3.1.1 · draft · 2026-10-17</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 <p>🚧 <strong>Coming soon. You can't run this demo in this lab yet.</strong></p>
+<p>⛔ <strong>Blocked: the VDDK path is closed for good.</strong> The lab can't obtain VDDK and won't again, so warm migration
+here waits on a <strong>SAN with CSI</strong> (below) and Red Hat's storage copy offload path. Until then this page is a
+placeholder to read.</p>
 <p>This demo is written for a lab that has a <strong>supported SAN array</strong> with its <strong>CSI driver</strong> and <strong>snapshot</strong>
 support on OpenShift. This lab doesn't have one yet: its vSphere datastore is NFS and its OpenShift storage is ODF
 and NFS. Read it to learn how a warm migration works when the array copies the disks; it runs once the SAN is in.</p>
