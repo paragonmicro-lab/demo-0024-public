@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.4.0
+version: 1.4.1
 date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.4.0 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.4.1 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -255,6 +255,9 @@ instructor before you delete or archive the plan.
 
 <details markdown="1">
 <summary>Site A can't finish your migration: fall back to site B (your instructor decides)</summary>
+
+Only in the **VMware Migration & BCDR** class (demo-0024). The **VMware Alternative** class (demo-0002) has one
+OpenShift cluster, so there is no site B to fall back to: your instructor restarts the plan on site A.
 
 Site B is staged exactly like site A: the same provider, maps and plan `d1-win-pg-s01`, into your namespace of the
 same name. If site A has a problem your instructor can't fix in class time, they tell you to run your migration on
