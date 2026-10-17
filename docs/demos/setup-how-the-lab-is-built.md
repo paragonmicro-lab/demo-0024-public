@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.7.8
+version: 0.7.9
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.7.8 · draft · 2026-10-17** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.9 · draft · 2026-10-17** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -22,7 +22,7 @@ ask you to do the **last step** yourself (start your migration). This guide is h
 
 | Built by | What | Where |
 |---|---|---|
-| **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts, the shared NFS datastore `coresan01_data00` (the class VMs live there; on **vSAN** when the booking sets `vmware_storage: vsan`; with `vmware_storage: local`, each VM on **its own ESXi host's** SSD datastore `esxi-lz<N>-NN-vmfs00`: student01 on `esxi-lz<N>-01`, student02 on `esxi-lz<N>-02`, …, the instructor's on the last host), port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
+| **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts, the shared NFS datastore `coresan01_data00` (the ISO library; the class VMs live there only on a `vmware_storage: na` booking, on **vSAN** with `vsan`); by default (`vmware_storage: local`, both classes, 2026-10-17) each class VM sits on **its own ESXi host's** SSD datastore `esxi-lz<N>-NN-vmfs00`: student01 on `esxi-lz<N>-01`, student02 on `esxi-lz<N>-02`, …, the instructor's on the last host), port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
 | **demo-openshift** (core-web dispatches it, twice) | OpenShift 4.19, OpenShift Virtualization (`ove: cnv`), ACM and cert-manager, NMState bridges + NADs per VLAN, `nfs-csi` storage; **ODF on site A only** | site A `<A>` and site B `<B>` |
 | **this demo's CI** (`customize`, sections S.5–S.12) | MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans | all three |
 | **you** | start your own migration plan (Demo 1 / 1b), then everything in the demo guides | |
