@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.13
+version: 1.3.0
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.13 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.3.0 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -146,16 +146,28 @@ oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
   | jq -r '.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'
 ```
 
-⏱️ **Plan on about 1 h 15 min** (about 1 h 45 if your class runs on the shared NFS datastore). This lab copies the
-disks through vCenter (no VDDK). Measured on 2026-10-17 with each VM on its own ESXi host's local SSD
-(`vmware_storage: local`): `win-pg-s02` **1 h 06 min** (ImageConversion 43 min, DiskTransferV2v 22 min) and
-`win-pg-i01` **1 h 16 min** (50 + 25 min), and two VMs copying at once each ran as fast as one alone. On NFS
-(2026-10-16) the same steps took 67 + 35 min. ImageConversion is `virt-v2v` reading the guest from vCenter and
-installing the drivers (no MB counter moves here); DiskTransferV2v copies the 34 GB; VirtualMachineCreation takes a
-second. A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an `HTTP 500` in the
-conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows **Failed** with *Guest
-conversion failed*. Start the plan again; MTV removes the half-copied disks first. Use the wait for the reading at
-the end of this step, or start a bonus lab's reading.
+⏱️ **Plan on about 1 h 15 min.** Without VDDK, `virt-v2v` reads your VM's disks through vCenter, and that read is
+the slow part. How long it takes depends on where the lab keeps the VMs on vSphere, the booking's `vmware_storage`:
+
+| vSphere storage · read path | ImageConversion | DiskTransferV2v | whole migration | measured |
+|---|---|---|---|---|
+| shared NFS (`na`) · through vCenter | 67 min | 35 min | **1 h 43** | `win-pg-s01`, 2026-10-16 |
+| each VM on its own ESXi host's SSD (`local`) · through vCenter | 43–50 min | 22–25 min | **1 h 06 – 1 h 16** | `win-pg-s02`, `win-pg-i01`, 2026-10-17 |
+| same SSDs · straight from the ESXi host | — | — | not offered | needs VDDK (below) |
+
+- **ImageConversion** is `virt-v2v` reading the guest from vCenter, inspecting Windows and installing the virtio drivers.
+  No MB counter moves here. **DiskTransferV2v** copies the 34 GB. **VirtualMachineCreation** takes a second.
+- **The whole class at once is no slower per VM.** On local SSD, two VMs copying side by side each took as long as one
+  alone: the limit is each read's round trip through vCenter, not the disks.
+- **Why not straight from ESXi?** A raw read from the ESXi host is about 3× faster than through vCenter (49 vs
+  16 MB/s, measured). But without VDDK, ESXi's file download doesn't allow the partial reads `virt-v2v` needs (Red Hat
+  MTV-1322), and VDDK is no longer publicly downloadable (Demo 2 explains). With VDDK, MTV reads from ESXi directly.
+- A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an `HTTP 500` in the
+  conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows **Failed** with *Guest
+  conversion failed*. Start the plan again; MTV removes the half-copied disks first.
+
+Use the wait for the reading at the end of this step, or start a bonus lab's reading. Can't wait? See *Take the class
+spare* below.
 
 ✅ The plan shows **Succeeded**.
 
@@ -267,6 +279,73 @@ those ([Demo 4: two identical sites](04-odf-regional-dr.md#two-identical-sites-a
 
 </details>
 
+<details markdown="1">
+<summary>Can't wait for your copy? Take the class spare (your instructor runs this)</summary>
+
+The lab migrated one extra VM before class: the spare **`win-pg-s00`**, cloned from the same golden image as your
+VM. It waits on site A **powered off and never booted**, so a copy of it still does everything 1.4 shows on its first
+start: the reboots while VMware Tools comes out and the virtio drivers and guest agent go in. Everyone can see it:
+
+- **vCenter:** **VMs and Templates → datacenter01 → vms → students → `win-pg-s00`** (powered off: its migration shut it
+  down).
+- **Site A console:** **Virtualization → VirtualMachines**, project **`student-00-0024-012`** → **`win-pg-s00`**
+  (*Stopped*). Its migration is plan **`d1-win-pg-s00`**.
+
+**What changes for you:** the copy's database is the spare's. Your Lab 0 and 1.2 rows stay on your vSphere VM, so
+before 1.5 you write a fresh `start-cold-migration` row on the copy (step 4).
+
+**Your instructor**, in the **site A** Web Terminal (set the first line for you):
+
+```bash
+ME=student-01-0024-012; VM=win-pg-s01; SP=student-00-0024-012; MTV=openshift-mtv
+# 1 · stop your own migration: it must never finish beside the copy (same VLAN, same address)
+M=$(oc -n $MTV get migration -o json | jq -r --arg p d1-$VM '[.items[] | select(.spec.plan.name == $p) | .metadata.name] | last // empty')
+ID=$(oc -n $MTV get plan d1-$VM -o jsonpath='{.status.migration.vms[0].id}')
+[ -z "$M" ] || oc -n $MTV patch migration $M --type merge -p "{\"spec\":{\"cancel\":[{\"id\":\"$ID\"}]}}"
+# 2 · copy the spare into your project as your VM, stopped: a CSI clone of each disk (seconds), a new MAC
+oc -n $SP get vm win-pg-s00 -o json | jq --arg ns $ME --arg vm $VM --arg sp $SP '
+  def dv($k): "\($vm)-disk\($k)";
+  {apiVersion, kind, metadata: {name: $vm, namespace: $ns, labels: {"ovedr/from-spare": "win-pg-s00"}},
+   spec: (.spec | .runStrategy = "Halted" | .template.metadata.labels = {app: $vm}
+     | .template.spec.domain.devices.interfaces |= map(del(.macAddress))
+     | del(.template.spec.domain.firmware.serial, .template.spec.domain.firmware.uuid)
+     | .template.spec.volumes as $v
+     | .dataVolumeTemplates = [$v | to_entries[] | select(.value.persistentVolumeClaim)
+         | {metadata: {name: dv(.key)}, spec: {source: {pvc: {namespace: $sp, name: .value.persistentVolumeClaim.claimName}}, storage: {}}}]
+     | .template.spec.volumes = [$v | to_entries[] | if .value.persistentVolumeClaim
+         then {name: .value.name, dataVolume: {name: dv(.key)}} else .value end])}' | oc apply -f -
+oc -n $ME get dv -w                                   # three disks, Succeeded (Ctrl-C to stop watching)
+```
+
+3. **You:** carry on at **1.4** with the copy (`win-pg-s01` in your project): review it, **Start** it and watch the
+   first boot in **Console**.
+4. **Your instructor**, once the login screen stays up: in the VM's **Console**, sign in as the instructor and give
+   the copy **your** address. With its new MAC, the copy doesn't get the spare's static `10.101.23.100` back: it takes
+   a DHCP address on the VLAN (`10.101.23.160` in the lab's test, 2026-10-17). PowerShell as administrator:
+
+   ```powershell
+   $ip = '10.101.23.101'                                          # yours: .100 + your student number
+   $n  = Get-NetAdapter | Where-Object Status -eq Up | Select-Object -First 1
+   Set-NetIPInterface -InterfaceIndex $n.ifIndex -AddressFamily IPv4 -Dhcp Disabled
+   Get-NetIPAddress -InterfaceIndex $n.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue | Remove-NetIPAddress -Confirm:$false
+   Remove-NetRoute -InterfaceIndex $n.ifIndex -DestinationPrefix 0.0.0.0/0 -Confirm:$false -ErrorAction SilentlyContinue
+   New-NetIPAddress -InterfaceIndex $n.ifIndex -IPAddress $ip -PrefixLength 24 -DefaultGateway 10.101.23.1 | Out-Null
+   Set-DnsClientServerAddress -InterfaceIndex $n.ifIndex -ServerAddresses 10.101.6.201, 10.101.6.202
+   ```
+
+   **You**, then: write the row your vSphere VM holds, on the copy, and go on with 1.5 as written:
+
+   ```bash
+   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cold-migration', 'on the class spare (copied, not migrated)');"
+   ```
+
+✅ The copy answers on your address, and 1.5's read-back lists the rows written on the copy.
+
+Several students can each take a copy at the same time: each copy gets its own MAC and DHCP address until it is given
+its student's.
+
+</details>
+
 ---
 
 ## 1.4 Review your VM on OpenShift, then power it on
@@ -289,7 +368,7 @@ oc -n student-01-0024-012 get pvc -o custom-columns=NAME:.metadata.name,SIZE:.sp
 oc -n student-01-0024-012 get vmi win-pg-s01 -w                      # Scheduling → Running (Ctrl-C to stop watching)
 ```
 
-> 🔄 **Windows reboots by itself two or three times on its first start: that is normal.** On the first boot, the
+> 🔄 **Windows reboots by itself three or four times on its first start: that is normal.** On the first boot, the
 > scripts `virt-v2v` left behind remove VMware Tools, finish the virtio driver install and start the QEMU guest
 > agent; each step can restart the guest. Watch it in **Console**; allow about 5–10 minutes, and don't stop or
 > restart the VM yourself. It's done when the login screen stays up and the *Guest agent* shows as connected.

@@ -1,13 +1,13 @@
 ---
 title: "Lab S — How this lab was built: every operator and customization, by command line and by console"
 subtitle: "What CI staged for you · how to check it · how you would build it yourself (CLI and console) · where Red Hat documents it"
-version: 0.7.6
+version: 0.7.7
 date: 2026-10-15
 ---
 
 # Lab S: How this lab was built
 
-> **Version 0.7.6 · draft · 2026-10-16** · class/demos/setup-how-the-lab-is-built.md
+> **Version 0.7.7 · draft · 2026-10-17** · class/demos/setup-how-the-lab-is-built.md
 
 ## What you will learn
 
@@ -711,6 +711,7 @@ govc object.mv "$F/my-win-pg-s01" '/datacenter01/vm/vms/students/<student ID>'
 |---|---|---|
 | site A and site B | **`d1-<vm>`** | vSphere → that site, cold (Demo 1) |
 | site A and site B | **`d2-<vm>`** | vSphere → that site, **warm** (Demo 2): lands as `<vm>-warm`. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking) |
+| site A and site B | **`d1-win-pg-s00`** | the **class spare**, cold, into `student-00-<class>`, landing **powered off** (`targetPowerState: off`). After the build is verified, the deploy job `spare` (`spare_migrate.sh`) starts it on site A and doesn't wait. Instructors copy it for a student who can't wait (Demo 1 §1.3). Every student can view it: vCenter ReadOnly on that VM, `view` on its namespace |
 
 Each plan targets **its VM's owner's namespace**: a student's VM lands in that student's own namespace (their class ID,
 `$VMNS`), the instructor's `win-pg-i01` in `ovedr-app`. It uses the **bridge** network map when it exists (your VM keeps its own address), plus the
