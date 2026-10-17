@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.3.0
-date: 2026-10-15
+version: 1.4.0
+date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.3.0 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.4.0 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -146,28 +146,27 @@ oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
   | jq -r '.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'
 ```
 
-⏱️ **Plan on about 1 h 15 min.** Without VDDK, `virt-v2v` reads your VM's disks through vCenter, and that read is
-the slow part. How long it takes depends on where the lab keeps the VMs on vSphere, the booking's `vmware_storage`:
+⏱️ **The copy takes about 1 h 30.** Without VDDK, `virt-v2v` reads your VM's disks through vCenter, and that read
+is the slow part (measured 1 h 06 – 1 h 16 on the lab's SSDs; allow 1 h 30). **ImageConversion** takes most of it,
+with no MB counter moving: `virt-v2v` reads the guest, inspects Windows and installs the virtio drivers.
+**DiskTransferV2v** then copies the disks. The whole class migrating at once is no slower per VM.
 
-| vSphere storage · read path | ImageConversion | DiskTransferV2v | whole migration | measured |
-|---|---|---|---|---|
-| shared NFS (`na`) · through vCenter | 67 min | 35 min | **1 h 43** | `win-pg-s01`, 2026-10-16 |
-| each VM on its own ESXi host's SSD (`local`) · through vCenter | 43–50 min | 22–25 min | **1 h 06 – 1 h 16** | `win-pg-s02`, `win-pg-i01`, 2026-10-17 |
-| same SSDs · straight from the ESXi host | — | — | not offered | needs VDDK (below) |
+A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an `HTTP 500` in the
+conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows **Failed** with *Guest
+conversion failed*. Start the plan again; MTV removes the half-copied disks first.
 
-- **ImageConversion** is `virt-v2v` reading the guest from vCenter, inspecting Windows and installing the virtio drivers.
-  No MB counter moves here. **DiskTransferV2v** copies the 34 GB. **VirtualMachineCreation** takes a second.
-- **The whole class at once is no slower per VM.** On local SSD, two VMs copying side by side each took as long as one
-  alone: the limit is each read's round trip through vCenter, not the disks.
-- **Why not straight from ESXi?** A raw read from the ESXi host is about 3× faster than through vCenter (49 vs
-  16 MB/s, measured). But without VDDK, ESXi's file download doesn't allow the partial reads `virt-v2v` needs (Red Hat
-  MTV-1322), and VDDK is no longer publicly downloadable (Demo 2 explains). With VDDK, MTV reads from ESXi directly.
-- A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an `HTTP 500` in the
-  conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows **Failed** with *Guest
-  conversion failed*. Start the plan again; MTV removes the half-copied disks first.
-
-Use the wait for the reading at the end of this step, or start a bonus lab's reading. Can't wait? See *Take the class
-spare* below.
+> ▶️ **Don't wait for it: carry on with the cloud-native server.** Leave the copy running and do these, in order,
+> on a **new** Linux database server you build from code:
+>
+> 1. [Demo 1d: a cloud-native golden image](01d-vm-cloudnative-golden-image.md): build `pg-s01-centos10` (30 min)
+> 2. [Demo 1a: snapshot and restore](01a-snapshot-restore.md), on that server (20 min)
+> 3. [Demo 5: OADP backup and restore](05-oadp-vm-backup.md), on that server, if your lab has OADP (30 min)
+>
+> Then **delete the cloud-native server** and come back here to **1.4**. By then your copy has finished.
+>
+> ⚠️ **When the plan says Succeeded, your Windows VM waits on site A *Stopped*. Don't start it until you're back at
+> 1.4.** Its first start is the part worth watching: the reboots while VMware Tools comes out and the QEMU guest
+> agent goes in.
 
 ✅ The plan shows **Succeeded**.
 
@@ -279,76 +278,17 @@ those ([Demo 4: two identical sites](04-odf-regional-dr.md#two-identical-sites-a
 
 </details>
 
-<details markdown="1">
-<summary>Can't wait for your copy? Take the class spare (your instructor runs this)</summary>
-
-The lab migrated one extra VM before class: the spare **`win-pg-s00`**, cloned from the same golden image as your
-VM. It waits on site A **powered off and never booted**, so a copy of it still does everything 1.4 shows on its first
-start: the reboots while VMware Tools comes out and the virtio drivers and guest agent go in. Everyone can see it:
-
-- **vCenter:** **VMs and Templates → datacenter01 → vms → students → `win-pg-s00`** (powered off: its migration shut it
-  down).
-- **Site A console:** **Virtualization → VirtualMachines**, project **`student-00-0024-012`** → **`win-pg-s00`**
-  (*Stopped*). Its migration is plan **`d1-win-pg-s00`**.
-
-**What changes for you:** the copy's database is the spare's. Your Lab 0 and 1.2 rows stay on your vSphere VM, so
-before 1.5 you write a fresh `start-cold-migration` row on the copy (step 4).
-
-**Your instructor**, in the **site A** Web Terminal (set the first line for you):
-
-```bash
-ME=student-01-0024-012; VM=win-pg-s01; SP=student-00-0024-012; MTV=openshift-mtv
-# 1 · stop your own migration: it must never finish beside the copy (same VLAN, same address)
-M=$(oc -n $MTV get migration -o json | jq -r --arg p d1-$VM '[.items[] | select(.spec.plan.name == $p) | .metadata.name] | last // empty')
-ID=$(oc -n $MTV get plan d1-$VM -o jsonpath='{.status.migration.vms[0].id}')
-[ -z "$M" ] || oc -n $MTV patch migration $M --type merge -p "{\"spec\":{\"cancel\":[{\"id\":\"$ID\"}]}}"
-# 2 · copy the spare into your project as your VM, stopped: a CSI clone of each disk (seconds), a new MAC
-oc -n $SP get vm win-pg-s00 -o json | jq --arg ns $ME --arg vm $VM --arg sp $SP '
-  def dv($k): "\($vm)-disk\($k)";
-  {apiVersion, kind, metadata: {name: $vm, namespace: $ns, labels: {"ovedr/from-spare": "win-pg-s00"}},
-   spec: (.spec | .runStrategy = "Halted" | .template.metadata.labels = {app: $vm}
-     | .template.spec.domain.devices.interfaces |= map(del(.macAddress))
-     | del(.template.spec.domain.firmware.serial, .template.spec.domain.firmware.uuid)
-     | .template.spec.volumes as $v
-     | .dataVolumeTemplates = [$v | to_entries[] | select(.value.persistentVolumeClaim)
-         | {metadata: {name: dv(.key)}, spec: {source: {pvc: {namespace: $sp, name: .value.persistentVolumeClaim.claimName}}, storage: {}}}]
-     | .template.spec.volumes = [$v | to_entries[] | if .value.persistentVolumeClaim
-         then {name: .value.name, dataVolume: {name: dv(.key)}} else .value end])}' | oc apply -f -
-oc -n $ME get dv -w                                   # three disks, Succeeded (Ctrl-C to stop watching)
-```
-
-3. **You:** carry on at **1.4** with the copy (`win-pg-s01` in your project): review it, **Start** it and watch the
-   first boot in **Console**.
-4. **Your instructor**, once the login screen stays up: in the VM's **Console**, sign in as the instructor and give
-   the copy **your** address. With its new MAC, the copy doesn't get the spare's static `10.101.23.100` back: it takes
-   a DHCP address on the VLAN (`10.101.23.160` in the lab's test, 2026-10-17). PowerShell as administrator:
-
-   ```powershell
-   $ip = '10.101.23.101'                                          # yours: .100 + your student number
-   $n  = Get-NetAdapter | Where-Object Status -eq Up | Select-Object -First 1
-   Set-NetIPInterface -InterfaceIndex $n.ifIndex -AddressFamily IPv4 -Dhcp Disabled
-   Get-NetIPAddress -InterfaceIndex $n.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue | Remove-NetIPAddress -Confirm:$false
-   Remove-NetRoute -InterfaceIndex $n.ifIndex -DestinationPrefix 0.0.0.0/0 -Confirm:$false -ErrorAction SilentlyContinue
-   New-NetIPAddress -InterfaceIndex $n.ifIndex -IPAddress $ip -PrefixLength 24 -DefaultGateway 10.101.23.1 | Out-Null
-   Set-DnsClientServerAddress -InterfaceIndex $n.ifIndex -ServerAddresses 10.101.6.201, 10.101.6.202
-   ```
-
-   **You**, then: write the row your vSphere VM holds, on the copy, and go on with 1.5 as written:
-
-   ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cold-migration', 'on the class spare (copied, not migrated)');"
-   ```
-
-✅ The copy answers on your address, and 1.5's read-back lists the rows written on the copy.
-
-Several students can each take a copy at the same time: each copy gets its own MAC and DHCP address until it is given
-its student's.
-
-</details>
-
 ---
 
 ## 1.4 Review your VM on OpenShift, then power it on
+
+**Back from the cloud-native labs?** Delete your cloud-native server first, if you haven't (Demo 1d §1d.5), and
+check that your plan shows **Succeeded**:
+
+```bash
+oc -n student-01-0024-012 delete vm pg-s01-centos10 --ignore-not-found     # the CentOS server and its disks
+oc -n openshift-mtv get plan d1-win-pg-s01                                 # SUCCEEDED True
+```
 
 **Console (site A):** **Virtualization → VirtualMachines**, project **`student-01-0024-012`** → **`win-pg-s01`**.
 
@@ -400,17 +340,6 @@ check above in the VM's **Console**: `QEMU-GA` is **Running** and there is **no*
 
 ✅ Running, guest agent connected, address `10.101.23.101`.
 
-> ⚠️ **Known issue on the current lab build: the migrated VM can't reach the network yet.** It runs and reports its
-> address, but the OpenShift nodes' VM network isn't connected to the lab's VLAN 23, so nothing outside the VM
-> reaches `10.101.23.101`, and step 1.5's commands time out. The fix is in the lab's node build and comes with the
-> next lab rebuild. Until then, skip step 1.5's commands. You can still check that your rows survived the move,
-> from **inside** the VM: open its **Console**, sign in to Windows, and run this in PowerShell (your database user is
-> `student_NN`, as in `dblogin`; it asks for your class password):
->
-> ```powershell
-> & 'C:\Program Files\PostgreSQL\16\bin\psql.exe' -h 127.0.0.1 -U student_01 -d bcdr -c "SELECT id, ts, stage FROM marks ORDER BY id;"
-> ```
-
 ---
 
 ## 1.5 Inject: the migration is complete, and read your rows back
@@ -433,14 +362,15 @@ reordered by the move.
 
 ## Bonus labs (optional)
 
-1a to 1c start from your VM running on site A, where Demo 1 left it. 1d builds a new server next to it.
+You did 1d, 1a and 5 on the cloud-native server while the copy ran. **Do 1a and 5 again on your migrated Windows
+VM** to see the same protection on the server you moved; 1b and 1c start from it too.
 
 | Bonus | What you do |
 |---|---|
 | [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot your VM, destroy the database, bring it back from the snapshot's disks |
 | [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the **running** VM to another node, then move its disks to another storage class, with no reboot |
 | [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
-| [Demo 1d: a cloud-native golden image](01d-vm-cloudnative-golden-image.md) | build a new CentOS Stream 10 + PostgreSQL server purely in code, from Red Hat's boot source and a Template, and inject into it |
+| [Demo 5: OADP backup and restore](05-oadp-vm-backup.md) | back up your project, delete your VM, restore it, prove the rows (if your lab has OADP) |
 
 **Next:** [Demo 2: warm migration with storage copy offload](02-vmware-to-ove-warm.md) (🚧 coming soon: read only).
 

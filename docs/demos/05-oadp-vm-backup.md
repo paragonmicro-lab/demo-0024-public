@@ -1,14 +1,14 @@
 ---
 title: "Demo 5 (bonus) — Back up and restore your VM with OADP"
 subtitle: "OpenShift API for Data Protection: back up your namespace (VM, disks, Service), lose it, restore it, prove the data"
-version: 0.2.1
+version: 0.3.0
 status: framework
-date: 2026-10-12
+date: 2026-10-17
 ---
 
 # Demo 5 (bonus): Back up and restore your VM with OADP
 
-> **Version 0.2.1 · framework · 2026-10-12** · class/demos/05-oadp-vm-backup.md
+> **Version 0.3.0 · framework · 2026-10-17** · class/demos/05-oadp-vm-backup.md
 
 > 🚧 **Bonus, framework.** OADP is now built by the lab when a class books it (option `backup: oadp`, the default for this
 > class). The commands below are unproven **[verify]** until a booking has run them. Ask your instructor whether your
@@ -28,12 +28,21 @@ restored VM holds exactly the data it had at backup time.
 |---|---|---|
 | Both sites (demo-openshift, `backup: oadp`) | the **OADP operator** (1.5) in `openshift-adp`, a `DataProtectionApplication` with the `openshift`, `aws`, `kubevirt` and `csi` plugins, the node agent and the **Data Mover** (disk snapshots copied off the cluster), and **non-admin backups**: you back up and restore your **own namespace** yourself | [OADP](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index) [verify link] |
 | Both sites | a **backup location** on the lab's object store (MinIO, outside the clusters), one bucket per cluster and a folder per booking: backups outlive the cluster | [Backup locations](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index) [verify link] |
-| You | your VM running on site A (after [Demo 1](01-vmware-to-ove-cold.md)), in your namespace | — |
+| You | a VM running on site A in your namespace: first your **cloud-native** server (after [Demo 1a](01a-snapshot-restore.md) Part 1, while Demo 1's copy runs), then, optionally, your **migrated Windows** VM (after [Demo 1](01-vmware-to-ove-cold.md) §1.5) | — |
 
 **You do yourself:** inject data, request a backup of your namespace, delete your VM, restore it, and verify.
 
 > 🖥️ **Where you type the commands: your browser terminal** ([Toolkit T.1](toolkit.md)), signed in on site A, with
 > `dblogin` done. `powershell` blocks run inside your Windows VM, from its console.
+
+**Which VM.** The terminal's commands (`alive`, `mark`, `verify`) follow `$VM` and `$PGHOST`. **On your cloud-native
+server** (the first time through), point them at it, with your own number:
+
+```bash
+export VM=pg-s01-centos10 PGHOST=10.101.23.151
+```
+
+**On your Windows VM** (after Demo 1), open a new terminal tab, or `unset PGHOST; export VM=win-pg-s01`.
 
 <!-- 🎬 video slot 05-oadp-vm-backup: one walk-through of the whole demo in the console -->
 <video controls preload="metadata" playsinline width="100%" poster="../.images/05-oadp-vm-backup.jpg">
@@ -70,7 +79,7 @@ mark d5-in-backup                  # ✍️ note the id: this row MUST come back
 verify                             # chain_ok = t
 ```
 
-In the VM's console (PowerShell):
+On Windows, also write a line into a file in the VM, from its console (PowerShell):
 
 ```powershell
 Add-Content "C:\Users\Public\ovedr\$env:USERNAME.txt" "$(Get-Date -Format o)  d5-in-backup"
@@ -127,13 +136,21 @@ spec:
 EOF
 oc --context site-a -n "$VMNS" get nonadminrestores.oadp.openshift.io d5 -w           # Ctrl-C when the restore Completed
 oc --context site-a -n "$VMNS" get vm "$VM" -w                      # Running again
-until alive >/dev/null 2>&1; do sleep 10; done; alive              # Windows booted, PostgreSQL recovered
+until alive >/dev/null 2>&1; do sleep 10; done; alive              # the VM booted, PostgreSQL recovered
 verify                                                             # chain_ok = t
 sql -c "SELECT stage FROM marks WHERE student = '$ME' AND stage LIKE 'd5-%' ORDER BY id;"
 ```
 
 ✅ `d5-in-backup` is back and `chain_ok = t`. `d5-after-backup` is **gone**: it was written after the backup, which is
-exactly what a restore means. Your file in the VM ends at `d5-in-backup` too.
+exactly what a restore means. On Windows, your file in the VM ends at `d5-in-backup` too.
+
+**Done on the cloud-native server?** Delete it, then go back to Demo 1 and start your migrated Windows VM:
+
+```bash
+oc --context site-a -n "$VMNS" delete vm pg-s01-centos10          # the CentOS server and its disks
+```
+
+**Next:** [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on).
 
 ✍️ **Row 5.5:** the restore's duration, `chain_ok`, and which of your rows came back.
 

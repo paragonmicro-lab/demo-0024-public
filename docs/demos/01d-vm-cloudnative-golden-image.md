@@ -1,13 +1,13 @@
 ---
 title: "Demo 1d — A cloud-native golden image: a new Linux database server, built from code (bonus)"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 1.0.1
-date: 2026-10-16
+version: 1.1.0
+date: 2026-10-17
 ---
 
 # Demo 1d: a cloud-native golden image (bonus)
 
-> **Version 1.0.1 · draft · 2026-10-16** · class/demos/01d-vm-cloudnative-golden-image.md
+> **Version 1.1.0 · draft · 2026-10-17** · class/demos/01d-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -27,8 +27,9 @@ You deploy it twice over: in the console (as in the video), and with one command
 Linux PostgreSQL and read them back, exactly as you did on Windows.
 
 **Before you start:** do [Lab 0](00-access-and-tools.md). You are signed in to the **site A** console, and your
-class terminal is signed in to the database (`dblogin`, once). Your Windows VM can be anywhere: this demo builds a
-**new** VM next to it. Commands run in the console's **Web Terminal** (`>_`).
+class terminal is signed in to the database (`dblogin`, once). **Do it while Demo 1's copy runs** (started in
+[Demo 1 §1.3](01-vmware-to-ove-cold.md#13-start-the-migration)): this demo builds a **new** VM, at its own address, and
+Demos 1a and 5 then protect it while your Windows VM is still copying. Commands run in the console's **Web Terminal** (`>_`).
 
 > ⚠ **The commands are an example. Change these values to yours before you run them:**
 >
@@ -185,10 +186,10 @@ Then run **1d.2** again. In a few minutes you have the **same** server at the sa
 table: every setting came from code, so nothing drifted and nothing was forgotten.
 
 **That is the end of Demo 1d.** You built a database server purely in code, from Red Hat's maintained image, and
-proved it with your own rows.
+proved it with your own rows. **Keep it running** (redeploy it if you deleted it above): Demo 1a and Demo 5 use it.
 
-> 💡 **One copy at a time on an address.** Delete or stop your `pg-s01-centos10` when you're done: its address
-> is yours alone.
+> 💡 **One copy at a time on an address.** `10.101.23.151` is yours alone. When you've finished Demo 5, delete
+> `pg-s01-centos10` (the command above) and go back to [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on).
 
 ---
 
@@ -204,7 +205,7 @@ The customer's version of this is a short pipeline: change the cloud-init in git
 test VM, runs its checks → the Template is published for everyone. The base OS comes from Red Hat's boot source,
 which OpenShift Virtualization updates on its own; your code stays the same.
 
-**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
+**Next:** [Demo 1a: snapshot and restore](01a-snapshot-restore.md), on this server · **Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
 
 ## Thank you
 

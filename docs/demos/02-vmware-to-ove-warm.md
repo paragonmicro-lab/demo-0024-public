@@ -1,15 +1,19 @@
 ---
 title: "Demo 2 — Coming soon: warm migration with storage copy offload"
 subtitle: "Why this lab doesn't demo VDDK · what a SAN with CSI and snapshots adds · inject · CBT · warm plan with the array doing the copy · cut over · snapshot on the array · read back"
-version: 3.1.0
-date: 2026-10-15
+version: 3.1.1
+date: 2026-10-17
 ---
 
 # Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)
 
-> **Version 3.1.0 · draft · 2026-10-15** · class/demos/02-vmware-to-ove-warm.md
+> **Version 3.1.1 · draft · 2026-10-17** · class/demos/02-vmware-to-ove-warm.md
 
 > 🚧 **Coming soon. You can't run this demo in this lab yet.**
+>
+> ⛔ **Blocked: the VDDK path is closed for good.** The lab can't obtain VDDK and won't again, so warm migration
+> here waits on a **SAN with CSI** (below) and Red Hat's storage copy offload path. Until then this page is a
+> placeholder to read.
 >
 > This demo is written for a lab that has a **supported SAN array** with its **CSI driver** and **snapshot**
 > support on OpenShift. This lab doesn't have one yet: its vSphere datastore is NFS and its OpenShift storage is ODF

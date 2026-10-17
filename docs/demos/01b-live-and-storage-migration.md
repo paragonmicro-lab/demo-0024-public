@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — Live migration and storage migration (bonus)"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 1.1.2
+version: 1.1.3
 date: 2026-10-15
 ---
 
 # Demo 1b: live migration and storage migration (bonus)
 
-> **Version 1.1.2 · draft · 2026-10-16** · class/demos/01b-live-and-storage-migration.md
+> **Version 1.1.3 · draft · 2026-10-17** · class/demos/01b-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -29,10 +29,6 @@ in the site A console's **Web Terminal** (`>_`).
 <sub>🎬 *Demo 1b: live migration and storage migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
 
 ---
-
-> ⚠️ **Known issue on the current lab build:** the migrated VM can't reach the network yet (see Demo 1, step 1.4), so
-> the `ovedr_mark` and read-back commands in this demo time out. Everything on the OpenShift side works and was proven
-> on 0024-015 on 2026-10-16. Skip those commands, or check your rows from inside the VM, as in Demo 1.
 
 ## 1b.1 Inject, and check the VM can live-migrate
 

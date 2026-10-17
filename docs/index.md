@@ -1,7 +1,7 @@
 ---
 title: "Start here — VMware to OpenShift Virtualization"
 subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
-version: 1.2.4
+version: 1.2.5
 date: 2026-10-14
 ---
 
@@ -69,9 +69,10 @@ The [student guide](student-guide.md) explains how the class works and lists the
 | Block | Time |
 |---|---|
 | Welcome, and Kubernetes in a few ideas (this page) | 20 min |
-| Lab 0 · Demo 1 (cold migration: the copy alone is about 1 h 15, 1 h 45 on NFS) | 1 h 55 |
+| Lab 0 · Demo 1 (cold migration): start your copy (about 1 h 30) | 30 min |
+| While it copies: a cloud-native server (1d), snapshot and restore (1a), OADP backup (5) | 1 h 20 |
 | *Break* | 15 min |
-| Bonus labs 1a–1d (Demo 2, warm migration, is coming soon) | 1 h |
+| Demo 1 finished: start your migrated VM, read back; then 1a/5 on it, or 1b–1c (Demo 2, warm migration, is coming soon) | 1 h |
 | Wrap-up: your rows read back, questions | 15 min |
 
 **Going deeper**, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), Backup
@@ -129,4 +130,4 @@ migrated VM keeps its address.
 
 ---
 
-> **Version 1.2.4 · draft · 2026-10-17** · class/welcome.md
+> **Version 1.2.5 · draft · 2026-10-17** · class/welcome.md
