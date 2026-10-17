@@ -1296,7 +1296,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.7.8 · draft · 2026-10-17</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.7.9 · draft · 2026-10-17</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1317,7 +1317,7 @@ ask you to do the <strong>last step</strong> yourself (start your migration). Th
 <tbody>
 <tr>
 <td><strong>demo-vmware</strong> (core-web dispatches it)</td>
-<td>vCenter <code>vcenter0&lt;N&gt;</code>, 4 nested ESXi hosts, the shared NFS datastore <code>coresan01_data00</code> (the class VMs live there; on <strong>vSAN</strong> when the booking sets <code>vmware_storage: vsan</code>; with <code>vmware_storage: local</code>, each VM on <strong>its own ESXi host's</strong> SSD datastore <code>esxi-lz&lt;N&gt;-NN-vmfs00</code>: student01 on <code>esxi-lz&lt;N&gt;-01</code>, student02 on <code>esxi-lz&lt;N&gt;-02</code>, …, the instructor's on the last host), port group <code>vm-network</code> on VLAN 22+N, your vCenter folder <code>vms/students/&lt;your ID&gt;</code></td>
+<td>vCenter <code>vcenter0&lt;N&gt;</code>, 4 nested ESXi hosts, the shared NFS datastore <code>coresan01_data00</code> (the ISO library; the class VMs live there only on a <code>vmware_storage: na</code> booking, on <strong>vSAN</strong> with <code>vsan</code>); by default (<code>vmware_storage: local</code>, both classes, 2026-10-17) each class VM sits on <strong>its own ESXi host's</strong> SSD datastore <code>esxi-lz&lt;N&gt;-NN-vmfs00</code>: student01 on <code>esxi-lz&lt;N&gt;-01</code>, student02 on <code>esxi-lz&lt;N&gt;-02</code>, …, the instructor's on the last host), port group <code>vm-network</code> on VLAN 22+N, your vCenter folder <code>vms/students/&lt;your ID&gt;</code></td>
 <td>vSphere <code>lzN</code></td>
 </tr>
 <tr>
