@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.2.12
+version: 1.2.13
 date: 2026-10-15
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.2.12 · draft · 2026-10-16** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.2.13 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -146,12 +146,16 @@ oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
   | jq -r '.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'
 ```
 
-⏱️ **Plan on about 1 h 45 min.** This lab copies the disks through vCenter (no VDDK). The last measured run
-(`win-pg-s01`, 2026-10-16) took **1 h 43 min**: DiskAllocation 1 min, ImageConversion **67 min** while `virt-v2v`
-reads the guest from vCenter and installs the drivers (no MB counter moves here), then DiskTransferV2v **35 min**
-for the 34 GB, and VirtualMachineCreation in a second. A progress bar that sits still for a few minutes is normal: vCenter retries a slow
-read (an `HTTP 500` in the conversion pod's log, then it carries on). Use the wait for the reading at the end of this
-step, or start a bonus lab's reading.
+⏱️ **Plan on about 1 h 15 min** (about 1 h 45 if your class runs on the shared NFS datastore). This lab copies the
+disks through vCenter (no VDDK). Measured on 2026-10-17 with each VM on its own ESXi host's local SSD
+(`vmware_storage: local`): `win-pg-s02` **1 h 06 min** (ImageConversion 43 min, DiskTransferV2v 22 min) and
+`win-pg-i01` **1 h 16 min** (50 + 25 min), and two VMs copying at once each ran as fast as one alone. On NFS
+(2026-10-16) the same steps took 67 + 35 min. ImageConversion is `virt-v2v` reading the guest from vCenter and
+installing the drivers (no MB counter moves here); DiskTransferV2v copies the 34 GB; VirtualMachineCreation takes a
+second. A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an `HTTP 500` in the
+conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows **Failed** with *Guest
+conversion failed*. Start the plan again; MTV removes the half-copied disks first. Use the wait for the reading at
+the end of this step, or start a bonus lab's reading.
 
 ✅ The plan shows **Succeeded**.
 
