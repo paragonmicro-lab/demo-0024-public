@@ -1296,7 +1296,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.7.6 · draft · 2026-10-16</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.7.7 · draft · 2026-10-17</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1930,6 +1930,11 @@ govc<span class="w"> </span>object.mv<span class="w"> </span><span class="s2">"<
 <td>site A and site B</td>
 <td><strong><code>d2-&lt;vm&gt;</code></strong></td>
 <td>vSphere → that site, <strong>warm</strong> (Demo 2): lands as <code>&lt;vm&gt;-warm</code>. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking)</td>
+</tr>
+<tr>
+<td>site A and site B</td>
+<td><strong><code>d1-win-pg-s00</code></strong></td>
+<td>the <strong>class spare</strong>, cold, into <code>student-00-&lt;class&gt;</code>, landing <strong>powered off</strong> (<code>targetPowerState: off</code>). After the build is verified, the deploy job <code>spare</code> (<code>spare_migrate.sh</code>) starts it on site A and doesn't wait. Instructors copy it for a student who can't wait (Demo 1 §1.3). Every student can view it: vCenter ReadOnly on that VM, <code>view</code> on its namespace</td>
 </tr>
 </tbody>
 </table>
