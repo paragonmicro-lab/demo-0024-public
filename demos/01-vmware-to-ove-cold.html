@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.2.12 · draft · 2026-10-16</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.2.13 · draft · 2026-10-17</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1171,12 +1171,16 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'</span>
 </code></pre></div>
-<p>⏱️ <strong>Plan on about 1 h 45 min.</strong> This lab copies the disks through vCenter (no VDDK). The last measured run
-(<code>win-pg-s01</code>, 2026-10-16) took <strong>1 h 43 min</strong>: DiskAllocation 1 min, ImageConversion <strong>67 min</strong> while <code>virt-v2v</code>
-reads the guest from vCenter and installs the drivers (no MB counter moves here), then DiskTransferV2v <strong>35 min</strong>
-for the 34 GB, and VirtualMachineCreation in a second. A progress bar that sits still for a few minutes is normal: vCenter retries a slow
-read (an <code>HTTP 500</code> in the conversion pod's log, then it carries on). Use the wait for the reading at the end of this
-step, or start a bonus lab's reading.</p>
+<p>⏱️ <strong>Plan on about 1 h 15 min</strong> (about 1 h 45 if your class runs on the shared NFS datastore). This lab copies the
+disks through vCenter (no VDDK). Measured on 2026-10-17 with each VM on its own ESXi host's local SSD
+(<code>vmware_storage: local</code>): <code>win-pg-s02</code> <strong>1 h 06 min</strong> (ImageConversion 43 min, DiskTransferV2v 22 min) and
+<code>win-pg-i01</code> <strong>1 h 16 min</strong> (50 + 25 min), and two VMs copying at once each ran as fast as one alone. On NFS
+(2026-10-16) the same steps took 67 + 35 min. ImageConversion is <code>virt-v2v</code> reading the guest from vCenter and
+installing the drivers (no MB counter moves here); DiskTransferV2v copies the 34 GB; VirtualMachineCreation takes a
+second. A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an <code>HTTP 500</code> in the
+conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows <strong>Failed</strong> with <em>Guest
+conversion failed</em>. Start the plan again; MTV removes the half-copied disks first. Use the wait for the reading at
+the end of this step, or start a bonus lab's reading.</p>
 <p>✅ The plan shows <strong>Succeeded</strong>.</p>
 <details>
 <summary>Or: create and start your own cold plan from the CLI (instead of the staged one)</summary>
