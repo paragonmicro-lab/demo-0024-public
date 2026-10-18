@@ -984,7 +984,7 @@
 
 <h1 id="demo-1d-a-cloud-native-golden-image-bonus">Demo 1d: a cloud-native golden image (bonus)<a class="headerlink" href="#demo-1d-a-cloud-native-golden-image-bonus" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.0 · draft · 2026-10-17</strong> · class/demos/01d-vm-cloudnative-golden-image.md</p>
+<p><strong>Version 1.2.0 · draft · 2026-10-18</strong> · class/demos/01d-vm-cloudnative-golden-image.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
@@ -1116,7 +1116,7 @@ oc<span class="w"> </span>get<span class="w"> </span>template<span class="w"> </
 <td>that address, its gateway and the lab's DNS</td>
 </tr>
 <tr>
-<td><code>cloudInitNoCloud.userData</code></td>
+<td>a <strong>Secret</strong> <code>&lt;VM name&gt;-cloudinit</code>, read by <code>cloudInitNoCloud.secretRef</code></td>
 <td><strong>cloud-init</strong>, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's <code>marks</code> toolkit, creates your Linux and database logins, starts the database and a heartbeat</td>
 </tr>
 </tbody>
@@ -1167,11 +1167,12 @@ as the form did, and <code>oc apply</code> creates the result in your project. I
 appears on screen:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Your class password: '</span><span class="w"> </span>PW<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>process<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres<span class="w"> </span>-p<span class="w"> </span><span class="nv">NAME</span><span class="o">=</span>pg-s01-centos10<span class="w"> </span>-p<span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="m">23</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">IP</span><span class="o">=</span><span class="m">10</span>.101.23.151<span class="w"> </span>-p<span class="w"> </span><span class="nv">OS_USER</span><span class="o">=</span>student-01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_USER</span><span class="o">=</span>student_01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PW</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>-f<span class="w"> </span>-<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>PW
 </code></pre></div>
-<p>✅ <code>virtualmachine.kubevirt.io/pg-s01-centos10 created</code>.</p>
+<p>✅ <code>secret/pg-s01-centos10-cloudinit created</code> and <code>virtualmachine.kubevirt.io/pg-s01-centos10 created</code>.</p>
 <blockquote>
-<p>💡 <strong>Your password is in the VM's cloud-init</strong>, readable by you and the instructors in your project. That is fine
-for a lab account that dies with the booking. In production, cloud-init comes from a <strong>Secret</strong>
-(<code>cloudInitNoCloud.secretRef</code>), so the VM's definition holds no password.</p>
+<p>💡 <strong>Your cloud-init, password included, is in a Secret</strong>, <code>pg-s01-centos10-cloudinit</code>, in your project. The
+VM points at it (<code>cloudInitNoCloud.secretRef</code>), so the VM's definition holds no password. A Secret is also the
+only way for a real server: KubeVirt refuses cloud-init written inline in the VM above 2 KB, and this one is
+about 11 KB. The Template creates both, so both are yours to delete (1d.5).</p>
 </blockquote>
 <hr />
 <h2 id="1d3-watch-it-build-itself">1d.3 Watch it build itself<a class="headerlink" href="#1d3-watch-it-build-itself" title="Permanent link">&para;</a></h2>
@@ -1210,7 +1211,7 @@ drivers: the same checks as your migrated Windows VM, on a server that was never
 <hr />
 <h2 id="1d5-rebuild-it-the-point-of-a-golden-image-as-code">1d.5 Rebuild it: the point of a golden image as code<a class="headerlink" href="#1d5-rebuild-it-the-point-of-a-golden-image-as-code" title="Permanent link">&para;</a></h2>
 <p>A pet is repaired. Cattle are replaced. Delete the server and deploy it again from the same Template:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete<span class="w"> </span>vm<span class="w"> </span>pg-s01-centos10<span class="w">                  </span><span class="c1"># the VM and its three disks</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete<span class="w"> </span>vm,secret<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>pg-s01-centos10<span class="w">    </span><span class="c1"># the VM, its three disks and its cloud-init Secret</span>
 </code></pre></div>
 <p>Then run <strong>1d.2</strong> again. In a few minutes you have the <strong>same</strong> server at the same address, with an empty <code>marks</code>
 table: every setting came from code, so nothing drifted and nothing was forgotten.</p>

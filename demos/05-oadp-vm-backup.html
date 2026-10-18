@@ -1009,7 +1009,7 @@
 
 <h1 id="demo-5-bonus-back-up-and-restore-your-vm-with-oadp">Demo 5 (bonus): Back up and restore your VM with OADP<a class="headerlink" href="#demo-5-bonus-back-up-and-restore-your-vm-with-oadp" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.3.0 · framework · 2026-10-17</strong> · class/demos/05-oadp-vm-backup.md</p>
+<p><strong>Version 0.3.1 · framework · 2026-10-18</strong> · class/demos/05-oadp-vm-backup.md</p>
 <p>🚧 <strong>Bonus, framework.</strong> OADP is now built by the lab when a class books it (option <code>backup: oadp</code>, the default for this
 class). The commands below are unproven <strong>[verify]</strong> until a booking has run them. Ask your instructor whether your
 lab has OADP before you start.</p>
@@ -1130,7 +1130,7 @@ sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT st
 <p>✅ <code>d5-in-backup</code> is back and <code>chain_ok = t</code>. <code>d5-after-backup</code> is <strong>gone</strong>: it was written after the backup, which is
 exactly what a restore means. On Windows, your file in the VM ends at <code>d5-in-backup</code> too.</p>
 <p><strong>Done on the cloud-native server?</strong> Delete it, then go back to Demo 1 and start your migrated Windows VM:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>delete<span class="w"> </span>vm<span class="w"> </span>pg-s01-centos10<span class="w">          </span><span class="c1"># the CentOS server and its disks</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>delete<span class="w"> </span>vm,secret<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>pg-s01-centos10<span class="w">   </span><span class="c1"># the CentOS server, its disks and Secret</span>
 </code></pre></div>
 <p><strong>Next:</strong> <a href="01-vmware-to-ove-cold.html#14-review-your-vm-on-openshift-then-power-it-on">Demo 1 §1.4</a>.</p>
 <p>✍️ <strong>Row 5.5:</strong> the restore's duration, <code>chain_ok</code>, and which of your rows came back.</p>

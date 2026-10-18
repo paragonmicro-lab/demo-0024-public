@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.4.1 · draft · 2026-10-17</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.4.2 · draft · 2026-10-18</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1280,7 +1280,7 @@ those (<a href="04-odf-regional-dr.html#two-identical-sites-and-the-one-step-ci-
 <h2 id="14-review-your-vm-on-openshift-then-power-it-on">1.4 Review your VM on OpenShift, then power it on<a class="headerlink" href="#14-review-your-vm-on-openshift-then-power-it-on" title="Permanent link">&para;</a></h2>
 <p><strong>Back from the cloud-native labs?</strong> Delete your cloud-native server first, if you haven't (Demo 1d §1d.5), and
 check that your plan shows <strong>Succeeded</strong>:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete<span class="w"> </span>vm<span class="w"> </span>pg-s01-centos10<span class="w"> </span>--ignore-not-found<span class="w">     </span><span class="c1"># the CentOS server and its disks</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete<span class="w"> </span>vm,secret<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>pg-s01-centos10<span class="w">         </span><span class="c1"># the CentOS server, its disks and Secret</span>
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w">                                 </span><span class="c1"># SUCCEEDED True</span>
 </code></pre></div>
 <p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines</strong>, project <strong><code>student-01-0024-012</code></strong> → <strong><code>win-pg-s01</code></strong>.</p>
