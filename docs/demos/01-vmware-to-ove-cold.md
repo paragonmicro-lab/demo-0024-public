@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.4.1
+version: 1.4.2
 date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.4.1 · draft · 2026-10-17** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.4.2 · draft · 2026-10-18** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -289,7 +289,7 @@ those ([Demo 4: two identical sites](04-odf-regional-dr.md#two-identical-sites-a
 check that your plan shows **Succeeded**:
 
 ```bash
-oc -n student-01-0024-012 delete vm pg-s01-centos10 --ignore-not-found     # the CentOS server and its disks
+oc -n student-01-0024-012 delete vm,secret -l app=pg-s01-centos10         # the CentOS server, its disks and Secret
 oc -n openshift-mtv get plan d1-win-pg-s01                                 # SUCCEEDED True
 ```
 

@@ -1,14 +1,14 @@
 ---
 title: "Demo 5 (bonus) — Back up and restore your VM with OADP"
 subtitle: "OpenShift API for Data Protection: back up your namespace (VM, disks, Service), lose it, restore it, prove the data"
-version: 0.3.0
+version: 0.3.1
 status: framework
 date: 2026-10-17
 ---
 
 # Demo 5 (bonus): Back up and restore your VM with OADP
 
-> **Version 0.3.0 · framework · 2026-10-17** · class/demos/05-oadp-vm-backup.md
+> **Version 0.3.1 · framework · 2026-10-18** · class/demos/05-oadp-vm-backup.md
 
 > 🚧 **Bonus, framework.** OADP is now built by the lab when a class books it (option `backup: oadp`, the default for this
 > class). The commands below are unproven **[verify]** until a booking has run them. Ask your instructor whether your
@@ -147,7 +147,7 @@ exactly what a restore means. On Windows, your file in the VM ends at `d5-in-bac
 **Done on the cloud-native server?** Delete it, then go back to Demo 1 and start your migrated Windows VM:
 
 ```bash
-oc --context site-a -n "$VMNS" delete vm pg-s01-centos10          # the CentOS server and its disks
+oc --context site-a -n "$VMNS" delete vm,secret -l app=pg-s01-centos10   # the CentOS server, its disks and Secret
 ```
 
 **Next:** [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on).

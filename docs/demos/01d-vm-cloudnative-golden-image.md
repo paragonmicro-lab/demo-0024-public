@@ -1,13 +1,13 @@
 ---
 title: "Demo 1d — A cloud-native golden image: a new Linux database server, built from code (bonus)"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 1.1.0
+version: 1.2.0
 date: 2026-10-17
 ---
 
 # Demo 1d: a cloud-native golden image (bonus)
 
-> **Version 1.1.0 · draft · 2026-10-17** · class/demos/01d-vm-cloudnative-golden-image.md
+> **Version 1.2.0 · draft · 2026-10-18** · class/demos/01d-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -81,7 +81,7 @@ oc get template -n openshift ovedr-centos10-postgres -o yaml | less          # q
 | `dataVolumeTemplates` | the system disk, cloned from Red Hat's `centos-stream10` boot source, plus two **empty** disks: 10 GB for the data, 5 GB for the WAL |
 | `networks` | one NIC on your VLAN's bridge (`default/vmnet23`), so the server has its own address on the lab network |
 | `cloudInitNoCloud.networkData` | that address, its gateway and the lab's DNS |
-| `cloudInitNoCloud.userData` | **cloud-init**, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's `marks` toolkit, creates your Linux and database logins, starts the database and a heartbeat |
+| a **Secret** `<VM name>-cloudinit`, read by `cloudInitNoCloud.secretRef` | **cloud-init**, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's `marks` toolkit, creates your Linux and database logins, starts the database and a heartbeat |
 
 The whole file is also on the class site: [`ovedr-centos10-postgres.yaml`](../downloads/ovedr-centos10-postgres.yaml).
 
@@ -113,11 +113,12 @@ appears on screen:
 read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos10-postgres -p NAME=pg-s01-centos10 -p VLAN=23 -p IP=10.101.23.151 -p OS_USER=student-01 -p DB_USER=student_01 -p DB_PASSWORD="$PW" | oc apply -n student-01-0024-012 -f -; unset PW
 ```
 
-✅ `virtualmachine.kubevirt.io/pg-s01-centos10 created`.
+✅ `secret/pg-s01-centos10-cloudinit created` and `virtualmachine.kubevirt.io/pg-s01-centos10 created`.
 
-> 💡 **Your password is in the VM's cloud-init**, readable by you and the instructors in your project. That is fine
-> for a lab account that dies with the booking. In production, cloud-init comes from a **Secret**
-> (`cloudInitNoCloud.secretRef`), so the VM's definition holds no password.
+> 💡 **Your cloud-init, password included, is in a Secret**, `pg-s01-centos10-cloudinit`, in your project. The
+> VM points at it (`cloudInitNoCloud.secretRef`), so the VM's definition holds no password. A Secret is also the
+> only way for a real server: KubeVirt refuses cloud-init written inline in the VM above 2 KB, and this one is
+> about 11 KB. The Template creates both, so both are yours to delete (1d.5).
 
 ---
 
@@ -179,7 +180,7 @@ drivers: the same checks as your migrated Windows VM, on a server that was never
 A pet is repaired. Cattle are replaced. Delete the server and deploy it again from the same Template:
 
 ```bash
-oc -n student-01-0024-012 delete vm pg-s01-centos10                  # the VM and its three disks
+oc -n student-01-0024-012 delete vm,secret -l app=pg-s01-centos10    # the VM, its three disks and its cloud-init Secret
 ```
 
 Then run **1d.2** again. In a few minutes you have the **same** server at the same address, with an empty `marks`
