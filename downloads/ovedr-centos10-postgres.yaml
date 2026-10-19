@@ -3,7 +3,7 @@
 #
 # Deploy it from the console (Virtualization → Catalog → Template catalog → "CentOS Stream 10 + PostgreSQL 16 (class)"),
 # or from the command line:
-#   oc process openshift//ovedr-centos10-postgres -p NAME=… -p VLAN=… -p IP=… -p OS_USER=… -p DB_USER=… -p DB_PASSWORD=… \
+#   oc process openshift//ovedr-centos10-postgres -p NAME=… -p VLAN=… -p IP=… -p OS_USER=… -p DB_USER=… -p DB_PASSWORD=… -p SSH_KEY_SECRET=… \
 #     | oc apply -n <your project> -f -
 apiVersion: template.openshift.io/v1
 kind: Template
@@ -35,6 +35,7 @@ parameters:
   - { name: OS_USER,     displayName: "Linux login",       required: true, description: "e.g. student-01" }
   - { name: DB_USER,     displayName: "Database login",    required: true, description: "e.g. student_01 (underscore)" }
   - { name: DB_PASSWORD, displayName: "Password (Linux and database)", required: true, description: "your class password" }
+  - { name: SSH_KEY_SECRET, displayName: "SSH key Secret", required: true, description: "the Secret in your project holding your public SSH key, e.g. student-01-ssh" }
 objects:
   # cloud-init's user-data rides in a Secret: KubeVirt refuses inline userData over 2048 bytes, and this is ~10 KB
   - apiVersion: v1
@@ -55,13 +56,17 @@ objects:
         # automation/tools/centos10_template.sh builds the Template from this file and workload/sql/*.sql (#@file lines).
         # Keep shell variables brace-free ($x, never with braces): the Template reads dollar-brace names as its parameters.
         hostname: ${NAME}
-        users:
-          - default
-          - name: ${OS_USER}
+        # The student's Linux login IS cloud-init's default user, so the public SSH key OpenShift hands the VM (the Template's
+        # accessCredentials, from the student's key Secret) lands on it. SSH takes that key or the class password.
+        system_info:
+          default_user:
+            name: ${OS_USER}
             groups: [wheel]
+            sudo: ["ALL=(ALL) NOPASSWD:ALL"]
             lock_passwd: false
             shell: /bin/bash
-        ssh_pwauth: false
+        users: [ default ]
+        ssh_pwauth: true
 
         # The two database disks, found by the serial the VM gives them, each with an xfs filesystem and a label. Mounted
         # with PostgreSQL's SELinux type, so the database may use them without relabelling.
@@ -279,6 +284,10 @@ objects:
           labels: { kubevirt.io/domain: "${NAME}", ovedr/golden: centos10-postgres }
           annotations: { vm.kubevirt.io/os: centos-stream10, vm.kubevirt.io/workload: server, vm.kubevirt.io/flavor: medium }
         spec:
+          accessCredentials:                              # your public SSH key, from your Secret, onto your Linux login
+            - sshPublicKey:
+                source: { secret: { secretName: "${SSH_KEY_SECRET}" } }
+                propagationMethod: { noCloud: {} }
           domain:
             cpu: { cores: 2, sockets: 1, threads: 1 }
             memory: { guest: 4Gi }

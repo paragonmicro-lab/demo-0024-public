@@ -429,6 +429,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="1a.2 Deploy it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-your-ssh-key-saved-in-openshift-as-a-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: your SSH key, saved in OpenShift as a Secret
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-deploy-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: deploy the Template
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -873,6 +897,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="1a.2 Deploy it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-your-ssh-key-saved-in-openshift-as-a-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: your SSH key, saved in OpenShift as a Secret
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-deploy-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: deploy the Template
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -937,7 +985,7 @@
 
 <h1 id="demo-1a-a-cloud-native-golden-image">Demo 1a: a cloud-native golden image<a class="headerlink" href="#demo-1a-a-cloud-native-golden-image" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.0.0 · draft · 2026-10-19</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
+<p><strong>Version 2.1.0 · draft · 2026-10-19</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
@@ -1070,15 +1118,66 @@ oc<span class="w"> </span>get<span class="w"> </span>template<span class="w"> </
 <td>that address, its gateway and the lab's DNS</td>
 </tr>
 <tr>
+<td><code>accessCredentials</code></td>
+<td><strong>your public SSH key</strong>, read from a Secret you create (parameter <em>SSH key Secret</em>), put on your Linux login at first boot</td>
+</tr>
+<tr>
 <td>a <strong>Secret</strong> <code>&lt;VM name&gt;-cloudinit</code>, read by <code>cloudInitNoCloud.secretRef</code></td>
-<td><strong>cloud-init</strong>, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's <code>marks</code> toolkit, creates your Linux and database logins, starts the database and a heartbeat</td>
+<td><strong>cloud-init</strong>, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's <code>marks</code> toolkit, creates your Linux and database logins (SSH takes your key <strong>or</strong> your password), starts the database and a heartbeat</td>
 </tr>
 </tbody>
 </table>
 <p>The whole file is also on the class site: <a href="../downloads/ovedr-centos10-postgres.yaml"><code>ovedr-centos10-postgres.yaml</code></a>.</p>
 <hr />
 <h2 id="1a2-deploy-it">1a.2 Deploy it<a class="headerlink" href="#1a2-deploy-it" title="Permanent link">&para;</a></h2>
-<p>Do <strong>one</strong> of the two. Both create the same VM.</p>
+<p>Two steps: save your public SSH key in OpenShift, then deploy the Template. Each has a console way and a Web
+Terminal way, and both ways give the same result.</p>
+<h3 id="step-1-your-ssh-key-saved-in-openshift-as-a-secret">Step 1: your SSH key, saved in OpenShift as a Secret<a class="headerlink" href="#step-1-your-ssh-key-saved-in-openshift-as-a-secret" title="Permanent link">&para;</a></h3>
+<p>A server built from code gets its SSH key the way a cloud server does: OpenShift holds your <strong>public</strong> key in a
+<strong>Secret</strong> in your project, and the Template hands it to the VM on its first boot. Your <strong>private</strong> key never leaves
+your terminal.</p>
+<p><strong>Make a key pair in the Web Terminal</strong> (both ways start here, since the class installs nothing on your laptop):</p>
+<div class="highlight"><pre><span></span><code>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-N<span class="w"> </span><span class="s1">''</span><span class="w"> </span>-C<span class="w"> </span>student-01<span class="w"> </span>-f<span class="w"> </span>~/.ssh/id_ed25519<span class="w">      </span><span class="c1"># your key pair: no passphrase, for the lab</span>
+cat<span class="w"> </span>~/.ssh/id_ed25519.pub<span class="w">                                            </span><span class="c1"># the PUBLIC key: one line, ssh-ed25519 AAAA… student-01</span>
+</code></pre></div>
+<p><strong>Console (site A), as in the video:</strong> <strong>Workloads → Secrets → Create → Key/value secret</strong>, in project
+<strong><code>student-01-0024-012</code></strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Secret name</td>
+<td><code>student-01-ssh</code></td>
+</tr>
+<tr>
+<td>Key</td>
+<td><code>key</code></td>
+</tr>
+<tr>
+<td>Value</td>
+<td>paste the <strong>public</strong> key line from <code>cat ~/.ssh/id_ed25519.pub</code> (or <strong>Browse</strong> to upload a <code>.pub</code> file)</td>
+</tr>
+</tbody>
+</table>
+<p>Then <strong>Create</strong>. This is the same Secret the VM wizards' <strong>Public SSH key → Add new</strong> dialog saves ("SSH key is saved
+in the project as a secret").</p>
+<p><strong>Or, the Web Terminal:</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>student-01-ssh<span class="w"> </span>--from-file<span class="o">=</span><span class="nv">key</span><span class="o">=</span><span class="nv">$HOME</span>/.ssh/id_ed25519.pub
+</code></pre></div>
+<p>✅ <code>secret/student-01-ssh created</code>. Check it holds your public key, and only that:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>student-01-ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.data.key}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w">     </span><span class="c1"># ssh-ed25519 AAAA… student-01</span>
+</code></pre></div>
+<blockquote>
+<p>💡 <strong>The Web Terminal's home directory lasts as long as the terminal does.</strong> If it restarts, your private key is
+gone: make a new pair and replace the Secret's value (<strong>Secret → Actions → Edit Secret</strong>). Your password still
+signs you in meanwhile.</p>
+</blockquote>
+<h3 id="step-2-deploy-the-template">Step 2: deploy the Template<a class="headerlink" href="#step-2-deploy-the-template" title="Permanent link">&para;</a></h3>
 <p><strong>Console (site A), as in the video:</strong> in the Template catalog, open <strong>CentOS Stream 10 + PostgreSQL 16 (class)</strong> →
 <strong>Customize VirtualMachine</strong> → project <strong><code>student-01-0024-012</code></strong>, and fill in the parameters:</p>
 <table>
@@ -1113,13 +1212,23 @@ oc<span class="w"> </span>get<span class="w"> </span>template<span class="w"> </
 <td>Password (Linux and database)</td>
 <td>your class password</td>
 </tr>
+<tr>
+<td>SSH key Secret</td>
+<td><code>student-01-ssh</code> (the Secret from step 1)</td>
+</tr>
 </tbody>
 </table>
-<p>Then <strong>Create VirtualMachine</strong>.</p>
+<p>Then <strong>Create VirtualMachine</strong>. Leave the wizard's own <strong>Public SSH key</strong> setting at <strong>None</strong>: the Template already
+takes your key from the Secret you named. <strong>[verify: the console's Template form shows the <em>SSH key Secret</em>
+parameter]</strong></p>
+<blockquote>
+<p>⚠️ <strong>Not the InstanceTypes tab.</strong> <strong>Catalog → InstanceTypes</strong> builds a plain CentOS VM from Red Hat's boot source,
+with none of this Template's code: no PostgreSQL, no data disks, no class logins. Use the <strong>Template catalog</strong>.</p>
+</blockquote>
 <p><strong>Or, the Web Terminal: the whole server is one command.</strong> <code>oc process</code> fills in the Template's blanks, exactly
 as the form did, and <code>oc apply</code> creates the result in your project. It asks for your password, so it never
 appears on screen:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Your class password: '</span><span class="w"> </span>PW<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>process<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres<span class="w"> </span>-p<span class="w"> </span><span class="nv">NAME</span><span class="o">=</span>pg-s01-centos10<span class="w"> </span>-p<span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="m">23</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">IP</span><span class="o">=</span><span class="m">10</span>.101.23.151<span class="w"> </span>-p<span class="w"> </span><span class="nv">OS_USER</span><span class="o">=</span>student-01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_USER</span><span class="o">=</span>student_01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PW</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>-f<span class="w"> </span>-<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>PW
+<div class="highlight"><pre><span></span><code><span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Your class password: '</span><span class="w"> </span>PW<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>process<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres<span class="w"> </span>-p<span class="w"> </span><span class="nv">NAME</span><span class="o">=</span>pg-s01-centos10<span class="w"> </span>-p<span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="m">23</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">IP</span><span class="o">=</span><span class="m">10</span>.101.23.151<span class="w"> </span>-p<span class="w"> </span><span class="nv">OS_USER</span><span class="o">=</span>student-01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_USER</span><span class="o">=</span>student_01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PW</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">SSH_KEY_SECRET</span><span class="o">=</span>student-01-ssh<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>-f<span class="w"> </span>-<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>PW
 </code></pre></div>
 <p>✅ <code>secret/pg-s01-centos10-cloudinit created</code> and <code>virtualmachine.kubevirt.io/pg-s01-centos10 created</code>.</p>
 <blockquote>
@@ -1144,6 +1253,15 @@ sudo<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>
 </code></pre></div>
 <p>✅ cloud-init <strong>done</strong>, both database disks mounted, both services <strong>active</strong>. Every one of these was declared in
 the Template, and none was typed by hand.</p>
+<p><strong>Sign in over SSH, from the Web Terminal:</strong> first with your key, then with your password. Both work, because the
+Template turned on both.</p>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">StrictHostKeyChecking</span><span class="o">=</span>accept-new<span class="w"> </span>student-01@10.101.23.151<span class="w"> </span><span class="s1">'hostname; whoami'</span><span class="w">                          </span><span class="c1"># key: no password asked</span>
+ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">PubkeyAuthentication</span><span class="o">=</span>no<span class="w"> </span>-o<span class="w"> </span><span class="nv">PreferredAuthentications</span><span class="o">=</span>password<span class="w"> </span>student-01@10.101.23.151<span class="w"> </span><span class="s1">'whoami'</span><span class="w">       </span><span class="c1"># password: asks for it</span>
+</code></pre></div>
+<p>✅ The first prints <code>pg-s01-centos10</code> and <code>student-01</code> without asking anything: your key from the Secret is in
+<code>~/.ssh/authorized_keys</code>. The second asks for your class password, then prints <code>student-01</code>. (Also works through
+the API server, without reaching the VLAN: <code>virtctl ssh -n student-01-0024-012 -i ~/.ssh/id_ed25519 student-01@vm/pg-s01-centos10</code>.)
+<strong>[verify: <code>ssh</code> and <code>virtctl</code> in the Web Terminal tooling]</strong></p>
 <hr />
 <h2 id="1a4-inject-into-your-new-linux-postgresql-and-read-it-back">1a.4 Inject into your new Linux PostgreSQL, and read it back<a class="headerlink" href="#1a4-inject-into-your-new-linux-postgresql-and-read-it-back" title="Permanent link">&para;</a></h2>
 <p>Same commands as on Windows, at the new address. Your class terminal's <code>dblogin</code> works here too: same login, same
@@ -1167,6 +1285,7 @@ drivers: the same checks as your migrated Windows VM, on a server that was never
 <p>A pet is repaired. Cattle are replaced. Delete the server and deploy it again from the same Template:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete<span class="w"> </span>vm,secret<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>pg-s01-centos10<span class="w">    </span><span class="c1"># the VM, its three disks and its cloud-init Secret</span>
 </code></pre></div>
+<p>Your SSH key Secret <code>student-01-ssh</code> stays (it isn't labelled with the VM), so the rebuild reuses it.</p>
 <p>Then run <strong>1a.2</strong> again. In a few minutes you have the <strong>same</strong> server at the same address, with an empty <code>marks</code>
 table: every setting came from code, so nothing drifted and nothing was forgotten.</p>
 <p><strong>That is the end of Demo 1a.</strong> You built a database server purely in code, from Red Hat's maintained image, and
