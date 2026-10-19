@@ -991,7 +991,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.6.0 · draft · 2026-10-19</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.6.1 · draft · 2026-10-19</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1189,7 +1189,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-w<span class="w">                        </span><span class="c1"># Executing → Succeeded (Ctrl-C to stop watching)</span>
 <span class="c1"># each step, its state and progress</span>
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'(.status.migration.vms // [])[0].pipeline // ["not started yet: press Start on the plan"] | .[] | if type == "string" then . else "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")" end'</span>
 </code></pre></div>
 <p>⏱️ <strong>The copy takes about 1 h 30.</strong> Without VDDK, <code>virt-v2v</code> reads your VM's disks through vCenter, and that read
 is the slow part (measured 1 h 06 – 1 h 16 on the lab's SSDs; allow 1 h 30). <strong>ImageConversion</strong> takes most of it,
@@ -1349,7 +1349,7 @@ virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<spa
 <p><strong>Review the migration:</strong> on the plan's page (<strong>Migration for Virtualization → Migration plans → <code>d1-win-pg-s01</code></strong>),
 expand your VM. Each step shows when it started and how long it took: <strong>ImageConversion</strong> is the long one, then
 <strong>DiskTransferV2v</strong>. ✍️ Note the total: that is the outage a cold migration costs.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.status.migration.vms[0] | "total: \(.started) → \(.completed)", (.pipeline[] | "  \(.name): \(.started) → \(.completed)")'</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'(.status.migration.vms // [])[0] // {} | if .pipeline then "total: \(.started) → \(.completed)", (.pipeline[] | "  \(.name): \(.started) → \(.completed)") else "not started yet" end'</span>
 </code></pre></div>
 <p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines</strong>, project <strong><code>student-01-0024-012</code></strong> → <strong><code>win-pg-s01</code></strong>.</p>
 <table>
