@@ -449,11 +449,11 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01a-snapshot-restore.html" class="md-nav__link">
+      <a href="demos/01a-vm-cloudnative-golden-image.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1a: A cloud-native server, built from code
   </span>
   
 
@@ -470,11 +470,11 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01b-live-and-storage-migration.html" class="md-nav__link">
+      <a href="demos/01b-snapshot-restore.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1b: Snapshot and restore
   </span>
   
 
@@ -491,11 +491,11 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+      <a href="demos/01c-live-and-storage-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1c: Live and storage migration
   </span>
   
 
@@ -512,12 +512,40 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01d-vm-cloudnative-golden-image.html" class="md-nav__link">
+      <a href="demos/01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/01e-oadp-vm-backup.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1e: OADP backup and restore
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -628,81 +656,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="demos/05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="downloads.html" class="md-nav__link">
         
@@ -756,10 +709,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -770,8 +723,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -1010,15 +963,15 @@ Windows VM and its database.</p>
 <td>30 min</td>
 </tr>
 <tr>
-<td>While it copies: a cloud-native server (1d), snapshot and restore (1a), OADP backup (5)</td>
-<td>1 h 20</td>
+<td>While it copies, on a cloud-native server you build (1a): snapshot and restore (1b), live and storage migration (1c), cross-cluster migration (1d, BCDR class), OADP backup (1e)</td>
+<td>2 h</td>
 </tr>
 <tr>
 <td><em>Break</em></td>
 <td>15 min</td>
 </tr>
 <tr>
-<td>Demo 1 finished: start your migrated VM, read back; then 1a/5 on it, or 1b–1c (Demo 2, warm migration, is coming soon)</td>
+<td>Demo 1 finished: stop the cloud-native server, start your migrated VM, read back; then 1b – 1e again on it (Demo 2, warm migration, is coming soon)</td>
 <td>1 h</td>
 </tr>
 <tr>
@@ -1027,8 +980,8 @@ Windows VM and its database.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Going deeper</strong>, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), Backup
-(Demo 5, OADP, 30 min), and more demos (moving between clusters, 1 h 25), each with bonus rounds for early finishers.</p>
+<p><strong>Going deeper</strong>, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), with bonus
+rounds for early finishers.</p>
 <p>Times are estimates until the class has been timed. The demos and their bonus rounds, each with its time, are in the
 <a href="student-guide.html#the-demos-in-order">Student Guide</a>.</p>
 <h2 id="kubernetes-in-a-few-ideas">Kubernetes in a few ideas<a class="headerlink" href="#kubernetes-in-a-few-ideas" title="Permanent link">&para;</a></h2>
@@ -1111,7 +1064,7 @@ migrated VM keeps its address.</p>
 <p><strong>Ready? Open the <a href="student-guide.html">Student Guide</a>, then <a href="demos/00-access-and-tools.html">Lab 0</a>.</strong></p>
 <hr />
 <blockquote>
-<p><strong>Version 1.2.5 · draft · 2026-10-17</strong> · class/welcome.md</p>
+<p><strong>Version 1.3.0 · draft · 2026-10-19</strong> · class/welcome.md</p>
 </blockquote>
 
 

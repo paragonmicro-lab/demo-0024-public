@@ -355,11 +355,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01a-snapshot-restore.html" class="md-nav__link">
+      <a href="01a-vm-cloudnative-golden-image.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1a: A cloud-native server, built from code
   </span>
   
 
@@ -376,11 +376,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+      <a href="01b-snapshot-restore.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1b: Snapshot and restore
   </span>
   
 
@@ -397,11 +397,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+      <a href="01c-live-and-storage-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1c: Live and storage migration
   </span>
   
 
@@ -418,12 +418,40 @@
   
   
     <li class="md-nav__item">
-      <a href="01d-vm-cloudnative-golden-image.html" class="md-nav__link">
+      <a href="01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01e-oadp-vm-backup.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1e: OADP backup and restore
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -534,81 +562,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -664,10 +617,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -678,8 +631,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -899,7 +852,7 @@ booking to booking. How each piece was built, from the CLI and in the console: <
   STU --&gt; A
   STU --&gt; B
   VS == "Demo 1 cold · Demo 2 warm (CBT)&lt;br/&gt;each VM keeps its own address (bridge map)" ==&gt; A
-  A == "Demo 1c cross-cluster OVE → OVE&lt;br/&gt;ODF → NFS storage migration" ==&gt; B
+  A == "Demo 1d cross-cluster OVE → OVE&lt;br/&gt;ODF → NFS storage migration" ==&gt; B
   A -. "Demo 4 ODF Regional-DR · RBD mirror every 15 min&lt;br/&gt;(needs ODF on both sites)" .-&gt; B
   B -. "ACM hub manages site A (BL-D11)" .-&gt; A</code></pre>
 
@@ -930,7 +883,7 @@ password to vCenter, both clusters and the Windows VMs.</p>
 <td>Customized by this demo</td>
 <td>the instructor's <code>win-pg-i01</code> (<code>vms/ovedr</code>, <code>.62</code>) and <strong>one full clone per student</strong> <code>win-pg-sNN</code> in <strong>that student's own folder</strong> <code>vms/students/&lt;class ID&gt;</code> (<code>.100+NN</code>), each with PostgreSQL (WAL on <code>L:</code>, data on <code>D:</code>), the toolkit, Windows logins and WinRM; each student may power, open the console, Edit Settings (CBT) and snapshot <strong>their own</strong> VM</td>
 <td>MTV with its console menu, providers + maps, <strong>staged plans <code>d1-&lt;vm&gt;</code> (cold) and <code>d2-&lt;vm&gt;</code> (warm) per class VM (not started)</strong> landing each student's VM in <strong>that student's own namespace</strong> (their class ID, where they are admin), <code>ovedr-app</code> with <code>sql-client</code> and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class)</td>
-<td>the same as A without staged plans (Demo 1c builds its own from site A), plus the ACM hub role and DR (Demo 4)</td>
+<td>the same as A without staged plans (Demo 1d builds its own from site A), plus the ACM hub role and DR (Demo 4)</td>
 </tr>
 <tr>
 <td>Storage</td>
@@ -947,8 +900,8 @@ password to vCenter, both clusters and the Windows VMs.</p>
 <tr>
 <td>Demos</td>
 <td>1, 2 (source)</td>
-<td>1, 2 (target) · 1c (source) · 4 (primary)</td>
-<td>1c (target) · 4 (DR site, hub)</td>
+<td>1, 2 (target) · 1d (source) · 4 (primary)</td>
+<td>1d (target) · 4 (DR site, hub)</td>
 </tr>
 </tbody>
 </table>

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01c-ocp-vm-cross-cluster-migration.html">
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01d-ocp-vm-cross-cluster-migration.html">
       
       
-        <link rel="prev" href="01b-live-and-storage-migration.html">
+        <link rel="prev" href="01c-live-and-storage-migration.html">
       
       
-        <link rel="next" href="01d-vm-cloudnative-golden-image.html">
+        <link rel="next" href="01e-oadp-vm-backup.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus) - VMware to OpenShift Virtualization: student guide</title>
+        <title>Demo 1d — Cross-cluster migration: OpenShift site A to site B, with its storage (BCDR class) - VMware to OpenShift Virtualization: student guide</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" class="md-skip">
+        <a href="#demo-1d-cross-cluster-migration-site-a-to-site-b-bcdr-class" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Demo 1c — Cross-cluster migration: OpenShift site A to site B, with its storage (bonus)
+              Demo 1d — Cross-cluster migration: OpenShift site A to site B, with its storage (BCDR class)
             
           </span>
         </div>
@@ -359,11 +359,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01a-snapshot-restore.html" class="md-nav__link">
+      <a href="01a-vm-cloudnative-golden-image.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1a: A cloud-native server, built from code
   </span>
   
 
@@ -380,11 +380,32 @@
   
   
     <li class="md-nav__item">
-      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+      <a href="01b-snapshot-restore.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1b: Snapshot and restore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01c-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Live and storage migration
   </span>
   
 
@@ -414,18 +435,18 @@
           
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
   
 
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link md-nav__link--active">
+      <a href="01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
   
 
@@ -456,63 +477,72 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c0-inject-the-demo-has-started-site-a" class="md-nav__link">
+  <a href="#1d0-inject-the-demo-has-started-site-a" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.0 Inject: the demo has started (site A)
+      1d.0 Inject: the demo has started (site A)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c1-acm-the-two-clusters-linked-site-b" class="md-nav__link">
+  <a href="#1d1-acm-the-two-clusters-linked-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.1 ACM: the two clusters, linked (site B)
+      1d.1 ACM: the two clusters, linked (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c2-mtv-the-link-to-site-a-and-the-maps-site-b" class="md-nav__link">
+  <a href="#1d2-mtv-the-link-to-site-a-and-the-maps-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.2 MTV: the link to site A, and the maps (site B)
+      1d.2 MTV: the link to site A, and the maps (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c3-inject-then-stop-your-vm-site-a" class="md-nav__link">
+  <a href="#1d3-inject-then-stop-your-vm-site-a" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.3 Inject, then stop your VM (site A)
+      1d.3 Inject, then stop your VM (site A)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c4-create-your-plan-and-start-it-site-b" class="md-nav__link">
+  <a href="#1d4-create-your-plan-and-start-it-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.4 Create your plan, and start it (site B)
+      1d.4 Create your plan, and start it (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c5-review-your-vm-on-site-b-then-power-it-on-site-b" class="md-nav__link">
+  <a href="#1d5-review-your-vm-on-site-b-then-power-it-on-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.5 Review your VM on site B, then power it on (site B)
+      1d.5 Review your VM on site B, then power it on (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b" class="md-nav__link">
+  <a href="#1d6-inject-the-move-is-complete-and-read-your-rows-back-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.6 Inject: the move is complete, and read your rows back (site B)
+      1d.6 Inject: the move is complete, and read your rows back (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d7-back-to-site-a-before-demo-1e" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.7 Back to site A, before Demo 1e
     </span>
   </a>
   
@@ -543,12 +573,19 @@
   
   
     <li class="md-nav__item">
-      <a href="01d-vm-cloudnative-golden-image.html" class="md-nav__link">
+      <a href="01e-oadp-vm-backup.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
+    Demo 1e: OADP backup and restore
   </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -659,81 +696,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -787,10 +749,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -801,8 +763,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -914,63 +876,72 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c0-inject-the-demo-has-started-site-a" class="md-nav__link">
+  <a href="#1d0-inject-the-demo-has-started-site-a" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.0 Inject: the demo has started (site A)
+      1d.0 Inject: the demo has started (site A)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c1-acm-the-two-clusters-linked-site-b" class="md-nav__link">
+  <a href="#1d1-acm-the-two-clusters-linked-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.1 ACM: the two clusters, linked (site B)
+      1d.1 ACM: the two clusters, linked (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c2-mtv-the-link-to-site-a-and-the-maps-site-b" class="md-nav__link">
+  <a href="#1d2-mtv-the-link-to-site-a-and-the-maps-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.2 MTV: the link to site A, and the maps (site B)
+      1d.2 MTV: the link to site A, and the maps (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c3-inject-then-stop-your-vm-site-a" class="md-nav__link">
+  <a href="#1d3-inject-then-stop-your-vm-site-a" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.3 Inject, then stop your VM (site A)
+      1d.3 Inject, then stop your VM (site A)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c4-create-your-plan-and-start-it-site-b" class="md-nav__link">
+  <a href="#1d4-create-your-plan-and-start-it-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.4 Create your plan, and start it (site B)
+      1d.4 Create your plan, and start it (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c5-review-your-vm-on-site-b-then-power-it-on-site-b" class="md-nav__link">
+  <a href="#1d5-review-your-vm-on-site-b-then-power-it-on-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.5 Review your VM on site B, then power it on (site B)
+      1d.5 Review your VM on site B, then power it on (site B)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b" class="md-nav__link">
+  <a href="#1d6-inject-the-move-is-complete-and-read-your-rows-back-site-b" class="md-nav__link">
     <span class="md-ellipsis">
-      1c.6 Inject: the move is complete, and read your rows back (site B)
+      1d.6 Inject: the move is complete, and read your rows back (site B)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1d7-back-to-site-a-before-demo-1e" class="md-nav__link">
+    <span class="md-ellipsis">
+      1d.7 Back to site A, before Demo 1e
     </span>
   </a>
   
@@ -1000,17 +971,22 @@
                   
 
 
-<h1 id="demo-1c-cross-cluster-migration-site-a-to-site-b-bonus">Demo 1c: cross-cluster migration, site A to site B (bonus)<a class="headerlink" href="#demo-1c-cross-cluster-migration-site-a-to-site-b-bonus" title="Permanent link">&para;</a></h1>
+<h1 id="demo-1d-cross-cluster-migration-site-a-to-site-b-bcdr-class">Demo 1d: cross-cluster migration, site A to site B (BCDR class)<a class="headerlink" href="#demo-1d-cross-cluster-migration-site-a-to-site-b-bcdr-class" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.1 · draft · 2026-10-15</strong> · class/demos/01c-ocp-vm-cross-cluster-migration.md</p>
+<p><strong>Version 2.0.0 · draft · 2026-10-19</strong> · class/demos/01d-ocp-vm-cross-cluster-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
-<p>Your VM already runs on OpenShift: <a href="01-vmware-to-ove-cold.html">Demo 1</a> (cold) or, once it ships, <a href="02-vmware-to-ove-warm.html">Demo 2</a>
-(warm) moved it off VMware onto <strong>site A</strong>. Now you move it to a <strong>second OpenShift cluster</strong>, site B. Advanced
+<p>Your cloud-native server <code>pg-s01-centos10</code> (<a href="01a-vm-cloudnative-golden-image.html">Demo 1a</a>) runs on <strong>site A</strong>. Now you
+move it to a <strong>second OpenShift cluster</strong>, site B. Advanced
 Cluster Management (ACM) links the two clusters into one fleet, and MTV moves the VM between them. The two sites use
-different storage, so the move is also a <strong>storage migration</strong>: site A's disks on ODF are copied onto site B's NFS.
+their own storage, so the move is also a <strong>storage migration</strong>: every disk is copied into site B's storage class.
 As in every demo, you write a row before and after the move and read them all back.</p>
-<p><strong>Before you start:</strong> your VM runs on <strong>site A</strong> (after Demo 1 or 2). You are signed in to <strong>both</strong> consoles. Commands
+<blockquote>
+<p>🏢 <strong>BCDR class only</strong> (<em>VMware Migration &amp; BCDR</em>, demo-0024): this demo needs two OpenShift clusters. The <em>VM
+Hosting Alternative</em> class (demo-0002) has one, so skip to <a href="01e-oadp-vm-backup.html">Demo 1e</a>.</p>
+</blockquote>
+<p><strong>Before you start:</strong> your cloud-native server runs on <strong>site A</strong> (after Demos 1a – 1c), while Demo 1's copy runs.
+You are signed in to <strong>both</strong> consoles. Commands
 run in each console's <strong>Web Terminal</strong> (<code>&gt;_</code>); each step says which site.</p>
 <blockquote>
 <p>⚠ <strong>The commands are an example. Change these values to yours before you run them:</strong></p>
@@ -1029,14 +1005,14 @@ run in each console's <strong>Web Terminal</strong> (<code>&gt;_</code>); each s
 <td>your class ID</td>
 </tr>
 <tr>
-<td><code>win-pg-s01</code></td>
-<td>your VM</td>
-<td>your VM</td>
+<td><code>pg-s01-centos10</code></td>
+<td>your cloud-native server (Windows second walk-through: <code>win-pg-s01</code>)</td>
+<td>your server</td>
 </tr>
 <tr>
-<td><code>10.101.23.101</code></td>
-<td>your VM's address, the SQL server: it keeps it on site B too</td>
-<td>your VM's address</td>
+<td><code>10.101.23.151</code></td>
+<td>its address, the SQL server: it keeps it on site B too (Windows: <code>10.101.23.101</code>)</td>
+<td>its address</td>
 </tr>
 <tr>
 <td><code>ocp-lz1</code> → <code>ocp-lz2</code></td>
@@ -1046,19 +1022,19 @@ run in each console's <strong>Web Terminal</strong> (<code>&gt;_</code>); each s
 </tbody>
 </table>
 </blockquote>
-<!-- 🎬 video slot 01c-ocp-vm-cross-cluster-migration: one walk-through of the whole demo in the console -->
-<video controls preload="metadata" playsinline width="100%" poster="../.images/01c-ocp-vm-cross-cluster-migration.jpg">
-  <source src="../.images/01c-ocp-vm-cross-cluster-migration.mp4" type="video/mp4">
-  <a href="../.images/01c-ocp-vm-cross-cluster-migration.mp4">🎬 Video: Demo 1c: cross-cluster migration</a>
+<!-- 🎬 video slot 01d-ocp-vm-cross-cluster-migration: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01d-ocp-vm-cross-cluster-migration.jpg">
+  <source src="../.images/01d-ocp-vm-cross-cluster-migration.mp4" type="video/mp4">
+  <a href="../.images/01d-ocp-vm-cross-cluster-migration.mp4">🎬 Video: Demo 1d: cross-cluster migration</a>
 </video>
-<p><sub>🎬 <em>Demo 1c: cross-cluster migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
+<p><sub>🎬 <em>Demo 1d: cross-cluster migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
-<h2 id="1c0-inject-the-demo-has-started-site-a">1c.0 Inject: the demo has started (site A)<a class="headerlink" href="#1c0-inject-the-demo-has-started-site-a" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1c: running on site A');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+<h2 id="1d0-inject-the-demo-has-started-site-a">1d.0 Inject: the demo has started (site A)<a class="headerlink" href="#1d0-inject-the-demo-has-started-site-a" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1d: running on site A');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
-<h2 id="1c1-acm-the-two-clusters-linked-site-b">1c.1 ACM: the two clusters, linked (site B)<a class="headerlink" href="#1c1-acm-the-two-clusters-linked-site-b" title="Permanent link">&para;</a></h2>
+<h2 id="1d1-acm-the-two-clusters-linked-site-b">1d.1 ACM: the two clusters, linked (site B)<a class="headerlink" href="#1d1-acm-the-two-clusters-linked-site-b" title="Permanent link">&para;</a></h2>
 <p>Site B runs the ACM <strong>hub</strong>, and site A is imported into it as a <strong>managed cluster</strong>.</p>
 <p><strong>Console (site B):</strong> switch the perspective at the top left to <strong>All Clusters</strong> → <strong>Infrastructure → Clusters</strong>.</p>
 <p>✅ <code>ocp-lz1</code> (site A) shows <strong>Ready</strong>, next to <code>local-cluster</code> (site B itself).</p>
@@ -1067,10 +1043,10 @@ and site A's belongs to site B's. The hub supervises; the sites aren't peers (<a
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                              </span><span class="c1"># ocp-lz1  JOINED True  AVAILABLE True</span>
 </code></pre></div>
 <p><strong>Your VM, seen from the hub:</strong> <strong>All Clusters → Infrastructure → Virtual machines</strong> <strong>[verify: ACM 2.13 fleet
-virtualization view on the hub]</strong>. <code>win-pg-s01</code> shows on cluster <code>ocp-lz1</code>, in your project, <strong>Running</strong>.</p>
+virtualization view on the hub]</strong>. <code>pg-s01-centos10</code> shows on cluster <code>ocp-lz1</code>, in your project, <strong>Running</strong>.</p>
 <p>ACM shows you where the VM is; <strong>MTV does the move.</strong></p>
 <hr />
-<h2 id="1c2-mtv-the-link-to-site-a-and-the-maps-site-b">1c.2 MTV: the link to site A, and the maps (site B)<a class="headerlink" href="#1c2-mtv-the-link-to-site-a-and-the-maps-site-b" title="Permanent link">&para;</a></h2>
+<h2 id="1d2-mtv-the-link-to-site-a-and-the-maps-site-b">1d.2 MTV: the link to site A, and the maps (site B)<a class="headerlink" href="#1d2-mtv-the-link-to-site-a-and-the-maps-site-b" title="Permanent link">&para;</a></h2>
 <p><strong>Console (site B):</strong> <strong>Migration for Virtualization → Providers → <code>ovedr-ocp-lz1</code></strong>.</p>
 <p>✅ <strong>Ready</strong> and <strong>Connected</strong>: site B's MTV reads site A's VMs.</p>
 <table>
@@ -1087,7 +1063,7 @@ virtualization view on the hub]</strong>. <code>win-pg-s01</code> shows on clust
 </tr>
 <tr>
 <td>Storage map <code>ovedr-ocp-lz1-storage</code></td>
-<td><code>ocs-storagecluster-ceph-rbd-virtualization</code> (ODF, site A) → <code>nfs-csi</code> (NFS, site B): the <strong>storage migration</strong></td>
+<td>site A's <code>ocs-storagecluster-ceph-rbd-virtualization</code> (ODF) <strong>and</strong> its <code>nfs-csi</code> (where Demo 1c moved your data disk) → site B's storage class: the <strong>storage migration</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1097,15 +1073,25 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 <p>MTV doesn't move the disks themselves: for each one it creates a new volume on site B in <code>nfs-csi</code> and fills it by
 <strong>reading the disk on site A over the network</strong>. Site A's disks are left untouched.</p>
 <hr />
-<h2 id="1c3-inject-then-stop-your-vm-site-a">1c.3 Inject, then stop your VM (site A)<a class="headerlink" href="#1c3-inject-then-stop-your-vm-site-a" title="Permanent link">&para;</a></h2>
+<h2 id="1d3-inject-then-stop-your-vm-site-a">1d.3 Inject, then stop your VM (site A)<a class="headerlink" href="#1d3-inject-then-stop-your-vm-site-a" title="Permanent link">&para;</a></h2>
 <p>Write the "start" row <strong>before</strong> the VM stops, while its database still answers:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
-<p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Actions → Stop</strong>.</p>
+<p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code> → Actions → Stop</strong>.</p>
 <p>✅ The VM shows <strong>Stopped</strong>.</p>
+<p><strong>Unplug its cloud-init disk.</strong> MTV copies the VM and its disks, not the cloud-init Secret it booted from (Demo 1a).
+cloud-init only did its work on the first boot: the server's address, logins and PostgreSQL are now on its own disks.
+So remove the disk while the VM is stopped, and it starts on site B without the Secret:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>pg-s01-centos10<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">'del(.spec.template.spec.volumes[] | select(.cloudInitNoCloud)) | del(.spec.template.spec.domain.devices.disks[] | select(.name == "cloudinitdisk"))'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>replace<span class="w"> </span>-f<span class="w"> </span>-
+</code></pre></div>
+<p>✅ <code>virtualmachine.kubevirt.io/pg-s01-centos10 replaced</code>. (Windows second walk-through: skip this; a migrated
+Windows VM has no cloud-init disk.) <strong>[verify: MTV 2.11 OpenShift → OpenShift, a CentOS VM without its cloud-init
+disk boots at its static address on site B]</strong></p>
 <hr />
-<h2 id="1c4-create-your-plan-and-start-it-site-b">1c.4 Create your plan, and start it (site B)<a class="headerlink" href="#1c4-create-your-plan-and-start-it-site-b" title="Permanent link">&para;</a></h2>
+<h2 id="1d4-create-your-plan-and-start-it-site-b">1d.4 Create your plan, and start it (site B)<a class="headerlink" href="#1d4-create-your-plan-and-start-it-site-b" title="Permanent link">&para;</a></h2>
 <p>This plan isn't staged: you create it, then start it.</p>
 <p><strong>Console (site B):</strong> <strong>Migration for Virtualization → Migration plans → Create plan</strong>:</p>
 <table>
@@ -1118,7 +1104,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 <tbody>
 <tr>
 <td>Plan name</td>
-<td><code>d1c-win-pg-s01</code> (<code>d1c-&lt;your VM&gt;</code>)</td>
+<td><code>d1d-pg-s01-centos10</code> (<code>d1d-&lt;your VM&gt;</code>)</td>
 </tr>
 <tr>
 <td>Plan project</td>
@@ -1138,7 +1124,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 </tr>
 <tr>
 <td>Virtual machines</td>
-<td><strong>only</strong> your VM, <code>win-pg-s01</code> (in project <code>student-01-0024-012</code>)</td>
+<td><strong>only</strong> your VM, <code>pg-s01-centos10</code> (in project <code>student-01-0024-012</code>)</td>
 </tr>
 <tr>
 <td>Network map</td>
@@ -1155,22 +1141,22 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 </tbody>
 </table>
 <p><strong>Create plan</strong>. When it shows <strong>Ready</strong>, click <strong>Start</strong> → confirm. Expand your VM on the plan's page to watch
-<strong>DiskTransfer</strong>: three disks copied from ODF on site A into <code>nfs-csi</code> on site B.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1c-win-pg-s01<span class="w"> </span>-w<span class="w">      </span><span class="c1"># Ready → Executing → Succeeded (Ctrl-C)</span>
+<strong>DiskTransfer</strong>: three disks copied from site A into site B's storage class.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1d-pg-s01-centos10<span class="w"> </span>-w<span class="w">      </span><span class="c1"># Ready → Executing → Succeeded (Ctrl-C)</span>
 </code></pre></div>
 <details>
 <summary>Or: create and start the plan from the CLI (site B Web Terminal)</summary>
-<p>This builds the <strong>same</strong> plan under its own name, <code>d1c-cli-win-pg-s01</code>, so it never touches one you made in the
+<p>This builds the <strong>same</strong> plan under its own name, <code>d1d-cli-pg-s01-centos10</code>, so it never touches one you made in the
 console. Use <strong>one</strong> of them: a VM can be in only one running plan.</p>
 <p>Set the values once. Every command below reads them:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># your class ID: your project on both sites, and where MTV creates the VM on site B</span>
 <span class="nv">CLASS_ID</span><span class="o">=</span>student-01-0024-012
 <span class="c1"># your VM's name on site A (MTV keeps the name on site B)</span>
-<span class="nv">VM</span><span class="o">=</span>win-pg-s01
+<span class="nv">VM</span><span class="o">=</span>pg-s01-centos10
 <span class="c1"># the provider on site B that reads site A ("ovedr-ocp-" + site A's slot), and its two maps</span>
 <span class="nv">SRC</span><span class="o">=</span>ovedr-ocp-lz1
 <span class="c1"># a NEW plan name, so this never overwrites a plan you created in the console</span>
-<span class="nv">PLAN</span><span class="o">=</span>d1c-cli-<span class="nv">$VM</span>
+<span class="nv">PLAN</span><span class="o">=</span>d1d-cli-<span class="nv">$VM</span>
 </code></pre></div>
 <p>Create the plan:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
@@ -1205,8 +1191,8 @@ A that the maps don't cover.</p>
 </details>
 <p>✅ The plan shows <strong>Succeeded</strong>.</p>
 <hr />
-<h2 id="1c5-review-your-vm-on-site-b-then-power-it-on-site-b">1c.5 Review your VM on site B, then power it on (site B)<a class="headerlink" href="#1c5-review-your-vm-on-site-b-then-power-it-on-site-b" title="Permanent link">&para;</a></h2>
-<p><strong>Console (site B):</strong> <strong>Virtualization → VirtualMachines</strong>, project <strong><code>student-01-0024-012</code></strong> → <strong><code>win-pg-s01</code></strong>.</p>
+<h2 id="1d5-review-your-vm-on-site-b-then-power-it-on-site-b">1d.5 Review your VM on site B, then power it on (site B)<a class="headerlink" href="#1d5-review-your-vm-on-site-b-then-power-it-on-site-b" title="Permanent link">&para;</a></h2>
+<p><strong>Console (site B):</strong> <strong>Virtualization → VirtualMachines</strong>, project <strong><code>student-01-0024-012</code></strong> → <strong><code>pg-s01-centos10</code></strong>.</p>
 <table>
 <thead>
 <tr>
@@ -1221,36 +1207,47 @@ A that the maps don't cover.</p>
 </tr>
 <tr>
 <td><strong>Configuration → Storage</strong></td>
-<td>three disks, now on <strong><code>nfs-csi</code></strong> (they were on ODF on site A): the storage migration</td>
+<td>three disks, now on <strong>site B's storage class</strong>: the storage migration</td>
 </tr>
 </tbody>
 </table>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,SIZE:.spec.resources.requests.storage,CLASS:.spec.storageClassName
 </code></pre></div>
 <p>If it isn't running yet: <strong>Actions → Start</strong>, and wait for <strong>Running</strong>. On its <strong>Overview</strong>, <strong>IP addresses</strong> shows
-<code>10.101.23.101</code>: the same address on a different cluster.</p>
-<p>✅ Running on site B, disks on <code>nfs-csi</code>, address <code>10.101.23.101</code>.</p>
+<code>10.101.23.151</code>: the same address on a different cluster.</p>
+<p>✅ Running on site B, disks on <code>nfs-csi</code>, address <code>10.101.23.151</code>.</p>
 <blockquote>
 <p>💡 <strong>The source is stopped, not deleted.</strong> Site A still holds your VM, stopped, as of <code>start-cross-cluster-migration</code>.
 <strong>Never run both copies at once:</strong> they share an address and a database identity. To roll back, stop it on site B
-and start it on site A (rows written on B are not on A). Once you've checked site B, your instructor can delete the
-site A copy.</p>
+and start it on site A (rows written on B are not on A): that is what you do in 1d.7, so <strong>keep</strong> the site A copy.</p>
 </blockquote>
 <hr />
-<h2 id="1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b">1c.6 Inject: the move is complete, and read your rows back (site B)<a class="headerlink" href="#1c6-inject-the-move-is-complete-and-read-your-rows-back-site-b" title="Permanent link">&para;</a></h2>
+<h2 id="1d6-inject-the-move-is-complete-and-read-your-rows-back-site-b">1d.6 Inject: the move is complete, and read your rows back (site B)<a class="headerlink" href="#1d6-inject-the-move-is-complete-and-read-your-rows-back-site-b" title="Permanent link">&para;</a></h2>
 <p>Site B has its own class terminal (<code>sql-client</code>, in your project), which needs its own database sign-in once:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>dblogin
 </code></pre></div>
-<p>Give Windows a minute to start PostgreSQL, then:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-migration-complete', 'running on site B, disks on NFS');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
+<p>Give the server a minute to start PostgreSQL (Windows: a few minutes), then:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-migration-complete', 'running on site B, disks on NFS');"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
 </code></pre></div>
-<p>✅ Every row from Lab 0 and Demo 1 (or 2) is there, then <code>cross-cluster-started</code>, <code>start-cross-cluster-migration</code>
+<p>✅ Every row your server held is there (Demos 1a – 1c), then <code>cross-cluster-started</code>, <code>start-cross-cluster-migration</code>
 (both written on site A) and <code>cross-cluster-migration-complete</code> (written on site B), in order, with <code>chain_ok = t</code>.</p>
-<p><strong>That is the end of Demo 1c.</strong> Your VM crossed from one OpenShift cluster to another, and from ODF to NFS, with every
+<p><strong>That is the end of Demo 1d.</strong> Your server crossed from one OpenShift cluster to another, with its storage and every
 row it held.</p>
-<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next:</strong> <a href="02-vmware-to-ove-warm.html">Demo 2: warm migration with storage copy offload</a> (🚧 coming soon: read only).</p>
+<hr />
+<h2 id="1d7-back-to-site-a-before-demo-1e">1d.7 Back to site A, before Demo 1e<a class="headerlink" href="#1d7-back-to-site-a-before-demo-1e" title="Permanent link">&para;</a></h2>
+<p>Demo 1e backs up your project on <strong>site A</strong>. Run your server there again, <strong>one copy at a time</strong>:</p>
+<ol>
+<li><strong>Console (site B):</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code> → Actions → Stop</strong>. Wait for
+   <strong>Stopped</strong>.</li>
+<li><strong>Console (site A):</strong> the same VM → <strong>Actions → Start</strong>. It comes back as of <code>start-cross-cluster-migration</code>:
+   the row written on site B stays on site B.</li>
+</ol>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span><span class="w">   </span><span class="c1"># site A: chain_ok = t</span>
+</code></pre></div>
+<p><strong>Next:</strong> <a href="01e-oadp-vm-backup.html">Demo 1e: OADP backup and restore</a>, on the same server. · <strong>Back to:</strong>
+<a href="01-vmware-to-ove-cold.html">Demo 1</a></p>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11">Migration Toolkit for Virtualization 2.11 documentation</a>: OpenShift-to-OpenShift migration, network and storage maps</li>
@@ -1297,7 +1294,7 @@ row it held.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="01b-live-and-storage-migration.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1b: Live and storage migration (bonus)">
+          <a href="01c-live-and-storage-migration.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1c: Live and storage migration">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1307,20 +1304,20 @@ row it held.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Demo 1b: Live and storage migration (bonus)
+                Demo 1c: Live and storage migration
               </div>
             </div>
           </a>
         
         
           
-          <a href="01d-vm-cloudnative-golden-image.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1d: A cloud-native golden image (bonus)">
+          <a href="01e-oadp-vm-backup.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1e: OADP backup and restore">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Demo 1d: A cloud-native golden image (bonus)
+                Demo 1e: OADP backup and restore
               </div>
             </div>
             <div class="md-footer__button md-icon">

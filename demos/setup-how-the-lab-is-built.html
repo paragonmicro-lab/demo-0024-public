@@ -357,11 +357,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01a-snapshot-restore.html" class="md-nav__link">
+      <a href="01a-vm-cloudnative-golden-image.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1a: A cloud-native server, built from code
   </span>
   
 
@@ -378,11 +378,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+      <a href="01b-snapshot-restore.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1b: Snapshot and restore
   </span>
   
 
@@ -399,11 +399,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+      <a href="01c-live-and-storage-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1c: Live and storage migration
   </span>
   
 
@@ -420,12 +420,40 @@
   
   
     <li class="md-nav__item">
-      <a href="01d-vm-cloudnative-golden-image.html" class="md-nav__link">
+      <a href="01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01e-oadp-vm-backup.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1e: OADP backup and restore
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -536,81 +564,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -666,10 +619,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -680,8 +633,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -1332,7 +1285,7 @@ ask you to do the <strong>last step</strong> yourself (start your migration). Th
 </tr>
 <tr>
 <td><strong>you</strong></td>
-<td>start your own migration plan (Demo 1 / 1b), then everything in the demo guides</td>
+<td>start your own migration plan (Demo 1 / 1c), then everything in the demo guides</td>
 <td></td>
 </tr>
 </tbody>
@@ -1760,7 +1713,7 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
   <code>ovedr-students-edit</code> (ClusterRole <code>edit</code>, group <code>demo-students</code>), the instructor VM's Service <code>win-pg-i01-sql</code>, Secret
   <strong><code>bcdr-db</code></strong> (the <code>bcdr</code> database password, from the vault), and Deployment <strong><code>sql-client</code></strong>
   (<code>registry.redhat.io/rhel9/postgresql-16</code>), the instructor's tool as the database owner (<code>bcdr</code>): the healthcheck
-  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1a). Students
+  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1b). Students
   never need it.
 - ClusterRole + ClusterRoleBinding <strong><code>ovedr-class-read</code></strong>: students may read NNCPs and node network states, storage
   classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.</p>
@@ -1938,7 +1891,7 @@ govc<span class="w"> </span>object.mv<span class="w"> </span><span class="s2">"<
 site's storage map. CI waits until every plan is <strong>Ready</strong>: MTV found the VM and the maps validate. <strong>No plan is started.</strong>
 That is the one step left to you (Demo 1, Demo 2). Both sites are staged the same (since 2026-10-16), but <strong>the demos
 start site A's plan only</strong>: both sites share the VM's VLAN, so starting a plan on both would bring up two copies of
-your VM at one address. Your VM reaches site B from site A in Demo 1c, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.</p>
+your VM at one address. Your VM reaches site B from site A in Demo 1d, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="s2">"d1-</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.conditions[?(@.type=="Ready")].status}{"\n"}'</span><span class="w">     </span><span class="c1"># True</span>
@@ -2022,7 +1975,7 @@ storage maps → <strong>Cold</strong> → <strong>Create</strong>. 📸 <code>S
 - <a href="https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_ping_module.html">ansible.windows.win_ping</a></p>
 <hr />
 <h2 id="s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery">S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery<a class="headerlink" href="#s14-how-the-two-clusters-are-joined-acm-submariner-then-odf-disaster-recovery" title="Permanent link">&para;</a></h2>
-<p>Two clusters become one DR pair in <strong>three layers</strong>, and each layer needs the one before it. Demo 1c (moving a VM between
+<p>Two clusters become one DR pair in <strong>three layers</strong>, and each layer needs the one before it. Demo 1d (moving a VM between
 clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async replication) needs all three.</p>
 <div class="highlight"><pre><span></span><code>  layer 1  ACM        one hub MANAGES both clusters        ManagedCluster, ManagedClusterSet
   layer 2  Submariner the clusters' pod/service networks   submariner add-on, Broker, Globalnet,
@@ -2432,7 +2385,7 @@ cluster (the hub included).</p>
 </thead>
 <tbody>
 <tr>
-<td>MTV between the clusters (Demo 1c)</td>
+<td>MTV between the clusters (Demo 1d)</td>
 <td>✅ every deploy: providers <code>ovedr-ocp-&lt;peer&gt;</code> + maps, both directions</td>
 <td>✅</td>
 </tr>

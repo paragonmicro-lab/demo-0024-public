@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01a-snapshot-restore.html">
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01b-snapshot-restore.html">
       
       
-        <link rel="prev" href="01-vmware-to-ove-cold.html">
+        <link rel="prev" href="01a-vm-cloudnative-golden-image.html">
       
       
-        <link rel="next" href="01b-live-and-storage-migration.html">
+        <link rel="next" href="01c-live-and-storage-migration.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Demo 1a — Snapshot, destroy the database, restore from the snapshot (bonus) - VMware to OpenShift Virtualization: student guide</title>
+        <title>Demo 1b — Snapshot, destroy the database, restore from the snapshot - VMware to OpenShift Virtualization: student guide</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#demo-1a-snapshot-and-restore-bonus" class="md-skip">
+        <a href="#demo-1b-snapshot-and-restore" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Demo 1a — Snapshot, destroy the database, restore from the snapshot (bonus)
+              Demo 1b — Snapshot, destroy the database, restore from the snapshot
             
           </span>
         </div>
@@ -356,6 +356,27 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="01a-vm-cloudnative-golden-image.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1a: A cloud-native server, built from code
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -372,18 +393,18 @@
           
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1b: Snapshot and restore
   </span>
   
 
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="01a-snapshot-restore.html" class="md-nav__link md-nav__link--active">
+      <a href="01b-snapshot-restore.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1b: Snapshot and restore
   </span>
   
 
@@ -424,36 +445,36 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1a1-inject-then-snapshot" class="md-nav__link">
+  <a href="#1b1-inject-then-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.1 Inject, then snapshot
+      1b.1 Inject, then snapshot
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1a2-destroy-the-database" class="md-nav__link">
+  <a href="#1b2-destroy-the-database" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.2 Destroy the database
+      1b.2 Destroy the database
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1a3-restore-the-whole-vm-from-the-snapshot" class="md-nav__link">
+  <a href="#1b3-restore-the-whole-vm-from-the-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.3 Restore the whole VM from the snapshot
+      1b.3 Restore the whole VM from the snapshot
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1a4-inject-and-read-back-what-came-back" class="md-nav__link">
+  <a href="#1b4-inject-and-read-back-what-came-back" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.4 Inject, and read back what came back
+      1b.4 Inject, and read back what came back
     </span>
   </a>
   
@@ -465,64 +486,64 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#part-2-optional-your-migrated-windows-vm-restore-only-the-database-disks" class="md-nav__link">
+  <a href="#part-2-optional-second-walk-through-your-migrated-windows-vm-restore-only-the-database-disks" class="md-nav__link">
     <span class="md-ellipsis">
-      Part 2 (optional): your migrated Windows VM, restore only the database disks
+      Part 2 (optional, second walk-through): your migrated Windows VM, restore only the database disks
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Part 2 (optional): your migrated Windows VM, restore only the database disks">
+    <nav class="md-nav" aria-label="Part 2 (optional, second walk-through): your migrated Windows VM, restore only the database disks">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1aw1-inject-then-snapshot" class="md-nav__link">
+  <a href="#1bw1-inject-then-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W1 Inject, then snapshot
+      1b.W1 Inject, then snapshot
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw2-destroy-the-database" class="md-nav__link">
+  <a href="#1bw2-destroy-the-database" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W2 Destroy the database
+      1b.W2 Destroy the database
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw3-take-the-damaged-disks-offline" class="md-nav__link">
+  <a href="#1bw3-take-the-damaged-disks-offline" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W3 Take the damaged disks offline
+      1b.W3 Take the damaged disks offline
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" class="md-nav__link">
+  <a href="#1bw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W4 Create volumes from the snapshot's D: and L:, and hot-plug them
+      1b.W4 Create volumes from the snapshot's D: and L:, and hot-plug them
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" class="md-nav__link">
+  <a href="#1bw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W5 Bring the restored disks online as D: and L:, start PostgreSQL
+      1b.W5 Bring the restored disks online as D: and L:, start PostgreSQL
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw6-inject-and-read-back-what-came-back" class="md-nav__link">
+  <a href="#1bw6-inject-and-read-back-what-came-back" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W6 Inject, and read back what came back
+      1b.W6 Inject, and read back what came back
     </span>
   </a>
   
@@ -567,11 +588,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01b-live-and-storage-migration.html" class="md-nav__link">
+      <a href="01c-live-and-storage-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1c: Live and storage migration
   </span>
   
 
@@ -588,11 +609,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+      <a href="01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
   
 
@@ -609,12 +630,19 @@
   
   
     <li class="md-nav__item">
-      <a href="01d-vm-cloudnative-golden-image.html" class="md-nav__link">
+      <a href="01e-oadp-vm-backup.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
+    Demo 1e: OADP backup and restore
   </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -725,81 +753,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -853,10 +806,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -867,8 +820,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -990,36 +943,36 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1a1-inject-then-snapshot" class="md-nav__link">
+  <a href="#1b1-inject-then-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.1 Inject, then snapshot
+      1b.1 Inject, then snapshot
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1a2-destroy-the-database" class="md-nav__link">
+  <a href="#1b2-destroy-the-database" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.2 Destroy the database
+      1b.2 Destroy the database
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1a3-restore-the-whole-vm-from-the-snapshot" class="md-nav__link">
+  <a href="#1b3-restore-the-whole-vm-from-the-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.3 Restore the whole VM from the snapshot
+      1b.3 Restore the whole VM from the snapshot
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1a4-inject-and-read-back-what-came-back" class="md-nav__link">
+  <a href="#1b4-inject-and-read-back-what-came-back" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.4 Inject, and read back what came back
+      1b.4 Inject, and read back what came back
     </span>
   </a>
   
@@ -1031,64 +984,64 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#part-2-optional-your-migrated-windows-vm-restore-only-the-database-disks" class="md-nav__link">
+  <a href="#part-2-optional-second-walk-through-your-migrated-windows-vm-restore-only-the-database-disks" class="md-nav__link">
     <span class="md-ellipsis">
-      Part 2 (optional): your migrated Windows VM, restore only the database disks
+      Part 2 (optional, second walk-through): your migrated Windows VM, restore only the database disks
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Part 2 (optional): your migrated Windows VM, restore only the database disks">
+    <nav class="md-nav" aria-label="Part 2 (optional, second walk-through): your migrated Windows VM, restore only the database disks">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1aw1-inject-then-snapshot" class="md-nav__link">
+  <a href="#1bw1-inject-then-snapshot" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W1 Inject, then snapshot
+      1b.W1 Inject, then snapshot
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw2-destroy-the-database" class="md-nav__link">
+  <a href="#1bw2-destroy-the-database" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W2 Destroy the database
+      1b.W2 Destroy the database
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw3-take-the-damaged-disks-offline" class="md-nav__link">
+  <a href="#1bw3-take-the-damaged-disks-offline" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W3 Take the damaged disks offline
+      1b.W3 Take the damaged disks offline
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" class="md-nav__link">
+  <a href="#1bw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W4 Create volumes from the snapshot's D: and L:, and hot-plug them
+      1b.W4 Create volumes from the snapshot's D: and L:, and hot-plug them
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" class="md-nav__link">
+  <a href="#1bw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W5 Bring the restored disks online as D: and L:, start PostgreSQL
+      1b.W5 Bring the restored disks online as D: and L:, start PostgreSQL
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#1aw6-inject-and-read-back-what-came-back" class="md-nav__link">
+  <a href="#1bw6-inject-and-read-back-what-came-back" class="md-nav__link">
     <span class="md-ellipsis">
-      1a.W6 Inject, and read back what came back
+      1b.W6 Inject, and read back what came back
     </span>
   </a>
   
@@ -1132,15 +1085,15 @@
                   
 
 
-<h1 id="demo-1a-snapshot-and-restore-bonus">Demo 1a: snapshot and restore (bonus)<a class="headerlink" href="#demo-1a-snapshot-and-restore-bonus" title="Permanent link">&para;</a></h1>
+<h1 id="demo-1b-snapshot-and-restore">Demo 1b: snapshot and restore<a class="headerlink" href="#demo-1b-snapshot-and-restore" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.2.0 · draft · 2026-10-17</strong> · class/demos/01a-snapshot-restore.md</p>
+<p><strong>Version 2.0.0 · draft · 2026-10-19</strong> · class/demos/01b-snapshot-restore.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You take a snapshot of your running VM, destroy its database for real, then bring the data back from the snapshot.
 The rows you read back show the <strong>recovery point</strong>: everything written before the snapshot returns, and what you
 wrote after it does not.</p>
-<p>You do it twice, on two servers:</p>
+<p>You do it on your cloud-native server; your migrated Windows VM is the optional second walk-through:</p>
 <table>
 <thead>
 <tr>
@@ -1153,14 +1106,14 @@ wrote after it does not.</p>
 <tbody>
 <tr>
 <td><strong>1</strong></td>
-<td>your <strong>cloud-native</strong> CentOS server <code>pg-s01-centos10</code> (<a href="01d-vm-cloudnative-golden-image.html">Demo 1d</a>)</td>
+<td>your <strong>cloud-native</strong> CentOS server <code>pg-s01-centos10</code> (<a href="01a-vm-cloudnative-golden-image.html">Demo 1a</a>)</td>
 <td>while Demo 1's copy runs</td>
 <td>the <strong>whole VM</strong> from the snapshot, in one step</td>
 </tr>
 <tr>
 <td><strong>2</strong> (optional)</td>
 <td>your <strong>migrated Windows</strong> VM <code>win-pg-s01</code></td>
-<td>after <a href="01-vmware-to-ove-cold.html">Demo 1</a> §1.5</td>
+<td>the second walk-through, after <a href="01-vmware-to-ove-cold.html">Demo 1</a> §1.5</td>
 <td>only the database's two disks, swapped in while it runs</td>
 </tr>
 </tbody>
@@ -1172,7 +1125,7 @@ wrote after it does not.</p>
 addresses before you run them.</p>
 </blockquote>
 <h2 id="part-1-your-cloud-native-server-while-demo-1s-copy-runs">Part 1: your cloud-native server (while Demo 1's copy runs)<a class="headerlink" href="#part-1-your-cloud-native-server-while-demo-1s-copy-runs" title="Permanent link">&para;</a></h2>
-<h3 id="1a1-inject-then-snapshot">1a.1 Inject, then snapshot<a class="headerlink" href="#1a1-inject-then-snapshot" title="Permanent link">&para;</a></h3>
+<h3 id="1b1-inject-then-snapshot">1b.1 Inject, then snapshot<a class="headerlink" href="#1b1-inject-then-snapshot" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"</span>
 </code></pre></div>
 <p><strong>Console:</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code> → Snapshots → Take snapshot</strong>, name it
@@ -1191,7 +1144,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span cla
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'after-snapshot', 'this row must NOT come back');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
 </code></pre></div>
-<h3 id="1a2-destroy-the-database">1a.2 Destroy the database<a class="headerlink" href="#1a2-destroy-the-database" title="Permanent link">&para;</a></h3>
+<h3 id="1b2-destroy-the-database">1b.2 Destroy the database<a class="headerlink" href="#1b2-destroy-the-database" title="Permanent link">&para;</a></h3>
 <p>You own this server, so you do the damage yourself. In the VM's <strong>Console</strong>, logged in as <code>student-01</code>:</p>
 <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s1">'DROP DATABASE bcdr WITH (FORCE);'</span>
 </code></pre></div>
@@ -1199,7 +1152,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
 </code></pre></div>
 <p>✅ <code>FATAL: database "bcdr" does not exist</code>. That is the disaster.</p>
-<h3 id="1a3-restore-the-whole-vm-from-the-snapshot">1a.3 Restore the whole VM from the snapshot<a class="headerlink" href="#1a3-restore-the-whole-vm-from-the-snapshot" title="Permanent link">&para;</a></h3>
+<h3 id="1b3-restore-the-whole-vm-from-the-snapshot">1b.3 Restore the whole VM from the snapshot<a class="headerlink" href="#1b3-restore-the-whole-vm-from-the-snapshot" title="Permanent link">&para;</a></h3>
 <p>A restore needs the VM stopped. <strong>Console:</strong> <strong>Actions → Stop</strong>, then <strong>Snapshots → <code>pg-s01-centos10-snap</code> → ⋮ →
 Restore</strong>, then <strong>Actions → Start</strong>. Or:</p>
 <div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>stop<span class="w"> </span>pg-s01-centos10
@@ -1217,7 +1170,7 @@ virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<spa
 </code></pre></div>
 <p>All three disks come back as they were at the snapshot: the system, the data and the WAL together, so PostgreSQL
 starts clean. <strong>[verify: first run on a booking]</strong></p>
-<h3 id="1a4-inject-and-read-back-what-came-back">1a.4 Inject, and read back what came back<a class="headerlink" href="#1a4-inject-and-read-back-what-came-back" title="Permanent link">&para;</a></h3>
+<h3 id="1b4-inject-and-read-back-what-came-back">1b.4 Inject, and read back what came back<a class="headerlink" href="#1b4-inject-and-read-back-what-came-back" title="Permanent link">&para;</a></h3>
 <p>Give it a minute to boot, then:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'snapshot-restored', 'whole VM back from the snapshot');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
@@ -1225,10 +1178,9 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 </code></pre></div>
 <p>✅ <code>chain_ok = t</code>, and <code>before-snapshot</code> is back. ✅ <strong><code>after-snapshot</code> is gone</strong>: it was written after the
 snapshot. That is the <strong>recovery point</strong>: a restore takes you back to the snapshot, not to the moment of the disaster.</p>
-<p><strong>Next:</strong> <a href="05-oadp-vm-backup.html">Demo 5: OADP backup and restore</a> on the same server, if your lab has OADP. Otherwise
-delete the server and go back to <a href="01-vmware-to-ove-cold.html#14-review-your-vm-on-openshift-then-power-it-on">Demo 1 §1.4</a>.</p>
+<p><strong>Next:</strong> <a href="01c-live-and-storage-migration.html">Demo 1c: live migration and storage migration</a>, on the same server.</p>
 <hr />
-<h2 id="part-2-optional-your-migrated-windows-vm-restore-only-the-database-disks">Part 2 (optional): your migrated Windows VM, restore only the database disks<a class="headerlink" href="#part-2-optional-your-migrated-windows-vm-restore-only-the-database-disks" title="Permanent link">&para;</a></h2>
+<h2 id="part-2-optional-second-walk-through-your-migrated-windows-vm-restore-only-the-database-disks">Part 2 (optional, second walk-through): your migrated Windows VM, restore only the database disks<a class="headerlink" href="#part-2-optional-second-walk-through-your-migrated-windows-vm-restore-only-the-database-disks" title="Permanent link">&para;</a></h2>
 <p>After <a href="01-vmware-to-ove-cold.html">Demo 1</a> §1.5, do the same on the server you moved, the precise way: swap in only the
 snapshot's data and WAL disks while the VM keeps running. <code>powershell</code> blocks run inside your Windows VM:
 <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Console</strong>, then log in as <code>.\student-01</code> (your Windows login).</p>
@@ -1238,14 +1190,14 @@ only <code>D:</code> and keep today's <code>L:</code>, PostgreSQL replays the ne
 lose the database again. Restore <strong>both</strong> disks from the <strong>same</strong> snapshot. A VM snapshot with the guest agent
 freezes all disks at the same instant, so its <code>D:</code> and <code>L:</code> match.</p>
 </blockquote>
-<!-- 🎬 video slot 01a-snapshot-restore: one walk-through of the whole demo in the console -->
-<video controls preload="metadata" playsinline width="100%" poster="../.images/01a-snapshot-restore.jpg">
-  <source src="../.images/01a-snapshot-restore.mp4" type="video/mp4">
-  <a href="../.images/01a-snapshot-restore.mp4">🎬 Video: Demo 1a: snapshot and restore</a>
+<!-- 🎬 video slot 01b-snapshot-restore: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01b-snapshot-restore.jpg">
+  <source src="../.images/01b-snapshot-restore.mp4" type="video/mp4">
+  <a href="../.images/01b-snapshot-restore.mp4">🎬 Video: Demo 1b: snapshot and restore</a>
 </video>
-<p><sub>🎬 <em>Demo 1a: snapshot and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
+<p><sub>🎬 <em>Demo 1b: snapshot and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
-<h3 id="1aw1-inject-then-snapshot">1a.W1 Inject, then snapshot<a class="headerlink" href="#1aw1-inject-then-snapshot" title="Permanent link">&para;</a></h3>
+<h3 id="1bw1-inject-then-snapshot">1b.W1 Inject, then snapshot<a class="headerlink" href="#1bw1-inject-then-snapshot" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
@@ -1267,7 +1219,7 @@ together.</p>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
-<h3 id="1aw2-destroy-the-database">1a.W2 Destroy the database<a class="headerlink" href="#1aw2-destroy-the-database" title="Permanent link">&para;</a></h3>
+<h3 id="1bw2-destroy-the-database">1b.W2 Destroy the database<a class="headerlink" href="#1bw2-destroy-the-database" title="Permanent link">&para;</a></h3>
 <p>In your VM's console, in an <strong>elevated</strong> PowerShell (<em>Run as administrator</em>), stop the heartbeat writer so that it
 doesn't recreate anything:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Disable-ScheduledTask</span> <span class="n">-TaskName</span> <span class="n">bcdr-heartbeat</span> <span class="p">|</span> <span class="nb">Out-Null</span>
@@ -1283,7 +1235,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </
 </code></pre></div>
 <p>✅ <code>FATAL: database "bcdr" does not exist</code>. That is the disaster.</p>
 <hr />
-<h3 id="1aw3-take-the-damaged-disks-offline">1a.W3 Take the damaged disks offline<a class="headerlink" href="#1aw3-take-the-damaged-disks-offline" title="Permanent link">&para;</a></h3>
+<h3 id="1bw3-take-the-damaged-disks-offline">1b.W3 Take the damaged disks offline<a class="headerlink" href="#1bw3-take-the-damaged-disks-offline" title="Permanent link">&para;</a></h3>
 <p>In the VM's elevated PowerShell:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Stop-Service</span> <span class="n">postgresql</span><span class="p">-</span><span class="n">16</span>
 <span class="nv">$bad</span> <span class="p">=</span> <span class="k">foreach</span> <span class="p">(</span><span class="nv">$l</span> <span class="k">in</span> <span class="s1">'D'</span><span class="p">,</span><span class="s1">'L'</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Get-Partition</span> <span class="n">-DriveLetter</span> <span class="nv">$l</span> <span class="p">|</span> <span class="nb">Get-Disk</span> <span class="p">}</span>
@@ -1292,11 +1244,11 @@ oc<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </
 <span class="nv">$bad</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span> <span class="nb">Set-Disk</span> <span class="n">-Number</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Number</span> <span class="n">-IsOffline</span> <span class="nv">$true</span> <span class="p">}</span>
 </code></pre></div>
 <hr />
-<h3 id="1aw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them">1a.W4 Create volumes from the snapshot's <code>D:</code> and <code>L:</code>, and hot-plug them<a class="headerlink" href="#1aw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" title="Permanent link">&para;</a></h3>
+<h3 id="1bw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them">1b.W4 Create volumes from the snapshot's <code>D:</code> and <code>L:</code>, and hot-plug them<a class="headerlink" href="#1bw4-create-volumes-from-the-snapshots-d-and-l-and-hot-plug-them" title="Permanent link">&para;</a></h3>
 <p>Set the values once. Every command in this step reads them:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># your class ID: the project your VM, its disks and the snapshot live in</span>
 <span class="nv">CLASS_ID</span><span class="o">=</span>student-01-0024-012
-<span class="c1"># your VM, and the snapshot you took in 1a.W1</span>
+<span class="c1"># your VM, and the snapshot you took in 1b.W1</span>
 <span class="nv">VM</span><span class="o">=</span>win-pg-s01
 <span class="nv">SNAP</span><span class="o">=</span><span class="nv">$VM</span>-snap
 </code></pre></div>
@@ -1336,7 +1288,7 @@ oc<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</
 <p>✅ Both restored volumes show <code>Ready</code>. (Proven on this cluster on 0024-015: snapshot, a volume from it, hot-plug into the
 running VM, and the restored disk held the snapshot-time data.) <strong>[verify: the <code>vioscsi</code> driver in the Windows guest]</strong></p>
 <hr />
-<h3 id="1aw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql">1a.W5 Bring the restored disks online as <code>D:</code> and <code>L:</code>, start PostgreSQL<a class="headerlink" href="#1aw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" title="Permanent link">&para;</a></h3>
+<h3 id="1bw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql">1b.W5 Bring the restored disks online as <code>D:</code> and <code>L:</code>, start PostgreSQL<a class="headerlink" href="#1bw5-bring-the-restored-disks-online-as-d-and-l-start-postgresql" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Update-HostStorageCache</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$m</span> <span class="k">in</span> <span class="p">@(@{</span><span class="n">Serial</span><span class="p">=</span><span class="s1">'data'</span><span class="p">;</span> <span class="n">Letter</span><span class="p">=</span><span class="s1">'D'</span><span class="p">},</span> <span class="p">@{</span><span class="n">Serial</span><span class="p">=</span><span class="s1">'wal'</span><span class="p">;</span> <span class="n">Letter</span><span class="p">=</span><span class="s1">'L'</span><span class="p">}))</span> <span class="p">{</span>
   <span class="nv">$d</span> <span class="p">=</span> <span class="nb">Get-Disk</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">SerialNumber</span> <span class="o">-eq</span> <span class="nv">$m</span><span class="p">.</span><span class="n">Serial</span> <span class="p">}</span>
@@ -1352,7 +1304,7 @@ running VM, and the restored disk held the snapshot-time data.) <strong>[verify:
 <p>(The restored disks are copies of the originals, so Windows may first report a <em>signature collision</em>. Bringing the
 copy online while the originals are offline gives it a new signature. That is expected.)</p>
 <hr />
-<h3 id="1aw6-inject-and-read-back-what-came-back">1a.W6 Inject, and read back what came back<a class="headerlink" href="#1aw6-inject-and-read-back-what-came-back" title="Permanent link">&para;</a></h3>
+<h3 id="1bw6-inject-and-read-back-what-came-back">1b.W6 Inject, and read back what came back<a class="headerlink" href="#1bw6-inject-and-read-back-what-came-back" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'snapshot-restored', 'database back from the snapshot');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
@@ -1380,7 +1332,7 @@ virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<spa
 <p><strong>Tidy up:</strong> after the disk swap, your VM carries two extra disks and its original <code>D:</code> and <code>L:</code> are offline. Before
 the next demo, either restore the whole VM (above), or stop the VM and remove the old volumes in <strong>Configuration →
 Storage</strong> <strong>[verify: BL-D11, a clean "post-bonus" state for demos 2-4]</strong>.</p>
-<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next:</strong> <a href="05-oadp-vm-backup.html">Demo 5: OADP backup and restore</a>, on your Windows VM this time.</p>
+<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next on Windows:</strong> <a href="01c-live-and-storage-migration.html">Demo 1c: live migration and storage migration</a>.</p>
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/backup-and-restore">OpenShift Virtualization: backup and restore (VM snapshots)</a> [verify link]</li>
@@ -1424,7 +1376,7 @@ Storage</strong> <strong>[verify: BL-D11, a clean "post-bonus" state for demos 2
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="01-vmware-to-ove-cold.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1: Cold migration">
+          <a href="01a-vm-cloudnative-golden-image.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1a: A cloud-native server, built from code">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1434,20 +1386,20 @@ Storage</strong> <strong>[verify: BL-D11, a clean "post-bonus" state for demos 2
                 Previous
               </span>
               <div class="md-ellipsis">
-                Demo 1: Cold migration
+                Demo 1a: A cloud-native server, built from code
               </div>
             </div>
           </a>
         
         
           
-          <a href="01b-live-and-storage-migration.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1b: Live and storage migration (bonus)">
+          <a href="01c-live-and-storage-migration.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1c: Live and storage migration">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Demo 1b: Live and storage migration (bonus)
+                Demo 1c: Live and storage migration
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01b-live-and-storage-migration.html">
+        <link rel="canonical" href="https://paragonmicro-lab.github.io/demo-0024-public/demos/01e-oadp-vm-backup.html">
       
       
-        <link rel="prev" href="01a-snapshot-restore.html">
+        <link rel="prev" href="01d-ocp-vm-cross-cluster-migration.html">
       
       
-        <link rel="next" href="01c-ocp-vm-cross-cluster-migration.html">
+        <link rel="next" href="02-vmware-to-ove-warm.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Demo 1b — Live migration and storage migration (bonus) - VMware to OpenShift Virtualization: student guide</title>
+        <title>Demo 1e — Back up and restore your VM with OADP - VMware to OpenShift Virtualization: student guide</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#demo-1b-live-migration-and-storage-migration-bonus" class="md-skip">
+        <a href="#demo-1e-back-up-and-restore-your-vm-with-oadp" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Demo 1b — Live migration and storage migration (bonus)
+              Demo 1e — Back up and restore your VM with OADP
             
           </span>
         </div>
@@ -359,11 +359,74 @@
   
   
     <li class="md-nav__item">
-      <a href="01a-snapshot-restore.html" class="md-nav__link">
+      <a href="01a-vm-cloudnative-golden-image.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1a: A cloud-native server, built from code
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01b-snapshot-restore.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1b: Snapshot and restore
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01c-live-and-storage-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1c: Live and storage migration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
   
 
@@ -393,19 +456,33 @@
           
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1e: OADP backup and restore
   </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="01b-live-and-storage-migration.html" class="md-nav__link md-nav__link--active">
+      <a href="01e-oadp-vm-backup.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1e: OADP backup and restore
   </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -435,36 +512,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b1-inject-and-check-the-vm-can-live-migrate" class="md-nav__link">
+  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.1 Inject, and check the VM can live-migrate
+      How the lab is set up for this demo
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b2-live-migrate-to-another-node" class="md-nav__link">
+  <a href="#1e1-what-a-vm-backup-contains" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.2 Live-migrate to another node
+      1e.1 What a VM backup contains
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs" class="md-nav__link">
+  <a href="#1e2-inject-before-the-backup" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.3 Storage migration: move the data disk from ODF to NFS, while it runs
+      1e.2 Inject before the backup
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b4-inject-and-read-back" class="md-nav__link">
+  <a href="#1e3-back-up-your-namespace" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.4 Inject, and read back
+      1e.3 Back up your namespace
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1e4-lose-it-delete-your-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      1e.4 Lose it: delete your VM
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1e5-restore-and-prove-the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      1e.5 Restore, and prove the data
     </span>
   </a>
   
@@ -479,52 +574,19 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#proof-table-demo-1e" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proof table: Demo 1e
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="01d-vm-cloudnative-golden-image.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -632,81 +694,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../downloads.html" class="md-nav__link">
         
@@ -760,10 +747,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -774,8 +761,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -887,36 +874,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b1-inject-and-check-the-vm-can-live-migrate" class="md-nav__link">
+  <a href="#how-the-lab-is-set-up-for-this-demo" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.1 Inject, and check the VM can live-migrate
+      How the lab is set up for this demo
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b2-live-migrate-to-another-node" class="md-nav__link">
+  <a href="#1e1-what-a-vm-backup-contains" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.2 Live-migrate to another node
+      1e.1 What a VM backup contains
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs" class="md-nav__link">
+  <a href="#1e2-inject-before-the-backup" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.3 Storage migration: move the data disk from ODF to NFS, while it runs
+      1e.2 Inject before the backup
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#1b4-inject-and-read-back" class="md-nav__link">
+  <a href="#1e3-back-up-your-namespace" class="md-nav__link">
     <span class="md-ellipsis">
-      1b.4 Inject, and read back
+      1e.3 Back up your namespace
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1e4-lose-it-delete-your-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      1e.4 Lose it: delete your VM
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1e5-restore-and-prove-the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      1e.5 Restore, and prove the data
     </span>
   </a>
   
@@ -926,6 +931,15 @@
   <a href="#thank-you" class="md-nav__link">
     <span class="md-ellipsis">
       Thank you
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proof-table-demo-1e" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proof table: Demo 1e
     </span>
   </a>
   
@@ -946,108 +960,179 @@
                   
 
 
-<h1 id="demo-1b-live-migration-and-storage-migration-bonus">Demo 1b: live migration and storage migration (bonus)<a class="headerlink" href="#demo-1b-live-migration-and-storage-migration-bonus" title="Permanent link">&para;</a></h1>
+<h1 id="demo-1e-back-up-and-restore-your-vm-with-oadp">Demo 1e: Back up and restore your VM with OADP<a class="headerlink" href="#demo-1e-back-up-and-restore-your-vm-with-oadp" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.3 · draft · 2026-10-17</strong> · class/demos/01b-live-and-storage-migration.md</p>
+<p><strong>Version 0.4.0 · framework · 2026-10-19</strong> · class/demos/01e-oadp-vm-backup.md</p>
+<p>🚧 <strong>Framework.</strong> OADP is now built by the lab when a class books it (option <code>backup: oadp</code>, the default for this
+class). The commands below are unproven <strong>[verify]</strong> until a booking has run them. Ask your instructor whether your
+lab has OADP before you start.</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
-<p>Two moves on a <strong>running</strong> VM, with no reboot: a <strong>live migration</strong> moves its memory and CPU to another node, and
-a <strong>storage migration</strong> moves one of its disks to another storage class (ODF → NFS) while Windows and PostgreSQL keep
-running. You write a row before and after each move and read them back.</p>
-<p><strong>Before you start:</strong> finish <a href="01-vmware-to-ove-cold.html">Demo 1</a>. Your VM runs on <strong>site A</strong>, and every command runs
-in the site A console's <strong>Web Terminal</strong> (<code>&gt;_</code>).</p>
+<p>Disaster recovery (Demo 4) keeps a running copy on another site. A <strong>backup</strong> is different: a point-in-time copy you
+can restore after a mistake, a bad change or a ransomware event, even when every replica has the damage too. You will
+back up your whole namespace with <strong>OADP</strong> (the OpenShift API for Data Protection, Red Hat's Velero-based operator): the
+<code>VirtualMachine</code>, its disks and its Service. Then you delete it all, restore it, and prove with your own rows that the
+restored VM holds exactly the data it had at backup time.</p>
+<h2 id="how-the-lab-is-set-up-for-this-demo">How the lab is set up for this demo<a class="headerlink" href="#how-the-lab-is-set-up-for-this-demo" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>What is pre-built (planned)</th>
+<th>How it is built</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Both sites (demo-openshift, <code>backup: oadp</code>)</td>
+<td>the <strong>OADP operator</strong> (1.5) in <code>openshift-adp</code>, a <code>DataProtectionApplication</code> with the <code>openshift</code>, <code>aws</code>, <code>kubevirt</code> and <code>csi</code> plugins, the node agent and the <strong>Data Mover</strong> (disk snapshots copied off the cluster), and <strong>non-admin backups</strong>: you back up and restore your <strong>own namespace</strong> yourself</td>
+<td><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index">OADP</a> [verify link]</td>
+</tr>
+<tr>
+<td>Both sites</td>
+<td>a <strong>backup location</strong> on the lab's object store (MinIO, outside the clusters), one bucket per cluster and a folder per booking: backups outlive the cluster</td>
+<td><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index">Backup locations</a> [verify link]</td>
+</tr>
+<tr>
+<td>You</td>
+<td>a VM running on site A in your namespace: your <strong>cloud-native</strong> server <code>pg-sNN-centos10</code> (after Demos <a href="01a-vm-cloudnative-golden-image.html">1a</a> – <a href="01d-ocp-vm-cross-cluster-migration.html">1d</a>, while Demo 1's copy runs); your <strong>migrated Windows</strong> VM is the optional second walk-through (after <a href="01-vmware-to-ove-cold.html">Demo 1</a> §1.5)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>You do yourself:</strong> inject data, request a backup of your namespace, delete your VM, restore it, and verify.</p>
 <blockquote>
-<p>⚠ <strong>The commands are an example</strong> for <code>student-01-0024-012</code>, VM <code>win-pg-s01</code> at <code>10.101.23.101</code>. Change them to
-your class ID, your VM and its address before you run them.</p>
+<p>🖥️ <strong>Where you type the commands: your browser terminal</strong> (<a href="toolkit.html">Toolkit T.1</a>), signed in on site A, with
+<code>dblogin</code> done. <code>powershell</code> blocks run inside your Windows VM, from its console.</p>
 </blockquote>
-<!-- 🎬 video slot 01b-live-and-storage-migration: one walk-through of the whole demo in the console -->
-<video controls preload="metadata" playsinline width="100%" poster="../.images/01b-live-and-storage-migration.jpg">
-  <source src="../.images/01b-live-and-storage-migration.mp4" type="video/mp4">
-  <a href="../.images/01b-live-and-storage-migration.mp4">🎬 Video: Demo 1b: live migration and storage migration</a>
+<p><strong>Which VM.</strong> The terminal's commands (<code>alive</code>, <code>mark</code>, <code>verify</code>) follow <code>$VM</code> and <code>$PGHOST</code>. <strong>On your cloud-native
+server</strong> (the first time through), point them at it, with your own number:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">VM</span><span class="o">=</span>pg-s01-centos10<span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="m">10</span>.101.23.151
+</code></pre></div>
+<p><strong>On your Windows VM</strong> (after Demo 1), open a new terminal tab, or <code>unset PGHOST; export VM=win-pg-s01</code>.</p>
+<!-- 🎬 video slot 01e-oadp-vm-backup: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01e-oadp-vm-backup.jpg">
+  <source src="../.images/01e-oadp-vm-backup.mp4" type="video/mp4">
+  <a href="../.images/01e-oadp-vm-backup.mp4">🎬 Video: Demo 1e: OADP backup and restore</a>
 </video>
-<p><sub>🎬 <em>Demo 1b: live migration and storage migration: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
+<p><sub>🎬 <em>Demo 1e: OADP backup and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.</em></sub></p>
 <hr />
-<h2 id="1b1-inject-and-check-the-vm-can-live-migrate">1b.1 Inject, and check the VM can live-migrate<a class="headerlink" href="#1b1-inject-and-check-the-vm-can-live-migrate" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-live-migration', 'running on one node');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}  LiveMigratable={.status.conditions[?(@.type=="LiveMigratable")].status}{"\n"}'</span>
-</code></pre></div>
-<p>✅ <code>LiveMigratable=True</code>. ✍️ Note the node it runs on now. A live migration needs the disks reachable from <strong>both</strong>
-nodes at once (ReadWriteMany): ODF's <code>ocs-storagecluster-ceph-rbd-virtualization</code> is. If it says <code>False</code>, the
-condition's message names the reason, usually a mounted CD.</p>
-<hr />
-<h2 id="1b2-live-migrate-to-another-node">1b.2 Live-migrate to another node<a class="headerlink" href="#1b2-live-migrate-to-another-node" title="Permanent link">&para;</a></h2>
-<p><strong>Console:</strong> <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Actions → Migrate → Compute</strong>. Or:</p>
-<div class="highlight"><pre><span></span><code>virtctl<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>migrate<span class="w"> </span>win-pg-s01
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                                 </span><span class="c1"># … Succeeded (Ctrl-C)</span>
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.status.nodeName}{"\n"}'</span>
-</code></pre></div>
-<p>✅ The VM runs on a <strong>different</strong> node, and it never stopped: the console's VM <strong>Overview</strong> shows the new node and no
-restart.</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'after-live-migration', 'running on another node');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+<h2 id="1e1-what-a-vm-backup-contains">1e.1 What a VM backup contains<a class="headerlink" href="#1e1-what-a-vm-backup-contains" title="Permanent link">&para;</a></h2>
+<p>A backup of your namespace captures its <strong>objects</strong> (the <code>VirtualMachine</code>, its <code>DataVolume</code>s and PVCs, the Service) and
+its <strong>data</strong>: each disk is snapshotted, and the Data Mover copies the snapshot to object storage, so the backup
+survives even if the cluster's storage is lost. A running Windows VM is backed up <strong>crash-consistent</strong> unless the guest
+agent freezes it first: PostgreSQL recovers from that like from a power cut, and your hash chain proves it.</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,dv,pvc,svc<span class="w">               </span><span class="c1"># what your backup will contain</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminbackupstoragelocations.oadp.openshift.io<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"(the class's location is the default one)"</span><span class="w">   </span><span class="c1"># [verify]</span>
 </code></pre></div>
 <hr />
-<h2 id="1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs">1b.3 Storage migration: move the data disk from ODF to NFS, while it runs<a class="headerlink" href="#1b3-storage-migration-move-the-data-disk-from-odf-to-nfs-while-it-runs" title="Permanent link">&para;</a></h2>
-<p>Your VM's disks are on ODF (<code>ocs-storagecluster-ceph-rbd-virtualization</code>). Move the 1 GB <strong>data</strong> disk (<code>D:</code>) to
-<code>nfs-csi</code>, with the VM running. OpenShift Virtualization copies the disk in the background, then switches the VM to
-the new copy with a live migration.</p>
-<p>Proven on this cluster (0024-015, 2026-10-16): a 1 GiB disk moved from ODF (block) to <code>nfs-csi</code> (filesystem) in
-46 seconds, the VM never restarted, and its data was intact. <strong>[verify: whether the console's </strong>Actions → Migrate →
-Storage<strong> offers the same]</strong></p>
-<p>First check the VM allows it:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'StorageLiveMigratable={.status.conditions[?(@.type=="StorageLiveMigratable")].status}{"\n"}'</span>
+<blockquote>
+<p>💡 <strong>Use full resource names here.</strong> On these clusters <code>oc get backup</code> finds ODF's database-backup type and
+<code>oc get restore</code> finds ACM's, not OADP's. Several operators define a "backup" or "restore". Always write the full name,
+for example <code>nonadminbackups.oadp.openshift.io</code> or <code>backups.velero.io</code>.</p>
+</blockquote>
+<h2 id="1e2-inject-before-the-backup">1e.2 Inject before the backup<a class="headerlink" href="#1e2-inject-before-the-backup" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>alive<span class="w">                              </span><span class="c1"># your VM is writing</span>
+mark<span class="w"> </span>d1e-in-backup<span class="w">                  </span><span class="c1"># ✍️ note the id: this row MUST come back</span>
+verify<span class="w">                             </span><span class="c1"># chain_ok = t</span>
 </code></pre></div>
-<p>✅ <code>StorageLiveMigratable=True</code>.</p>
-<p>Find the data disk's volume (the 1 GiB one):</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.spec.template.spec.volumes[] | "\(.name)  \(.persistentVolumeClaim.claimName // .dataVolume.name)"'</span>
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>custom-columns<span class="o">=</span>NAME:.metadata.name,SIZE:.spec.resources.requests.storage,CLASS:.spec.storageClassName
+<p>On Windows, also write a line into a file in the VM, from its console (PowerShell):</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Add-Content</span> <span class="s2">"C:\Users\Public\ovedr\$env:USERNAME.txt"</span> <span class="s2">"</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="n">o</span><span class="p">)</span><span class="s2">  d1e-in-backup"</span>
 </code></pre></div>
-<p>Set the one value this step needs, from the list above:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># the data disk's current volume (the 1 GiB one on ODF): the disk you are moving</span>
-<span class="nv">OLD</span><span class="o">=</span><span class="s1">'&lt;the 1 GiB pvc from the list above&gt;'</span>
-</code></pre></div>
-<p>Create an empty 1Gi target volume on <code>nfs-csi</code>, the same size as the disk you move:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
-<span class="s">apiVersion: cdi.kubevirt.io/v1beta1</span>
-<span class="s">kind: DataVolume</span>
-<span class="s">metadata: { name: win-pg-s01-data-nfs, namespace: student-01-0024-012 }</span>
+<hr />
+<h2 id="1e3-back-up-your-namespace">1e.3 Back up your namespace<a class="headerlink" href="#1e3-back-up-your-namespace" title="Permanent link">&para;</a></h2>
+<p>You create a <strong><code>NonAdminBackup</code></strong> in your own namespace; OADP turns it into a backup of that namespace only, and the
+label selector narrows it to <strong>your server</strong> (<code>app=$VM</code>; OADP's KubeVirt plugin adds its disks). Your namespace also
+holds the Windows VM that Demo 1 is still copying in: it stays out of this backup.
+<strong>[verify: the NonAdminBackup fields and the student rights on OADP 1.5 (demo-openshift reports what the operator
+grants)]</strong></p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: oadp.openshift.io/v1alpha1</span>
+<span class="s">kind: NonAdminBackup</span>
+<span class="s">metadata: { name: d1e }</span>
 <span class="s">spec:</span>
-<span class="s">  source: { blank: {} }</span>
-<span class="s">  storage:</span>
-<span class="s">    storageClassName: nfs-csi</span>
-<span class="s">    accessModes: [ ReadWriteMany ]</span>
-<span class="s">    resources: { requests: { storage: 1Gi } }</span>
+<span class="s">  backupSpec:</span>
+<span class="s">    labelSelector: { matchLabels: { app: $VM } }   # your server, its disks and its cloud-init Secret   [verify]</span>
+<span class="s">    snapshotMoveData: true        # the Data Mover: your disks' data leaves the cluster's storage</span>
+<span class="s">    ttl: 24h0m0s</span>
 <span class="s">EOF</span>
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>dv<span class="w"> </span>win-pg-s01-data-nfs<span class="w"> </span>-w<span class="w">                </span><span class="c1"># Succeeded (Ctrl-C)</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminbackups.oadp.openshift.io<span class="w"> </span>d1e<span class="w"> </span>-w<span class="w">            </span><span class="c1"># Ctrl-C when its phase is Created and the backup Completed</span>
+mark<span class="w"> </span>d1e-after-backup<span class="w">               </span><span class="c1"># this row is NOT in the backup: it must be gone after the restore</span>
 </code></pre></div>
-<p>Point the VM's data disk at the new volume, and tell it to <strong>migrate</strong> the data (not just swap the disk):</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>--arg<span class="w"> </span>old<span class="w"> </span><span class="s2">"</span><span class="nv">$OLD</span><span class="s2">"</span><span class="w"> </span><span class="s1">'</span>
-<span class="s1">  .spec.updateVolumesStrategy = "Migration"</span>
-<span class="s1">  | .spec.template.spec.volumes |= map(</span>
-<span class="s1">      if ((.persistentVolumeClaim.claimName // .dataVolume.name) == $old)</span>
-<span class="s1">      then {name: .name, dataVolume: {name: "win-pg-s01-data-nfs"}} else . end)</span>
-<span class="s1">  | if .spec.dataVolumeTemplates then .spec.dataVolumeTemplates |= map(select(.metadata.name != $old)) else . end'</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>replace<span class="w"> </span>-f<span class="w"> </span>-
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmim<span class="w"> </span>-w<span class="w">                                 </span><span class="c1"># a migration runs and Succeeds (Ctrl-C)</span>
-oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>vmi<span class="w"> </span>win-pg-s01<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{range .status.volumeStatus[*]}{.name}  {.persistentVolumeClaimInfo.claimName}{"\n"}{end}'</span>
-</code></pre></div>
-<p>✅ The data disk now reads <code>win-pg-s01-data-nfs</code> (<code>nfs-csi</code>), and the VM never restarted. In the console: <strong>VM →
-Configuration → Storage</strong> shows the data disk on <code>nfs-csi</code>.</p>
+<p><strong>Console:</strong> your project → <strong>Operators → Installed Operators → OADP → NonAdminBackup → Create</strong>.</p>
+<p>✍️ <strong>Row 1e.3:</strong> the backup's duration and size (<code>oc -n "$VMNS" get nonadminbackups.oadp.openshift.io d1e -o yaml</code>, under <code>status</code>).</p>
 <hr />
-<h2 id="1b4-inject-and-read-back">1b.4 Inject, and read back<a class="headerlink" href="#1b4-inject-and-read-back" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'after-storage-migration', 'data disk on NFS');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
+<h2 id="1e4-lose-it-delete-your-vm">1e.4 Lose it: delete your VM<a class="headerlink" href="#1e4-lose-it-delete-your-vm" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>delete<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w">                     </span><span class="c1"># the VM and its disks are gone</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm,pvc<span class="w">                          </span><span class="c1"># nothing left of your VM</span>
+alive<span class="w">                                                              </span><span class="c1"># fails: that is the disaster</span>
 </code></pre></div>
-<p>✅ After Demo 1's rows: <code>before-live-migration</code>, <code>after-live-migration</code> and <code>after-storage-migration</code>, in order, with
-<code>chain_ok = t</code>. PostgreSQL kept running through both moves, so nothing between them is missing.</p>
-<p><strong>Back to:</strong> <a href="01-vmware-to-ove-cold.html">Demo 1</a> · <strong>Next:</strong> <a href="02-vmware-to-ove-warm.html">Demo 2: warm migration with storage copy offload</a> (🚧 coming soon: read only).</p>
+<hr />
+<h2 id="1e5-restore-and-prove-the-data">1e.5 Restore, and prove the data<a class="headerlink" href="#1e5-restore-and-prove-the-data" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: oadp.openshift.io/v1alpha1</span>
+<span class="s">kind: NonAdminRestore</span>
+<span class="s">metadata: { name: d1e }</span>
+<span class="s">spec:</span>
+<span class="s">  restoreSpec:</span>
+<span class="s">    backupName: d1e                # your NonAdminBackup   [verify]</span>
+<span class="s">EOF</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>nonadminrestores.oadp.openshift.io<span class="w"> </span>d1e<span class="w"> </span>-w<span class="w">           </span><span class="c1"># Ctrl-C when the restore Completed</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$VMNS</span><span class="s2">"</span><span class="w"> </span>get<span class="w"> </span>vm<span class="w"> </span><span class="s2">"</span><span class="nv">$VM</span><span class="s2">"</span><span class="w"> </span>-w<span class="w">                      </span><span class="c1"># Running again</span>
+<span class="k">until</span><span class="w"> </span>alive<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">10</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="p">;</span><span class="w"> </span>alive<span class="w">              </span><span class="c1"># the VM booted, PostgreSQL recovered</span>
+verify<span class="w">                                                             </span><span class="c1"># chain_ok = t</span>
+sql<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT stage FROM marks WHERE student = '</span><span class="nv">$ME</span><span class="s2">' AND stage LIKE 'd1e-%' ORDER BY id;"</span>
+</code></pre></div>
+<p>✅ <code>d1e-in-backup</code> is back and <code>chain_ok = t</code>. <code>d1e-after-backup</code> is <strong>gone</strong>: it was written after the backup, which is
+exactly what a restore means. On Windows, your file in the VM ends at <code>d1e-in-backup</code> too.</p>
+<p><strong>Done on the cloud-native server?</strong> Go back to Demo 1: you <strong>stop</strong> it there (no need to delete it) and start your
+migrated Windows VM.</p>
+<p><strong>Next:</strong> <a href="01-vmware-to-ove-cold.html#14-review-your-vm-on-openshift-then-power-it-on">Demo 1 §1.4</a>.</p>
+<blockquote>
+<p><strong>Second walk-through on Windows:</strong> the backup selects <code>app=$VM</code>, so label the migrated VM first (MTV doesn't):
+<code>oc --context site-a -n "$VMNS" label vm win-pg-s01 app=win-pg-s01 --overwrite</code>.</p>
+</blockquote>
+<p>✍️ <strong>Row 1e.5:</strong> the restore's duration, <code>chain_ok</code>, and which of your rows came back.</p>
+<hr />
 <h2 id="thank-you">Thank you<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<p>You protected a VM the way a platform team protects any application on OpenShift: one backup of the namespace, its
+objects and its disks, restored in place. To go deeper:</p>
 <ul>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/live-migration">OpenShift Virtualization: live migration</a> [verify link]</li>
-<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">OpenShift Virtualization documentation (4.19)</a></li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/backup_and_restore/index">OADP: backup and restore on OpenShift (4.19)</a> [verify link]</li>
+<li><a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index">Backing up and restoring virtual machines (OpenShift Virtualization 4.19)</a> [verify link]</li>
+<li><a href="https://velero.io/docs/">Velero, the upstream project</a></li>
 </ul>
+<h2 id="proof-table-demo-1e">Proof table: Demo 1e<a class="headerlink" href="#proof-table-demo-1e" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Stage</th>
+<th>Duration</th>
+<th>Size</th>
+<th>Rows back</th>
+<th><code>chain_ok</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1e.3</td>
+<td>backup</td>
+<td></td>
+<td></td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>1e.5</td>
+<td>restore</td>
+<td></td>
+<td>—</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -1086,7 +1171,7 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="01a-snapshot-restore.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1a: Snapshot and restore (bonus)">
+          <a href="01d-ocp-vm-cross-cluster-migration.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo 1d: Cross-cluster migration (BCDR class)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1096,20 +1181,20 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
                 Previous
               </span>
               <div class="md-ellipsis">
-                Demo 1a: Snapshot and restore (bonus)
+                Demo 1d: Cross-cluster migration (BCDR class)
               </div>
             </div>
           </a>
         
         
           
-          <a href="01c-ocp-vm-cross-cluster-migration.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 1c: Cross-cluster migration (bonus)">
+          <a href="02-vmware-to-ove-warm.html" class="md-footer__link md-footer__link--next" aria-label="Next: Demo 2: Warm migration">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Demo 1c: Cross-cluster migration (bonus)
+                Demo 2: Warm migration
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -433,11 +433,11 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01a-snapshot-restore.html" class="md-nav__link">
+      <a href="demos/01a-vm-cloudnative-golden-image.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1a: Snapshot and restore (bonus)
+    Demo 1a: A cloud-native server, built from code
   </span>
   
 
@@ -454,11 +454,11 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01b-live-and-storage-migration.html" class="md-nav__link">
+      <a href="demos/01b-snapshot-restore.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1b: Live and storage migration (bonus)
+    Demo 1b: Snapshot and restore
   </span>
   
 
@@ -475,11 +475,11 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01c-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
+      <a href="demos/01c-live-and-storage-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1c: Cross-cluster migration (bonus)
+    Demo 1c: Live and storage migration
   </span>
   
 
@@ -496,12 +496,40 @@
   
   
     <li class="md-nav__item">
-      <a href="demos/01d-vm-cloudnative-golden-image.html" class="md-nav__link">
+      <a href="demos/01d-ocp-vm-cross-cluster-migration.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Demo 1d: A cloud-native golden image (bonus)
+    Demo 1d: Cross-cluster migration (BCDR class)
   </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/01e-oadp-vm-backup.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo 1e: OADP backup and restore
+  </span>
+  
+    
+  
+  
+    <span class="md-status md-status--framework"></span>
+  
+
   
 
       </a>
@@ -612,81 +640,6 @@
   
   
   
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Backup
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Backup
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="demos/05-oadp-vm-backup.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo 5: OADP backup and restore (bonus)
-  </span>
-  
-    
-  
-  
-    <span class="md-status md-status--framework"></span>
-  
-
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="downloads.html" class="md-nav__link">
         
@@ -740,10 +693,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -754,8 +707,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -910,7 +863,7 @@
 
 <h1 id="student-guide">Student Guide<a class="headerlink" href="#student-guide" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.9.7 · draft · 2026-10-19</strong> · class/student-guide.md</p>
+<p><strong>Version 0.10.0 · draft · 2026-10-19</strong> · class/student-guide.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You take a real Windows Server + PostgreSQL VM from VMware vSphere onto Red Hat OpenShift Virtualization, cold and then
@@ -1014,8 +967,8 @@ knows your own (type <code>ovedr</code>).</p>
 <td>1</td>
 <td><a href="demos/01-vmware-to-ove-cold.html">Cold migration</a></td>
 <td>check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows</td>
-<td>2 h (the copy alone is about 1 h 30)</td>
-<td><a href="demos/01b-live-and-storage-migration.html">1b: live and storage migration</a> (20 min) · <a href="demos/01c-ocp-vm-cross-cluster-migration.html">1c: cross-cluster migration</a> (45 min) · 1a and 5 again on your Windows VM</td>
+<td>2 h 30 with the labs below (the copy alone is about 1 h 30)</td>
+<td>second walk-through: 1b – 1e again on your migrated Windows VM</td>
 </tr>
 <tr>
 <td>2</td>
@@ -1026,14 +979,20 @@ knows your own (type <code>ovedr</code>).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>While your copy runs</strong> (Demo 1 §1.3 sends you here; about 1 h 20 in all), on a <strong>new</strong> cloud-native server:
-<a href="demos/01d-vm-cloudnative-golden-image.html">1d: a cloud-native golden image</a> (30 min) →
-<a href="demos/01a-snapshot-restore.html">1a: snapshot and restore</a> (20 min) →
-<a href="demos/05-oadp-vm-backup.html">Demo 5: OADP backup and restore</a> (30 min, if your lab has OADP) → delete that server, back
-to Demo 1 §1.4 to start your migrated Windows VM.</p>
+<p><strong>While your copy runs</strong> (Demo 1 §1.3 sends you here; about 2 h in all), in this order, on a <strong>new</strong> cloud-native
+server you build first, <code>pg-sNN-centos10</code>:</p>
+<ol>
+<li><a href="demos/01a-vm-cloudnative-golden-image.html">1a: a cloud-native golden image</a>: build the server (30 min)</li>
+<li><a href="demos/01b-snapshot-restore.html">1b: snapshot and restore</a> (20 min)</li>
+<li><a href="demos/01c-live-and-storage-migration.html">1c: live migration and storage migration</a> (20 min)</li>
+<li><a href="demos/01d-ocp-vm-cross-cluster-migration.html">1d: cross-cluster migration</a> (30 min): <strong>BCDR class only</strong>, it needs two OpenShift clusters</li>
+<li><a href="demos/01e-oadp-vm-backup.html">1e: OADP backup and restore</a> (30 min, if your lab has OADP)</li>
+</ol>
+<p>Then back to <strong>Demo 1 §1.4</strong>: review the migration, <strong>stop</strong> the cloud-native server (no need to delete it), and
+start your migrated Windows VM. Early finishers do 1b – 1e again on the Windows VM.</p>
 <blockquote>
 <p>💡 <strong>Two classes use these guides.</strong> <em>VM Hosting Alternative to VMware</em> (demo-0002) has <strong>one</strong> OpenShift
-cluster (site A) and stops after migration, snapshot and OADP backup: it has no site B, so Demos 1c and 4 aren't in
+cluster (site A) and stops after migration, snapshot and OADP backup: it has no site B, so Demos 1d and 4 aren't in
 it. <em>VMware Migration &amp; BCDR</em> (demo-0024) has both sites and everything below.</p>
 </blockquote>
 <p><strong>Go deeper</strong>, when your instructor offers it (demo-0024):</p>
@@ -1054,13 +1013,6 @@ it. <em>VMware Migration &amp; BCDR</em> (demo-0024) has both sites and everythi
 <td>replicate every 15 minutes, fail over, reverse, come home clean</td>
 <td>90 min</td>
 <td>§4.8 hostile failover (30 min)</td>
-</tr>
-<tr>
-<td>Backup</td>
-<td><a href="demos/05-oadp-vm-backup.html">Demo 5: OADP backup and restore</a></td>
-<td>back up your namespace, delete your VM, restore it, prove the data</td>
-<td>30 min</td>
-<td><em>framework: when OADP is staged</em></td>
 </tr>
 </tbody>
 </table>
