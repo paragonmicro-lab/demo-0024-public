@@ -10,5 +10,6 @@ it needs into your browser terminal.
 | File | What it is | |
 |---|---|---|
 | CentOS Stream 10 + PostgreSQL Template | Demo 1a's golden image as code: an OpenShift Template that builds the class's database server from Red Hat's CentOS Stream 10 boot source with cloud-init | [Download](downloads/ovedr-centos10-postgres.yaml){ download } |
+| CentOS PostgreSQL setup script | Demo 1a's "build it yourself" twisty: the class's PostgreSQL build (install, the class database and toolkit, your login, the heartbeat) that your own cloud-init downloads and runs | [Download](downloads/ovedr-pg-setup.sh){ download } |
 
 The 🎬 recordings play on each lab's page.

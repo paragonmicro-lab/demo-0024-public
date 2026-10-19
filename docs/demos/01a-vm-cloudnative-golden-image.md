@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.1.2
+version: 2.2.0
 date: 2026-10-17
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.1.2 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.2.0 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -179,6 +179,90 @@ read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos
 > VM points at it (`cloudInitNoCloud.secretRef`), so the VM's definition holds no password. A Secret is also the
 > only way for a real server: KubeVirt refuses cloud-init written inline in the VM above 2 KB, and this one is
 > about 11 KB. The Template creates both, so both are yours to delete (1a.5).
+
+<details markdown="1">
+<summary>Build it yourself in the console: your own VM, your own cloud-init (optional)</summary>
+
+The Template did the work above. Here you build the same database server **by hand in the console**, from a plain
+CentOS Stream 10 VM plus a short **cloud-init**: the standard way a cloud server is customized on its first boot. The
+PostgreSQL build itself (install, the class database and toolkit, your database login, the heartbeat) is the lab's
+published script, [`ovedr-pg-setup.sh`](../downloads/ovedr-pg-setup.sh): your cloud-init downloads and runs it, so you
+write 30 lines, not 300. Read the script first: it is what will run as root on your server.
+
+One address per student: build this **instead of** the Template's server, or delete that one first (1a.5), since
+both would use `10.101.23.151`. This server keeps its data on its system disk (the Template's has separate data and
+WAL disks); Demos 1b – 1e work on either.
+
+**Console (site A):** **[verify: the field names on OpenShift 4.19's VM wizard]**
+
+1. Set the **Project** dropdown to **your** project, `student-01-0024-012`.
+2. **Virtualization → Catalog → InstanceTypes**: boot volume **CentOS Stream 10**; series **U series** (general
+   purpose), size **u1.medium**. Not the **N series**: it needs dedicated CPUs and hugepages this lab doesn't have.
+3. **VirtualMachine name** `pg-s01-centos10` → **Customize VirtualMachine**.
+4. **Network**: edit the NIC → network **`default/vmnet23`** (your VLAN's bridge), type **Bridge**.
+5. **Scripts → Cloud-init → Edit**: switch to the **script** (YAML) view and paste the block below, with your values
+   in the lines marked ✎. Tick **Add network data** and set it as in the second block (or its fields: Ethernet name
+   `enp1s0`, IP address `10.101.23.151/24`, gateway `10.101.23.1`).
+6. **Scripts → Public SSH key → Use existing** → `student-01-ssh` (the Secret from step 1 above).
+7. **Create VirtualMachine**, then carry on with **1a.3** as for the Template's server.
+
+The cloud-init (user data), about 1.2 KB: the console keeps it inside the VM, where KubeVirt allows at most 2 KB.
+
+```yaml
+#cloud-config
+# Demo 1a, built yourself: the class's PostgreSQL server from a plain CentOS Stream 10 VM.
+# Change the values marked ✎ to yours.
+hostname: pg-s01-centos10                     # ✎ your VM's name
+system_info:
+  default_user:
+    name: student-01                          # ✎ your Linux login (your SSH key lands here too)
+    groups: [ wheel ]
+    sudo: [ "ALL=(ALL) NOPASSWD:ALL" ]
+    lock_passwd: false
+users: [ default ]
+ssh_pwauth: true                              # SSH with your password as well as your key
+chpasswd:
+  expire: false
+  users:
+    - { name: student-01, password: "<your class password>", type: text }   # ✎ your login and password
+packages: [ postgresql-server, qemu-guest-agent ]
+write_files:
+  - path: /root/.ovedr-db                     # read once by the setup script, then shredded
+    permissions: "0600"
+    content: |
+      DB_USER=student_01
+      DB_PASSWORD=<your class password>
+runcmd:
+  # the class's PostgreSQL build, published on the class site: read it before you run it
+  - curl -fsSL -o /usr/local/sbin/ovedr-pg-setup https://paragonmicro-lab.github.io/demo-0024-public/downloads/ovedr-pg-setup.sh
+  - bash /usr/local/sbin/ovedr-pg-setup
+```
+
+The network data: your address, its gateway and the lab's DNS.
+
+```yaml
+version: 2
+ethernets:
+  enp1s0:
+    addresses: [ 10.101.23.151/24 ]                # ✎ 10.101.<VLAN>.<150 + your number>
+    routes: [ { to: 0.0.0.0/0, via: 10.101.23.1 } ]  # ✎ your VLAN's gateway, 10.101.<VLAN>.1
+    nameservers: { addresses: [ 10.101.6.201, 10.101.6.202 ] }
+```
+
+What each part does, the same jobs the Template's cloud-init does:
+
+| cloud-init | What it does |
+|---|---|
+| `system_info.default_user`, `users` | makes **your** Linux login the VM's default user, in `wheel` (sudo); your SSH key from the Secret lands on it |
+| `ssh_pwauth`, `chpasswd` | SSH and the console accept your password too |
+| `packages` | installs PostgreSQL and the QEMU guest agent from the CentOS mirrors |
+| `write_files` | your database login and password, in a root-only file the script reads once and then shreds |
+| `runcmd` | downloads the class's setup script and runs it; its last line in `/var/log/cloud-init-output.log` is `OVEDR-READY` |
+
+Your password is in the VM's definition this time (cloud-init written in the console stays inline). The Template
+kept it in a Secret; for a lab login that dies with the booking, either is fine.
+
+</details>
 
 ---
 
