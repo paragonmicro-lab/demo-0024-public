@@ -1092,7 +1092,7 @@
 
 <h1 id="demo-2-vmware-to-openshift-virtualization-warm-migration-storage-copy-offload">Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)<a class="headerlink" href="#demo-2-vmware-to-openshift-virtualization-warm-migration-storage-copy-offload" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 3.1.1 · draft · 2026-10-17</strong> · class/demos/02-vmware-to-ove-warm.md</p>
+<p><strong>Version 3.2.0 · draft · 2026-10-19</strong> · class/demos/02-vmware-to-ove-warm.md</p>
 <p>🚧 <strong>Coming soon. You can't run this demo in this lab yet.</strong></p>
 <p>⛔ <strong>Blocked: the VDDK path is closed for good.</strong> The lab can't obtain VDDK and won't again, so warm migration
 here waits on a <strong>SAN with CSI</strong> (below) and Red Hat's storage copy offload path. Until then this page is a
@@ -1125,6 +1125,65 @@ Demo 2 on it, and has stopped:</p>
 </ol>
 <p><strong>What still works without VDDK:</strong> cold migration. MTV reads the disks over vCenter/ESXi HTTPS instead: it's slower,
 and the VM is down for its whole disk copy. That's <a href="01-vmware-to-ove-cold.html">Demo 1</a>, and it runs in this lab today.</p>
+<details>
+<summary>With and without VDDK: what it does to the copy time, and to your VM's downtime</summary>
+<p><strong>VDDK</strong> (VMware's <em>Virtual Disk Development Kit</em>) is VMware's own library for reading a VM's disks. MTV can use it,
+but this lab has no VDDK (above), so <a href="01-vmware-to-ove-cold.html">Demo 1</a>'s cold copy takes the path without it, and
+this demo waits on storage copy offload instead.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Without VDDK</strong> (this lab)</th>
+<th><strong>With VDDK</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How the disks are read</td>
+<td><code>virt-v2v</code> reads each disk as a <strong>file over HTTPS through vCenter</strong> (its datastore file service). vCenter stays in the data path for every read</td>
+<td>vCenter only hands out an access ticket. The disk is read <strong>from the ESXi host directly</strong>, over VMware's block protocol (NBD/NBDSSL)</td>
+</tr>
+<tr>
+<td>What is copied</td>
+<td>the <strong>whole</strong> disk, empty space included (34 GB for <code>win-pg-sNN</code>)</td>
+<td>only the blocks that <strong>hold data</strong>; empty space is skipped</td>
+</tr>
+<tr>
+<td><strong>ImageConversion</strong> (inspect Windows, add the virtio drivers)</td>
+<td>slow: thousands of small reads, each one an HTTPS round trip through vCenter</td>
+<td>much faster: each read is a short block request to the host</td>
+</tr>
+<tr>
+<td>Retries and failures</td>
+<td>vCenter's file service sometimes answers <code>HTTP 500</code>; most are retried (a stall of a few minutes), and one can fail the plan</td>
+<td>no vCenter file service, so not this class of error</td>
+</tr>
+<tr>
+<td><strong>Your VM's downtime</strong></td>
+<td><strong>the whole copy</strong>: a cold migration only</td>
+<td>cold, <strong>or warm</strong>: VDDK reads VMware's Changed Block Tracking, so MTV copies while the VM runs and stops it only for a short final cutover</td>
+</tr>
+<tr>
+<td>Red Hat's guidance</td>
+<td>supported, but <em>"not recommended"</em></td>
+<td><em>"strongly recommended … A VDDK image accelerates migration and reduces the risk of a plan failing"</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Measured in this lab, without VDDK:</strong> 0002-007 (vSphere 9, local SSD, one copy running) took <strong>45 min</strong>:
+ImageConversion 31 min, then DiskTransferV2v 13 min for 34 GB (about 43 MB/s). Earlier runs on vSphere 8 took
+1 h 06 – 1 h 16. Most of the time is the conversion's reads through vCenter, not the bytes themselves.</p>
+<p><strong>With VDDK, an estimate (not measured here):</strong> the same VM would copy in a fraction of that, roughly 10–20 min, and
+a <strong>warm</strong> migration would keep the VM running for all but the few minutes of cutover. How much faster depends on
+how full the disks are and on the network to the ESXi hosts.</p>
+<p><strong>Read more:</strong></p>
+<ul>
+<li>Red Hat MTV 2.11, <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv">VMware prerequisites: creating a VDDK image</a>: why VDDK is recommended, and that a VM on vSAN can't migrate without it</li>
+<li>Red Hat MTV 2.11, <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_cold-warm-migration_mtv">Cold and warm migration, and the migration speed comparison</a>: precopy with Changed Block Tracking, cutover, and what each costs in downtime</li>
+<li>Broadcom, <a href="https://developer.broadcom.com/xapis/virtual-disk-api/latest/vddkDataStruct.5.5.html">VDDK: virtual disk transport methods</a>: NBD, NBDSSL, SAN and HotAdd, the ways VDDK reads a disk</li>
+</ul>
+</details>
 <p>The VDDK version of this guide (2.2.0) stays in the repository's history. The lab's VDDK automation (job <code>vddk</code>,
 <a href="setup-how-the-lab-is-built.html">Lab S §S.15</a>) is retired.</p>
 <h2 id="where-red-hat-is-with-this-2026-10-14">Where Red Hat is with this (2026-10-14)<a class="headerlink" href="#where-red-hat-is-with-this-2026-10-14" title="Permanent link">&para;</a></h2>

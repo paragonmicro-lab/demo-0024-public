@@ -1020,7 +1020,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.4.2 · draft · 2026-10-18</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.5.0 · draft · 2026-10-19</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1175,6 +1175,65 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 is the slow part (measured 1 h 06 – 1 h 16 on the lab's SSDs; allow 1 h 30). <strong>ImageConversion</strong> takes most of it,
 with no MB counter moving: <code>virt-v2v</code> reads the guest, inspects Windows and installs the virtio drivers.
 <strong>DiskTransferV2v</strong> then copies the disks. The whole class migrating at once is no slower per VM.</p>
+<details>
+<summary>With and without VDDK: what it does to the copy time, and to your VM's downtime</summary>
+<p><strong>VDDK</strong> (VMware's <em>Virtual Disk Development Kit</em>) is VMware's own library for reading a VM's disks. MTV can use it,
+but this lab has no VDDK (<a href="02-vmware-to-ove-warm.html#why-this-lab-does-not-demo-vddk">why</a>), so your copy takes the
+path without it.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Without VDDK</strong> (this lab)</th>
+<th><strong>With VDDK</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How the disks are read</td>
+<td><code>virt-v2v</code> reads each disk as a <strong>file over HTTPS through vCenter</strong> (its datastore file service). vCenter stays in the data path for every read</td>
+<td>vCenter only hands out an access ticket. The disk is read <strong>from the ESXi host directly</strong>, over VMware's block protocol (NBD/NBDSSL)</td>
+</tr>
+<tr>
+<td>What is copied</td>
+<td>the <strong>whole</strong> disk, empty space included (34 GB for <code>win-pg-sNN</code>)</td>
+<td>only the blocks that <strong>hold data</strong>; empty space is skipped</td>
+</tr>
+<tr>
+<td><strong>ImageConversion</strong> (inspect Windows, add the virtio drivers)</td>
+<td>slow: thousands of small reads, each one an HTTPS round trip through vCenter</td>
+<td>much faster: each read is a short block request to the host</td>
+</tr>
+<tr>
+<td>Retries and failures</td>
+<td>vCenter's file service sometimes answers <code>HTTP 500</code>; most are retried (a stall of a few minutes), and one can fail the plan</td>
+<td>no vCenter file service, so not this class of error</td>
+</tr>
+<tr>
+<td><strong>Your VM's downtime</strong></td>
+<td><strong>the whole copy</strong>: a cold migration only</td>
+<td>cold, <strong>or warm</strong>: VDDK reads VMware's Changed Block Tracking, so MTV copies while the VM runs and stops it only for a short final cutover</td>
+</tr>
+<tr>
+<td>Red Hat's guidance</td>
+<td>supported, but <em>"not recommended"</em></td>
+<td><em>"strongly recommended … A VDDK image accelerates migration and reduces the risk of a plan failing"</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Measured in this lab, without VDDK:</strong> 0002-007 (vSphere 9, local SSD, one copy running) took <strong>45 min</strong>:
+ImageConversion 31 min, then DiskTransferV2v 13 min for 34 GB (about 43 MB/s). Earlier runs on vSphere 8 took
+1 h 06 – 1 h 16. Most of the time is the conversion's reads through vCenter, not the bytes themselves.</p>
+<p><strong>With VDDK, an estimate (not measured here):</strong> the same VM would copy in a fraction of that, roughly 10–20 min, and
+a <strong>warm</strong> migration would keep the VM running for all but the few minutes of cutover. How much faster depends on
+how full the disks are and on the network to the ESXi hosts.</p>
+<p><strong>Read more:</strong></p>
+<ul>
+<li>Red Hat MTV 2.11, <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv">VMware prerequisites: creating a VDDK image</a>: why VDDK is recommended, and that a VM on vSAN can't migrate without it</li>
+<li>Red Hat MTV 2.11, <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_cold-warm-migration_mtv">Cold and warm migration, and the migration speed comparison</a>: precopy with Changed Block Tracking, cutover, and what each costs in downtime</li>
+<li>Broadcom, <a href="https://developer.broadcom.com/xapis/virtual-disk-api/latest/vddkDataStruct.5.5.html">VDDK: virtual disk transport methods</a>: NBD, NBDSSL, SAN and HotAdd, the ways VDDK reads a disk</li>
+</ul>
+</details>
 <p>A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an <code>HTTP 500</code> in the
 conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows <strong>Failed</strong> with <em>Guest
 conversion failed</em>. Start the plan again; MTV removes the half-copied disks first.</p>
