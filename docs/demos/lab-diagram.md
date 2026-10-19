@@ -52,7 +52,7 @@ flowchart TB
   STU --> A
   STU --> B
   VS == "Demo 1 cold · Demo 2 warm (CBT)<br/>each VM keeps its own address (bridge map)" ==> A
-  A == "Demo 1c cross-cluster OVE → OVE<br/>ODF → NFS storage migration" ==> B
+  A == "Demo 1d cross-cluster OVE → OVE<br/>ODF → NFS storage migration" ==> B
   A -. "Demo 4 ODF Regional-DR · RBD mirror every 15 min<br/>(needs ODF on both sites)" .-> B
   B -. "ACM hub manages site A (BL-D11)" .-> A
 ```
@@ -69,10 +69,10 @@ password to vCenter, both clusters and the Windows VMs.
 | | vSphere `lzN` | Site A `ocp-lzX` | Site B `ocp-lzY` |
 |---|---|---|---|
 | Built by | demo-vmware (core-web dispatches) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) | demo-openshift (`ove: cnv`, `storage: odf`, ACM, cert-manager) |
-| Customized by this demo | the instructor's `win-pg-i01` (`vms/ovedr`, `.62`) and **one full clone per student** `win-pg-sNN` in **that student's own folder** `vms/students/<class ID>` (`.100+NN`), each with PostgreSQL (WAL on `L:`, data on `D:`), the toolkit, Windows logins and WinRM; each student may power, open the console, Edit Settings (CBT) and snapshot **their own** VM | MTV with its console menu, providers + maps, **staged plans `d1-<vm>` (cold) and `d2-<vm>` (warm) per class VM (not started)** landing each student's VM in **that student's own namespace** (their class ID, where they are admin), `ovedr-app` with `sql-client` and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class) | the same as A without staged plans (Demo 1c builds its own from site A), plus the ACM hub role and DR (Demo 4) |
+| Customized by this demo | the instructor's `win-pg-i01` (`vms/ovedr`, `.62`) and **one full clone per student** `win-pg-sNN` in **that student's own folder** `vms/students/<class ID>` (`.100+NN`), each with PostgreSQL (WAL on `L:`, data on `D:`), the toolkit, Windows logins and WinRM; each student may power, open the console, Edit Settings (CBT) and snapshot **their own** VM | MTV with its console menu, providers + maps, **staged plans `d1-<vm>` (cold) and `d2-<vm>` (warm) per class VM (not started)** landing each student's VM in **that student's own namespace** (their class ID, where they are admin), `ovedr-app` with `sql-client` and the instructor's VM, a Service per VM, the demo prep (pre-copy interval, snapshot class) | the same as A without staged plans (Demo 1d builds its own from site A), plus the ACM hub role and DR (Demo 4) |
 | Storage | by default (`vmware_storage: local`) each class VM on its own host's SSD datastore `esxi-lzN-NN-vmfs00` (student NN → host NN, wrapping after 4); NFS datastore `coresan01_data00` for the ISOs (and the VMs on an `na` booking); **vSAN** on a `vsan` booking | **ODF** on one scratch SSD per host (`ocs-storagecluster-ceph-rbd-virtualization`, the VM default), plus `nfs-csi` | **the same**: ODF on the second SSD per host, plus `nfs-csi` (demo-0024 only: the VMware Alternative class has no site B) |
 | Network | port group `vm-network`, VLAN 22+N; every class VM its own static address | NMState bridge onto VLAN 22+N (`vmnet<VLAN>`), plus the pod network | the same VLAN bridges, plus the pod network |
-| Demos | 1, 2 (source) | 1, 2 (target) · 1c (source) · 4 (primary) | 1c (target) · 4 (DR site, hub) |
+| Demos | 1, 2 (source) | 1, 2 (target) · 1d (source) · 4 (primary) | 1d (target) · 4 (DR site, hub) |
 
 The operators are the **same on both clusters**, storage included: ODF on both sites is the lab standard
 (`storage: odf`), which is what lets Demo 4 mirror between them. A booking can still choose `odf-site-a` (ODF on site A

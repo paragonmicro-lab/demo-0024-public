@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.5.1
+version: 1.6.0
 date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.5.1 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.6.0 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -18,6 +18,20 @@ database and read every row back, so you can see your data survive the move.
 
 **Before you start:** do [Lab 0](00-access-and-tools.md). You are signed in to the **site A** console, and your
 database rows from Lab 0 are there. Every command below runs in the console's **Web Terminal** (`>_`).
+
+**Your path through Demo 1.** The copy takes about 1 h 30, so you start it, then work on a **second** server, a Linux
+one you build from code, while it runs. Every lab in the middle uses that cloud-native server, `pg-sNN-centos10`
+(`.150 + your number`), not your Windows VM:
+
+| Step | Lab | On |
+|---|---|---|
+| 1 | **Demo 1, §1.0 – 1.3:** start the cold migration of your Windows VM | Windows (vSphere) |
+| 2 | [Demo 1a: build a cloud-native server from code](01a-vm-cloudnative-golden-image.md) | `pg-sNN-centos10` |
+| 3 | [Demo 1b: snapshot and restore](01b-snapshot-restore.md) | `pg-sNN-centos10` |
+| 4 | [Demo 1c: live migration and storage migration](01c-live-and-storage-migration.md) | `pg-sNN-centos10` |
+| 5 | [Demo 1d: cross-cluster migration](01d-ocp-vm-cross-cluster-migration.md) (**BCDR class only:** it needs two OpenShift clusters) | `pg-sNN-centos10` |
+| 6 | [Demo 1e: OADP backup and restore](01e-oadp-vm-backup.md) | `pg-sNN-centos10` |
+| 7 | **Demo 1, §1.4 – 1.5:** back here: stop the cloud-native server, review and start your migrated Windows VM | Windows (OpenShift) |
 
 > ⚠ **The commands are an example. Change these values to yours before you run them:**
 >
@@ -188,13 +202,17 @@ conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan 
 conversion failed*. Start the plan again; MTV removes the half-copied disks first.
 
 > ▶️ **Don't wait for it: carry on with the cloud-native server.** Leave the copy running and do these, in order,
-> on a **new** Linux database server you build from code:
+> on a **new** Linux database server you build from code, `pg-s01-centos10`:
 >
-> 1. [Demo 1d: a cloud-native golden image](01d-vm-cloudnative-golden-image.md): build `pg-s01-centos10` (30 min)
-> 2. [Demo 1a: snapshot and restore](01a-snapshot-restore.md), on that server (20 min)
-> 3. [Demo 5: OADP backup and restore](05-oadp-vm-backup.md), on that server, if your lab has OADP (30 min)
+> 1. [Demo 1a: a cloud-native server, built from code](01a-vm-cloudnative-golden-image.md): build `pg-s01-centos10` (30 min)
+> 2. [Demo 1b: snapshot and restore](01b-snapshot-restore.md) (20 min)
+> 3. [Demo 1c: live migration and storage migration](01c-live-and-storage-migration.md) (20 min)
+> 4. [Demo 1d: cross-cluster migration](01d-ocp-vm-cross-cluster-migration.md) (30 min): **BCDR class only**
+>    (*VMware Migration & BCDR*, demo-0024), because it needs a second OpenShift cluster. In the *VM Hosting
+>    Alternative* class (demo-0002), skip it.
+> 5. [Demo 1e: OADP backup and restore](01e-oadp-vm-backup.md) (30 min), if your lab has OADP
 >
-> Then **delete the cloud-native server** and come back here to **1.4**. By then your copy has finished.
+> Then come back here to **1.4**. By then your copy has finished.
 >
 > ⚠️ **When the plan says Succeeded, your Windows VM waits on site A *Stopped*. Don't start it until you're back at
 > 1.4.** Its first start is the part worth watching: the reboots while VMware Tools comes out and the QEMU guest
@@ -289,12 +307,23 @@ instructor before you delete or archive the plan.
 
 ## 1.4 Review your VM on OpenShift, then power it on
 
-**Back from the cloud-native labs?** Delete your cloud-native server first, if you haven't (Demo 1d §1d.5), and
-check that your plan shows **Succeeded**:
+**Back from Demos 1a – 1e?** First check that your migration finished, then **stop** your cloud-native server
+(don't delete it: you can come back to it), so your Windows VM has the room:
 
 ```bash
-oc -n student-01-0024-012 delete vm,secret -l app=pg-s01-centos10         # the CentOS server, its disks and Secret
-oc -n openshift-mtv get plan d1-win-pg-s01                                 # SUCCEEDED True
+oc -n openshift-mtv get plan d1-win-pg-s01                                 # SUCCEEDED True: the copy is done
+virtctl -n student-01-0024-012 stop pg-s01-centos10                        # the CentOS server: Stopped, kept
+```
+
+**Console (site A):** **Virtualization → VirtualMachines → `pg-s01-centos10` → Actions → Stop**. It shows
+**Stopped**; its disks, snapshots and rows stay. (If Demo 1d left it on site B, stop it there.)
+
+**Review the migration:** on the plan's page (**Migration for Virtualization → Migration plans → `d1-win-pg-s01`**),
+expand your VM. Each step shows when it started and how long it took: **ImageConversion** is the long one, then
+**DiskTransferV2v**. ✍️ Note the total: that is the outage a cold migration costs.
+
+```bash
+oc -n openshift-mtv get plan d1-win-pg-s01 -o json | jq -r '.status.migration.vms[0] | "total: \(.started) → \(.completed)", (.pipeline[] | "  \(.name): \(.started) → \(.completed)")'
 ```
 
 **Console (site A):** **Virtualization → VirtualMachines**, project **`student-01-0024-012`** → **`win-pg-s01`**.
@@ -367,17 +396,30 @@ reordered by the move.
 
 ---
 
-## Bonus labs (optional)
+## Second walk-through: the same labs on your Windows VM (optional)
 
-You did 1d, 1a and 5 on the cloud-native server while the copy ran. **Do 1a and 5 again on your migrated Windows
-VM** to see the same protection on the server you moved; 1b and 1c start from it too.
+You did Demos 1b – 1e on the **Linux cloud-native** server. **Every one of them works on your migrated Windows VM
+too**: run them again with `win-pg-s01` and `10.101.23.101` in place of `pg-s01-centos10` and `10.101.23.151`. That
+shows the same protection and mobility on the server you moved off VMware. Where Windows needs something different,
+the lab says so (for example, Demo 1b's restore of only the database disks while Windows runs).
+
+| Lab | On your Windows VM |
+|---|---|
+| [Demo 1b: snapshot and restore](01b-snapshot-restore.md) | snapshot it, destroy the database, restore |
+| [Demo 1c: live migration and storage migration](01c-live-and-storage-migration.md) | move it, running, to another node, then move a disk to another storage class |
+| [Demo 1d: cross-cluster migration](01d-ocp-vm-cross-cluster-migration.md) (BCDR class) | move it from site A to site B |
+| [Demo 1e: OADP backup and restore](01e-oadp-vm-backup.md) | back up your project, delete the VM, restore it |
+
+Your two servers have different addresses (`.101` and `.151`), so they can run side by side. What must never run
+twice is the **same** VM: in Demo 1d, stop one site's copy before you start the other.
+
+---
+
+## Bonus labs (optional)
 
 | Bonus | What you do |
 |---|---|
-| [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot your VM, destroy the database, bring it back from the snapshot's disks |
-| [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the **running** VM to another node, then move its disks to another storage class, with no reboot |
-| [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | link the two clusters in ACM, then move your VM from site A (ODF) to site B (NFS) |
-| [Demo 5: OADP backup and restore](05-oadp-vm-backup.md) | back up your project, delete your VM, restore it, prove the rows (if your lab has OADP) |
+| [Demo 2: warm migration with storage copy offload](02-vmware-to-ove-warm.md) | 🚧 coming soon, read only: migrate while the VM keeps running |
 
 **Next:** [Demo 2: warm migration with storage copy offload](02-vmware-to-ove-warm.md) (🚧 coming soon: read only).
 

@@ -25,7 +25,7 @@ ask you to do the **last step** yourself (start your migration). This guide is h
 | **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts (vSphere/VCF **9** by default, 8 when the booking picks `vmware_version: 8`), the shared NFS datastore `coresan01_data00` (the ISO library; the class VMs live there only on a `vmware_storage: na` booking, on **vSAN** with `vsan`); by default (`vmware_storage: local`, both classes, 2026-10-17) each class VM sits on **its own ESXi host's** SSD datastore `esxi-lz<N>-NN-vmfs00`: student01 on `esxi-lz<N>-01`, student02 on `esxi-lz<N>-02`, …, the instructor's on the last host), port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
 | **demo-openshift** (core-web dispatches it, twice) | OpenShift 4.19, OpenShift Virtualization (`ove: cnv`), ACM and cert-manager, NMState bridges + NADs per VLAN, `nfs-csi` storage; **ODF on site A only** | site A `<A>` and site B `<B>` |
 | **this demo's CI** (`customize`, sections S.5–S.12) | MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans | all three |
-| **you** | start your own migration plan (Demo 1 / 1b), then everything in the demo guides | |
+| **you** | start your own migration plan (Demo 1 / 1c), then everything in the demo guides | |
 
 Picture: [lab diagram](lab-diagram.md). Every command below uses your class terminal's variables (`$A`, `$B`, `$N`, `$VM`, `$DOMAIN`; [Toolkit T.1](toolkit.md))
 and the contexts `site-a` / `site-b`. Most "do it yourself" steps need **cluster-admin**. In class you only **read**
@@ -506,7 +506,7 @@ YAML
   `ovedr-students-edit` (ClusterRole `edit`, group `demo-students`), the instructor VM's Service `win-pg-i01-sql`, Secret
   **`bcdr-db`** (the `bcdr` database password, from the vault), and Deployment **`sql-client`**
   (`registry.redhat.io/rhel9/postgresql-16`), the instructor's tool as the database owner (`bcdr`): the healthcheck
-  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1a). Students
+  reads every VM's heartbeat through it, and the instructor uses it for owner-only steps (Demo 1b). Students
   never need it.
 - ClusterRole + ClusterRoleBinding **`ovedr-class-read`**: students may read NNCPs and node network states, storage
   classes, snapshot classes, ACM managed clusters and cluster sets, DR policies and clusters, and nodes.
@@ -717,7 +717,7 @@ Each plan targets **its VM's owner's namespace**: a student's VM lands in that s
 site's storage map. CI waits until every plan is **Ready**: MTV found the VM and the maps validate. **No plan is started.**
 That is the one step left to you (Demo 1, Demo 2). Both sites are staged the same (since 2026-10-16), but **the demos
 start site A's plan only**: both sites share the VM's VLAN, so starting a plan on both would bring up two copies of
-your VM at one address. Your VM reaches site B from site A in Demo 1c, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.
+your VM at one address. Your VM reaches site B from site A in Demo 1d, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.
 
 **Check:**
 
@@ -792,7 +792,7 @@ The booking turns **READY** only when CI's last job passes every check, against 
 
 ## S.14 How the two clusters are joined: ACM, Submariner, then ODF disaster recovery
 
-Two clusters become one DR pair in **three layers**, and each layer needs the one before it. Demo 1c (moving a VM between
+Two clusters become one DR pair in **three layers**, and each layer needs the one before it. Demo 1d (moving a VM between
 clusters) needs only MTV's providers (S.7). Demo 4 (ODF Regional-DR, async replication) needs all three.
 
 ```
@@ -1103,7 +1103,7 @@ Red Hat: [ODF 4.19: Configuring disaster recovery for OpenShift workloads, Regio
 
 | Layer | Automated | Proven |
 |---|---|---|
-| MTV between the clusters (Demo 1c) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | ✅ |
+| MTV between the clusters (Demo 1d) | ✅ every deploy: providers `ovedr-ocp-<peer>` + maps, both directions | ✅ |
 | 1 · ACM join | ✅ every deploy: site A booked `acm: managed`, then `acm_join.sh` (`demo-prep`) imports it into site B's hub; both in set `ovedr` | ⏳ checked again on the first ODF-on-both booking |
 | 2 · Submariner (Globalnet only for an IPv4 overlap) | ✅ when DR is on (`storage: odf`): `dr_fabric.sh` | ⛔ 0024-015: gateways up after the public-IP pin; sites share IPv6 ranges, waiting on demo-openshift (BL-D18) |
 | 3 · ODF replication link | ✅ when DR is on: `dr_fabric.sh` (MCG, provider-server export, MirrorPeer, DRClusters, peering + mirror health) + `dr_policy.sh` (DRPolicy 15m) | ⏳ first ODF-on-both booking |

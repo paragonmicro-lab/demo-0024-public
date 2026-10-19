@@ -1,13 +1,13 @@
 ---
-title: "Demo 1d — A cloud-native golden image: a new Linux database server, built from code (bonus)"
+title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 1.2.0
+version: 2.0.0
 date: 2026-10-17
 ---
 
-# Demo 1d: a cloud-native golden image (bonus)
+# Demo 1a: a cloud-native golden image
 
-> **Version 1.2.0 · draft · 2026-10-18** · class/demos/01d-vm-cloudnative-golden-image.md
+> **Version 2.0.0 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -28,8 +28,9 @@ Linux PostgreSQL and read them back, exactly as you did on Windows.
 
 **Before you start:** do [Lab 0](00-access-and-tools.md). You are signed in to the **site A** console, and your
 class terminal is signed in to the database (`dblogin`, once). **Do it while Demo 1's copy runs** (started in
-[Demo 1 §1.3](01-vmware-to-ove-cold.md#13-start-the-migration)): this demo builds a **new** VM, at its own address, and
-Demos 1a and 5 then protect it while your Windows VM is still copying. Commands run in the console's **Web Terminal** (`>_`).
+[Demo 1 §1.3](01-vmware-to-ove-cold.md#13-start-the-migration)): this demo builds a **new** VM, at its own address,
+and **Demos 1b to 1e all use it** while your Windows VM is still copying: snapshot, live and storage migration,
+cross-cluster migration (BCDR class) and OADP backup. Commands run in the console's **Web Terminal** (`>_`).
 
 > ⚠ **The commands are an example. Change these values to yours before you run them:**
 >
@@ -41,16 +42,16 @@ Demos 1a and 5 then protect it while your Windows VM is still copying. Commands 
 > | `23` | your booking's VLAN (`22 + N`, `vcenter01` → 23) | from your instructor's `N` |
 > | `student-01` / `student_01` | your Linux login / your database login (underscore) | yours |
 
-<!-- 🎬 video slot 01d-vm-cloudnative-golden-image: one walk-through of the whole demo in the console -->
-<video controls preload="metadata" playsinline width="100%" poster="../.images/01d-vm-cloudnative-golden-image.jpg">
-  <source src="../.images/01d-vm-cloudnative-golden-image.mp4" type="video/mp4">
-  <a href="../.images/01d-vm-cloudnative-golden-image.mp4">🎬 Video: Demo 1d: a cloud-native golden image</a>
+<!-- 🎬 video slot 01a-vm-cloudnative-golden-image: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01a-vm-cloudnative-golden-image.jpg">
+  <source src="../.images/01a-vm-cloudnative-golden-image.mp4" type="video/mp4">
+  <a href="../.images/01a-vm-cloudnative-golden-image.mp4">🎬 Video: Demo 1a: a cloud-native golden image</a>
 </video>
-<sub>🎬 *Demo 1d: a cloud-native golden image: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+<sub>🎬 *Demo 1a: a cloud-native golden image: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
 
 ---
 
-## 1d.1 Look at the golden image: it's code
+## 1a.1 Look at the golden image: it's code
 
 The lab published the customer's Template, **`ovedr-centos10-postgres`**, on both clusters. It lives in the
 **`openshift`** project, the shared one, so every project's catalog offers it.
@@ -69,7 +70,7 @@ The same from the Web Terminal: what it asks for, and the code itself. **`oc pro
 used from the command line. A Template is YAML with blanks in it (`${NAME}`, `${IP}`, …):
 `oc process --parameters` lists the blanks, which are the same fields the console's form asks for.
 `oc process -p NAME=…` fills them in and prints the finished VM; it creates nothing until you pipe it to
-`oc apply` (1d.2).
+`oc apply` (1a.2).
 
 ```bash
 oc process --parameters -n openshift ovedr-centos10-postgres
@@ -87,7 +88,7 @@ The whole file is also on the class site: [`ovedr-centos10-postgres.yaml`](../do
 
 ---
 
-## 1d.2 Deploy it
+## 1a.2 Deploy it
 
 Do **one** of the two. Both create the same VM.
 
@@ -118,11 +119,11 @@ read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos
 > 💡 **Your cloud-init, password included, is in a Secret**, `pg-s01-centos10-cloudinit`, in your project. The
 > VM points at it (`cloudInitNoCloud.secretRef`), so the VM's definition holds no password. A Secret is also the
 > only way for a real server: KubeVirt refuses cloud-init written inline in the VM above 2 KB, and this one is
-> about 11 KB. The Template creates both, so both are yours to delete (1d.5).
+> about 11 KB. The Template creates both, so both are yours to delete (1a.5).
 
 ---
 
-## 1d.3 Watch it build itself
+## 1a.3 Watch it build itself
 
 **Console:** **Virtualization → VirtualMachines → `pg-s01-centos10`**. It goes **Provisioning** (the disks are
 created: the system disk is cloned from the boot source), **Starting**, then **Running**.
@@ -147,13 +148,13 @@ the Template, and none was typed by hand.
 
 ---
 
-## 1d.4 Inject into your new Linux PostgreSQL, and read it back
+## 1a.4 Inject into your new Linux PostgreSQL, and read it back
 
 Same commands as on Windows, at the new address. Your class terminal's `dblogin` works here too: same login, same
 password, a different server.
 
 ```bash
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cloudnative-started', 'Demo 1d: CentOS Stream 10 from the Template');"
+oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cloudnative-started', 'Demo 1a: CentOS Stream 10 from the Template');"
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_load('student-01-0024-012', 'cloudnative-load', 100);"
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
@@ -175,7 +176,7 @@ drivers: the same checks as your migrated Windows VM, on a server that was never
 
 ---
 
-## 1d.5 Rebuild it: the point of a golden image as code
+## 1a.5 Rebuild it: the point of a golden image as code
 
 A pet is repaired. Cattle are replaced. Delete the server and deploy it again from the same Template:
 
@@ -183,14 +184,15 @@ A pet is repaired. Cattle are replaced. Delete the server and deploy it again fr
 oc -n student-01-0024-012 delete vm,secret -l app=pg-s01-centos10    # the VM, its three disks and its cloud-init Secret
 ```
 
-Then run **1d.2** again. In a few minutes you have the **same** server at the same address, with an empty `marks`
+Then run **1a.2** again. In a few minutes you have the **same** server at the same address, with an empty `marks`
 table: every setting came from code, so nothing drifted and nothing was forgotten.
 
-**That is the end of Demo 1d.** You built a database server purely in code, from Red Hat's maintained image, and
-proved it with your own rows. **Keep it running** (redeploy it if you deleted it above): Demo 1a and Demo 5 use it.
+**That is the end of Demo 1a.** You built a database server purely in code, from Red Hat's maintained image, and
+proved it with your own rows. **Keep it running** (redeploy it if you deleted it above): Demos 1b to 1e use it.
 
-> 💡 **One copy at a time on an address.** `10.101.23.151` is yours alone. When you've finished Demo 5, delete
-> `pg-s01-centos10` (the command above) and go back to [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on).
+> 💡 **One copy at a time on an address.** `10.101.23.151` is yours alone. When you've finished Demo 1e, go back to
+> [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on) and **stop**
+> `pg-s01-centos10` there (no need to delete it).
 
 ---
 
@@ -206,7 +208,7 @@ The customer's version of this is a short pipeline: change the cloud-init in git
 test VM, runs its checks → the Template is published for everyone. The base OS comes from Red Hat's boot source,
 which OpenShift Virtualization updates on its own; your code stays the same.
 
-**Next:** [Demo 1a: snapshot and restore](01a-snapshot-restore.md), on this server · **Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
+**Next:** [Demo 1b: snapshot and restore](01b-snapshot-restore.md), on this server · **Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
 
 ## Thank you
 

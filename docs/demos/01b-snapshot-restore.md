@@ -1,13 +1,13 @@
 ---
-title: "Demo 1a — Snapshot, destroy the database, restore from the snapshot (bonus)"
-subtitle: "Snapshot your VM · write a row after it · drop the database · bring D: and L: back from the snapshot · read back"
-version: 1.2.0
+title: "Demo 1b — Snapshot, destroy the database, restore from the snapshot"
+subtitle: "Snapshot your cloud-native server · write a row after it · drop the database · restore the VM from the snapshot · read back"
+version: 2.0.0
 date: 2026-10-17
 ---
 
-# Demo 1a: snapshot and restore (bonus)
+# Demo 1b: snapshot and restore
 
-> **Version 1.2.0 · draft · 2026-10-17** · class/demos/01a-snapshot-restore.md
+> **Version 2.0.0 · draft · 2026-10-19** · class/demos/01b-snapshot-restore.md
 
 ## What you will learn
 
@@ -15,12 +15,12 @@ You take a snapshot of your running VM, destroy its database for real, then brin
 The rows you read back show the **recovery point**: everything written before the snapshot returns, and what you
 wrote after it does not.
 
-You do it twice, on two servers:
+You do it on your cloud-native server; your migrated Windows VM is the optional second walk-through:
 
 | Part | Server | When | Restore |
 |---|---|---|---|
-| **1** | your **cloud-native** CentOS server `pg-s01-centos10` ([Demo 1d](01d-vm-cloudnative-golden-image.md)) | while Demo 1's copy runs | the **whole VM** from the snapshot, in one step |
-| **2** (optional) | your **migrated Windows** VM `win-pg-s01` | after [Demo 1](01-vmware-to-ove-cold.md) §1.5 | only the database's two disks, swapped in while it runs |
+| **1** | your **cloud-native** CentOS server `pg-s01-centos10` ([Demo 1a](01a-vm-cloudnative-golden-image.md)) | while Demo 1's copy runs | the **whole VM** from the snapshot, in one step |
+| **2** (optional) | your **migrated Windows** VM `win-pg-s01` | the second walk-through, after [Demo 1](01-vmware-to-ove-cold.md) §1.5 | only the database's two disks, swapped in while it runs |
 
 Every command runs in the site A console's **Web Terminal** (`>_`).
 
@@ -30,7 +30,7 @@ Every command runs in the site A console's **Web Terminal** (`>_`).
 
 ## Part 1: your cloud-native server (while Demo 1's copy runs)
 
-### 1a.1 Inject, then snapshot
+### 1b.1 Inject, then snapshot
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"
@@ -59,7 +59,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SEL
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
 ```
 
-### 1a.2 Destroy the database
+### 1b.2 Destroy the database
 
 You own this server, so you do the damage yourself. In the VM's **Console**, logged in as `student-01`:
 
@@ -75,7 +75,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SEL
 
 ✅ `FATAL: database "bcdr" does not exist`. That is the disaster.
 
-### 1a.3 Restore the whole VM from the snapshot
+### 1b.3 Restore the whole VM from the snapshot
 
 A restore needs the VM stopped. **Console:** **Actions → Stop**, then **Snapshots → `pg-s01-centos10-snap` → ⋮ →
 Restore**, then **Actions → Start**. Or:
@@ -98,7 +98,7 @@ virtctl -n student-01-0024-012 start pg-s01-centos10
 All three disks come back as they were at the snapshot: the system, the data and the WAL together, so PostgreSQL
 starts clean. **[verify: first run on a booking]**
 
-### 1a.4 Inject, and read back what came back
+### 1b.4 Inject, and read back what came back
 
 Give it a minute to boot, then:
 
@@ -111,12 +111,11 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SEL
 ✅ `chain_ok = t`, and `before-snapshot` is back. ✅ **`after-snapshot` is gone**: it was written after the
 snapshot. That is the **recovery point**: a restore takes you back to the snapshot, not to the moment of the disaster.
 
-**Next:** [Demo 5: OADP backup and restore](05-oadp-vm-backup.md) on the same server, if your lab has OADP. Otherwise
-delete the server and go back to [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on).
+**Next:** [Demo 1c: live migration and storage migration](01c-live-and-storage-migration.md), on the same server.
 
 ---
 
-## Part 2 (optional): your migrated Windows VM, restore only the database disks
+## Part 2 (optional, second walk-through): your migrated Windows VM, restore only the database disks
 
 After [Demo 1](01-vmware-to-ove-cold.md) §1.5, do the same on the server you moved, the precise way: swap in only the
 snapshot's data and WAL disks while the VM keeps running. `powershell` blocks run inside your Windows VM:
@@ -127,16 +126,16 @@ snapshot's data and WAL disks while the VM keeps running. `powershell` blocks ru
 > lose the database again. Restore **both** disks from the **same** snapshot. A VM snapshot with the guest agent
 > freezes all disks at the same instant, so its `D:` and `L:` match.
 
-<!-- 🎬 video slot 01a-snapshot-restore: one walk-through of the whole demo in the console -->
-<video controls preload="metadata" playsinline width="100%" poster="../.images/01a-snapshot-restore.jpg">
-  <source src="../.images/01a-snapshot-restore.mp4" type="video/mp4">
-  <a href="../.images/01a-snapshot-restore.mp4">🎬 Video: Demo 1a: snapshot and restore</a>
+<!-- 🎬 video slot 01b-snapshot-restore: one walk-through of the whole demo in the console -->
+<video controls preload="metadata" playsinline width="100%" poster="../.images/01b-snapshot-restore.jpg">
+  <source src="../.images/01b-snapshot-restore.mp4" type="video/mp4">
+  <a href="../.images/01b-snapshot-restore.mp4">🎬 Video: Demo 1b: snapshot and restore</a>
 </video>
-<sub>🎬 *Demo 1a: snapshot and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
+<sub>🎬 *Demo 1b: snapshot and restore: a walk-through of the whole demo in the console. Watch it, then do the same with the steps below.*</sub>
 
 ---
 
-### 1a.W1 Inject, then snapshot
+### 1b.W1 Inject, then snapshot
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"
@@ -169,7 +168,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 
 ---
 
-### 1a.W2 Destroy the database
+### 1b.W2 Destroy the database
 
 In your VM's console, in an **elevated** PowerShell (*Run as administrator*), stop the heartbeat writer so that it
 doesn't recreate anything:
@@ -197,7 +196,7 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 
 ---
 
-### 1a.W3 Take the damaged disks offline
+### 1b.W3 Take the damaged disks offline
 
 In the VM's elevated PowerShell:
 
@@ -211,14 +210,14 @@ $bad | ForEach-Object { Set-Disk -Number $_.Number -IsOffline $true }
 
 ---
 
-### 1a.W4 Create volumes from the snapshot's `D:` and `L:`, and hot-plug them
+### 1b.W4 Create volumes from the snapshot's `D:` and `L:`, and hot-plug them
 
 Set the values once. Every command in this step reads them:
 
 ```bash
 # your class ID: the project your VM, its disks and the snapshot live in
 CLASS_ID=student-01-0024-012
-# your VM, and the snapshot you took in 1a.W1
+# your VM, and the snapshot you took in 1b.W1
 VM=win-pg-s01
 SNAP=$VM-snap
 ```
@@ -273,7 +272,7 @@ running VM, and the restored disk held the snapshot-time data.) **[verify: the `
 
 ---
 
-### 1a.W5 Bring the restored disks online as `D:` and `L:`, start PostgreSQL
+### 1b.W5 Bring the restored disks online as `D:` and `L:`, start PostgreSQL
 
 ```powershell
 Update-HostStorageCache
@@ -294,7 +293,7 @@ copy online while the originals are offline gives it a new signature. That is ex
 
 ---
 
-### 1a.W6 Inject, and read back what came back
+### 1b.W6 Inject, and read back what came back
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'snapshot-restored', 'database back from the snapshot');"
@@ -332,7 +331,7 @@ virtctl -n student-01-0024-012 start win-pg-s01
 the next demo, either restore the whole VM (above), or stop the VM and remove the old volumes in **Configuration →
 Storage** **[verify: BL-D11, a clean "post-bonus" state for demos 2-4]**.
 
-**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next:** [Demo 5: OADP backup and restore](05-oadp-vm-backup.md), on your Windows VM this time.
+**Back to:** [Demo 1](01-vmware-to-ove-cold.md) · **Next on Windows:** [Demo 1c: live migration and storage migration](01c-live-and-storage-migration.md).
 
 ## Thank you
 

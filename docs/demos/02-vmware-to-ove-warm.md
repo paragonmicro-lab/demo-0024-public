@@ -25,7 +25,7 @@ date: 2026-10-17
 > with the VDDK-independent transfer Red Hat has in **preview** ([status](#where-red-hat-is-with-this-2026-10-14)).
 >
 > **In class today:** do [Demo 1](01-vmware-to-ove-cold.md) (cold migration, no VDDK needed) and its bonus labs,
-> then Demos 1c, 1d and 4.
+> then Demos 1d, 1a and 4.
 
 ## Why this lab does not demo VDDK
 
@@ -354,7 +354,7 @@ oc -n student-01-0024-012 get vmsnapshot                              # after-wa
 oc -n student-01-0024-012 get volumesnapshot -o custom-columns=NAME:.metadata.name,CLASS:.spec.volumeSnapshotClassName,READY:.status.readyToUse   # ontap-snapclass  true
 ```
 
-✅ Three volume snapshots, class `ontap-snapclass`, ready. [Demo 1a](01a-snapshot-restore.md) shows what you can do
+✅ Three volume snapshots, class `ontap-snapclass`, ready. [Demo 1b](01b-snapshot-restore.md) shows what you can do
 with one.
 
 ---
@@ -397,9 +397,9 @@ The Demo 1 bonus labs work on this VM too: use **`win-pg-s01-warm`** wherever th
 
 | Bonus | What you do |
 |---|---|
-| [Demo 1a: snapshot and restore](01a-snapshot-restore.md) | snapshot, destroy the database, restore |
-| [Demo 1b: live migration and storage migration](01b-live-and-storage-migration.md) | move the running VM to another node, then to another storage class |
-| [Demo 1c: cross-cluster migration](01c-ocp-vm-cross-cluster-migration.md) | site A → site B in ACM |
+| [Demo 1b: snapshot and restore](01b-snapshot-restore.md) | snapshot, destroy the database, restore |
+| [Demo 1c: live migration and storage migration](01c-live-and-storage-migration.md) | move the running VM to another node, then to another storage class |
+| [Demo 1d: cross-cluster migration](01d-ocp-vm-cross-cluster-migration.md) | site A → site B in ACM |
 
 **Back to:** [Demo 1](01-vmware-to-ove-cold.md) · [Student guide](../student-guide.md).
 

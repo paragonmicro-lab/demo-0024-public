@@ -1,7 +1,7 @@
 ---
 title: "Start here — VMware to OpenShift Virtualization"
 subtitle: "Thank you for joining · start here · how the class works · the day · Kubernetes in a few ideas"
-version: 1.2.5
+version: 1.3.0
 date: 2026-10-14
 ---
 
@@ -70,13 +70,13 @@ The [student guide](student-guide.md) explains how the class works and lists the
 |---|---|
 | Welcome, and Kubernetes in a few ideas (this page) | 20 min |
 | Lab 0 · Demo 1 (cold migration): start your copy (about 1 h 30) | 30 min |
-| While it copies: a cloud-native server (1d), snapshot and restore (1a), OADP backup (5) | 1 h 20 |
+| While it copies, on a cloud-native server you build (1a): snapshot and restore (1b), live and storage migration (1c), cross-cluster migration (1d, BCDR class), OADP backup (1e) | 2 h |
 | *Break* | 15 min |
-| Demo 1 finished: start your migrated VM, read back; then 1a/5 on it, or 1b–1c (Demo 2, warm migration, is coming soon) | 1 h |
+| Demo 1 finished: stop the cloud-native server, start your migrated VM, read back; then 1b – 1e again on it (Demo 2, warm migration, is coming soon) | 1 h |
 | Wrap-up: your rows read back, questions | 15 min |
 
-**Going deeper**, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), Backup
-(Demo 5, OADP, 30 min), and more demos (moving between clusters, 1 h 25), each with bonus rounds for early finishers.
+**Going deeper**, as your instructor sets up the class: Storage (Demo 4, ODF disaster recovery, 1 h 30), with bonus
+rounds for early finishers.
 
 Times are estimates until the class has been timed. The demos and their bonus rounds, each with its time, are in the
 [Student Guide](student-guide.md#the-demos-in-order).
@@ -130,4 +130,4 @@ migrated VM keeps its address.
 
 ---
 
-> **Version 1.2.5 · draft · 2026-10-17** · class/welcome.md
+> **Version 1.3.0 · draft · 2026-10-19** · class/welcome.md

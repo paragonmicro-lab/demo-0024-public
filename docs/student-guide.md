@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.9.7
+version: 0.10.0
 date: 2026-10-17
 ---
 
 # Student Guide
 
-> **Version 0.9.7 · draft · 2026-10-19** · class/student-guide.md
+> **Version 0.10.0 · draft · 2026-10-19** · class/student-guide.md
 
 ## What you will learn
 
@@ -67,17 +67,23 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 | # | Guide | You will | Time | Bonus (optional) |
 |---|---|---|---|---|
 | 0 | [Access and tools](demos/00-access-and-tools.md) | sign in to vCenter, both clusters and PostgreSQL; open a command line | 5 min | — |
-| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 2 h (the copy alone is about 1 h 30) | [1b: live and storage migration](demos/01b-live-and-storage-migration.md) (20 min) · [1c: cross-cluster migration](demos/01c-ocp-vm-cross-cluster-migration.md) (45 min) · 1a and 5 again on your Windows VM |
+| 1 | [Cold migration](demos/01-vmware-to-ove-cold.md) | check your plan and the vCenter link; shut down, migrate, review and power on in OpenShift; inject and read back your rows | 2 h 30 with the labs below (the copy alone is about 1 h 30) | second walk-through: 1b – 1e again on your migrated Windows VM |
 | 2 | [Warm migration with storage copy offload](demos/02-vmware-to-ove-warm.md) | **🚧 coming soon (read only): needs a SAN array this lab doesn't have yet.** Why the lab dropped VDDK; the array copies the disks while the VM runs; cut over; snapshot on the array | — | — |
 
-**While your copy runs** (Demo 1 §1.3 sends you here; about 1 h 20 in all), on a **new** cloud-native server:
-[1d: a cloud-native golden image](demos/01d-vm-cloudnative-golden-image.md) (30 min) →
-[1a: snapshot and restore](demos/01a-snapshot-restore.md) (20 min) →
-[Demo 5: OADP backup and restore](demos/05-oadp-vm-backup.md) (30 min, if your lab has OADP) → delete that server, back
-to Demo 1 §1.4 to start your migrated Windows VM.
+**While your copy runs** (Demo 1 §1.3 sends you here; about 2 h in all), in this order, on a **new** cloud-native
+server you build first, `pg-sNN-centos10`:
+
+1. [1a: a cloud-native golden image](demos/01a-vm-cloudnative-golden-image.md): build the server (30 min)
+2. [1b: snapshot and restore](demos/01b-snapshot-restore.md) (20 min)
+3. [1c: live migration and storage migration](demos/01c-live-and-storage-migration.md) (20 min)
+4. [1d: cross-cluster migration](demos/01d-ocp-vm-cross-cluster-migration.md) (30 min): **BCDR class only**, it needs two OpenShift clusters
+5. [1e: OADP backup and restore](demos/01e-oadp-vm-backup.md) (30 min, if your lab has OADP)
+
+Then back to **Demo 1 §1.4**: review the migration, **stop** the cloud-native server (no need to delete it), and
+start your migrated Windows VM. Early finishers do 1b – 1e again on the Windows VM.
 
 > 💡 **Two classes use these guides.** *VM Hosting Alternative to VMware* (demo-0002) has **one** OpenShift
-> cluster (site A) and stops after migration, snapshot and OADP backup: it has no site B, so Demos 1c and 4 aren't in
+> cluster (site A) and stops after migration, snapshot and OADP backup: it has no site B, so Demos 1d and 4 aren't in
 > it. *VMware Migration & BCDR* (demo-0024) has both sites and everything below.
 
 **Go deeper**, when your instructor offers it (demo-0024):
@@ -85,7 +91,6 @@ to Demo 1 §1.4 to start your migrated Windows VM.
 | Group | Guide | You will | Time | Bonus (optional) |
 |---|---|---|---|---|
 | Storage | [Demo 4: ODF Regional-DR](demos/04-odf-regional-dr.md) | replicate every 15 minutes, fail over, reverse, come home clean | 90 min | §4.8 hostile failover (30 min) |
-| Backup | [Demo 5: OADP backup and restore](demos/05-oadp-vm-backup.md) | back up your namespace, delete your VM, restore it, prove the data | 30 min | *framework: when OADP is staged* |
 
 Reference: [Toolkit](demos/toolkit.md) (your terminal and the data commands) · [Lab S](demos/setup-how-the-lab-is-built.md)
 (how every staged piece was built, with the commands and the Red Hat docs) · [Lab diagram](demos/lab-diagram.md).
