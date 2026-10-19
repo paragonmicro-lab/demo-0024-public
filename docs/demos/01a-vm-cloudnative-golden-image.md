@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.1.0
+version: 2.1.2
 date: 2026-10-17
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.1.0 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.1.2 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -150,12 +150,20 @@ oc -n student-01-0024-012 get secret student-01-ssh -o jsonpath='{.data.key}' | 
 | Password (Linux and database) | your class password |
 | SSH key Secret | `student-01-ssh` (the Secret from step 1) |
 
+> ⚠️ **Check the project before you create.** The VM is created in the project the wizard shows, and a VM can
+> **never** change project afterwards: Kubernetes refuses to edit `metadata.namespace` ("Cannot change resource
+> namespace"). It must be **your** project, `student-01-0024-012`, next to your Windows VM and your class terminal.
+> Built it in the wrong one (`default`, say)? Delete it there and deploy again here: it's code, so that takes
+> minutes and loses nothing.
+
 Then **Create VirtualMachine**. Leave the wizard's own **Public SSH key** setting at **None**: the Template already
 takes your key from the Secret you named. **[verify: the console's Template form shows the *SSH key Secret*
 parameter]**
 
 > ⚠️ **Not the InstanceTypes tab.** **Catalog → InstanceTypes** builds a plain CentOS VM from Red Hat's boot source,
 > with none of this Template's code: no PostgreSQL, no data disks, no class logins. Use the **Template catalog**.
+> (Its **N series** (`n1.*`) is for network appliances: dedicated CPUs and 1 GiB hugepages that this lab's nodes
+> don't offer, so such a VM stays **ErrorUnschedulable**.)
 
 **Or, the Web Terminal: the whole server is one command.** `oc process` fills in the Template's blanks, exactly
 as the form did, and `oc apply` creates the result in your project. It asks for your password, so it never
