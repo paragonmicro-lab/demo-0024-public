@@ -985,7 +985,7 @@
 
 <h1 id="demo-1a-a-cloud-native-golden-image">Demo 1a: a cloud-native golden image<a class="headerlink" href="#demo-1a-a-cloud-native-golden-image" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.1.2 · draft · 2026-10-19</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
+<p><strong>Version 2.2.0 · draft · 2026-10-19</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
@@ -1246,6 +1246,100 @@ VM points at it (<code>cloudInitNoCloud.secretRef</code>), so the VM's definitio
 only way for a real server: KubeVirt refuses cloud-init written inline in the VM above 2 KB, and this one is
 about 11 KB. The Template creates both, so both are yours to delete (1a.5).</p>
 </blockquote>
+<details>
+<summary>Build it yourself in the console: your own VM, your own cloud-init (optional)</summary>
+<p>The Template did the work above. Here you build the same database server <strong>by hand in the console</strong>, from a plain
+CentOS Stream 10 VM plus a short <strong>cloud-init</strong>: the standard way a cloud server is customized on its first boot. The
+PostgreSQL build itself (install, the class database and toolkit, your database login, the heartbeat) is the lab's
+published script, <a href="../downloads/ovedr-pg-setup.sh"><code>ovedr-pg-setup.sh</code></a>: your cloud-init downloads and runs it, so you
+write 30 lines, not 300. Read the script first: it is what will run as root on your server.</p>
+<p>One address per student: build this <strong>instead of</strong> the Template's server, or delete that one first (1a.5), since
+both would use <code>10.101.23.151</code>. This server keeps its data on its system disk (the Template's has separate data and
+WAL disks); Demos 1b – 1e work on either.</p>
+<p><strong>Console (site A):</strong> <strong>[verify: the field names on OpenShift 4.19's VM wizard]</strong></p>
+<ol>
+<li>Set the <strong>Project</strong> dropdown to <strong>your</strong> project, <code>student-01-0024-012</code>.</li>
+<li><strong>Virtualization → Catalog → InstanceTypes</strong>: boot volume <strong>CentOS Stream 10</strong>; series <strong>U series</strong> (general
+   purpose), size <strong>u1.medium</strong>. Not the <strong>N series</strong>: it needs dedicated CPUs and hugepages this lab doesn't have.</li>
+<li><strong>VirtualMachine name</strong> <code>pg-s01-centos10</code> → <strong>Customize VirtualMachine</strong>.</li>
+<li><strong>Network</strong>: edit the NIC → network <strong><code>default/vmnet23</code></strong> (your VLAN's bridge), type <strong>Bridge</strong>.</li>
+<li><strong>Scripts → Cloud-init → Edit</strong>: switch to the <strong>script</strong> (YAML) view and paste the block below, with your values
+   in the lines marked ✎. Tick <strong>Add network data</strong> and set it as in the second block (or its fields: Ethernet name
+   <code>enp1s0</code>, IP address <code>10.101.23.151/24</code>, gateway <code>10.101.23.1</code>).</li>
+<li><strong>Scripts → Public SSH key → Use existing</strong> → <code>student-01-ssh</code> (the Secret from step 1 above).</li>
+<li><strong>Create VirtualMachine</strong>, then carry on with <strong>1a.3</strong> as for the Template's server.</li>
+</ol>
+<p>The cloud-init (user data), about 1.2 KB: the console keeps it inside the VM, where KubeVirt allows at most 2 KB.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#cloud-config</span>
+<span class="c1"># Demo 1a, built yourself: the class's PostgreSQL server from a plain CentOS Stream 10 VM.</span>
+<span class="c1"># Change the values marked ✎ to yours.</span>
+<span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pg-s01-centos10</span><span class="w">                     </span><span class="c1"># ✎ your VM's name</span>
+<span class="nt">system_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">default_user</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">student-01</span><span class="w">                          </span><span class="c1"># ✎ your Linux login (your SSH key lands here too)</span>
+<span class="w">    </span><span class="nt">groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">wheel</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">sudo</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">"ALL=(ALL)</span><span class="nv"> </span><span class="s">NOPASSWD:ALL"</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">lock_passwd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">users</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">default</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="nt">ssh_pwauth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                              </span><span class="c1"># SSH with your password as well as your key</span>
+<span class="nt">chpasswd</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">expire</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">users</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">student-01</span><span class="p p-Indicator">,</span><span class="nt"> password</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;your</span><span class="nv"> </span><span class="s">class</span><span class="nv"> </span><span class="s">password&gt;"</span><span class="p p-Indicator">,</span><span class="nt"> type</span><span class="p">:</span><span class="w"> </span><span class="nv">text</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w">   </span><span class="c1"># ✎ your login and password</span>
+<span class="nt">packages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">postgresql-server</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">qemu-guest-agent</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="nt">write_files</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/root/.ovedr-db</span><span class="w">                     </span><span class="c1"># read once by the setup script, then shredded</span>
+<span class="w">    </span><span class="nt">permissions</span><span class="p">:</span><span class="w"> </span><span class="s">"0600"</span>
+<span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">DB_USER=student_01</span>
+<span class="w">      </span><span class="no">DB_PASSWORD=&lt;your class password&gt;</span>
+<span class="nt">runcmd</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># the class's PostgreSQL build, published on the class site: read it before you run it</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl -fsSL -o /usr/local/sbin/ovedr-pg-setup https://paragonmicro-lab.github.io/demo-0024-public/downloads/ovedr-pg-setup.sh</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bash /usr/local/sbin/ovedr-pg-setup</span>
+</code></pre></div>
+<p>The network data: your address, its gateway and the lab's DNS.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="nt">ethernets</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enp1s0</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addresses</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">10.101.23.151/24</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w">                </span><span class="c1"># ✎ 10.101.&lt;VLAN&gt;.&lt;150 + your number&gt;</span>
+<span class="w">    </span><span class="nt">routes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> to</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0/0</span><span class="p p-Indicator">,</span><span class="nt"> via</span><span class="p">:</span><span class="w"> </span><span class="nv">10.101.23.1</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># ✎ your VLAN's gateway, 10.101.&lt;VLAN&gt;.1</span>
+<span class="w">    </span><span class="nt">nameservers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> addresses</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">10.101.6.201</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10.101.6.202</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</code></pre></div>
+<p>What each part does, the same jobs the Template's cloud-init does:</p>
+<table>
+<thead>
+<tr>
+<th>cloud-init</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>system_info.default_user</code>, <code>users</code></td>
+<td>makes <strong>your</strong> Linux login the VM's default user, in <code>wheel</code> (sudo); your SSH key from the Secret lands on it</td>
+</tr>
+<tr>
+<td><code>ssh_pwauth</code>, <code>chpasswd</code></td>
+<td>SSH and the console accept your password too</td>
+</tr>
+<tr>
+<td><code>packages</code></td>
+<td>installs PostgreSQL and the QEMU guest agent from the CentOS mirrors</td>
+</tr>
+<tr>
+<td><code>write_files</code></td>
+<td>your database login and password, in a root-only file the script reads once and then shreds</td>
+</tr>
+<tr>
+<td><code>runcmd</code></td>
+<td>downloads the class's setup script and runs it; its last line in <code>/var/log/cloud-init-output.log</code> is <code>OVEDR-READY</code></td>
+</tr>
+</tbody>
+</table>
+<p>Your password is in the VM's definition this time (cloud-init written in the console stays inline). The Template
+kept it in a Secret; for a lab login that dies with the booking, either is fine.</p>
+</details>
 <hr />
 <h2 id="1a3-watch-it-build-itself">1a.3 Watch it build itself<a class="headerlink" href="#1a3-watch-it-build-itself" title="Permanent link">&para;</a></h2>
 <p><strong>Console:</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code></strong>. It goes <strong>Provisioning</strong> (the disks are
