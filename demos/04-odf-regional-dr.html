@@ -1554,7 +1554,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.2 · draft · 2026-10-16</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.6.3 · draft · 2026-10-19</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1640,13 +1640,13 @@ console steps behind the shared pieces.</p>
 <h3 id="two-identical-sites-and-the-one-step-ci-runs-across-both">Two identical sites, and the one step CI runs across both<a class="headerlink" href="#two-identical-sites-and-the-one-step-ci-runs-across-both" title="Permanent link">&para;</a></h3>
 <p>CI's customization builds <strong>site A and site B the same</strong>, each site on its own: migration tools, the vSphere provider
 and maps, the staged plans <code>d1-&lt;vm&gt;</code> / <code>d2-&lt;vm&gt;</code>, your namespace and <code>sql-client</code>, the VLAN bridges. That's why
-Demo 1 can fall back to site B when site A has a problem (<a href="01-vmware-to-ove-cold.html">Demo 1 §1.3</a>).</p>
+your instructor can move a Demo 1 migration to site B when site A has a problem.</p>
 <p>The <strong>ODF DR clustering is the one workflow that can't run on each site in parallel</strong>, because it joins the two:
 <code>demo-prep</code> imports site A into site B's ACM hub, then <code>dr-fabric</code> turns on the object gateway (MCG) on both sites,
 links their networks with Submariner, and pairs the two Ceph clusters (<code>MirrorPeer</code> → both <code>DRCluster</code>s), and
 <code>dr-policy</code> adds the 15-minute <code>DRPolicy</code>. It runs once, after both sites are built, from the hub. <a href="setup-how-the-lab-is-built.html">Lab S §S.14</a> has each step as code.</p>
 <p><strong>This demo starts from site A, the first deploy.</strong> Your VM is protected where Demo 1 put it, on site A, and
-replicates to B. If you fell back to site B in Demo 1, tell your instructor before §4.0: they halt your site B copy
+replicates to B. If your instructor moved your Demo 1 migration to site B, remind them before §4.0: they halt your site B copy
 (both sites share your VLAN and address) and re-run your site A plan, so <code>where</code> shows <code>site-a Running</code>.</p>
 <h3 id="who-is-in-charge-the-hub-supervises-the-sites-are-not-peers">Who is in charge: the hub supervises, the sites are not peers<a class="headerlink" href="#who-is-in-charge-the-hub-supervises-the-sites-are-not-peers" title="Permanent link">&para;</a></h3>
 <p>Two clusters, but they don't have equal roles. One ACM <strong>hub</strong> supervises both. Only the hub can protect a VM, run a
