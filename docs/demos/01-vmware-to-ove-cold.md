@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.6.1
+version: 1.6.2
 date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.6.1 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.6.2 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -353,6 +353,14 @@ oc -n student-01-0024-012 get vmi win-pg-s01 -w                      # Schedulin
 > ```powershell
 > Get-Service QEMU-GA, VMTools -ErrorAction SilentlyContinue | Format-Table Name, Status   # QEMU-GA Running; no VMTools row
 > Get-PnpDevice -PresentOnly | Where-Object FriendlyName -match 'VirtIO|Red Hat' | Format-Table Status, FriendlyName
+> ```
+>
+> 🔑 **Once the reboots are done, sign in to the database again** before 1.5. Your class terminal keeps your sign-in
+> only inside its pod, and over the copy and the reboots that pod may have been restarted. Run `dblogin` with your
+> class password; it answers `✓ signed in to bcdr on win-pg-s01 (10.101.23.101)`, the address your commands use:
+>
+> ```bash
+> oc exec -it -n student-01-0024-012 deploy/sql-client -- dblogin
 > ```
 
 On the VM's **Overview**, the *Guest agent* shows as connected, and **IP addresses** shows `10.101.23.101`: your VM
