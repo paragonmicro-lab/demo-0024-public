@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.0.0
+version: 2.1.0
 date: 2026-10-17
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.0.0 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.1.0 · draft · 2026-10-19** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -82,7 +82,8 @@ oc get template -n openshift ovedr-centos10-postgres -o yaml | less          # q
 | `dataVolumeTemplates` | the system disk, cloned from Red Hat's `centos-stream10` boot source, plus two **empty** disks: 10 GB for the data, 5 GB for the WAL |
 | `networks` | one NIC on your VLAN's bridge (`default/vmnet23`), so the server has its own address on the lab network |
 | `cloudInitNoCloud.networkData` | that address, its gateway and the lab's DNS |
-| a **Secret** `<VM name>-cloudinit`, read by `cloudInitNoCloud.secretRef` | **cloud-init**, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's `marks` toolkit, creates your Linux and database logins, starts the database and a heartbeat |
+| `accessCredentials` | **your public SSH key**, read from a Secret you create (parameter *SSH key Secret*), put on your Linux login at first boot |
+| a **Secret** `<VM name>-cloudinit`, read by `cloudInitNoCloud.secretRef` | **cloud-init**, run on first boot: formats and mounts the two disks, installs PostgreSQL 16 with its WAL on its own disk, loads the class's `marks` toolkit, creates your Linux and database logins (SSH takes your key **or** your password), starts the database and a heartbeat |
 
 The whole file is also on the class site: [`ovedr-centos10-postgres.yaml`](../downloads/ovedr-centos10-postgres.yaml).
 
@@ -90,7 +91,51 @@ The whole file is also on the class site: [`ovedr-centos10-postgres.yaml`](../do
 
 ## 1a.2 Deploy it
 
-Do **one** of the two. Both create the same VM.
+Two steps: save your public SSH key in OpenShift, then deploy the Template. Each has a console way and a Web
+Terminal way, and both ways give the same result.
+
+### Step 1: your SSH key, saved in OpenShift as a Secret
+
+A server built from code gets its SSH key the way a cloud server does: OpenShift holds your **public** key in a
+**Secret** in your project, and the Template hands it to the VM on its first boot. Your **private** key never leaves
+your terminal.
+
+**Make a key pair in the Web Terminal** (both ways start here, since the class installs nothing on your laptop):
+
+```bash
+ssh-keygen -t ed25519 -N '' -C student-01 -f ~/.ssh/id_ed25519      # your key pair: no passphrase, for the lab
+cat ~/.ssh/id_ed25519.pub                                            # the PUBLIC key: one line, ssh-ed25519 AAAA… student-01
+```
+
+**Console (site A), as in the video:** **Workloads → Secrets → Create → Key/value secret**, in project
+**`student-01-0024-012`**:
+
+| Field | Value |
+|---|---|
+| Secret name | `student-01-ssh` |
+| Key | `key` |
+| Value | paste the **public** key line from `cat ~/.ssh/id_ed25519.pub` (or **Browse** to upload a `.pub` file) |
+
+Then **Create**. This is the same Secret the VM wizards' **Public SSH key → Add new** dialog saves ("SSH key is saved
+in the project as a secret").
+
+**Or, the Web Terminal:**
+
+```bash
+oc -n student-01-0024-012 create secret generic student-01-ssh --from-file=key=$HOME/.ssh/id_ed25519.pub
+```
+
+✅ `secret/student-01-ssh created`. Check it holds your public key, and only that:
+
+```bash
+oc -n student-01-0024-012 get secret student-01-ssh -o jsonpath='{.data.key}' | base64 -d     # ssh-ed25519 AAAA… student-01
+```
+
+> 💡 **The Web Terminal's home directory lasts as long as the terminal does.** If it restarts, your private key is
+> gone: make a new pair and replace the Secret's value (**Secret → Actions → Edit Secret**). Your password still
+> signs you in meanwhile.
+
+### Step 2: deploy the Template
 
 **Console (site A), as in the video:** in the Template catalog, open **CentOS Stream 10 + PostgreSQL 16 (class)** →
 **Customize VirtualMachine** → project **`student-01-0024-012`**, and fill in the parameters:
@@ -103,15 +148,21 @@ Do **one** of the two. Both create the same VM.
 | Linux login | `student-01` |
 | Database login | `student_01` |
 | Password (Linux and database) | your class password |
+| SSH key Secret | `student-01-ssh` (the Secret from step 1) |
 
-Then **Create VirtualMachine**.
+Then **Create VirtualMachine**. Leave the wizard's own **Public SSH key** setting at **None**: the Template already
+takes your key from the Secret you named. **[verify: the console's Template form shows the *SSH key Secret*
+parameter]**
+
+> ⚠️ **Not the InstanceTypes tab.** **Catalog → InstanceTypes** builds a plain CentOS VM from Red Hat's boot source,
+> with none of this Template's code: no PostgreSQL, no data disks, no class logins. Use the **Template catalog**.
 
 **Or, the Web Terminal: the whole server is one command.** `oc process` fills in the Template's blanks, exactly
 as the form did, and `oc apply` creates the result in your project. It asks for your password, so it never
 appears on screen:
 
 ```bash
-read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos10-postgres -p NAME=pg-s01-centos10 -p VLAN=23 -p IP=10.101.23.151 -p OS_USER=student-01 -p DB_USER=student_01 -p DB_PASSWORD="$PW" | oc apply -n student-01-0024-012 -f -; unset PW
+read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos10-postgres -p NAME=pg-s01-centos10 -p VLAN=23 -p IP=10.101.23.151 -p OS_USER=student-01 -p DB_USER=student_01 -p DB_PASSWORD="$PW" -p SSH_KEY_SECRET=student-01-ssh | oc apply -n student-01-0024-012 -f -; unset PW
 ```
 
 ✅ `secret/pg-s01-centos10-cloudinit created` and `virtualmachine.kubevirt.io/pg-s01-centos10 created`.
@@ -145,6 +196,19 @@ sudo ls -l /var/lib/pgsql/data/pg_wal                    # → /var/lib/pgsql/wa
 
 ✅ cloud-init **done**, both database disks mounted, both services **active**. Every one of these was declared in
 the Template, and none was typed by hand.
+
+**Sign in over SSH, from the Web Terminal:** first with your key, then with your password. Both work, because the
+Template turned on both.
+
+```bash
+ssh -o StrictHostKeyChecking=accept-new student-01@10.101.23.151 'hostname; whoami'                          # key: no password asked
+ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password student-01@10.101.23.151 'whoami'       # password: asks for it
+```
+
+✅ The first prints `pg-s01-centos10` and `student-01` without asking anything: your key from the Secret is in
+`~/.ssh/authorized_keys`. The second asks for your class password, then prints `student-01`. (Also works through
+the API server, without reaching the VLAN: `virtctl ssh -n student-01-0024-012 -i ~/.ssh/id_ed25519 student-01@vm/pg-s01-centos10`.)
+**[verify: `ssh` and `virtctl` in the Web Terminal tooling]**
 
 ---
 
@@ -183,6 +247,8 @@ A pet is repaired. Cattle are replaced. Delete the server and deploy it again fr
 ```bash
 oc -n student-01-0024-012 delete vm,secret -l app=pg-s01-centos10    # the VM, its three disks and its cloud-init Secret
 ```
+
+Your SSH key Secret `student-01-ssh` stays (it isn't labelled with the VM), so the rebuild reuses it.
 
 Then run **1a.2** again. In a few minutes you have the **same** server at the same address, with an empty `marks`
 table: every setting came from code, so nothing drifted and nothing was forgotten.

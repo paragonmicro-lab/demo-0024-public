@@ -1,13 +1,13 @@
 ---
 title: "Demo 1d — Cross-cluster migration: OpenShift site A to site B, with its storage (BCDR class)"
 subtitle: "ACM links the clusters · MTV moves your cloud-native server from site A to site B, with its disks · inject and read back"
-version: 2.0.0
+version: 2.0.1
 date: 2026-10-15
 ---
 
 # Demo 1d: cross-cluster migration, site A to site B (BCDR class)
 
-> **Version 2.0.0 · draft · 2026-10-19** · class/demos/01d-ocp-vm-cross-cluster-migration.md
+> **Version 2.0.1 · draft · 2026-10-19** · class/demos/01d-ocp-vm-cross-cluster-migration.md
 
 ## What you will learn
 
@@ -108,12 +108,13 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SEL
 ✅ The VM shows **Stopped**.
 
 **Unplug its cloud-init disk.** MTV copies the VM and its disks, not the cloud-init Secret it booted from (Demo 1a).
-cloud-init only did its work on the first boot: the server's address, logins and PostgreSQL are now on its own disks.
-So remove the disk while the VM is stopped, and it starts on site B without the Secret:
+cloud-init only did its work on the first boot: the server's address, logins, SSH key and PostgreSQL are now on its
+own disks. So remove the disk (and the SSH key setting that rides on it) while the VM is stopped, and it starts on
+site B without either Secret:
 
 ```bash
 oc -n student-01-0024-012 get vm pg-s01-centos10 -o json \
-  | jq 'del(.spec.template.spec.volumes[] | select(.cloudInitNoCloud)) | del(.spec.template.spec.domain.devices.disks[] | select(.name == "cloudinitdisk"))' \
+  | jq 'del(.spec.template.spec.volumes[] | select(.cloudInitNoCloud)) | del(.spec.template.spec.domain.devices.disks[] | select(.name == "cloudinitdisk")) | del(.spec.template.spec.accessCredentials)' \
   | oc replace -f -
 ```
 
