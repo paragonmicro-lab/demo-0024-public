@@ -991,7 +991,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.6.1 · draft · 2026-10-19</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.6.2 · draft · 2026-10-19</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1384,6 +1384,11 @@ restart the VM yourself. It's done when the login screen stays up and the <em>Gu
 To check from inside Windows (PowerShell):</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-Service</span> <span class="n">QEMU-GA</span><span class="p">,</span> <span class="n">VMTools</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Status</span>   <span class="c"># QEMU-GA Running; no VMTools row</span>
 <span class="nb">Get-PnpDevice</span> <span class="n">-PresentOnly</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">FriendlyName</span> <span class="o">-match</span> <span class="s1">'VirtIO|Red Hat'</span> <span class="p">|</span> <span class="nb">Format-Table</span> <span class="n">Status</span><span class="p">,</span> <span class="n">FriendlyName</span>
+</code></pre></div>
+<p>🔑 <strong>Once the reboots are done, sign in to the database again</strong> before 1.5. Your class terminal keeps your sign-in
+only inside its pod, and over the copy and the reboots that pod may have been restarted. Run <code>dblogin</code> with your
+class password; it answers <code>✓ signed in to bcdr on win-pg-s01 (10.101.23.101)</code>, the address your commands use:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>dblogin
 </code></pre></div>
 </blockquote>
 <p>On the VM's <strong>Overview</strong>, the <em>Guest agent</em> shows as connected, and <strong>IP addresses</strong> shows <code>10.101.23.101</code>: your VM
