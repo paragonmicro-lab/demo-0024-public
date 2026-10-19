@@ -985,7 +985,7 @@
 
 <h1 id="demo-1a-a-cloud-native-golden-image">Demo 1a: a cloud-native golden image<a class="headerlink" href="#demo-1a-a-cloud-native-golden-image" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.1.0 · draft · 2026-10-19</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
+<p><strong>Version 2.1.2 · draft · 2026-10-19</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
@@ -1218,12 +1218,21 @@ signs you in meanwhile.</p>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>⚠️ <strong>Check the project before you create.</strong> The VM is created in the project the wizard shows, and a VM can
+<strong>never</strong> change project afterwards: Kubernetes refuses to edit <code>metadata.namespace</code> ("Cannot change resource
+namespace"). It must be <strong>your</strong> project, <code>student-01-0024-012</code>, next to your Windows VM and your class terminal.
+Built it in the wrong one (<code>default</code>, say)? Delete it there and deploy again here: it's code, so that takes
+minutes and loses nothing.</p>
+</blockquote>
 <p>Then <strong>Create VirtualMachine</strong>. Leave the wizard's own <strong>Public SSH key</strong> setting at <strong>None</strong>: the Template already
 takes your key from the Secret you named. <strong>[verify: the console's Template form shows the <em>SSH key Secret</em>
 parameter]</strong></p>
 <blockquote>
 <p>⚠️ <strong>Not the InstanceTypes tab.</strong> <strong>Catalog → InstanceTypes</strong> builds a plain CentOS VM from Red Hat's boot source,
-with none of this Template's code: no PostgreSQL, no data disks, no class logins. Use the <strong>Template catalog</strong>.</p>
+with none of this Template's code: no PostgreSQL, no data disks, no class logins. Use the <strong>Template catalog</strong>.
+(Its <strong>N series</strong> (<code>n1.*</code>) is for network appliances: dedicated CPUs and 1 GiB hugepages that this lab's nodes
+don't offer, so such a VM stays <strong>ErrorUnschedulable</strong>.)</p>
 </blockquote>
 <p><strong>Or, the Web Terminal: the whole server is one command.</strong> <code>oc process</code> fills in the Template's blanks, exactly
 as the form did, and <code>oc apply</code> creates the result in your project. It asks for your password, so it never
