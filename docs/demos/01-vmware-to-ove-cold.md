@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.6.0
+version: 1.6.1
 date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.6.0 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.6.1 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -157,7 +157,7 @@ Watch it on the plan's page: expand your VM to see each step with a progress bar
 oc -n openshift-mtv get plan d1-win-pg-s01 -w                        # Executing → Succeeded (Ctrl-C to stop watching)
 # each step, its state and progress
 oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
-  | jq -r '.status.migration.vms[0].pipeline[] | "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")"'
+  | jq -r '(.status.migration.vms // [])[0].pipeline // ["not started yet: press Start on the plan"] | .[] | if type == "string" then . else "\(.name)  \(.phase // "-")  \(.progress.completed // 0)/\(.progress.total // 0) \(.annotations.unit // "")" end'
 ```
 
 ⏱️ **The copy takes about 1 h 30.** Without VDDK, `virt-v2v` reads your VM's disks through vCenter, and that read
@@ -323,7 +323,7 @@ expand your VM. Each step shows when it started and how long it took: **ImageCon
 **DiskTransferV2v**. ✍️ Note the total: that is the outage a cold migration costs.
 
 ```bash
-oc -n openshift-mtv get plan d1-win-pg-s01 -o json | jq -r '.status.migration.vms[0] | "total: \(.started) → \(.completed)", (.pipeline[] | "  \(.name): \(.started) → \(.completed)")'
+oc -n openshift-mtv get plan d1-win-pg-s01 -o json | jq -r '(.status.migration.vms // [])[0] // {} | if .pipeline then "total: \(.started) → \(.completed)", (.pipeline[] | "  \(.name): \(.started) → \(.completed)") else "not started yet" end'
 ```
 
 **Console (site A):** **Virtualization → VirtualMachines**, project **`student-01-0024-012`** → **`win-pg-s01`**.
