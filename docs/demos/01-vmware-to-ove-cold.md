@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.4.2
+version: 1.5.0
 date: 2026-10-17
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.4.2 · draft · 2026-10-18** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.5.0 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -150,6 +150,38 @@ oc -n openshift-mtv get plan d1-win-pg-s01 -o json \
 is the slow part (measured 1 h 06 – 1 h 16 on the lab's SSDs; allow 1 h 30). **ImageConversion** takes most of it,
 with no MB counter moving: `virt-v2v` reads the guest, inspects Windows and installs the virtio drivers.
 **DiskTransferV2v** then copies the disks. The whole class migrating at once is no slower per VM.
+
+<details markdown="1">
+<summary>With and without VDDK: what it does to the copy time, and to your VM's downtime</summary>
+
+**VDDK** (VMware's *Virtual Disk Development Kit*) is VMware's own library for reading a VM's disks. MTV can use it,
+but this lab has no VDDK ([why](02-vmware-to-ove-warm.md#why-this-lab-does-not-demo-vddk)), so your copy takes the
+path without it.
+
+| | **Without VDDK** (this lab) | **With VDDK** |
+|---|---|---|
+| How the disks are read | `virt-v2v` reads each disk as a **file over HTTPS through vCenter** (its datastore file service). vCenter stays in the data path for every read | vCenter only hands out an access ticket. The disk is read **from the ESXi host directly**, over VMware's block protocol (NBD/NBDSSL) |
+| What is copied | the **whole** disk, empty space included (34 GB for `win-pg-sNN`) | only the blocks that **hold data**; empty space is skipped |
+| **ImageConversion** (inspect Windows, add the virtio drivers) | slow: thousands of small reads, each one an HTTPS round trip through vCenter | much faster: each read is a short block request to the host |
+| Retries and failures | vCenter's file service sometimes answers `HTTP 500`; most are retried (a stall of a few minutes), and one can fail the plan | no vCenter file service, so not this class of error |
+| **Your VM's downtime** | **the whole copy**: a cold migration only | cold, **or warm**: VDDK reads VMware's Changed Block Tracking, so MTV copies while the VM runs and stops it only for a short final cutover |
+| Red Hat's guidance | supported, but *"not recommended"* | *"strongly recommended … A VDDK image accelerates migration and reduces the risk of a plan failing"* |
+
+**Measured in this lab, without VDDK:** 0002-007 (vSphere 9, local SSD, one copy running) took **45 min**:
+ImageConversion 31 min, then DiskTransferV2v 13 min for 34 GB (about 43 MB/s). Earlier runs on vSphere 8 took
+1 h 06 – 1 h 16. Most of the time is the conversion's reads through vCenter, not the bytes themselves.
+
+**With VDDK, an estimate (not measured here):** the same VM would copy in a fraction of that, roughly 10–20 min, and
+a **warm** migration would keep the VM running for all but the few minutes of cutover. How much faster depends on
+how full the disks are and on the network to the ESXi hosts.
+
+**Read more:**
+
+- Red Hat MTV 2.11, [VMware prerequisites: creating a VDDK image](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv): why VDDK is recommended, and that a VM on vSAN can't migrate without it
+- Red Hat MTV 2.11, [Cold and warm migration, and the migration speed comparison](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_cold-warm-migration_mtv): precopy with Changed Block Tracking, cutover, and what each costs in downtime
+- Broadcom, [VDDK: virtual disk transport methods](https://developer.broadcom.com/xapis/virtual-disk-api/latest/vddkDataStruct.5.5.html): NBD, NBDSSL, SAN and HotAdd, the ways VDDK reads a disk
+
+</details>
 
 A progress bar that sits still for a few minutes is normal: vCenter retries a slow read (an `HTTP 500` in the
 conversion pod's log, then it carries on). Rarely a 500 ends the copy: the plan shows **Failed** with *Guest

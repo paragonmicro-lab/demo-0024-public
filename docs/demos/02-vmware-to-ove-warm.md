@@ -1,13 +1,13 @@
 ---
 title: "Demo 2 — Coming soon: warm migration with storage copy offload"
 subtitle: "Why this lab doesn't demo VDDK · what a SAN with CSI and snapshots adds · inject · CBT · warm plan with the array doing the copy · cut over · snapshot on the array · read back"
-version: 3.1.1
+version: 3.2.0
 date: 2026-10-17
 ---
 
 # Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)
 
-> **Version 3.1.1 · draft · 2026-10-17** · class/demos/02-vmware-to-ove-warm.md
+> **Version 3.2.0 · draft · 2026-10-19** · class/demos/02-vmware-to-ove-warm.md
 
 > 🚧 **Coming soon. You can't run this demo in this lab yet.**
 >
@@ -46,6 +46,38 @@ Demo 2 on it, and has stopped:
 
 **What still works without VDDK:** cold migration. MTV reads the disks over vCenter/ESXi HTTPS instead: it's slower,
 and the VM is down for its whole disk copy. That's [Demo 1](01-vmware-to-ove-cold.md), and it runs in this lab today.
+
+<details markdown="1">
+<summary>With and without VDDK: what it does to the copy time, and to your VM's downtime</summary>
+
+**VDDK** (VMware's *Virtual Disk Development Kit*) is VMware's own library for reading a VM's disks. MTV can use it,
+but this lab has no VDDK (above), so [Demo 1](01-vmware-to-ove-cold.md)'s cold copy takes the path without it, and
+this demo waits on storage copy offload instead.
+
+| | **Without VDDK** (this lab) | **With VDDK** |
+|---|---|---|
+| How the disks are read | `virt-v2v` reads each disk as a **file over HTTPS through vCenter** (its datastore file service). vCenter stays in the data path for every read | vCenter only hands out an access ticket. The disk is read **from the ESXi host directly**, over VMware's block protocol (NBD/NBDSSL) |
+| What is copied | the **whole** disk, empty space included (34 GB for `win-pg-sNN`) | only the blocks that **hold data**; empty space is skipped |
+| **ImageConversion** (inspect Windows, add the virtio drivers) | slow: thousands of small reads, each one an HTTPS round trip through vCenter | much faster: each read is a short block request to the host |
+| Retries and failures | vCenter's file service sometimes answers `HTTP 500`; most are retried (a stall of a few minutes), and one can fail the plan | no vCenter file service, so not this class of error |
+| **Your VM's downtime** | **the whole copy**: a cold migration only | cold, **or warm**: VDDK reads VMware's Changed Block Tracking, so MTV copies while the VM runs and stops it only for a short final cutover |
+| Red Hat's guidance | supported, but *"not recommended"* | *"strongly recommended … A VDDK image accelerates migration and reduces the risk of a plan failing"* |
+
+**Measured in this lab, without VDDK:** 0002-007 (vSphere 9, local SSD, one copy running) took **45 min**:
+ImageConversion 31 min, then DiskTransferV2v 13 min for 34 GB (about 43 MB/s). Earlier runs on vSphere 8 took
+1 h 06 – 1 h 16. Most of the time is the conversion's reads through vCenter, not the bytes themselves.
+
+**With VDDK, an estimate (not measured here):** the same VM would copy in a fraction of that, roughly 10–20 min, and
+a **warm** migration would keep the VM running for all but the few minutes of cutover. How much faster depends on
+how full the disks are and on the network to the ESXi hosts.
+
+**Read more:**
+
+- Red Hat MTV 2.11, [VMware prerequisites: creating a VDDK image](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_planning-migration-vmware_mtv): why VDDK is recommended, and that a VM on vSAN can't migrate without it
+- Red Hat MTV 2.11, [Cold and warm migration, and the migration speed comparison](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/planning_your_migration_to_red_hat_openshift_virtualization/assembly_cold-warm-migration_mtv): precopy with Changed Block Tracking, cutover, and what each costs in downtime
+- Broadcom, [VDDK: virtual disk transport methods](https://developer.broadcom.com/xapis/virtual-disk-api/latest/vddkDataStruct.5.5.html): NBD, NBDSSL, SAN and HotAdd, the ways VDDK reads a disk
+
+</details>
 
 The VDDK version of this guide (2.2.0) stays in the repository's history. The lab's VDDK automation (job `vddk`,
 [Lab S §S.15](setup-how-the-lab-is-built.md)) is retired.
