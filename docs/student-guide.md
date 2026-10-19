@@ -1,13 +1,13 @@
 ---
 title: "Student Guide — VMware to OpenShift Virtualization: migrate, move and protect your VM"
 subtitle: "Start here · how the class works · the demos in order"
-version: 0.9.6
+version: 0.9.7
 date: 2026-10-17
 ---
 
 # Student Guide
 
-> **Version 0.9.6 · draft · 2026-10-17** · class/student-guide.md
+> **Version 0.9.7 · draft · 2026-10-19** · class/student-guide.md
 
 ## What you will learn
 
@@ -77,8 +77,8 @@ Every stage follows one rhythm: **inject** your own data → **change** somethin
 to Demo 1 §1.4 to start your migrated Windows VM.
 
 > 💡 **Two classes use these guides.** *VM Hosting Alternative to VMware* (demo-0002) has **one** OpenShift
-> cluster (site A) and stops after migration, snapshot and OADP backup: it has no site B, so Demos 1c and 4 and the
-> site B fallback aren't in it. *VMware Migration & BCDR* (demo-0024) has both sites and everything below.
+> cluster (site A) and stops after migration, snapshot and OADP backup: it has no site B, so Demos 1c and 4 aren't in
+> it. *VMware Migration & BCDR* (demo-0024) has both sites and everything below.
 
 **Go deeper**, when your instructor offers it (demo-0024):
 
