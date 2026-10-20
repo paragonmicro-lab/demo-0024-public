@@ -1,13 +1,13 @@
 ---
 title: "Demo 1c — Live migration and storage migration"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 2.0.0
+version: 2.1.0
 date: 2026-10-15
 ---
 
 # Demo 1c: live migration and storage migration
 
-> **Version 2.0.0 · draft · 2026-10-19** · class/demos/01c-live-and-storage-migration.md
+> **Version 2.1.0 · draft · 2026-10-20** · class/demos/01c-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -24,6 +24,9 @@ then [Demo 1b](01b-snapshot-restore.md)), while Demo 1's copy runs. Every comman
 >
 > **Second walk-through on Windows:** use `win-pg-s01` and `10.101.23.101`, and move its **1 GiB** data disk (`D:`)
 > instead of the 10 GiB one.
+>
+> **Built your server yourself (1a's console twisty)?** Its data disk is **5 GiB** (`pgdata`): use that disk and
+> `storage: 5Gi` below instead of 10.
 
 <!-- 🎬 video slot 01c-live-and-storage-migration: one walk-through of the whole demo in the console -->
 <video controls preload="metadata" playsinline width="100%" poster="../.images/01c-live-and-storage-migration.jpg">

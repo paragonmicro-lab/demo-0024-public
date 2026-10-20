@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.4.0
+version: 2.5.0
 date: 2026-10-20
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.4.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.5.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -191,8 +191,9 @@ published script, [`ovedr-pg-setup.sh`](../downloads/ovedr-pg-setup.sh): your cl
 write 30 lines, not 300. Read the script first: it is what will run as root on your server.
 
 One address per student: build this **instead of** the Template's server, or delete that one first (1a.5), since
-both would use `10.101.23.151`. This server keeps its data on its system disk (the Template's has separate data and
-WAL disks); Demos 1b – 1e work on either.
+both would use `10.101.23.151`. Like the Template's server, yours keeps PostgreSQL's **data** and its **WAL** (the
+write-ahead log) on two disks of their own, which you add in step 4: data 5 GiB, WAL 1 GiB (the Template's are 10 and 5).
+Demos 1b – 1e work on either; 1c moves your 5 GiB data disk.
 
 **Where the cloud-init goes.** The console's cloud-init editor does not hold a plain `#cloud-config` file. It edits
 the VM's **cloud-init disk**, which has two fields, each a text block:
@@ -229,6 +230,11 @@ part of that field. Paste a bare `#cloud-config` instead and the console refuses
    Stream 9; that only affects how the console lists it.)
 4. Still in your template, set it up, tab by tab:
    - **Network**: edit the NIC → network **`default/vmnet23`** (your VLAN's bridge), type **Bridge**.
+   - **Disks → Add disk**, twice, both **Blank**, interface **virtio**, the default storage class:
+     **`pgdata`**, **5 GiB**, for PostgreSQL's data; **`pgwal`**, **1 GiB**, for its log (the WAL). Then give each a
+     **serial** equal to its name, which is how cloud-init finds it (`/dev/disk/by-id/virtio-pgdata`): on the
+     **YAML** tab, under `spec.template.spec.domain.devices.disks`, add `serial: pgdata` to the `pgdata` entry and
+     `serial: pgwal` to the `pgwal` entry, then **Save**. **[verify: whether 4.19's Add disk form has a Serial field]**
    - **Scripts → Cloud-init → Edit** → **Script**. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change
      the lines marked ✎, then **Save**. Stay in **Script**: switching back to **Form view** rebuilds the simple form
      and drops what it can't show.
@@ -240,7 +246,7 @@ part of that field. Paste a bare `#cloud-config` instead and the console refuses
 Edit the **template**, not a VM made from it: cloud-init runs only on a VM's **first** boot, so changing a VM's
 cloud-init after it has started does nothing. A wrong template is cheap: fix it, delete the VM, create it again.
 
-The block to paste: about 1.4 KB, all of it saved in your template's definition.
+The block to paste: about 1.9 KB, all of it saved in your template's definition.
 
 ```yaml
 userData: |
@@ -259,6 +265,12 @@ userData: |
     expire: false
     users:
       - { name: student-01, password: "<your class password>", type: text }   # ✎ your login and password
+  fs_setup:                                     # your two disks (step 4), found by serial
+    - { device: /dev/disk/by-id/virtio-pgdata, partition: none, filesystem: xfs, label: pgdata }
+    - { device: /dev/disk/by-id/virtio-pgwal, partition: none, filesystem: xfs, label: pgwal }
+  mounts:
+    - [ LABEL=pgdata, /var/lib/pgsql/data, xfs, "defaults,nofail,context=system_u:object_r:postgresql_db_t:s0" ]
+    - [ LABEL=pgwal, /var/lib/pgsql/wal, xfs, "defaults,nofail,context=system_u:object_r:postgresql_db_t:s0" ]
   packages: [ postgresql-server, qemu-guest-agent ]
   write_files:
     - path: /root/.ovedr-db                     # read once by the setup script, then shredded
@@ -289,6 +301,7 @@ What each part does, the same jobs the Template's cloud-init does:
 | `hostname` | the server's name inside Linux |
 | `system_info.default_user`, `users` | makes **your** Linux login the VM's default user, in `wheel` (sudo); your SSH key from the Secret lands on it |
 | `ssh_pwauth`, `chpasswd` | SSH and the console accept your password too |
+| `fs_setup`, `mounts` | formats your two disks (xfs) and mounts them where PostgreSQL keeps its data and its WAL, with PostgreSQL's SELinux label; the script then puts the WAL on its own disk |
 | `packages` | installs PostgreSQL and the QEMU guest agent from the CentOS mirrors |
 | `write_files` | your database login and password, in a root-only file the script reads once and then shreds |
 | `runcmd` | downloads the class's setup script and runs it; its last line in `/var/log/cloud-init-output.log` is `OVEDR-READY` |
