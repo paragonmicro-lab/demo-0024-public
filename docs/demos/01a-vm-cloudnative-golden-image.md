@@ -131,9 +131,22 @@ oc -n student-01-0024-012 create secret generic student-01-ssh --from-file=key=$
 oc -n student-01-0024-012 get secret student-01-ssh -o jsonpath='{.data.key}' | base64 -d     # ssh-ed25519 AAAA… student-01
 ```
 
-> 💡 **The Web Terminal's home directory lasts as long as the terminal does.** If it restarts, your private key is
-> gone: make a new pair and replace the Secret's value (**Secret → Actions → Edit Secret**). Your password still
-> signs you in meanwhile.
+**Where you test it from.** The console has two ways in: the VM's **Console** tab (your login and **password**:
+no key needed), and the **Web Terminal**, which has `ssh`, `ssh-keygen` and `virtctl` and reaches your VLAN. That is
+why the key pair is made **in the Web Terminal**: its private key is where `ssh` runs. A key from your laptop only
+works from your laptop, and the browser-only class doesn't reach the lab's VLANs from there.
+
+The Web Terminal has **no disk of its own**: when it closes or idles out (about 15 minutes), `~/.ssh` is gone. A key
+reaches a VM only on its first boot, so a new pair won't open your server. Keep a copy of the private key in a
+second Secret in **your** project (only you and the instructor can read it), and bring it back in any new terminal:
+
+```bash
+oc -n student-01-0024-012 create secret generic student-01-ssh-private --from-file=id_ed25519=$HOME/.ssh/id_ed25519   # once
+mkdir -p ~/.ssh && oc -n student-01-0024-012 extract secret/student-01-ssh-private --to=$HOME/.ssh --confirm \
+  && chmod 600 ~/.ssh/id_ed25519                                                                                      # each new terminal
+```
+
+Never put the private key in `student-01-ssh`: every value in that Secret is handed to the VM as a **public** key.
 
 ### Step 2: deploy the Template
 
@@ -212,8 +225,11 @@ part of that field. Paste a bare `#cloud-config` instead and the console refuses
 2. **Virtualization → Templates**, project **All projects**, filter `centos`. OpenShift 4.19 has a CentOS Stream 10
    **boot source** but no CentOS Stream 10 **template** (`ovedr-centos10-postgres` is the class's own), so start from
    the nearest one: **`centos-stream9-server-small`** → **⋮ → Clone**.
-   - **Template name** `pg-s01-centos10-template`, **Template project** **your** project (a template can't change
-     project later either), display name `pg-s01 PostgreSQL (CentOS Stream 10)`.
+   - **Template name** `pg-s01-centos10-template`, **Template project** **your** project, `student-01-0024-012`
+     (the dialog offers `openshift` first: change it). A template can't change project later, and the Secrets its
+     tabs make land in **its** project. A VM in your project can't read a Secret in `openshift`: it would wait at
+     **Starting** for good (debug guide: *Starting, `secret … not found`*).
+   - Display name `pg-s01 PostgreSQL (CentOS Stream 10)`.
    - Leave **Clone the boot source** unticked: your template uses the shared boot source, as the class's does.
 3. Point your template at **CentOS Stream 10**. Open it (**Virtualization → Templates**, project
    `student-01-0024-012`) → **YAML**. Red Hat's templates take their boot disk from a parameter, near the end:
@@ -238,10 +254,12 @@ part of that field. Paste a bare `#cloud-config` instead and the console refuses
    - **Scripts → Cloud-init → Edit** → **Script**. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change
      the lines marked ✎, then **Save**. Stay in **Script**: switching back to **Form view** rebuilds the simple form
      and drops what it can't show.
-   - **Scripts → Public SSH key → Edit** → `student-01-ssh` (the Secret from step 1 above).
+   - **Scripts → Public SSH key → Edit** → **Use existing** → `student-01-ssh` (the Secret from step 1 above), not
+     **Add new**.
    - **Details → CPU | Memory**: 1 CPU, 4 GiB (PostgreSQL wants more than the small template's 2 GiB).
-5. **⋮ → Create VirtualMachine** (or **Catalog → Template catalog → User templates** → yours). Name
-   `pg-s01-centos10`, then **Create VirtualMachine**. Carry on with **1a.3** as for the Template's server.
+5. **⋮ → Create VirtualMachine** (or **Catalog → Template catalog → User templates** → yours). Change the
+   generated name (`centos-stream10-…`) to **`pg-s01-centos10`**, then **Create VirtualMachine**. Demos 1b – 1e
+   name the VM in their commands, and a VM can't be renamed. Carry on with **1a.3** as for the Template's server.
 
 Edit the **template**, not a VM made from it: cloud-init runs only on a VM's **first** boot, so changing a VM's
 cloud-init after it has started does nothing. A wrong template is cheap: fix it, delete the VM, create it again.
@@ -356,7 +374,6 @@ ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password student-01@1
 ✅ The first prints `pg-s01-centos10` and `student-01` without asking anything: your key from the Secret is in
 `~/.ssh/authorized_keys`. The second asks for your class password, then prints `student-01`. (Also works through
 the API server, without reaching the VLAN: `virtctl ssh -n student-01-0024-012 -i ~/.ssh/id_ed25519 student-01@vm/pg-s01-centos10`.)
-**[verify: `ssh` and `virtctl` in the Web Terminal tooling]**
 
 ---
 
