@@ -1003,7 +1003,7 @@
 
 <h1 id="demo-1a-a-cloud-native-golden-image">Demo 1a: a cloud-native golden image<a class="headerlink" href="#demo-1a-a-cloud-native-golden-image" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.6.0 · draft · 2026-10-20</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
+<p><strong>Version 2.6.1 · draft · 2026-10-20</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
@@ -1260,8 +1260,9 @@ with none of this Template's code: no PostgreSQL, no data disks, no class logins
 don't offer, so such a VM stays <strong>ErrorUnschedulable</strong>.)</p>
 </blockquote>
 <p><strong>Or, the Web Terminal: the whole server is one command.</strong> <code>oc process</code> fills in the Template's blanks, exactly
-as the form did, and <code>oc apply</code> creates the result in your project. It asks for your password, so it never
-appears on screen:</p>
+as the form did, and <code>oc apply</code> creates the result in your project. Paste it <strong>as it is</strong>: <code>'Your class
+password: '</code> is the prompt it shows, not where your password goes. When the prompt appears, type your password
+(nothing shows) and press Enter, so it never appears on screen:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">read</span><span class="w"> </span>-rsp<span class="w"> </span><span class="s1">'Your class password: '</span><span class="w"> </span>PW<span class="p">;</span><span class="w"> </span>echo<span class="p">;</span><span class="w"> </span>oc<span class="w"> </span>process<span class="w"> </span>-n<span class="w"> </span>openshift<span class="w"> </span>ovedr-centos10-postgres<span class="w"> </span>-p<span class="w"> </span><span class="nv">NAME</span><span class="o">=</span>pg-s01-centos10<span class="w"> </span>-p<span class="w"> </span><span class="nv">VLAN</span><span class="o">=</span><span class="m">23</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">IP</span><span class="o">=</span><span class="m">10</span>.101.23.151<span class="w"> </span>-p<span class="w"> </span><span class="nv">OS_USER</span><span class="o">=</span>student-01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_USER</span><span class="o">=</span>student_01<span class="w"> </span>-p<span class="w"> </span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PW</span><span class="s2">"</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">SSH_KEY_SECRET</span><span class="o">=</span>student-01-ssh<span class="w"> </span><span class="p">|</span><span class="w"> </span>oc<span class="w"> </span>apply<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>-f<span class="w"> </span>-<span class="p">;</span><span class="w"> </span><span class="nb">unset</span><span class="w"> </span>PW
 </code></pre></div>
 <p>✅ <code>secret/pg-s01-centos10-cloudinit created</code> and <code>virtualmachine.kubevirt.io/pg-s01-centos10 created</code>.</p>
