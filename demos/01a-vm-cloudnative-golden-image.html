@@ -1003,7 +1003,7 @@
 
 <h1 id="demo-1a-a-cloud-native-golden-image">Demo 1a: a cloud-native golden image<a class="headerlink" href="#demo-1a-a-cloud-native-golden-image" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.6.1 · draft · 2026-10-20</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
+<p><strong>Version 2.6.2 · draft · 2026-10-20</strong> · class/demos/01a-vm-cloudnative-golden-image.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>In Demo 1 you moved an existing Windows VM: a <strong>pet</strong>, built once by hand in vCenter, patched in place, and copied
@@ -1458,8 +1458,14 @@ ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">PubkeyAuth
 the API server, without reaching the VLAN: <code>virtctl ssh -n student-01-0024-012 -i ~/.ssh/id_ed25519 student-01@vm/pg-s01-centos10</code>.)</p>
 <hr />
 <h2 id="1a4-inject-into-your-new-linux-postgresql-and-read-it-back">1a.4 Inject into your new Linux PostgreSQL, and read it back<a class="headerlink" href="#1a4-inject-into-your-new-linux-postgresql-and-read-it-back" title="Permanent link">&para;</a></h2>
-<p>Same commands as on Windows, at the new address. Your class terminal's <code>dblogin</code> works here too: same login, same
-password, a different server.</p>
+<p>Same commands as on Windows, at the new address: same database login, same password, a different server.</p>
+<p><strong>First, sign in</strong> (once per class-terminal pod). <code>dblogin</code> normally checks your password against your Windows VM,
+which may still be copying, so point it at your new server:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>env<span class="w"> </span><span class="nv">PGHOST</span><span class="o">=</span><span class="m">10</span>.101.23.151<span class="w"> </span>dblogin
+</code></pre></div>
+<p>✅ <code>✓ signed in to bcdr at 10.101.23.151 as student_01</code> (or <code>… on win-pg-s01 (10.101.23.151)</code> with an older class terminal). The sign-in is kept in the pod for any of your servers, so
+this also covers your Windows VM later. If a command answers <em>First sign in to your VM's database … dblogin</em>, the pod
+was restarted: run this again.</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cloudnative-started', 'Demo 1a: CentOS Stream 10 from the Template');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_load('student-01-0024-012', 'cloudnative-load', 100);"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
