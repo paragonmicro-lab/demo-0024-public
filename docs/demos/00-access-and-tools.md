@@ -43,9 +43,10 @@ addresses. The instructor gives you `N`, `A` and `B`; the examples below use `1`
 
 1. Open the vCenter tab, choose **Launch vSphere Client**, then the **SSO / Entra** sign-in with your class account.
 2. Go to **VMs and Templates → datacenter01 → vms → students → `<your class ID>`** and select your VM,
-   **`win-pg-s<NN>`** (for example `student-03` → `win-pg-s03`).
+    **`win-pg-s<NN>`** (for example `student-03` → `win-pg-s03`).
+
 3. On its **Summary** tab, find **IP Addresses**. ✍️ **Write it down:** this is your VM's address (for example
-   `10.101.23.103`). You use it in step 0.4, and your VM keeps it after every move.
+    `10.101.23.103`). You use it in step 0.4, and your VM keeps it after every move.
 
 ✅ Your VM is powered on, with three disks (32 GB, 256 MB and 1 GB; 60, 5 and 10 GB on a VM built before 2026-10-15).
 
@@ -56,7 +57,7 @@ addresses. The instructor gives you `N`, `A` and `B`; the examples below use `1`
 1. Open the **site A** console tab and choose **Entra (SSO)**. Your vCenter sign-in carries over.
 2. Do the same in the **site B** console tab.
 3. In each, **Home → Projects** shows your own project, named your class ID (for example `student-01-0024-012`). You
-   are admin there.
+    are admin there.
 
 ---
 
@@ -115,27 +116,27 @@ terminal (`sql-client`).
 
 1. **Sign in to the database**, once (enter your class password):
 
-   ```bash
-   oc exec -it -n student-01-0024-012 deploy/sql-client -- dblogin
-   ```
+    ```bash
+    oc exec -it -n student-01-0024-012 deploy/sql-client -- dblogin
+    ```
 
 2. **Inject** a row: the class has started:
 
-   ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');"
-   ```
+    ```bash
+    oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');"
+    ```
 
 3. **Read back** every row you have posted, oldest first:
 
-   ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
-   ```
+    ```bash
+    oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+    ```
 
 4. **Prove** them: no row lost, changed or reordered (one summary line, `chain_ok = t`):
 
-   ```bash
-   oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
-   ```
+    ```bash
+    oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
+    ```
 
 > 💡 If a step says *First sign in to your VM's database … dblogin*, your class terminal restarted: do step 1 again.
 

@@ -27,10 +27,11 @@ from the OpenShift console. **Nothing is installed on your computer.** It has `p
 site A unless a guide says otherwise.
 
 1. In the **site A** console, open your project: **Home → Projects → `<your class ID>`** (or pick it in the
-   **Project** list at the top of any page).
+    **Project** list at the top of any page).
+
 2. Go to **Workloads → Pods**, open the pod **`sql-client-…`**, and choose the **Terminal** tab.
 3. Type `ovedr` and press Enter. It shows your class ID, your VM and its address, which site this terminal is on,
-   and what is signed in yet.
+    and what is signed in yet.
 
 > 📋 **Copy and paste.** The Terminal tab is a normal browser terminal:
 > - **Paste** a command from these guides with **right-click → Paste**, or **Ctrl+Shift+V** (Windows/Linux) /
@@ -50,7 +51,8 @@ With SSO, `oc` signs in with a **token** from the console, never a password. Do 
 terminal:
 
 1. In the **site A** console, open your name (top right) → **Copy login command** → **Display Token**. Copy the line
-   that starts with `oc login --token=…`.
+    that starts with `oc login --token=…`.
+
 2. In your terminal, type `oclogin` and a space, paste the line, and press Enter.
 3. Repeat in the **site B** console: copy its login command and paste it after `oclogin` in the **same** terminal.
 

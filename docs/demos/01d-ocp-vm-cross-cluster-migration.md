@@ -264,9 +264,10 @@ row it held.
 Demo 1e backs up your project on **site A**. Run your server there again, **one copy at a time**:
 
 1. **Console (site B):** **Virtualization → VirtualMachines → `pg-s01-centos10` → Actions → Stop**. Wait for
-   **Stopped**.
+    **Stopped**.
+
 2. **Console (site A):** the same VM → **Actions → Start**. It comes back as of `start-cross-cluster-migration`:
-   the row written on site B stays on site B.
+    the row written on site B stays on site B.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"   # site A: chain_ok = t

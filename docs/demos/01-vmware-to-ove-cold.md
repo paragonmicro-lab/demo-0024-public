@@ -147,9 +147,11 @@ Watch it on the plan's page: expand your VM to see each step with a progress bar
 
 1. **Initialize** (seconds)
 2. **DiskAllocation**: three empty disks (`C:`, `D:` data, `L:` WAL) are created on ODF in your project (about a
-   minute)
+    minute)
+
 3. **ImageConversion**: a conversion pod in your project runs `virt-v2v`, which opens your VM's disks through vCenter,
-   installs the virtio drivers and the QEMU guest agent, and removes VMware Tools
+    installs the virtio drivers and the QEMU guest agent, and removes VMware Tools
+
 4. **DiskTransferV2v**: `virt-v2v` writes the converted disks into the three new ones (MB done of the total)
 5. **VirtualMachineCreation**
 

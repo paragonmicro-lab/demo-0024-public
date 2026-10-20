@@ -105,9 +105,11 @@ YAML
 
 **Console:**
 1. **Operators → OperatorHub** → search *OpenShift Virtualization* → **Install** (namespace `openshift-cnv`).
-   📸 `S-cnv-operatorhub`
+    📸 `S-cnv-operatorhub`
+
 2. **Installed Operators → OpenShift Virtualization → Create HyperConverged** → **Create**.
-   📸 `S-cnv-hyperconverged`
+    📸 `S-cnv-hyperconverged`
+
 3. A **Virtualization** menu appears in the left navigation. 📸 `S-cnv-menu`
 
 **Red Hat docs:**
@@ -169,7 +171,7 @@ YAML
 1. **Networking → NodeNetworkConfigurationPolicy → Create** (form or YAML), as above. 📸 `S-nncp-create`
 2. Wait for **Available** on every node. 📸 `S-nncp-available`
 3. **Networking → NetworkAttachmentDefinitions → Create** in `default`: type *Linux bridge*, bridge name `br<VLAN>`.
-   📸 `S-nad-create`
+    📸 `S-nad-create`
 
 **Red Hat docs:**
 - [Kubernetes NMState operator](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index) [verify link]
@@ -229,9 +231,11 @@ ODF itself: install the **OpenShift Data Foundation** operator, label the storag
 **Console:**
 1. **Operators → OperatorHub → OpenShift Data Foundation → Install.** 📸 `S-odf-install`
 2. **Storage → Data Foundation → Create StorageSystem** → *Create a new StorageClass using local storage devices*.
-   📸 `S-odf-storagesystem`
+    📸 `S-odf-storagesystem`
+
 3. **Storage → StorageClasses**: see `ocs-storagecluster-ceph-rbd-virtualization` (site A) and `nfs-csi` (site B).
-   📸 `S-storageclasses`
+    📸 `S-storageclasses`
+
 4. **Storage → VolumeSnapshotClasses → Create.** 📸 `S-snapclass`
 
 **Red Hat docs:**
@@ -302,10 +306,11 @@ oc patch console.operator cluster --type json -p "[{\"op\":\"add\",\"path\":\"/s
 
 **Console:**
 1. **Operators → OperatorHub** → *Migration Toolkit for Virtualization Operator* → **Install**, channel `release-v2.11`,
-   namespace `openshift-mtv`. 📸 `S-mtv-operatorhub`
+    namespace `openshift-mtv`. 📸 `S-mtv-operatorhub`
+
 2. **Installed Operators → MTV → ForkliftController → Create.** 📸 `S-mtv-forkliftcontroller`
 3. Accept **"Web console update is available"** and refresh. **Migration for Virtualization** appears in the menu.
-   📸 `S-mtv-menu`
+    📸 `S-mtv-menu`
 
 **Red Hat docs:**
 - [Installing and using the Migration Toolkit for Virtualization 2.11](https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index) [verify link]
@@ -370,9 +375,11 @@ YAML
 
 **Console:**
 1. vSphere Client: **Administration → Roles → New** (privileges as above); **Single Sign On → Users and Groups → Add**;
-   **Hosts and Clusters → vCenter → Permissions → Add**. 📸 `S-vsphere-role` · 📸 `S-vsphere-permission`
+    **Hosts and Clusters → vCenter → Permissions → Add**. 📸 `S-vsphere-role` · 📸 `S-vsphere-permission`
+
 2. OpenShift: **Migration for Virtualization → Providers → Create Provider → VMware**: URL, user, password, and either
-   *fetch certificate* or paste the CA. 📸 `S-mtv-provider-vsphere`
+    *fetch certificate* or paste the CA. 📸 `S-mtv-provider-vsphere`
+
 3. The provider shows **Ready**, with VM and host counts. 📸 `S-mtv-provider-ready`
 
 **Red Hat docs:**
@@ -549,7 +556,8 @@ oc -n my-app set env deployment/sql-client --from=secret/bcdr-db
 **Console:**
 1. **Home → Projects → Create Project**: the name is the student's class ID. 📸 `S-namespace`
 2. That project → **Project access** (or **User Management → RoleBindings → Create binding**): subject **User** = the
-   student, role **admin**; add the group `demo-instructors` as **admin**. 📸 `S-project-access`
+    student, role **admin**; add the group `demo-instructors` as **admin**. 📸 `S-project-access`
+
 3. **Networking → Services → Create Service** in that project (selector `vm.kubevirt.io/name`). 📸 `S-service`
 4. In `ovedr-app`: **Workloads → Secrets → Create** and **Workloads → Deployments → Create** for `sql-client`.
 
@@ -1131,49 +1139,51 @@ public registry. In a real migration project this is one of the first prerequisi
 1. Download **VDDK 8.0.x for Linux** (`VMware-vix-disklib-<version>.x86_64.tar.gz`) from Broadcom's developer portal.
 2. Unpack it next to this `Containerfile`:
 
-   ```dockerfile
-   FROM registry.access.redhat.com/ubi8/ubi-minimal
-   USER 1001
-   COPY vmware-vix-disklib-distrib /vmware-vix-disklib-distrib
-   RUN mkdir -p /opt
-   ENTRYPOINT ["cp", "-r", "/vmware-vix-disklib-distrib", "/opt"]
-   ```
+    ```dockerfile
+    FROM registry.access.redhat.com/ubi8/ubi-minimal
+    USER 1001
+    COPY vmware-vix-disklib-distrib /vmware-vix-disklib-distrib
+    RUN mkdir -p /opt
+    ENTRYPOINT ["cp", "-r", "/vmware-vix-disklib-distrib", "/opt"]
+    ```
 
 3. Build and push it to a **private** registry. On OpenShift, the cluster's own registry works, with no tool on your
-   laptop:
+    laptop:
 
-   ```bash
-   tar -xzf VMware-vix-disklib-*.x86_64.tar.gz                  # → vmware-vix-disklib-distrib/
-   oc -n openshift-mtv new-build --name vddk --binary --strategy docker
-   oc -n openshift-mtv start-build vddk --from-dir=. --follow   # the directory with the Containerfile and the unpacked kit
-   oc -n openshift-mtv get istag vddk:latest                    # image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest
-   ```
+    ```bash
+    tar -xzf VMware-vix-disklib-*.x86_64.tar.gz                  # → vmware-vix-disklib-distrib/
+    oc -n openshift-mtv new-build --name vddk --binary --strategy docker
+    oc -n openshift-mtv start-build vddk --from-dir=. --follow   # the directory with the Containerfile and the unpacked kit
+    oc -n openshift-mtv get istag vddk:latest                    # image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest
+    ```
 
-   MTV's migration pods run in the **target** namespace, so let every service account pull from `openshift-mtv`:
+    MTV's migration pods run in the **target** namespace, so let every service account pull from `openshift-mtv`:
 
-   ```bash
-   oc -n openshift-mtv policy add-role-to-group system:image-puller system:serviceaccounts
-   ```
+    ```bash
+    oc -n openshift-mtv policy add-role-to-group system:image-puller system:serviceaccounts
+    ```
 
 4. Point the vSphere provider at it. **Console:** Migration for Virtualization → Providers → your vSphere provider →
-   **VDDK init image** → edit. **CLI:**
+    **VDDK init image** → edit. **CLI:**
 
-   ```bash
-   oc -n openshift-mtv patch provider "ovedr-vcenter0$N" --type merge \
-     -p '{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'
-   ```
+    ```bash
+    oc -n openshift-mtv patch provider "ovedr-vcenter0$N" --type merge \
+      -p '{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'
+    ```
 
 **How this lab does it** (`automation/customize/vddk.sh`, job `vddk`, after MTV is installed):
 
 1. **Once per VDDK version, the operator** downloads the kit with the lab's Broadcom account and runs
-   `automation/tools/vddk_image.sh <kit>`. It builds the image above and saves it in the lab's **private** registry
-   (never git, never public: the script refuses to finish if the image can be read without credentials). The image
-   holds the unpacked kit, so it is also the lab's only stored copy of the download.
+    `automation/tools/vddk_image.sh <kit>`. It builds the image above and saves it in the lab's **private** registry
+    (never git, never public: the script refuses to finish if the image can be read without credentials). The image
+    holds the unpacked kit, so it is also the lab's only stored copy of the download.
+
 2. **Every booking, on each cluster that runs MTV:** a Docker `BuildConfig` whose `Containerfile` is just
-   `FROM <the saved image>` copies it into the cluster's own registry as `openshift-mtv/vddk:<version>`, with a
-   short-lived read-only pull credential that is deleted when the build ends. Then the `image-puller` grant above.
+    `FROM <the saved image>` copies it into the cluster's own registry as `openshift-mtv/vddk:<version>`, with a
+    short-lived read-only pull credential that is deleted when the build ends. Then the `image-puller` grant above.
+
 3. **The vSphere provider** gets `vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:<version>`,
-   and the run's readiness table shows Demo 2 ready.
+    and the run's readiness table shows Demo 2 ready.
 
 So nothing is redistributed, the licensed file leaves the lab's private storage only into the lab's own clusters, and a
 booking never waits on a download. If no saved image exists yet, the `vddk` job warns, Demo 2 shows **blocked** and
