@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.6.0
+version: 2.6.1
 date: 2026-10-20
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.6.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.6.1 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -179,8 +179,9 @@ parameter]**
 > don't offer, so such a VM stays **ErrorUnschedulable**.)
 
 **Or, the Web Terminal: the whole server is one command.** `oc process` fills in the Template's blanks, exactly
-as the form did, and `oc apply` creates the result in your project. It asks for your password, so it never
-appears on screen:
+as the form did, and `oc apply` creates the result in your project. Paste it **as it is**: `'Your class
+password: '` is the prompt it shows, not where your password goes. When the prompt appears, type your password
+(nothing shows) and press Enter, so it never appears on screen:
 
 ```bash
 read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos10-postgres -p NAME=pg-s01-centos10 -p VLAN=23 -p IP=10.101.23.151 -p OS_USER=student-01 -p DB_USER=student_01 -p DB_PASSWORD="$PW" -p SSH_KEY_SECRET=student-01-ssh | oc apply -n student-01-0024-012 -f -; unset PW
