@@ -19,7 +19,14 @@ SQL=/usr/local/share/ovedr; mkdir -p "$SQL"
 
 dnf -y -q install postgresql-server qemu-guest-agent
 if [ ! -s /var/lib/pgsql/data/PG_VERSION ]; then
-  PGSETUP_INITDB_OPTIONS="--auth-local=peer --auth-host=scram-sha-256" postgresql-setup --initdb
+  # Data and WAL disks, if the student's cloud-init mounted them (twisty, step 4): PostgreSQL owns them and the WAL goes on
+  # its own disk, as in the class Template. Without them, everything stays on the system disk.
+  W=
+  for d in data wal; do
+    if mountpoint -q /var/lib/pgsql/$d; then chown postgres:postgres /var/lib/pgsql/$d; chmod 700 /var/lib/pgsql/$d; fi
+  done
+  if mountpoint -q /var/lib/pgsql/wal; then W="--waldir=/var/lib/pgsql/wal/pg_wal"; fi
+  PGSETUP_INITDB_OPTIONS="$W --auth-local=peer --auth-host=scram-sha-256" postgresql-setup --initdb
   echo "listen_addresses = '*'" >> /var/lib/pgsql/data/postgresql.conf
   echo "host all all 10.0.0.0/8 scram-sha-256" >> /var/lib/pgsql/data/pg_hba.conf
 fi

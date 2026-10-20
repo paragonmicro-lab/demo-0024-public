@@ -901,7 +901,7 @@
 
 <h1 id="demo-1c-live-migration-and-storage-migration">Demo 1c: live migration and storage migration<a class="headerlink" href="#demo-1c-live-migration-and-storage-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.0.0 · draft · 2026-10-19</strong> · class/demos/01c-live-and-storage-migration.md</p>
+<p><strong>Version 2.1.0 · draft · 2026-10-20</strong> · class/demos/01c-live-and-storage-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Two moves on a <strong>running</strong> VM, with no reboot: a <strong>live migration</strong> moves its memory and CPU to another node, and
@@ -915,6 +915,8 @@ then <a href="01b-snapshot-restore.html">Demo 1b</a>), while Demo 1's copy runs.
 <code>10.101.23.151</code>. Change them to your class ID, your server and its address before you run them.</p>
 <p><strong>Second walk-through on Windows:</strong> use <code>win-pg-s01</code> and <code>10.101.23.101</code>, and move its <strong>1 GiB</strong> data disk (<code>D:</code>)
 instead of the 10 GiB one.</p>
+<p><strong>Built your server yourself (1a's console twisty)?</strong> Its data disk is <strong>5 GiB</strong> (<code>pgdata</code>): use that disk and
+<code>storage: 5Gi</code> below instead of 10.</p>
 </blockquote>
 <!-- 🎬 video slot 01c-live-and-storage-migration: one walk-through of the whole demo in the console -->
 <video controls preload="metadata" playsinline width="100%" poster="../.images/01c-live-and-storage-migration.jpg">
