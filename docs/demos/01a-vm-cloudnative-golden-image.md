@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.5.0
+version: 2.6.0
 date: 2026-10-20
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.5.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.6.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
