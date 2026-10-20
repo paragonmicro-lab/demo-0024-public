@@ -1297,42 +1297,54 @@ part of that field. Paste a bare <code>#cloud-config</code> instead and the cons
 <p><strong>Console (site A):</strong> <strong>[verify: the field names on OpenShift 4.19's console]</strong></p>
 <ol>
 <li>Set the <strong>Project</strong> dropdown to <strong>your</strong> project, <code>student-01-0024-012</code>.</li>
-<li><strong>Virtualization → Templates</strong>, project <strong>All projects</strong>, filter <code>centos</code>. OpenShift 4.19 has a CentOS Stream 10
-   <strong>boot source</strong> but no CentOS Stream 10 <strong>template</strong> (<code>ovedr-centos10-postgres</code> is the class's own), so start from
-   the nearest one: <strong><code>centos-stream9-server-small</code></strong> → <strong>⋮ → Clone</strong>.</li>
+<li>
+<p><strong>Virtualization → Templates</strong>, project <strong>All projects</strong>, filter <code>centos</code>. OpenShift 4.19 has a CentOS Stream 10
+    <strong>boot source</strong> but no CentOS Stream 10 <strong>template</strong> (<code>ovedr-centos10-postgres</code> is the class's own), so start from
+    the nearest one: <strong><code>centos-stream9-server-small</code></strong> → <strong>⋮ → Clone</strong>.</p>
+<ul>
 <li><strong>Template name</strong> <code>pg-s01-centos10-template</code>, <strong>Template project</strong> <strong>your</strong> project, <code>student-01-0024-012</code>
-     (the dialog offers <code>openshift</code> first: change it). A template can't change project later, and the Secrets its
-     tabs make land in <strong>its</strong> project. A VM in your project can't read a Secret in <code>openshift</code>: it would wait at
-     <strong>Starting</strong> for good (debug guide: <em>Starting, <code>secret … not found</code></em>).</li>
+  (the dialog offers <code>openshift</code> first: change it). A template can't change project later, and the Secrets its
+  tabs make land in <strong>its</strong> project. A VM in your project can't read a Secret in <code>openshift</code>: it would wait at
+  <strong>Starting</strong> for good (debug guide: <em>Starting, <code>secret … not found</code></em>).</li>
 <li>Display name <code>pg-s01 PostgreSQL (CentOS Stream 10)</code>.</li>
 <li>Leave <strong>Clone the boot source</strong> unticked: your template uses the shared boot source, as the class's does.</li>
-<li>Point your template at <strong>CentOS Stream 10</strong>. Open it (<strong>Virtualization → Templates</strong>, project
-   <code>student-01-0024-012</code>) → <strong>YAML</strong>. Red Hat's templates take their boot disk from a parameter, near the end:</li>
-</ol>
+</ul>
+</li>
+<li>
+<p>Point your template at <strong>CentOS Stream 10</strong>. Open it (<strong>Virtualization → Templates</strong>, project
+    <code>student-01-0024-012</code>) → <strong>YAML</strong>. Red Hat's templates take their boot disk from a parameter, near the end:</p>
 <div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATA_SOURCE_NAME</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Name of the DataSource to clone</span>
 <span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">centos-stream9</span><span class="w">          </span><span class="c1"># → centos-stream10</span>
 </code></pre></div>
 <p>Change <code>centos-stream9</code> to <strong><code>centos-stream10</code></strong> in that one place, then <strong>Save</strong>. That is the whole difference
-   between the two templates' operating systems: the boot source <code>centos-stream10</code>, in project
-   <code>openshift-virtualization-os-images</code>, which OpenShift keeps up to date. (The template's labels still say CentOS
-   Stream 9; that only affects how the console lists it.)
-4. Still in your template, set it up, tab by tab:
-   - <strong>Network</strong>: edit the NIC → network <strong><code>default/vmnet23</code></strong> (your VLAN's bridge), type <strong>Bridge</strong>.
-   - <strong>Disks → Add disk</strong>, twice, both <strong>Blank</strong>, interface <strong>virtio</strong>, the default storage class:
-     <strong><code>pgdata</code></strong>, <strong>5 GiB</strong>, for PostgreSQL's data; <strong><code>pgwal</code></strong>, <strong>1 GiB</strong>, for its log (the WAL). Then give each a
-     <strong>serial</strong> equal to its name, which is how cloud-init finds it (<code>/dev/disk/by-id/virtio-pgdata</code>): on the
-     <strong>YAML</strong> tab, under <code>spec.template.spec.domain.devices.disks</code>, add <code>serial: pgdata</code> to the <code>pgdata</code> entry and
-     <code>serial: pgwal</code> to the <code>pgwal</code> entry, then <strong>Save</strong>. <strong>[verify: whether 4.19's Add disk form has a Serial field]</strong>
-   - <strong>Scripts → Cloud-init → Edit</strong> → <strong>Script</strong>. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change
-     the lines marked ✎, then <strong>Save</strong>. Stay in <strong>Script</strong>: switching back to <strong>Form view</strong> rebuilds the simple form
-     and drops what it can't show.
-   - <strong>Scripts → Public SSH key → Edit</strong> → <strong>Use existing</strong> → <code>student-01-ssh</code> (the Secret from step 1 above), not
-     <strong>Add new</strong>.
-   - <strong>Details → CPU | Memory</strong>: 1 CPU, 4 GiB (PostgreSQL wants more than the small template's 2 GiB).
-5. <strong>⋮ → Create VirtualMachine</strong> (or <strong>Catalog → Template catalog → User templates</strong> → yours). Change the
-   generated name (<code>centos-stream10-…</code>) to <strong><code>pg-s01-centos10</code></strong>, then <strong>Create VirtualMachine</strong>. Demos 1b – 1e
-   name the VM in their commands, and a VM can't be renamed. Carry on with <strong>1a.3</strong> as for the Template's server.</p>
+between the two templates' operating systems: the boot source <code>centos-stream10</code>, in project
+<code>openshift-virtualization-os-images</code>, which OpenShift keeps up to date. (The template's labels still say CentOS
+Stream 9; that only affects how the console lists it.)</p>
+</li>
+<li>
+<p>Still in your template, set it up, tab by tab:</p>
+<ul>
+<li><strong>Network</strong>: edit the NIC → network <strong><code>default/vmnet23</code></strong> (your VLAN's bridge), type <strong>Bridge</strong>.</li>
+<li><strong>Disks → Add disk</strong>, twice, both <strong>Blank</strong>, interface <strong>virtio</strong>, the default storage class:
+  <strong><code>pgdata</code></strong>, <strong>5 GiB</strong>, for PostgreSQL's data; <strong><code>pgwal</code></strong>, <strong>1 GiB</strong>, for its log (the WAL). Then give each a
+  <strong>serial</strong> equal to its name, which is how cloud-init finds it (<code>/dev/disk/by-id/virtio-pgdata</code>): on the
+  <strong>YAML</strong> tab, under <code>spec.template.spec.domain.devices.disks</code>, add <code>serial: pgdata</code> to the <code>pgdata</code> entry and
+  <code>serial: pgwal</code> to the <code>pgwal</code> entry, then <strong>Save</strong>. <strong>[verify: whether 4.19's Add disk form has a Serial field]</strong></li>
+<li><strong>Scripts → Cloud-init → Edit</strong> → <strong>Script</strong>. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change
+  the lines marked ✎, then <strong>Save</strong>. Stay in <strong>Script</strong>: switching back to <strong>Form view</strong> rebuilds the simple form
+  and drops what it can't show.</li>
+<li><strong>Scripts → Public SSH key → Edit</strong> → <strong>Use existing</strong> → <code>student-01-ssh</code> (the Secret from step 1 above), not
+  <strong>Add new</strong>.</li>
+<li><strong>Details → CPU | Memory</strong>: 1 CPU, 4 GiB (PostgreSQL wants more than the small template's 2 GiB).</li>
+</ul>
+</li>
+<li>
+<p><strong>⋮ → Create VirtualMachine</strong> (or <strong>Catalog → Template catalog → User templates</strong> → yours). Change the
+    generated name (<code>centos-stream10-…</code>) to <strong><code>pg-s01-centos10</code></strong>, then <strong>Create VirtualMachine</strong>. Demos 1b – 1e
+    name the VM in their commands, and a VM can't be renamed. Carry on with <strong>1a.3</strong> as for the Template's server.</p>
+</li>
+</ol>
 <p>Edit the <strong>template</strong>, not a VM made from it: cloud-init runs only on a VM's <strong>first</strong> boot, so changing a VM's
 cloud-init after it has started does nothing. A wrong template is cheap: fix it, delete the VM, create it again.</p>
 <p>The block to paste: about 1.9 KB, all of it saved in your template's definition.</p>
@@ -1503,12 +1515,18 @@ nothing records how it was built, so the next one may come out different.</p>
 <p><strong>Console (site A):</strong></p>
 <ol>
 <li><strong>Project</strong> <code>student-01-0024-012</code>, then <strong>Virtualization → Catalog → InstanceTypes</strong>.</li>
-<li>Pick any boot volume the lab offers (Red Hat's catalog: CentOS Stream, Fedora, RHEL…), series <strong>U series</strong>, size
-   <strong>u1.small</strong>. Name it <code>explore-s01</code>.</li>
-<li>Look at what <strong>Customize VirtualMachine</strong> would let you change (the same tabs as your template's), then simply
-   <strong>Create VirtualMachine</strong>: it uses the <strong>pod network</strong> and a generated login, so it takes no lab address.</li>
-<li>When it is <strong>Running</strong>: <strong>Overview</strong> shows the login (user and the generated password), the <strong>Console</strong> tab logs
-   you in. Look around, then <strong>Actions → Delete</strong>: the lab's capacity is shared.</li>
+<li>
+<p>Pick any boot volume the lab offers (Red Hat's catalog: CentOS Stream, Fedora, RHEL…), series <strong>U series</strong>, size
+    <strong>u1.small</strong>. Name it <code>explore-s01</code>.</p>
+</li>
+<li>
+<p>Look at what <strong>Customize VirtualMachine</strong> would let you change (the same tabs as your template's), then simply
+    <strong>Create VirtualMachine</strong>: it uses the <strong>pod network</strong> and a generated login, so it takes no lab address.</p>
+</li>
+<li>
+<p>When it is <strong>Running</strong>: <strong>Overview</strong> shows the login (user and the generated password), the <strong>Console</strong> tab logs
+    you in. Look around, then <strong>Actions → Delete</strong>: the lab's capacity is shared.</p>
+</li>
 </ol>
 <p>✅ Two ways to the same kind of VM: the <strong>Catalog</strong> for a one-off, a <strong>Template</strong> for a server you will build again,
 and again, the same way. Your template from the twisty above sits in the Catalog too, under <strong>Template catalog →

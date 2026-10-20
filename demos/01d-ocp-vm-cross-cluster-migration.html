@@ -1240,10 +1240,14 @@ row it held.</p>
 <h2 id="1d7-back-to-site-a-before-demo-1e">1d.7 Back to site A, before Demo 1e<a class="headerlink" href="#1d7-back-to-site-a-before-demo-1e" title="Permanent link">&para;</a></h2>
 <p>Demo 1e backs up your project on <strong>site A</strong>. Run your server there again, <strong>one copy at a time</strong>:</p>
 <ol>
-<li><strong>Console (site B):</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code> → Actions → Stop</strong>. Wait for
-   <strong>Stopped</strong>.</li>
-<li><strong>Console (site A):</strong> the same VM → <strong>Actions → Start</strong>. It comes back as of <code>start-cross-cluster-migration</code>:
-   the row written on site B stays on site B.</li>
+<li>
+<p><strong>Console (site B):</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code> → Actions → Stop</strong>. Wait for
+    <strong>Stopped</strong>.</p>
+</li>
+<li>
+<p><strong>Console (site A):</strong> the same VM → <strong>Actions → Start</strong>. It comes back as of <code>start-cross-cluster-migration</code>:
+    the row written on site B stays on site B.</p>
+</li>
 </ol>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span><span class="w">   </span><span class="c1"># site A: chain_ok = t</span>
 </code></pre></div>

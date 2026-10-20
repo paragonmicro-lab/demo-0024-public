@@ -1019,10 +1019,14 @@ addresses. The instructor gives you <code>N</code>, <code>A</code> and <code>B</
 <h2 id="01-sign-in-to-vcenter-and-note-your-vms-address">0.1 Sign in to vCenter, and note your VM's address<a class="headerlink" href="#01-sign-in-to-vcenter-and-note-your-vms-address" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Open the vCenter tab, choose <strong>Launch vSphere Client</strong>, then the <strong>SSO / Entra</strong> sign-in with your class account.</li>
-<li>Go to <strong>VMs and Templates → datacenter01 → vms → students → <code>&lt;your class ID&gt;</code></strong> and select your VM,
-   <strong><code>win-pg-s&lt;NN&gt;</code></strong> (for example <code>student-03</code> → <code>win-pg-s03</code>).</li>
-<li>On its <strong>Summary</strong> tab, find <strong>IP Addresses</strong>. ✍️ <strong>Write it down:</strong> this is your VM's address (for example
-   <code>10.101.23.103</code>). You use it in step 0.4, and your VM keeps it after every move.</li>
+<li>
+<p>Go to <strong>VMs and Templates → datacenter01 → vms → students → <code>&lt;your class ID&gt;</code></strong> and select your VM,
+    <strong><code>win-pg-s&lt;NN&gt;</code></strong> (for example <code>student-03</code> → <code>win-pg-s03</code>).</p>
+</li>
+<li>
+<p>On its <strong>Summary</strong> tab, find <strong>IP Addresses</strong>. ✍️ <strong>Write it down:</strong> this is your VM's address (for example
+    <code>10.101.23.103</code>). You use it in step 0.4, and your VM keeps it after every move.</p>
+</li>
 </ol>
 <p>✅ Your VM is powered on, with three disks (32 GB, 256 MB and 1 GB; 60, 5 and 10 GB on a VM built before 2026-10-15).</p>
 <hr />
@@ -1031,7 +1035,7 @@ addresses. The instructor gives you <code>N</code>, <code>A</code> and <code>B</
 <li>Open the <strong>site A</strong> console tab and choose <strong>Entra (SSO)</strong>. Your vCenter sign-in carries over.</li>
 <li>Do the same in the <strong>site B</strong> console tab.</li>
 <li>In each, <strong>Home → Projects</strong> shows your own project, named your class ID (for example <code>student-01-0024-012</code>). You
-   are admin there.</li>
+    are admin there.</li>
 </ol>
 <hr />
 <h2 id="03-open-a-command-line">0.3 Open a command line<a class="headerlink" href="#03-open-a-command-line" title="Permanent link">&para;</a></h2>
@@ -1094,25 +1098,27 @@ terminal (<code>sql-client</code>).</p>
 </table>
 </blockquote>
 <ol>
-<li><strong>Sign in to the database</strong>, once (enter your class password):</li>
-</ol>
+<li>
+<p><strong>Sign in to the database</strong>, once (enter your class password):</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>dblogin
 </code></pre></div>
-<ol>
-<li><strong>Inject</strong> a row: the class has started:</li>
-</ol>
+</li>
+<li>
+<p><strong>Inject</strong> a row: the class has started:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-class', 'Lab 0: signed in');"</span>
 </code></pre></div>
-<ol>
-<li><strong>Read back</strong> every row you have posted, oldest first:</li>
-</ol>
+</li>
+<li>
+<p><strong>Read back</strong> every row you have posted, oldest first:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
 </code></pre></div>
-<ol>
-<li><strong>Prove</strong> them: no row lost, changed or reordered (one summary line, <code>chain_ok = t</code>):</li>
-</ol>
+</li>
+<li>
+<p><strong>Prove</strong> them: no row lost, changed or reordered (one summary line, <code>chain_ok = t</code>):</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
 </code></pre></div>
+</li>
+</ol>
 <blockquote>
 <p>💡 If a step says <em>First sign in to your VM's database … dblogin</em>, your class terminal restarted: do step 1 again.</p>
 </blockquote>

@@ -1065,16 +1065,24 @@ then Demos 1d, 1a and 4.</p>
 it to copy disks, and for a warm migration to copy only the blocks that changed while the VM ran. This lab built
 Demo 2 on it, and has stopped:</p>
 <ol>
-<li><strong>We can't get it.</strong> Broadcom pulled the old VMware download links. VDDK now sits behind a Broadcom sign-in and
-   entitlement, and the lab couldn't obtain the kit it was built for (<code>vmware-vix-disklib-8.0.3</code>).</li>
-<li><strong>Nobody may hand it out.</strong> VDDK's licence doesn't let Red Hat, Paragon Micro or a class redistribute it. Each
-   customer must download it under their own entitlement. A class built on it teaches a step most students can't
-   repeat at home.</li>
-<li><strong>Red Hat no longer leads with it.</strong> Red Hat's position (2026-10-14): a customer who <strong>already has</strong> a VDDK copy
-   matching their VMware environment may still use it, once <strong>they</strong> confirm their right to keep and use the software;
-   Red Hat then assesses its technical suitability. That's a bridge for existing customers, not a path to teach.</li>
-<li><strong>There's a better path.</strong> MTV can have the <strong>storage array</strong> copy the disks (storage copy offload), and Red Hat is
-   building a VDDK-independent transfer for both warm and cold migration. That is what this demo now teaches.</li>
+<li>
+<p><strong>We can't get it.</strong> Broadcom pulled the old VMware download links. VDDK now sits behind a Broadcom sign-in and
+    entitlement, and the lab couldn't obtain the kit it was built for (<code>vmware-vix-disklib-8.0.3</code>).</p>
+</li>
+<li>
+<p><strong>Nobody may hand it out.</strong> VDDK's licence doesn't let Red Hat, Paragon Micro or a class redistribute it. Each
+    customer must download it under their own entitlement. A class built on it teaches a step most students can't
+    repeat at home.</p>
+</li>
+<li>
+<p><strong>Red Hat no longer leads with it.</strong> Red Hat's position (2026-10-14): a customer who <strong>already has</strong> a VDDK copy
+    matching their VMware environment may still use it, once <strong>they</strong> confirm their right to keep and use the software;
+    Red Hat then assesses its technical suitability. That's a bridge for existing customers, not a path to teach.</p>
+</li>
+<li>
+<p><strong>There's a better path.</strong> MTV can have the <strong>storage array</strong> copy the disks (storage copy offload), and Red Hat is
+    building a VDDK-independent transfer for both warm and cold migration. That is what this demo now teaches.</p>
+</li>
 </ol>
 <p><strong>What still works without VDDK:</strong> cold migration. MTV reads the disks over vCenter/ESXi HTTPS instead: it's slower,
 and the VM is down for its whole disk copy. That's <a href="01-vmware-to-ove-cold.html">Demo 1</a>, and it runs in this lab today.</p>

@@ -1162,11 +1162,15 @@ from the OpenShift console. <strong>Nothing is installed on your computer.</stro
 <code>virtctl</code> and <code>jq</code>, and it already knows who you are and where your VM is. You have one on each site; use the one on
 site A unless a guide says otherwise.</p>
 <ol>
-<li>In the <strong>site A</strong> console, open your project: <strong>Home → Projects → <code>&lt;your class ID&gt;</code></strong> (or pick it in the
-   <strong>Project</strong> list at the top of any page).</li>
-<li>Go to <strong>Workloads → Pods</strong>, open the pod <strong><code>sql-client-…</code></strong>, and choose the <strong>Terminal</strong> tab.</li>
+<li>
+<p>In the <strong>site A</strong> console, open your project: <strong>Home → Projects → <code>&lt;your class ID&gt;</code></strong> (or pick it in the
+    <strong>Project</strong> list at the top of any page).</p>
+</li>
+<li>
+<p>Go to <strong>Workloads → Pods</strong>, open the pod <strong><code>sql-client-…</code></strong>, and choose the <strong>Terminal</strong> tab.</p>
+</li>
 <li>Type <code>ovedr</code> and press Enter. It shows your class ID, your VM and its address, which site this terminal is on,
-   and what is signed in yet.</li>
+    and what is signed in yet.</li>
 </ol>
 <blockquote>
 <p>📋 <strong>Copy and paste.</strong> The Terminal tab is a normal browser terminal:
@@ -1183,9 +1187,13 @@ ever restarted, run <code>dblogin</code> and <code>oclogin</code> again. Leaving
 <p>With SSO, <code>oc</code> signs in with a <strong>token</strong> from the console, never a password. Do this once per site, in the <strong>same</strong>
 terminal:</p>
 <ol>
-<li>In the <strong>site A</strong> console, open your name (top right) → <strong>Copy login command</strong> → <strong>Display Token</strong>. Copy the line
-   that starts with <code>oc login --token=…</code>.</li>
-<li>In your terminal, type <code>oclogin</code> and a space, paste the line, and press Enter.</li>
+<li>
+<p>In the <strong>site A</strong> console, open your name (top right) → <strong>Copy login command</strong> → <strong>Display Token</strong>. Copy the line
+    that starts with <code>oc login --token=…</code>.</p>
+</li>
+<li>
+<p>In your terminal, type <code>oclogin</code> and a space, paste the line, and press Enter.</p>
+</li>
 <li>Repeat in the <strong>site B</strong> console: copy its login command and paste it after <code>oclogin</code> in the <strong>same</strong> terminal.</li>
 </ol>
 <div class="highlight"><pre><span></span><code>oclogin<span class="w"> </span>oc<span class="w"> </span>login<span class="w"> </span>--token<span class="o">=</span>sha256~…<span class="w"> </span>--server<span class="o">=</span>https://api.ocp-lz1.demo.lab-paragonmicro.com:6443<span class="w">   </span><span class="c1"># ✓ site-a: signed in as …</span>

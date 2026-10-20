@@ -1179,11 +1179,17 @@ oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n
 <p>Watch it on the plan's page: expand your VM to see each step with a progress bar.</p>
 <ol>
 <li><strong>Initialize</strong> (seconds)</li>
-<li><strong>DiskAllocation</strong>: three empty disks (<code>C:</code>, <code>D:</code> data, <code>L:</code> WAL) are created on ODF in your project (about a
-   minute)</li>
-<li><strong>ImageConversion</strong>: a conversion pod in your project runs <code>virt-v2v</code>, which opens your VM's disks through vCenter,
-   installs the virtio drivers and the QEMU guest agent, and removes VMware Tools</li>
-<li><strong>DiskTransferV2v</strong>: <code>virt-v2v</code> writes the converted disks into the three new ones (MB done of the total)</li>
+<li>
+<p><strong>DiskAllocation</strong>: three empty disks (<code>C:</code>, <code>D:</code> data, <code>L:</code> WAL) are created on ODF in your project (about a
+    minute)</p>
+</li>
+<li>
+<p><strong>ImageConversion</strong>: a conversion pod in your project runs <code>virt-v2v</code>, which opens your VM's disks through vCenter,
+    installs the virtio drivers and the QEMU guest agent, and removes VMware Tools</p>
+</li>
+<li>
+<p><strong>DiskTransferV2v</strong>: <code>virt-v2v</code> writes the converted disks into the three new ones (MB done of the total)</p>
+</li>
 <li><strong>VirtualMachineCreation</strong></li>
 </ol>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span>d1-win-pg-s01<span class="w"> </span>-w<span class="w">                        </span><span class="c1"># Executing → Succeeded (Ctrl-C to stop watching)</span>

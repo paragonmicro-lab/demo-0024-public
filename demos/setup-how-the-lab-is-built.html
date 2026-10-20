@@ -1348,10 +1348,16 @@ oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span
 </code></pre></div>
 <p><strong>Console:</strong>
 1. <strong>Operators → OperatorHub</strong> → search <em>OpenShift Virtualization</em> → <strong>Install</strong> (namespace <code>openshift-cnv</code>).
-   📸 <code>S-cnv-operatorhub</code>
-2. <strong>Installed Operators → OpenShift Virtualization → Create HyperConverged</strong> → <strong>Create</strong>.
-   📸 <code>S-cnv-hyperconverged</code>
-3. A <strong>Virtualization</strong> menu appears in the left navigation. 📸 <code>S-cnv-menu</code></p>
+    📸 <code>S-cnv-operatorhub</code></p>
+<ol>
+<li>
+<p><strong>Installed Operators → OpenShift Virtualization → Create HyperConverged</strong> → <strong>Create</strong>.
+    📸 <code>S-cnv-hyperconverged</code></p>
+</li>
+<li>
+<p>A <strong>Virtualization</strong> menu appears in the left navigation. 📸 <code>S-cnv-menu</code></p>
+</li>
+</ol>
 <p><strong>Red Hat docs:</strong>
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/installing">Installing OpenShift Virtualization</a>
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/installing#preparing-cluster-for-virt">Preparing your cluster for OpenShift Virtualization</a> [verify link]
@@ -1411,7 +1417,7 @@ oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span
 1. <strong>Networking → NodeNetworkConfigurationPolicy → Create</strong> (form or YAML), as above. 📸 <code>S-nncp-create</code>
 2. Wait for <strong>Available</strong> on every node. 📸 <code>S-nncp-available</code>
 3. <strong>Networking → NetworkAttachmentDefinitions → Create</strong> in <code>default</code>: type <em>Linux bridge</em>, bridge name <code>br&lt;VLAN&gt;</code>.
-   📸 <code>S-nad-create</code></p>
+    📸 <code>S-nad-create</code></p>
 <p><strong>Red Hat docs:</strong>
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/index">Kubernetes NMState operator</a> [verify link]
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/networking#virt-connecting-vm-to-linux-bridge">Connecting a VM to a Linux bridge network</a> [verify link]
@@ -1456,10 +1462,16 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"
 <p><strong>Console:</strong>
 1. <strong>Operators → OperatorHub → OpenShift Data Foundation → Install.</strong> 📸 <code>S-odf-install</code>
 2. <strong>Storage → Data Foundation → Create StorageSystem</strong> → <em>Create a new StorageClass using local storage devices</em>.
-   📸 <code>S-odf-storagesystem</code>
-3. <strong>Storage → StorageClasses</strong>: see <code>ocs-storagecluster-ceph-rbd-virtualization</code> (site A) and <code>nfs-csi</code> (site B).
-   📸 <code>S-storageclasses</code>
-4. <strong>Storage → VolumeSnapshotClasses → Create.</strong> 📸 <code>S-snapclass</code></p>
+    📸 <code>S-odf-storagesystem</code></p>
+<ol>
+<li>
+<p><strong>Storage → StorageClasses</strong>: see <code>ocs-storagecluster-ceph-rbd-virtualization</code> (site A) and <code>nfs-csi</code> (site B).
+    📸 <code>S-storageclasses</code></p>
+</li>
+<li>
+<p><strong>Storage → VolumeSnapshotClasses → Create.</strong> 📸 <code>S-snapclass</code></p>
+</li>
+</ol>
 <p><strong>Red Hat docs:</strong>
 - <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/deploying_openshift_data_foundation_using_bare_metal_infrastructure/index">Deploying ODF using local storage devices</a> [verify link]
 - <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/storage">Storage for virtual machines</a> [verify link]
@@ -1518,10 +1530,12 @@ oc<span class="w"> </span>patch<span class="w"> </span>console.operator<span cla
 </code></pre></div>
 <p><strong>Console:</strong>
 1. <strong>Operators → OperatorHub</strong> → <em>Migration Toolkit for Virtualization Operator</em> → <strong>Install</strong>, channel <code>release-v2.11</code>,
-   namespace <code>openshift-mtv</code>. 📸 <code>S-mtv-operatorhub</code>
-2. <strong>Installed Operators → MTV → ForkliftController → Create.</strong> 📸 <code>S-mtv-forkliftcontroller</code>
-3. Accept <strong>"Web console update is available"</strong> and refresh. <strong>Migration for Virtualization</strong> appears in the menu.
-   📸 <code>S-mtv-menu</code></p>
+    namespace <code>openshift-mtv</code>. 📸 <code>S-mtv-operatorhub</code></p>
+<ol>
+<li><strong>Installed Operators → MTV → ForkliftController → Create.</strong> 📸 <code>S-mtv-forkliftcontroller</code></li>
+<li>Accept <strong>"Web console update is available"</strong> and refresh. <strong>Migration for Virtualization</strong> appears in the menu.
+    📸 <code>S-mtv-menu</code></li>
+</ol>
 <p><strong>Red Hat docs:</strong>
 - <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/index">Installing and using the Migration Toolkit for Virtualization 2.11</a> [verify link]
 - <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv">MTV prerequisites</a> [verify link]
@@ -1574,10 +1588,16 @@ oc<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span
 </code></pre></div>
 <p><strong>Console:</strong>
 1. vSphere Client: <strong>Administration → Roles → New</strong> (privileges as above); <strong>Single Sign On → Users and Groups → Add</strong>;
-   <strong>Hosts and Clusters → vCenter → Permissions → Add</strong>. 📸 <code>S-vsphere-role</code> · 📸 <code>S-vsphere-permission</code>
-2. OpenShift: <strong>Migration for Virtualization → Providers → Create Provider → VMware</strong>: URL, user, password, and either
-   <em>fetch certificate</em> or paste the CA. 📸 <code>S-mtv-provider-vsphere</code>
-3. The provider shows <strong>Ready</strong>, with VM and host counts. 📸 <code>S-mtv-provider-ready</code></p>
+    <strong>Hosts and Clusters → vCenter → Permissions → Add</strong>. 📸 <code>S-vsphere-role</code> · 📸 <code>S-vsphere-permission</code></p>
+<ol>
+<li>
+<p>OpenShift: <strong>Migration for Virtualization → Providers → Create Provider → VMware</strong>: URL, user, password, and either
+    <em>fetch certificate</em> or paste the CA. 📸 <code>S-mtv-provider-vsphere</code></p>
+</li>
+<li>
+<p>The provider shows <strong>Ready</strong>, with VM and host counts. 📸 <code>S-mtv-provider-ready</code></p>
+</li>
+</ol>
 <p><strong>Red Hat docs:</strong>
 - <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/prerequisites_mtv#vmware-prerequisites_mtv">VMware prerequisites and privileges for MTV</a> [verify link]
 - <a href="https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization/2.11/html/installing_and_using_the_migration_toolkit_for_virtualization/migrating-vmware_vmware">Adding a VMware vSphere source provider</a> [verify link]
@@ -1746,9 +1766,11 @@ oc<span class="w"> </span>-n<span class="w"> </span>my-app<span class="w"> </spa
 <p><strong>Console:</strong>
 1. <strong>Home → Projects → Create Project</strong>: the name is the student's class ID. 📸 <code>S-namespace</code>
 2. That project → <strong>Project access</strong> (or <strong>User Management → RoleBindings → Create binding</strong>): subject <strong>User</strong> = the
-   student, role <strong>admin</strong>; add the group <code>demo-instructors</code> as <strong>admin</strong>. 📸 <code>S-project-access</code>
-3. <strong>Networking → Services → Create Service</strong> in that project (selector <code>vm.kubevirt.io/name</code>). 📸 <code>S-service</code>
-4. In <code>ovedr-app</code>: <strong>Workloads → Secrets → Create</strong> and <strong>Workloads → Deployments → Create</strong> for <code>sql-client</code>.</p>
+    student, role <strong>admin</strong>; add the group <code>demo-instructors</code> as <strong>admin</strong>. 📸 <code>S-project-access</code></p>
+<ol>
+<li><strong>Networking → Services → Create Service</strong> in that project (selector <code>vm.kubevirt.io/name</code>). 📸 <code>S-service</code></li>
+<li>In <code>ovedr-app</code>: <strong>Workloads → Secrets → Create</strong> and <strong>Workloads → Deployments → Create</strong> for <code>sql-client</code>.</li>
+</ol>
 <h3 id="the-browser-terminal-one-per-student-and-instructor-both-sites">The browser terminal (one per student and instructor, both sites)<a class="headerlink" href="#the-browser-terminal-one-per-student-and-instructor-both-sites" title="Permanent link">&para;</a></h3>
 <p>The class runs <strong>entirely in the browser</strong> (operator, 2026-10-12): students are external, may not install anything on
 their computers, and have no network path to the lab. So every command runs in a pod of their own, opened from the
@@ -2424,18 +2446,18 @@ public registry. In a real migration project this is one of the first prerequisi
 <p><strong>How to build it</strong> (Red Hat's procedure):</p>
 <ol>
 <li>Download <strong>VDDK 8.0.x for Linux</strong> (<code>VMware-vix-disklib-&lt;version&gt;.x86_64.tar.gz</code>) from Broadcom's developer portal.</li>
-<li>Unpack it next to this <code>Containerfile</code>:</li>
-</ol>
+<li>
+<p>Unpack it next to this <code>Containerfile</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">registry.access.redhat.com/ubi8/ubi-minimal</span>
 <span class="k">USER</span><span class="w"> </span><span class="s">1001</span>
 <span class="k">COPY</span><span class="w"> </span>vmware-vix-disklib-distrib<span class="w"> </span>/vmware-vix-disklib-distrib
 <span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt
 <span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">"cp"</span><span class="p">,</span><span class="w"> </span><span class="s2">"-r"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/vmware-vix-disklib-distrib"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/opt"</span><span class="p">]</span>
 </code></pre></div>
-<ol>
-<li>Build and push it to a <strong>private</strong> registry. On OpenShift, the cluster's own registry works, with no tool on your
-   laptop:</li>
-</ol>
+</li>
+<li>
+<p>Build and push it to a <strong>private</strong> registry. On OpenShift, the cluster's own registry works, with no tool on your
+    laptop:</p>
 <div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-xzf<span class="w"> </span>VMware-vix-disklib-*.x86_64.tar.gz<span class="w">                  </span><span class="c1"># → vmware-vix-disklib-distrib/</span>
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>new-build<span class="w"> </span>--name<span class="w"> </span>vddk<span class="w"> </span>--binary<span class="w"> </span>--strategy<span class="w"> </span>docker
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>start-build<span class="w"> </span>vddk<span class="w"> </span>--from-dir<span class="o">=</span>.<span class="w"> </span>--follow<span class="w">   </span><span class="c1"># the directory with the Containerfile and the unpacked kit</span>
@@ -2444,24 +2466,32 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 <p>MTV's migration pods run in the <strong>target</strong> namespace, so let every service account pull from <code>openshift-mtv</code>:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>policy<span class="w"> </span>add-role-to-group<span class="w"> </span>system:image-puller<span class="w"> </span>system:serviceaccounts
 </code></pre></div>
-<ol>
-<li>Point the vSphere provider at it. <strong>Console:</strong> Migration for Virtualization → Providers → your vSphere provider →
-   <strong>VDDK init image</strong> → edit. <strong>CLI:</strong></li>
-</ol>
+</li>
+<li>
+<p>Point the vSphere provider at it. <strong>Console:</strong> Migration for Virtualization → Providers → your vSphere provider →
+    <strong>VDDK init image</strong> → edit. <strong>CLI:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>patch<span class="w"> </span>provider<span class="w"> </span><span class="s2">"ovedr-vcenter0</span><span class="nv">$N</span><span class="s2">"</span><span class="w"> </span>--type<span class="w"> </span>merge<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-p<span class="w"> </span><span class="s1">'{"spec":{"settings":{"vddkInitImage":"image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:latest"}}}'</span>
 </code></pre></div>
+</li>
+</ol>
 <p><strong>How this lab does it</strong> (<code>automation/customize/vddk.sh</code>, job <code>vddk</code>, after MTV is installed):</p>
 <ol>
-<li><strong>Once per VDDK version, the operator</strong> downloads the kit with the lab's Broadcom account and runs
-   <code>automation/tools/vddk_image.sh &lt;kit&gt;</code>. It builds the image above and saves it in the lab's <strong>private</strong> registry
-   (never git, never public: the script refuses to finish if the image can be read without credentials). The image
-   holds the unpacked kit, so it is also the lab's only stored copy of the download.</li>
-<li><strong>Every booking, on each cluster that runs MTV:</strong> a Docker <code>BuildConfig</code> whose <code>Containerfile</code> is just
-   <code>FROM &lt;the saved image&gt;</code> copies it into the cluster's own registry as <code>openshift-mtv/vddk:&lt;version&gt;</code>, with a
-   short-lived read-only pull credential that is deleted when the build ends. Then the <code>image-puller</code> grant above.</li>
-<li><strong>The vSphere provider</strong> gets <code>vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:&lt;version&gt;</code>,
-   and the run's readiness table shows Demo 2 ready.</li>
+<li>
+<p><strong>Once per VDDK version, the operator</strong> downloads the kit with the lab's Broadcom account and runs
+    <code>automation/tools/vddk_image.sh &lt;kit&gt;</code>. It builds the image above and saves it in the lab's <strong>private</strong> registry
+    (never git, never public: the script refuses to finish if the image can be read without credentials). The image
+    holds the unpacked kit, so it is also the lab's only stored copy of the download.</p>
+</li>
+<li>
+<p><strong>Every booking, on each cluster that runs MTV:</strong> a Docker <code>BuildConfig</code> whose <code>Containerfile</code> is just
+    <code>FROM &lt;the saved image&gt;</code> copies it into the cluster's own registry as <code>openshift-mtv/vddk:&lt;version&gt;</code>, with a
+    short-lived read-only pull credential that is deleted when the build ends. Then the <code>image-puller</code> grant above.</p>
+</li>
+<li>
+<p><strong>The vSphere provider</strong> gets <code>vddkInitImage: image-registry.openshift-image-registry.svc:5000/openshift-mtv/vddk:&lt;version&gt;</code>,
+    and the run's readiness table shows Demo 2 ready.</p>
+</li>
 </ol>
 <p>So nothing is redistributed, the licensed file leaves the lab's private storage only into the lab's own clusters, and a
 booking never waits on a download. If no saved image exists yet, the <code>vddk</code> job warns, Demo 2 shows <strong>blocked</strong> and
