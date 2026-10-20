@@ -1190,11 +1190,18 @@ in the project as a secret").</p>
 <p>✅ <code>secret/student-01-ssh created</code>. Check it holds your public key, and only that:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>student-01-ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.data.key}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w">     </span><span class="c1"># ssh-ed25519 AAAA… student-01</span>
 </code></pre></div>
-<blockquote>
-<p>💡 <strong>The Web Terminal's home directory lasts as long as the terminal does.</strong> If it restarts, your private key is
-gone: make a new pair and replace the Secret's value (<strong>Secret → Actions → Edit Secret</strong>). Your password still
-signs you in meanwhile.</p>
-</blockquote>
+<p><strong>Where you test it from.</strong> The console has two ways in: the VM's <strong>Console</strong> tab (your login and <strong>password</strong>:
+no key needed), and the <strong>Web Terminal</strong>, which has <code>ssh</code>, <code>ssh-keygen</code> and <code>virtctl</code> and reaches your VLAN. That is
+why the key pair is made <strong>in the Web Terminal</strong>: its private key is where <code>ssh</code> runs. A key from your laptop only
+works from your laptop, and the browser-only class doesn't reach the lab's VLANs from there.</p>
+<p>The Web Terminal has <strong>no disk of its own</strong>: when it closes or idles out (about 15 minutes), <code>~/.ssh</code> is gone. A key
+reaches a VM only on its first boot, so a new pair won't open your server. Keep a copy of the private key in a
+second Secret in <strong>your</strong> project (only you and the instructor can read it), and bring it back in any new terminal:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>student-01-ssh-private<span class="w"> </span>--from-file<span class="o">=</span><span class="nv">id_ed25519</span><span class="o">=</span><span class="nv">$HOME</span>/.ssh/id_ed25519<span class="w">   </span><span class="c1"># once</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>~/.ssh<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>extract<span class="w"> </span>secret/student-01-ssh-private<span class="w"> </span>--to<span class="o">=</span><span class="nv">$HOME</span>/.ssh<span class="w"> </span>--confirm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.ssh/id_ed25519<span class="w">                                                                                      </span><span class="c1"># each new terminal</span>
+</code></pre></div>
+<p>Never put the private key in <code>student-01-ssh</code>: every value in that Secret is handed to the VM as a <strong>public</strong> key.</p>
 <h3 id="step-2-deploy-the-template">Step 2: deploy the Template<a class="headerlink" href="#step-2-deploy-the-template" title="Permanent link">&para;</a></h3>
 <p><strong>Console (site A), as in the video:</strong> in the Template catalog, open <strong>CentOS Stream 10 + PostgreSQL 16 (class)</strong> →
 <strong>Customize VirtualMachine</strong> → project <strong><code>student-01-0024-012</code></strong>, and fill in the parameters:</p>
@@ -1292,8 +1299,11 @@ part of that field. Paste a bare <code>#cloud-config</code> instead and the cons
 <li><strong>Virtualization → Templates</strong>, project <strong>All projects</strong>, filter <code>centos</code>. OpenShift 4.19 has a CentOS Stream 10
    <strong>boot source</strong> but no CentOS Stream 10 <strong>template</strong> (<code>ovedr-centos10-postgres</code> is the class's own), so start from
    the nearest one: <strong><code>centos-stream9-server-small</code></strong> → <strong>⋮ → Clone</strong>.</li>
-<li><strong>Template name</strong> <code>pg-s01-centos10-template</code>, <strong>Template project</strong> <strong>your</strong> project (a template can't change
-     project later either), display name <code>pg-s01 PostgreSQL (CentOS Stream 10)</code>.</li>
+<li><strong>Template name</strong> <code>pg-s01-centos10-template</code>, <strong>Template project</strong> <strong>your</strong> project, <code>student-01-0024-012</code>
+     (the dialog offers <code>openshift</code> first: change it). A template can't change project later, and the Secrets its
+     tabs make land in <strong>its</strong> project. A VM in your project can't read a Secret in <code>openshift</code>: it would wait at
+     <strong>Starting</strong> for good (debug guide: <em>Starting, <code>secret … not found</code></em>).</li>
+<li>Display name <code>pg-s01 PostgreSQL (CentOS Stream 10)</code>.</li>
 <li>Leave <strong>Clone the boot source</strong> unticked: your template uses the shared boot source, as the class's does.</li>
 <li>Point your template at <strong>CentOS Stream 10</strong>. Open it (<strong>Virtualization → Templates</strong>, project
    <code>student-01-0024-012</code>) → <strong>YAML</strong>. Red Hat's templates take their boot disk from a parameter, near the end:</li>
@@ -1316,10 +1326,12 @@ part of that field. Paste a bare <code>#cloud-config</code> instead and the cons
    - <strong>Scripts → Cloud-init → Edit</strong> → <strong>Script</strong>. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change
      the lines marked ✎, then <strong>Save</strong>. Stay in <strong>Script</strong>: switching back to <strong>Form view</strong> rebuilds the simple form
      and drops what it can't show.
-   - <strong>Scripts → Public SSH key → Edit</strong> → <code>student-01-ssh</code> (the Secret from step 1 above).
+   - <strong>Scripts → Public SSH key → Edit</strong> → <strong>Use existing</strong> → <code>student-01-ssh</code> (the Secret from step 1 above), not
+     <strong>Add new</strong>.
    - <strong>Details → CPU | Memory</strong>: 1 CPU, 4 GiB (PostgreSQL wants more than the small template's 2 GiB).
-5. <strong>⋮ → Create VirtualMachine</strong> (or <strong>Catalog → Template catalog → User templates</strong> → yours). Name
-   <code>pg-s01-centos10</code>, then <strong>Create VirtualMachine</strong>. Carry on with <strong>1a.3</strong> as for the Template's server.</p>
+5. <strong>⋮ → Create VirtualMachine</strong> (or <strong>Catalog → Template catalog → User templates</strong> → yours). Change the
+   generated name (<code>centos-stream10-…</code>) to <strong><code>pg-s01-centos10</code></strong>, then <strong>Create VirtualMachine</strong>. Demos 1b – 1e
+   name the VM in their commands, and a VM can't be renamed. Carry on with <strong>1a.3</strong> as for the Template's server.</p>
 <p>Edit the <strong>template</strong>, not a VM made from it: cloud-init runs only on a VM's <strong>first</strong> boot, so changing a VM's
 cloud-init after it has started does nothing. A wrong template is cheap: fix it, delete the VM, create it again.</p>
 <p>The block to paste: about 1.9 KB, all of it saved in your template's definition.</p>
@@ -1442,8 +1454,7 @@ ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">PubkeyAuth
 </code></pre></div>
 <p>✅ The first prints <code>pg-s01-centos10</code> and <code>student-01</code> without asking anything: your key from the Secret is in
 <code>~/.ssh/authorized_keys</code>. The second asks for your class password, then prints <code>student-01</code>. (Also works through
-the API server, without reaching the VLAN: <code>virtctl ssh -n student-01-0024-012 -i ~/.ssh/id_ed25519 student-01@vm/pg-s01-centos10</code>.)
-<strong>[verify: <code>ssh</code> and <code>virtctl</code> in the Web Terminal tooling]</strong></p>
+the API server, without reaching the VLAN: <code>virtctl ssh -n student-01-0024-012 -i ~/.ssh/id_ed25519 student-01@vm/pg-s01-centos10</code>.)</p>
 <hr />
 <h2 id="1a4-inject-into-your-new-linux-postgresql-and-read-it-back">1a.4 Inject into your new Linux PostgreSQL, and read it back<a class="headerlink" href="#1a4-inject-into-your-new-linux-postgresql-and-read-it-back" title="Permanent link">&para;</a></h2>
 <p>Same commands as on Windows, at the new address. Your class terminal's <code>dblogin</code> works here too: same login, same
