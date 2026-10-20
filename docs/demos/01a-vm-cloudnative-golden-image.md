@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.3.0
+version: 2.4.0
 date: 2026-10-20
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.3.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.4.0 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -181,10 +181,11 @@ read -rsp 'Your class password: ' PW; echo; oc process -n openshift ovedr-centos
 > about 11 KB. The Template creates both, so both are yours to delete (1a.5).
 
 <details markdown="1">
-<summary>Build it yourself in the console: your own VM, your own cloud-init (optional)</summary>
+<summary>Build it yourself in the console: your own Template, your own cloud-init (optional)</summary>
 
-The Template did the work above. Here you build the same database server **by hand in the console**, from a plain
-CentOS Stream 10 VM plus a short **cloud-init**: the standard way a cloud server is customized on its first boot. The
+The class's Template did the work above. Here you make **your own Template in the console**: clone one of Red Hat's
+templates, point it at the CentOS Stream 10 boot source, give it a short **cloud-init** (the standard way a cloud server is customized on its first
+boot) and your network, then create the server from it. The
 PostgreSQL build itself (install, the class database and toolkit, your database login, the heartbeat) is the lab's
 published script, [`ovedr-pg-setup.sh`](../downloads/ovedr-pg-setup.sh): your cloud-init downloads and runs it, so you
 write 30 lines, not 300. Read the script first: it is what will run as root on your server.
@@ -204,25 +205,42 @@ So below is **one** block, in exactly that shape. It **replaces everything** in 
 part of that field. Paste a bare `#cloud-config` instead and the console refuses it with
 `unknown field "...cloudInitNoCloud.hostname"` (and `runcmd`, `packages`, and so on).
 
-**Console (site A):** **[verify: the field names on OpenShift 4.19's VM wizard]**
+**Console (site A):** **[verify: the field names on OpenShift 4.19's console]**
 
 1. Set the **Project** dropdown to **your** project, `student-01-0024-012`.
-2. **Virtualization → Catalog → InstanceTypes**: boot volume **CentOS Stream 10**; series **U series** (general
-   purpose), size **u1.medium**. Not the **N series**: it needs dedicated CPUs and hugepages this lab doesn't have.
-3. **VirtualMachine name** `pg-s01-centos10` → **Customize VirtualMachine** (not **Create** yet: cloud-init runs
-   only on the **first** boot, so it must be in place before the VM ever starts).
-4. **Network**: edit the NIC → network **`default/vmnet23`** (your VLAN's bridge), type **Bridge**.
-5. **Scripts → Cloud-init → Edit** → **Script**. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change the
-   lines marked ✎, then **Save** (or **Apply**). Stay in **Script**: switching back to **Form view** rebuilds the
-   simple form and drops what it can't show.
-6. **Scripts → Public SSH key → Edit → Use existing** → `student-01-ssh` (the Secret from step 1 above).
-7. **Create VirtualMachine**, then carry on with **1a.3** as for the Template's server.
+2. **Virtualization → Templates**, project **All projects**, filter `centos`. OpenShift 4.19 has a CentOS Stream 10
+   **boot source** but no CentOS Stream 10 **template** (`ovedr-centos10-postgres` is the class's own), so start from
+   the nearest one: **`centos-stream9-server-small`** → **⋮ → Clone**.
+   - **Template name** `pg-s01-centos10-template`, **Template project** **your** project (a template can't change
+     project later either), display name `pg-s01 PostgreSQL (CentOS Stream 10)`.
+   - Leave **Clone the boot source** unticked: your template uses the shared boot source, as the class's does.
+3. Point your template at **CentOS Stream 10**. Open it (**Virtualization → Templates**, project
+   `student-01-0024-012`) → **YAML**. Red Hat's templates take their boot disk from a parameter, near the end:
 
-Started it already, with the default `centos` user? Changing cloud-init afterwards does nothing: the VM keeps the
-same instance ID, so cloud-init treats it as already set up. Delete the VM (**Actions → Delete**) and build it again
-from step 2.
+   ```yaml
+     - name: DATA_SOURCE_NAME
+       description: Name of the DataSource to clone
+       value: centos-stream9          # → centos-stream10
+   ```
 
-The block to paste: about 1.4 KB, all of it saved in the VM's definition.
+   Change `centos-stream9` to **`centos-stream10`** in that one place, then **Save**. That is the whole difference
+   between the two templates' operating systems: the boot source `centos-stream10`, in project
+   `openshift-virtualization-os-images`, which OpenShift keeps up to date. (The template's labels still say CentOS
+   Stream 9; that only affects how the console lists it.)
+4. Still in your template, set it up, tab by tab:
+   - **Network**: edit the NIC → network **`default/vmnet23`** (your VLAN's bridge), type **Bridge**.
+   - **Scripts → Cloud-init → Edit** → **Script**. Select all (Ctrl-A / ⌘-A), delete, paste the block below, change
+     the lines marked ✎, then **Save**. Stay in **Script**: switching back to **Form view** rebuilds the simple form
+     and drops what it can't show.
+   - **Scripts → Public SSH key → Edit** → `student-01-ssh` (the Secret from step 1 above).
+   - **Details → CPU | Memory**: 1 CPU, 4 GiB (PostgreSQL wants more than the small template's 2 GiB).
+5. **⋮ → Create VirtualMachine** (or **Catalog → Template catalog → User templates** → yours). Name
+   `pg-s01-centos10`, then **Create VirtualMachine**. Carry on with **1a.3** as for the Template's server.
+
+Edit the **template**, not a VM made from it: cloud-init runs only on a VM's **first** boot, so changing a VM's
+cloud-init after it has started does nothing. A wrong template is cheap: fix it, delete the VM, create it again.
+
+The block to paste: about 1.4 KB, all of it saved in your template's definition.
 
 ```yaml
 userData: |
@@ -276,15 +294,16 @@ What each part does, the same jobs the Template's cloud-init does:
 | `runcmd` | downloads the class's setup script and runs it; its last line in `/var/log/cloud-init-output.log` is `OVEDR-READY` |
 | `networkData` | a fixed address on `enp1s0` (the VM's NIC on your VLAN), the gateway, and the lab's DNS |
 
-**Compare it with the Template.** Open [the Template](../downloads/ovedr-centos10-postgres.yaml): its Secret
+**Compare yours with the class's.** Open your template's **YAML** tab next to
+[the class's Template](../downloads/ovedr-centos10-postgres.yaml): the same VM, NIC and cloud-init disk. Its Secret
 `${NAME}-cloudinit` carries the same `#cloud-config` with the PostgreSQL build written inline, and its VM's
 `cloudInitNoCloud` has the same `networkData`. What you pasted by hand is what the Template fills in from its
 parameters. Learn the rest of cloud-init later, from the
 [cloud-init module reference](https://cloudinit.readthedocs.io/en/latest/reference/modules.html) and
 [KubeVirt's cloud-init guide](https://kubevirt.io/user-guide/user_workloads/startup_scripts/).
 
-Your password is in the VM's definition this time (cloud-init written in the console stays inline). The Template
-kept it in a Secret; for a lab login that dies with the booking, either is fine.
+Your password is in your template's definition this time (cloud-init written in the console stays inline). The
+class's Template keeps it in a Secret; for a lab login that dies with the booking, either is fine.
 
 </details>
 
@@ -375,6 +394,28 @@ proved it with your own rows. **Keep it running** (redeploy it if you deleted it
 > 💡 **One copy at a time on an address.** `10.101.23.151` is yours alone. When you've finished Demo 1e, go back to
 > [Demo 1 §1.4](01-vmware-to-ove-cold.md#14-review-your-vm-on-openshift-then-power-it-on) and **stop**
 > `pg-s01-centos10` there (no need to delete it).
+
+---
+
+## 1a.6 Explore: a one-off VM from the Catalog (optional)
+
+Everything so far went through a **template**: written once, reviewed, then deployed the same way every time. The
+console's **Catalog** is the other way in: pick an OS, click, and you have a VM. That is right for a quick test box;
+nothing records how it was built, so the next one may come out different.
+
+**Console (site A):**
+
+1. **Project** `student-01-0024-012`, then **Virtualization → Catalog → InstanceTypes**.
+2. Pick any boot volume the lab offers (Red Hat's catalog: CentOS Stream, Fedora, RHEL…), series **U series**, size
+   **u1.small**. Name it `explore-s01`.
+3. Look at what **Customize VirtualMachine** would let you change (the same tabs as your template's), then simply
+   **Create VirtualMachine**: it uses the **pod network** and a generated login, so it takes no lab address.
+4. When it is **Running**: **Overview** shows the login (user and the generated password), the **Console** tab logs
+   you in. Look around, then **Actions → Delete**: the lab's capacity is shared.
+
+✅ Two ways to the same kind of VM: the **Catalog** for a one-off, a **Template** for a server you will build again,
+and again, the same way. Your template from the twisty above sits in the Catalog too, under **Template catalog →
+User templates**: a template is how a one-off becomes a standard.
 
 ---
 
