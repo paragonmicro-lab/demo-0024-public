@@ -31,6 +31,8 @@ if [ ! -s /var/lib/pgsql/data/PG_VERSION ]; then
   echo "host all all 10.0.0.0/8 scram-sha-256" >> /var/lib/pgsql/data/pg_hba.conf
 fi
 systemctl enable --now postgresql qemu-guest-agent
+# an online VM snapshot freezes every filesystem through the guest agent; SELinux lets it reach /var/lib/pgsql only with this
+setsebool -P virt_qemu_ga_read_nonsecurity_files on
 
 # the class database: the same schema and toolkit the Windows VMs run
 cat > "$SQL/schema.sql" <<'OVEDR_SQL'
