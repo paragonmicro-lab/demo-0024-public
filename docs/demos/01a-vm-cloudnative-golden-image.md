@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.6.1
+version: 2.6.2
 date: 2026-10-20
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.6.1 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.6.2 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -380,8 +380,18 @@ the API server, without reaching the VLAN: `virtctl ssh -n student-01-0024-012 -
 
 ## 1a.4 Inject into your new Linux PostgreSQL, and read it back
 
-Same commands as on Windows, at the new address. Your class terminal's `dblogin` works here too: same login, same
-password, a different server.
+Same commands as on Windows, at the new address: same database login, same password, a different server.
+
+**First, sign in** (once per class-terminal pod). `dblogin` normally checks your password against your Windows VM,
+which may still be copying, so point it at your new server:
+
+```bash
+oc exec -it -n student-01-0024-012 deploy/sql-client -- env PGHOST=10.101.23.151 dblogin
+```
+
+✅ `✓ signed in to bcdr at 10.101.23.151 as student_01` (or `… on win-pg-s01 (10.101.23.151)` with an older class terminal). The sign-in is kept in the pod for any of your servers, so
+this also covers your Windows VM later. If a command answers *First sign in to your VM's database … dblogin*, the pod
+was restarted: run this again.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cloudnative-started', 'Demo 1a: CentOS Stream 10 from the Template');"
