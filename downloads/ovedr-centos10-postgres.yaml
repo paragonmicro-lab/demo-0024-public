@@ -220,6 +220,9 @@ objects:
               echo "listen_addresses = '*'" >> /var/lib/pgsql/data/postgresql.conf
               echo "host all all 10.0.0.0/8 scram-sha-256" >> /var/lib/pgsql/data/pg_hba.conf
               systemctl enable --now postgresql qemu-guest-agent
+              # an online VM snapshot freezes every filesystem through the guest agent, which must reach the mounts under
+              # /var/lib/pgsql (postgresql_db_t): without this boolean SELinux denies it and the snapshot fails (Demo 1b)
+              setsebool -P virt_qemu_ga_read_nonsecurity_files on
               runuser -u postgres -- psql -X -q -v ON_ERROR_STOP=1 -f /usr/local/share/ovedr/schema.sql
               runuser -u postgres -- psql -X -q -v ON_ERROR_STOP=1 -d bcdr -f /usr/local/share/ovedr/integrity.sql
               runuser -u postgres -- psql -X -q -v ON_ERROR_STOP=1 -v pw="$pw" -f /usr/local/share/ovedr/class.sql
