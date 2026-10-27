@@ -991,7 +991,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.6.2 · draft · 2026-10-19</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.7.0 · draft · 2026-10-26</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1170,9 +1170,17 @@ information concerns are fine for a cold migration.</em></p>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p><strong>vCenter:</strong> <strong>VMs and Templates → datacenter01 → vms → students → <code>student-01-0024-012</code> → <code>win-pg-s01</code></strong> →
-<strong>Actions → Power → Shut Down Guest OS</strong>. A clean guest shutdown flushes PostgreSQL to disk first.</p>
+<strong>Actions → Power → Shut Down Guest OS</strong> (it needs VMware Tools running), or inside Windows <strong>Start → Power → Shut down</strong>.
+A clean guest shutdown flushes PostgreSQL to disk first, and closes the <code>C:</code> drive cleanly.</p>
+<blockquote>
+<p>⛔ <strong>Never Power Off, Reset or Suspend the VM, and don't hibernate it.</strong> They stop Windows without closing its
+drives. The migration still starts and looks normal, then fails at <strong>ImageConversion</strong> 30–45 minutes later, because
+<code>virt-v2v</code> can't write the drivers onto a <code>C:</code> drive that wasn't closed cleanly. If Windows says updates are installing,
+let it finish; don't force it off. Already powered it off? See
+<a href="#a-step-failed-read-the-logs-before-you-delete-anything">A step failed</a> for how to recover before you start.</p>
+</blockquote>
 <p>✅ The read-back (before the shutdown) ends with <code>start-cold-migration</code>, the last row written on vSphere. The VM shows
-<strong>Powered Off</strong> in vCenter.</p>
+<strong>Powered Off</strong> in vCenter, <strong>after</strong> a guest shutdown.</p>
 <hr />
 <h2 id="13-start-the-migration">1.3 Start the migration<a class="headerlink" href="#13-start-the-migration" title="Permanent link">&para;</a></h2>
 <p><strong>Console (site A):</strong> <strong>Migration for Virtualization → Migration plans → <code>d1-win-pg-s01</code></strong> → <strong>Start</strong> → confirm.</p>
@@ -1326,7 +1334,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>plan<span class="w"> </span><span class="nv">$PLAN</span><span class="w"> </span>-w<span class="w">                </span><span class="c1"># Executing → Succeeded (Ctrl-C)</span>
 </code></pre></div>
 </details>
-<details>
+<details id="a-step-failed-read-the-logs-before-you-delete-anything">
 <summary>A step failed: read the logs before you delete anything</summary>
 <p><img alt="A failed plan: ImageConversion, Guest conversion failed" src="../.images/01-plan-failed-imageconversion.png" />
 <em>A failed cold migration: ImageConversion (virt-v2v) failed, and the error says "See pod logs for details". There is no
@@ -1342,6 +1350,23 @@ oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span cla
 <p>Read the log <strong>bottom up</strong>: the last <code>virt-v2v: error:</code> line is the verdict, and the lines above it are the cause.
 For example, <code>HTTP 404</code> on a <code>…-flat.vmdk</code> URL means MTV could not read the VM's disk from vCenter. Show your
 instructor before you delete or archive the plan.</p>
+<p><strong>Failed at ImageConversion 30–45 min in, with <code>not cleanly unmounted</code>.</strong> The log ends with
+<code>virt-v2v: error: filesystem was mounted read-only … the filesystem was not cleanly unmounted</code>, and the lines above
+say <code>unclean file system</code> and <code>Metadata kept in Windows cache</code>. The VM was <strong>powered off</strong> instead of shut down (§1.2), so
+Windows left <code>C:</code> half-closed. The cluster is fine. Recover like this:</p>
+<ol>
+<li><strong>vCenter:</strong> power the VM <strong>on</strong> and wait for the Windows login screen. Windows cleans its drive as it boots.</li>
+<li><strong>Actions → Power → Shut Down Guest OS</strong>, and wait for <strong>Powered Off</strong>.</li>
+<li>
+<p>Clear the failed run out of your project: its conversion pod (status <em>Error</em>) and the three disks (PVCs) it made:</p>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pods,pvc<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>d1-win-pg-s01<span class="w">                                  </span><span class="c1"># the Error pod and 3 PVCs</span>
+oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>get<span class="w"> </span>pods,pvc<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>d1-win-pg-s01<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>delete
+</code></pre></div>
+</li>
+<li>
+<p><strong>Start</strong> the plan again (§1.3).</p>
+</li>
+</ol>
 </details>
 <hr />
 <h2 id="14-review-your-vm-on-openshift-then-power-it-on">1.4 Review your VM on OpenShift, then power it on<a class="headerlink" href="#14-review-your-vm-on-openshift-then-power-it-on" title="Permanent link">&para;</a></h2>
