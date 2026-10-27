@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.6.2
-date: 2026-10-17
+version: 1.7.0
+date: 2026-10-26
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.6.2 · draft · 2026-10-19** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.7.0 · draft · 2026-10-26** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -132,10 +132,17 @@ oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SEL
 ```
 
 **vCenter:** **VMs and Templates → datacenter01 → vms → students → `student-01-0024-012` → `win-pg-s01`** →
-**Actions → Power → Shut Down Guest OS**. A clean guest shutdown flushes PostgreSQL to disk first.
+**Actions → Power → Shut Down Guest OS** (it needs VMware Tools running), or inside Windows **Start → Power → Shut down**.
+A clean guest shutdown flushes PostgreSQL to disk first, and closes the `C:` drive cleanly.
+
+> ⛔ **Never Power Off, Reset or Suspend the VM, and don't hibernate it.** They stop Windows without closing its
+> drives. The migration still starts and looks normal, then fails at **ImageConversion** 30–45 minutes later, because
+> `virt-v2v` can't write the drivers onto a `C:` drive that wasn't closed cleanly. If Windows says updates are installing,
+> let it finish; don't force it off. Already powered it off? See
+> [A step failed](#a-step-failed-read-the-logs-before-you-delete-anything) for how to recover before you start.
 
 ✅ The read-back (before the shutdown) ends with `start-cold-migration`, the last row written on vSphere. The VM shows
-**Powered Off** in vCenter.
+**Powered Off** in vCenter, **after** a guest shutdown.
 
 ---
 
@@ -279,7 +286,7 @@ oc -n openshift-mtv get plan $PLAN -w                # Executing → Succeeded (
 
 </details>
 
-<details markdown="1">
+<details markdown="1" id="a-step-failed-read-the-logs-before-you-delete-anything">
 <summary>A step failed: read the logs before you delete anything</summary>
 
 ![A failed plan: ImageConversion, Guest conversion failed](../.images/01-plan-failed-imageconversion.png)
@@ -302,6 +309,22 @@ oc -n student-01-0024-012 logs "$POD" | grep -E 'virt-v2v: error|error:|HTTP' | 
 Read the log **bottom up**: the last `virt-v2v: error:` line is the verdict, and the lines above it are the cause.
 For example, `HTTP 404` on a `…-flat.vmdk` URL means MTV could not read the VM's disk from vCenter. Show your
 instructor before you delete or archive the plan.
+
+**Failed at ImageConversion 30–45 min in, with `not cleanly unmounted`.** The log ends with
+`virt-v2v: error: filesystem was mounted read-only … the filesystem was not cleanly unmounted`, and the lines above
+say `unclean file system` and `Metadata kept in Windows cache`. The VM was **powered off** instead of shut down (§1.2), so
+Windows left `C:` half-closed. The cluster is fine. Recover like this:
+
+1. **vCenter:** power the VM **on** and wait for the Windows login screen. Windows cleans its drive as it boots.
+2. **Actions → Power → Shut Down Guest OS**, and wait for **Powered Off**.
+3. Clear the failed run out of your project: its conversion pod (status *Error*) and the three disks (PVCs) it made:
+
+    ```bash
+    oc -n student-01-0024-012 get pods,pvc | grep d1-win-pg-s01                                  # the Error pod and 3 PVCs
+    oc -n student-01-0024-012 get pods,pvc -o name | grep d1-win-pg-s01 | xargs oc -n student-01-0024-012 delete
+    ```
+
+4. **Start** the plan again (§1.3).
 
 </details>
 
