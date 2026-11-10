@@ -220,11 +220,11 @@ So below is **one** block, in exactly that shape. It **replaces everything** in 
 part of that field. Paste a bare `#cloud-config` instead and the console refuses it with
 `unknown field "...cloudInitNoCloud.hostname"` (and `runcmd`, `packages`, and so on).
 
-**Console (site A):** **[verify: the field names on OpenShift 4.19's console]**
+**Console (site A):** **[verify: the field names on OpenShift 4.22's console]**
 
 1. Set the **Project** dropdown to **your** project, `student-01-0024-012`.
-2. **Virtualization → Templates**, project **All projects**, filter `centos`. OpenShift 4.19 has a CentOS Stream 10
-    **boot source** but no CentOS Stream 10 **template** (`ovedr-centos10-postgres` is the class's own), so start from
+2. **Virtualization → Templates**, project **All projects**, filter `centos`. OpenShift 4.19 had a CentOS Stream 10
+    **boot source** but no CentOS Stream 10 **template** **[verify on 4.22]** (`ovedr-centos10-postgres` is the class's own), so start from
     the nearest one: **`centos-stream9-server-small`** → **⋮ → Clone**.
     - **Template name** `pg-s01-centos10-template`, **Template project** **your** project, `student-01-0024-012`
       (the dialog offers `openshift` first: change it). A template can't change project later, and the Secrets its

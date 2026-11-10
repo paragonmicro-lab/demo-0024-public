@@ -23,7 +23,7 @@ ask you to do the **last step** yourself (start your migration). This guide is h
 | Built by | What | Where |
 |---|---|---|
 | **demo-vmware** (core-web dispatches it) | vCenter `vcenter0<N>`, 4 nested ESXi hosts (vSphere/VCF **9** by default, 8 when the booking picks `vmware_version: 8`), the shared NFS datastore `coresan01_data00` (the ISO library; the class VMs live there only on a `vmware_storage: na` booking, on **vSAN** with `vsan`); by default (`vmware_storage: local`, both classes, 2026-10-17) each class VM sits on **its own ESXi host's** SSD datastore `esxi-lz<N>-NN-vmfs00`: student01 on `esxi-lz<N>-01`, student02 on `esxi-lz<N>-02`, …, the instructor's on the last host), port group `vm-network` on VLAN 22+N, your vCenter folder `vms/students/<your ID>` | vSphere `lzN` |
-| **demo-openshift** (core-web dispatches it, twice) | OpenShift 4.19, OpenShift Virtualization (`ove: cnv`), ACM and cert-manager, NMState bridges + NADs per VLAN, `nfs-csi` storage; **ODF on site A only** | site A `<A>` and site B `<B>` |
+| **demo-openshift** (core-web dispatches it, twice) | OpenShift 4.22 (the booking's `ocp_version`: `latest`; `previous` = 4.21, the same on both sites), OpenShift Virtualization (`ove: cnv`), ACM and cert-manager, NMState bridges + NADs per VLAN, `nfs-csi` storage; **ODF on site A only** | site A `<A>` and site B `<B>` |
 | **this demo's CI** (`customize`, sections S.5–S.12) | MTV, providers, maps, the class namespace, the class VMs, demo prep, the staged plans | all three |
 | **you** | start your own migration plan (Demo 1 / 1c), then everything in the demo guides | |
 
@@ -1029,12 +1029,14 @@ YAML
     "ocs.openshift.io/api-server-exported-address=$c.ocs-provider-server.openshift-storage.svc.clusterset.local:50051"
 done
 
-# 3. the Orchestrator on the hub (brings Ramen, the DR hub operator)
-oc --context site-b apply -f - <<'YAML'
+# 3. the Orchestrator on the hub (brings Ramen, the DR hub operator), on the hub's own ODF channel (stable-4.22 on latest)
+ch="$(oc --context site-b -n openshift-storage get subscriptions.operators.coreos.com -o json \
+  | jq -r '[.items[] | select(.spec.name == "odf-operator") | .spec.channel][0]')"
+oc --context site-b apply -f - <<YAML
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata: { name: odf-multicluster-orchestrator, namespace: openshift-operators }
-spec: { name: odf-multicluster-orchestrator, channel: stable-4.19, source: redhat-operators,
+spec: { name: odf-multicluster-orchestrator, channel: $ch, source: redhat-operators,
         sourceNamespace: openshift-marketplace, installPlanApproval: Automatic }
 YAML
 oc --context site-b -n openshift-operators get pods | grep -E 'odfmo-controller|ramen-hub|odf-multicluster-console'

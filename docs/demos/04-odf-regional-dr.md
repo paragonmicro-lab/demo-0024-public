@@ -530,7 +530,7 @@ reached the DR site, and moved the whole application there and back with every r
 - **ODF disaster recovery for OpenShift workloads (4.19):** <https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19/html/configuring_openshift_data_foundation_disaster_recovery_for_openshift_workloads/index>
 - **Red Hat OpenShift Data Foundation 4.19 documentation:** <https://docs.redhat.com/en/documentation/red_hat_openshift_data_foundation/4.19>
 - **Red Hat Advanced Cluster Management 2.13:** <https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.13>
-- **OpenShift Virtualization (OpenShift 4.19):** <https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/virtualization/index>
+- **OpenShift Virtualization (OpenShift 4.22):** <https://docs.redhat.com/en/documentation/openshift_container_platform/4.22/html/virtualization/index>
 - **Training: DO316, Managing Virtual Machines with Red Hat OpenShift Virtualization:** <https://www.redhat.com/en/services/training/do316-managing-virtual-machines-red-hat-openshift-virtualization>
 - **Red Hat interactive labs:** <https://www.redhat.com/en/interactive-labs>
 - **OpenShift Data Foundation:** <https://www.redhat.com/en/technologies/cloud-computing/openshift-data-foundation>
