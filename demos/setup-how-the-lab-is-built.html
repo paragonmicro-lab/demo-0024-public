@@ -1275,7 +1275,7 @@ ask you to do the <strong>last step</strong> yourself (start your migration). Th
 </tr>
 <tr>
 <td><strong>demo-openshift</strong> (core-web dispatches it, twice)</td>
-<td>OpenShift 4.19, OpenShift Virtualization (<code>ove: cnv</code>), ACM and cert-manager, NMState bridges + NADs per VLAN, <code>nfs-csi</code> storage; <strong>ODF on site A only</strong></td>
+<td>OpenShift 4.22 (the booking's <code>ocp_version</code>: <code>latest</code>; <code>previous</code> = 4.21, the same on both sites), OpenShift Virtualization (<code>ove: cnv</code>), ACM and cert-manager, NMState bridges + NADs per VLAN, <code>nfs-csi</code> storage; <strong>ODF on site A only</strong></td>
 <td>site A <code>&lt;A&gt;</code> and site B <code>&lt;B&gt;</code></td>
 </tr>
 <tr>
@@ -2296,12 +2296,14 @@ oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"
 <span class="w">    </span><span class="s2">"ocs.openshift.io/api-server-exported-address=</span><span class="nv">$c</span><span class="s2">.ocs-provider-server.openshift-storage.svc.clusterset.local:50051"</span>
 <span class="k">done</span>
 
-<span class="c1"># 3. the Orchestrator on the hub (brings Ramen, the DR hub operator)</span>
-oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'YAML'</span>
+<span class="c1"># 3. the Orchestrator on the hub (brings Ramen, the DR hub operator), on the hub's own ODF channel (stable-4.22 on latest)</span>
+<span class="nv">ch</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-storage<span class="w"> </span>get<span class="w"> </span>subscriptions.operators.coreos.com<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'[.items[] | select(.spec.name == "odf-operator") | .spec.channel][0]'</span><span class="k">)</span><span class="s2">"</span>
+oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;YAML</span>
 <span class="s">apiVersion: operators.coreos.com/v1alpha1</span>
 <span class="s">kind: Subscription</span>
 <span class="s">metadata: { name: odf-multicluster-orchestrator, namespace: openshift-operators }</span>
-<span class="s">spec: { name: odf-multicluster-orchestrator, channel: stable-4.19, source: redhat-operators,</span>
+<span class="s">spec: { name: odf-multicluster-orchestrator, channel: $ch, source: redhat-operators,</span>
 <span class="s">        sourceNamespace: openshift-marketplace, installPlanApproval: Automatic }</span>
 <span class="s">YAML</span>
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>-n<span class="w"> </span>openshift-operators<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'odfmo-controller|ramen-hub|odf-multicluster-console'</span>

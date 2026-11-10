@@ -1294,12 +1294,12 @@ the VM's <strong>cloud-init disk</strong>, which has two fields, each a text blo
 <code>user: centos</code> and the generated password. Keep the two-space indent under each field: it is what makes the lines
 part of that field. Paste a bare <code>#cloud-config</code> instead and the console refuses it with
 <code>unknown field "...cloudInitNoCloud.hostname"</code> (and <code>runcmd</code>, <code>packages</code>, and so on).</p>
-<p><strong>Console (site A):</strong> <strong>[verify: the field names on OpenShift 4.19's console]</strong></p>
+<p><strong>Console (site A):</strong> <strong>[verify: the field names on OpenShift 4.22's console]</strong></p>
 <ol>
 <li>Set the <strong>Project</strong> dropdown to <strong>your</strong> project, <code>student-01-0024-012</code>.</li>
 <li>
-<p><strong>Virtualization → Templates</strong>, project <strong>All projects</strong>, filter <code>centos</code>. OpenShift 4.19 has a CentOS Stream 10
-    <strong>boot source</strong> but no CentOS Stream 10 <strong>template</strong> (<code>ovedr-centos10-postgres</code> is the class's own), so start from
+<p><strong>Virtualization → Templates</strong>, project <strong>All projects</strong>, filter <code>centos</code>. OpenShift 4.19 had a CentOS Stream 10
+    <strong>boot source</strong> but no CentOS Stream 10 <strong>template</strong> <strong>[verify on 4.22]</strong> (<code>ovedr-centos10-postgres</code> is the class's own), so start from
     the nearest one: <strong><code>centos-stream9-server-small</code></strong> → <strong>⋮ → Clone</strong>.</p>
 <ul>
 <li><strong>Template name</strong> <code>pg-s01-centos10-template</code>, <strong>Template project</strong> <strong>your</strong> project, <code>student-01-0024-012</code>
