@@ -1,13 +1,13 @@
 ---
 title: "Demo 1d — Cross-cluster migration: OpenShift site A to site B, with its storage (BCDR class)"
 subtitle: "ACM links the clusters · MTV moves your cloud-native server from site A to site B, with its disks · inject and read back"
-version: 2.0.1
-date: 2026-10-15
+version: 2.0.2
+date: 2026-11-10
 ---
 
 # Demo 1d: cross-cluster migration, site A to site B (BCDR class)
 
-> **Version 2.0.1 · draft · 2026-10-19** · class/demos/01d-ocp-vm-cross-cluster-migration.md
+> **Version 2.0.2 · draft · 2026-11-10** · class/demos/01d-ocp-vm-cross-cluster-migration.md
 
 ## What you will learn
 
@@ -46,7 +46,7 @@ run in each console's **Web Terminal** (`>_`); each step says which site.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1d: running on site A');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151   # read back: your rows so far, oldest first
 ```
 
 ---
@@ -100,7 +100,7 @@ Write the "start" row **before** the VM stops, while its database still answers:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151   # read back: your rows so far, oldest first
 ```
 
 **Console (site A):** **Virtualization → VirtualMachines → `pg-s01-centos10` → Actions → Stop**.
@@ -247,7 +247,7 @@ Give the server a minute to start PostgreSQL (Windows: a few minutes), then:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-migration-complete', 'running on site B, disks on NFS');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 

@@ -1,13 +1,13 @@
 ---
 title: "Demo 2 — Coming soon: warm migration with storage copy offload"
 subtitle: "Why this lab doesn't demo VDDK · what a SAN with CSI and snapshots adds · inject · CBT · warm plan with the array doing the copy · cut over · snapshot on the array · read back"
-version: 3.2.0
-date: 2026-10-17
+version: 3.2.1
+date: 2026-11-10
 ---
 
 # Demo 2: VMware to OpenShift Virtualization (warm migration, storage copy offload)
 
-> **Version 3.2.0 · draft · 2026-10-19** · class/demos/02-vmware-to-ove-warm.md
+> **Version 3.2.1 · draft · 2026-11-10** · class/demos/02-vmware-to-ove-warm.md
 
 > 🚧 **Coming soon. You can't run this demo in this lab yet.**
 >
@@ -151,7 +151,7 @@ with its disks on the SAN datastore.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 2: warm migration, storage copy offload');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101   # read back: your rows so far, oldest first
 ```
 
 ✅ One row, `stage = demo-started`.
@@ -322,7 +322,7 @@ Write the "start" row while your VM still runs on vSphere. It must survive the c
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-warm-migration', 'on vSphere, before cutover');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101   # read back: your rows so far, oldest first
 ```
 
 **Console (site A):** **Migration plans → `d2-win-pg-s01`** → **Cutover** → keep **now** → **Set cutover**.
@@ -366,7 +366,7 @@ with one.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'warm-migration-complete', 'on OpenShift site A, SAN');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 

@@ -1,13 +1,13 @@
 ---
 title: "Demo 1c — Live migration and storage migration"
 subtitle: "Move the running VM to another node · move a running disk to another storage class · no reboot · read back"
-version: 2.1.0
-date: 2026-10-15
+version: 2.1.1
+date: 2026-11-10
 ---
 
 # Demo 1c: live migration and storage migration
 
-> **Version 2.1.0 · draft · 2026-10-20** · class/demos/01c-live-and-storage-migration.md
+> **Version 2.1.1 · draft · 2026-11-10** · class/demos/01c-live-and-storage-migration.md
 
 ## What you will learn
 
@@ -41,7 +41,7 @@ then [Demo 1b](01b-snapshot-restore.md)), while Demo 1's copy runs. Every comman
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'before-live-migration', 'running on one node');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151   # read back: your rows so far, oldest first
 oc -n student-01-0024-012 get vmi pg-s01-centos10 -o jsonpath='{.status.nodeName}  LiveMigratable={.status.conditions[?(@.type=="LiveMigratable")].status}{"\n"}'
 ```
 
@@ -66,7 +66,7 @@ restart.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'after-live-migration', 'running on another node');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151   # read back: your rows so far, oldest first
 ```
 
 ---
@@ -144,7 +144,7 @@ Configuration → Storage** shows the data disk on `nfs-csi`.
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'after-storage-migration', 'data disk on NFS');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 

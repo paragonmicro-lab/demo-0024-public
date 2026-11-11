@@ -130,6 +130,7 @@ Each of your `marks` rows carries a SHA-256 hash of the previous row. If a row i
 | `dblogin` | sign in to **your VM's** database as you (`student_NN`), with your class password. Once per pod |
 | `mark <label> [note]` | **inject** one hash-chained row; note its `id`. Example: `mark d1-before` |
 | `load <label> [rows]` | inject a burst of rows (default 100) |
+| `marks [stage-prefix]` | **read back** your rows, oldest first: `id`, `ts`, `stage`, `payload`, the first 12 of `sha`. `marks d1-` shows only `d1-…` stages; `-h <IP>` reads another of your VMs |
 | `verify` | **read and prove** your rows: `chain_ok = t`, and the fingerprint of all marks |
 | `alive` | is your VM writing? `staleness` under 10 s = yes |
 | `sql [psql options]` | `psql` to your VM's database, e.g. `sql -c "SELECT count(*) FROM marks"` |

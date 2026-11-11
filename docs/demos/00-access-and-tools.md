@@ -1,13 +1,13 @@
 ---
 title: "Lab 0 — Access and tools (5 minutes)"
 subtitle: "Sign in to vCenter and both OpenShift clusters · open a command line · reach the cluster and your VM's database"
-version: 1.1.1
-date: 2026-10-15
+version: 1.1.2
+date: 2026-11-10
 ---
 
 # Lab 0: Access and tools
 
-> **Version 1.1.1 · draft · 2026-10-15** · class/demos/00-access-and-tools.md
+> **Version 1.1.2 · draft · 2026-11-10** · class/demos/00-access-and-tools.md
 
 **About 5 minutes.** You sign in to the lab in your browser, open a command line, and prove you can reach the cluster
 and your own VM's database. One recording covers the whole lab: watch it, then do the same with the steps below.
@@ -129,7 +129,7 @@ terminal (`sql-client`).
 3. **Read back** every row you have posted, oldest first:
 
     ```bash
-    oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+    oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101
     ```
 
 4. **Prove** them: no row lost, changed or reordered (one summary line, `chain_ok = t`):

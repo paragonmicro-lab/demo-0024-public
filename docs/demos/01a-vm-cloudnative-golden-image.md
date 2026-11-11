@@ -1,13 +1,13 @@
 ---
 title: "Demo 1a — A cloud-native golden image: a new Linux database server, built from code"
 subtitle: "Red Hat's CentOS Stream 10 boot source · the customer's Template and cloud-init · deploy in the console or with one command · inject into the new PostgreSQL"
-version: 2.6.2
-date: 2026-10-20
+version: 2.6.3
+date: 2026-11-10
 ---
 
 # Demo 1a: a cloud-native golden image
 
-> **Version 2.6.2 · draft · 2026-10-20** · class/demos/01a-vm-cloudnative-golden-image.md
+> **Version 2.6.3 · draft · 2026-11-10** · class/demos/01a-vm-cloudnative-golden-image.md
 
 ## What you will learn
 
@@ -399,7 +399,7 @@ was restarted: run this again.
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cloudnative-started', 'Demo 1a: CentOS Stream 10 from the Template');"
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_load('student-01-0024-012', 'cloudnative-load', 100);"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.151
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.151 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 

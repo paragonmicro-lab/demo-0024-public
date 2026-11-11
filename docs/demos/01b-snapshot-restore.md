@@ -1,13 +1,13 @@
 ---
 title: "Demo 1b — Snapshot, destroy the database, restore from the snapshot"
 subtitle: "Snapshot your cloud-native server · destroy its database · restore only the database's disks while it runs · then the whole VM · read back the recovery point"
-version: 3.0.0
-date: 2026-10-20
+version: 3.0.1
+date: 2026-11-10
 ---
 
 # Demo 1b: snapshot and restore
 
-> **Version 3.0.0 · draft · 2026-10-20** · class/demos/01b-snapshot-restore.md
+> **Version 3.0.1 · draft · 2026-11-10** · class/demos/01b-snapshot-restore.md
 
 ## What you will learn
 
@@ -107,7 +107,7 @@ oc exec -it -n $CLASS_ID deploy/sql-client -- env PGHOST=$IP dblogin
 
 ```bash
 oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT * FROM ovedr_mark('$CLASS_ID', '1b-started', 'snapshot task starting');"
-oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n $CLASS_ID deploy/sql-client -- marks -h $IP
 ```
 
 ✅ Your newest row is `1b-started` · `snapshot task starting`: the row the snapshot must keep.
@@ -152,7 +152,7 @@ it back:
 
 ```bash
 oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT * FROM ovedr_mark('$CLASS_ID', 'after-snapshot', 'all your data is destroyed 😈 mwahaha');"
-oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n $CLASS_ID deploy/sql-client -- marks -h $IP
 ```
 
 Then make it true. You own this server, so you do the damage yourself, over SSH from the Web Terminal (or in the
@@ -160,7 +160,7 @@ VM's **Console** tab, logged in as `student-NN`, with only the part in quotes):
 
 ```bash
 ssh -o StrictHostKeyChecking=accept-new student-$NN@$IP 'sudo -u postgres psql -X -c "DROP DATABASE bcdr WITH (FORCE);"'
-oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n $CLASS_ID deploy/sql-client -- marks -h $IP
 ```
 
 ✅ `DROP DATABASE`, then `FATAL: database "bcdr" does not exist`. That is the disaster.
@@ -234,7 +234,7 @@ beside the damaged `vdc` (`bad-pgdata`) and `vdd` (`bad-pgwal`). Then `/dev/sda 
 **f) Read back:**
 
 ```bash
-oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n $CLASS_ID deploy/sql-client -- marks -h $IP
 oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT * FROM ovedr_mark('$CLASS_ID', 'snapshot-restored', 'data and WAL disks back from the snapshot, the OS never stopped');"
 oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT * FROM ovedr_verify('$CLASS_ID');"
 ```
@@ -277,7 +277,7 @@ until oc -n $CLASS_ID exec deploy/sql-client -- pg_isready -q -h $IP 2>/dev/null
 ### 1b.8 Read back, and tidy up
 
 ```bash
-oc exec -n $CLASS_ID deploy/sql-client -- sql -h $IP -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n $CLASS_ID deploy/sql-client -- marks -h $IP
 ssh student-$NN@$IP 'lsblk -o NAME,SIZE,SERIAL,LABEL,MOUNTPOINT'
 ```
 
@@ -314,7 +314,7 @@ snapshot's data and WAL disks while the VM keeps running. `powershell` blocks ru
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101   # read back: your rows so far, oldest first
 ```
 
 **Console:** **Virtualization → VirtualMachines → `win-pg-s01` → Snapshots → Take snapshot**, name it
@@ -338,7 +338,7 @@ Now write a row **after** the snapshot. It exists only in the live database, so 
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'after-snapshot', 'this row must NOT come back');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101   # read back: your rows so far, oldest first
 ```
 
 ---
@@ -364,7 +364,7 @@ oc -n ovedr-app exec -i deploy/sql-client -- psql -h 10.101.23.101 -U bcdr -d po
 Confirm the damage:
 
 ```bash
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101
 ```
 
 ✅ `FATAL: database "bcdr" does not exist`. That is the disaster.
@@ -472,7 +472,7 @@ copy online while the originals are offline gives it a new signature. That is ex
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'snapshot-restored', 'database back from the snapshot');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 

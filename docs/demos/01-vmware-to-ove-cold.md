@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.7.0
-date: 2026-10-26
+version: 1.7.1
+date: 2026-11-10
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.7.0 · draft · 2026-10-26** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.7.1 · draft · 2026-11-10** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -64,7 +64,7 @@ Then write your first row, and read your rows back:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'demo-started', 'Demo 1: cold migration');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101   # read back: your rows so far, oldest first
 ```
 
 ✅ The first command prints the row it wrote, stage `demo-started`. The read-back lists every row you have written so
@@ -128,7 +128,7 @@ Your database lives **inside** the VM, so write the "start" row **before** you s
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cold-migration', 'on vSphere');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"   # read back: your rows so far, oldest first
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101   # read back: your rows so far, oldest first
 ```
 
 **vCenter:** **VMs and Templates → datacenter01 → vms → students → `student-01-0024-012` → `win-pg-s01`** →
@@ -417,7 +417,7 @@ Give Windows a minute to start PostgreSQL, then:
 
 ```bash
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_mark('student-01-0024-012', 'cold-migration-complete', 'on OpenShift site A');"
-oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT id, ts, stage, payload FROM marks ORDER BY id;"
+oc exec -n student-01-0024-012 deploy/sql-client -- marks -h 10.101.23.101
 oc exec -n student-01-0024-012 deploy/sql-client -- sql -h 10.101.23.101 -c "SELECT * FROM ovedr_verify('student-01-0024-012');"
 ```
 
