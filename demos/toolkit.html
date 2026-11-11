@@ -1322,6 +1322,10 @@ namespace, and are <strong>cluster-admin</strong> on both clusters, so they can 
 <td>inject a burst of rows (default 100)</td>
 </tr>
 <tr>
+<td><code>marks [stage-prefix]</code></td>
+<td><strong>read back</strong> your rows, oldest first: <code>id</code>, <code>ts</code>, <code>stage</code>, <code>payload</code>, the first 12 of <code>sha</code>. <code>marks d1-</code> shows only <code>d1-…</code> stages; <code>-h &lt;IP&gt;</code> reads another of your VMs</td>
+</tr>
+<tr>
 <td><code>verify</code></td>
 <td><strong>read and prove</strong> your rows: <code>chain_ok = t</code>, and the fingerprint of all marks</td>
 </tr>

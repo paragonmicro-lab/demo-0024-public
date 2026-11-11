@@ -1207,7 +1207,7 @@
 
 <h1 id="demo-1b-snapshot-and-restore">Demo 1b: snapshot and restore<a class="headerlink" href="#demo-1b-snapshot-and-restore" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 3.0.0 · draft · 2026-10-20</strong> · class/demos/01b-snapshot-restore.md</p>
+<p><strong>Version 3.0.1 · draft · 2026-11-10</strong> · class/demos/01b-snapshot-restore.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You take <strong>one</strong> snapshot of your running server, destroy its database for real, and bring the data back from that
@@ -1298,7 +1298,7 @@ password works too. Your other work is untouched: your Windows VM and the Demo 1
 </code></pre></div>
 <p><strong>4. Mark the start</strong>, and read it back:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('</span><span class="nv">$CLASS_ID</span><span class="s2">', '1b-started', 'snapshot task starting');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <p>✅ Your newest row is <code>1b-started</code> · <code>snapshot task starting</code>: the row the snapshot must keep.</p>
 <hr />
@@ -1331,12 +1331,12 @@ and take the snapshot again:
 <p>Write a row <strong>after</strong> the snapshot, and read it back. It exists only in the live database, so no restore can bring
 it back:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('</span><span class="nv">$CLASS_ID</span><span class="s2">', 'after-snapshot', 'all your data is destroyed 😈 mwahaha');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <p>Then make it true. You own this server, so you do the damage yourself, over SSH from the Web Terminal (or in the
 VM's <strong>Console</strong> tab, logged in as <code>student-NN</code>, with only the part in quotes):</p>
 <div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>-o<span class="w"> </span><span class="nv">StrictHostKeyChecking</span><span class="o">=</span>accept-new<span class="w"> </span>student-<span class="nv">$NN</span>@<span class="nv">$IP</span><span class="w"> </span><span class="s1">'sudo -u postgres psql -X -c "DROP DATABASE bcdr WITH (FORCE);"'</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <p>✅ <code>DROP DATABASE</code>, then <code>FATAL: database "bcdr" does not exist</code>. That is the disaster.</p>
 <h3 id="1b3-stop-postgresql-and-take-the-damaged-disks-out-of-use">1b.3 Stop PostgreSQL, and take the damaged disks out of use<a class="headerlink" href="#1b3-stop-postgresql-and-take-the-damaged-disks-out-of-use" title="Permanent link">&para;</a></h3>
@@ -1386,7 +1386,7 @@ beside the damaged <code>vdc</code> (<code>bad-pgdata</code>) and <code>vdd</cod
 <code>/dev/sdb /var/lib/pgsql/wal</code>, and <code>active</code>, <code>active</code>.</p>
 <h3 id="1b6-read-back-what-came-back">1b.6 Read back what came back<a class="headerlink" href="#1b6-read-back-what-came-back" title="Permanent link">&para;</a></h3>
 <p><strong>f) Read back:</strong></p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('</span><span class="nv">$CLASS_ID</span><span class="s2">', 'snapshot-restored', 'data and WAL disks back from the snapshot, the OS never stopped');"</span>
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('</span><span class="nv">$CLASS_ID</span><span class="s2">');"</span>
 </code></pre></div>
@@ -1417,7 +1417,7 @@ virtctl<span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS
 </code></pre></div>
 <p>✅ About a minute and a half from stop to <code>✅ pg-sNN-centos10 is back</code>.</p>
 <h3 id="1b8-read-back-and-tidy-up">1b.8 Read back, and tidy up<a class="headerlink" href="#1b8-read-back-and-tidy-up" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$CLASS_ID</span><span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span>
 ssh<span class="w"> </span>student-<span class="nv">$NN</span>@<span class="nv">$IP</span><span class="w"> </span><span class="s1">'lsblk -o NAME,SIZE,SERIAL,LABEL,MOUNTPOINT'</span>
 </code></pre></div>
 <p>✅ The read-back ends at <strong><code>1b-started</code></strong> again: Part 1's <code>snapshot-restored</code> row is gone too, because it was
@@ -1443,7 +1443,7 @@ freezes all disks at the same instant, so its <code>D:</code> and <code>L:</code
 </blockquote>
 <h3 id="1bw1-inject-then-snapshot">1b.W1 Inject, then snapshot<a class="headerlink" href="#1bw1-inject-then-snapshot" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'before-snapshot', 'this row must come back');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p><strong>Console:</strong> <strong>Virtualization → VirtualMachines → <code>win-pg-s01</code> → Snapshots → Take snapshot</strong>, name it
 <code>win-pg-s01-snap</code>. Or from the Web Terminal:</p>
@@ -1460,7 +1460,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span cla
 together.</p>
 <p>Now write a row <strong>after</strong> the snapshot. It exists only in the live database, so the restore must lose it:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'after-snapshot', 'this row must NOT come back');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
 <h3 id="1bw2-destroy-the-database">1b.W2 Destroy the database<a class="headerlink" href="#1bw2-destroy-the-database" title="Permanent link">&para;</a></h3>
@@ -1475,7 +1475,7 @@ instructor</strong> to run this with <strong>your</strong> VM's address:</p>
 oc<span class="w"> </span>-n<span class="w"> </span>ovedr-app<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>psql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-U<span class="w"> </span>bcdr<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>-c<span class="w"> </span><span class="s1">'DROP DATABASE bcdr WITH (FORCE);'</span>
 </code></pre></div>
 <p>Confirm the damage:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101
 </code></pre></div>
 <p>✅ <code>FATAL: database "bcdr" does not exist</code>. That is the disaster.</p>
 <hr />
@@ -1550,7 +1550,7 @@ copy online while the originals are offline gives it a new signature. That is ex
 <hr />
 <h3 id="1bw6-inject-and-read-back-what-came-back">1b.W6 Inject, and read back what came back<a class="headerlink" href="#1bw6-inject-and-read-back-what-came-back" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'snapshot-restored', 'database back from the snapshot');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
 </code></pre></div>
 <p>✅ The database exists again and <code>chain_ok = t</code>. The read-back runs <code>start-class</code> … <code>cold-migration-complete</code>,

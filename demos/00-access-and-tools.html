@@ -949,7 +949,7 @@
 
 <h1 id="lab-0-access-and-tools">Lab 0: Access and tools<a class="headerlink" href="#lab-0-access-and-tools" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.1.1 · draft · 2026-10-15</strong> · class/demos/00-access-and-tools.md</p>
+<p><strong>Version 1.1.2 · draft · 2026-11-10</strong> · class/demos/00-access-and-tools.md</p>
 </blockquote>
 <p><strong>About 5 minutes.</strong> You sign in to the lab in your browser, open a command line, and prove you can reach the cluster
 and your own VM's database. One recording covers the whole lab: watch it, then do the same with the steps below.</p>
@@ -1110,7 +1110,7 @@ terminal (<code>sql-client</code>).</p>
 </li>
 <li>
 <p><strong>Read back</strong> every row you have posted, oldest first:</p>
-<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+<div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.101
 </code></pre></div>
 </li>
 <li>

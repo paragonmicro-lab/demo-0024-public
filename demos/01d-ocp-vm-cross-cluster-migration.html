@@ -973,7 +973,7 @@
 
 <h1 id="demo-1d-cross-cluster-migration-site-a-to-site-b-bcdr-class">Demo 1d: cross-cluster migration, site A to site B (BCDR class)<a class="headerlink" href="#demo-1d-cross-cluster-migration-site-a-to-site-b-bcdr-class" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 2.0.1 · draft · 2026-10-19</strong> · class/demos/01d-ocp-vm-cross-cluster-migration.md</p>
+<p><strong>Version 2.0.2 · draft · 2026-11-10</strong> · class/demos/01d-ocp-vm-cross-cluster-migration.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Your cloud-native server <code>pg-s01-centos10</code> (<a href="01a-vm-cloudnative-golden-image.html">Demo 1a</a>) runs on <strong>site A</strong>. Now you
@@ -1031,7 +1031,7 @@ run in each console's <strong>Web Terminal</strong> (<code>&gt;_</code>); each s
 <hr />
 <h2 id="1d0-inject-the-demo-has-started-site-a">1d.0 Inject: the demo has started (site A)<a class="headerlink" href="#1d0-inject-the-demo-has-started-site-a" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-started', 'Demo 1d: running on site A');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <hr />
 <h2 id="1d1-acm-the-two-clusters-linked-site-b">1d.1 ACM: the two clusters, linked (site B)<a class="headerlink" href="#1d1-acm-the-two-clusters-linked-site-b" title="Permanent link">&para;</a></h2>
@@ -1076,7 +1076,7 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 <h2 id="1d3-inject-then-stop-your-vm-site-a">1d.3 Inject, then stop your VM (site A)<a class="headerlink" href="#1d3-inject-then-stop-your-vm-site-a" title="Permanent link">&para;</a></h2>
 <p>Write the "start" row <strong>before</strong> the VM stops, while its database still answers:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'start-cross-cluster-migration', 'last row on site A');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span><span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w">   </span><span class="c1"># read back: your rows so far, oldest first</span>
 </code></pre></div>
 <p><strong>Console (site A):</strong> <strong>Virtualization → VirtualMachines → <code>pg-s01-centos10</code> → Actions → Stop</strong>.</p>
 <p>✅ The VM shows <strong>Stopped</strong>.</p>
@@ -1229,7 +1229,7 @@ and start it on site A (rows written on B are not on A): that is what you do in 
 </code></pre></div>
 <p>Give the server a minute to start PostgreSQL (Windows: a few minutes), then:</p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_mark('student-01-0024-012', 'cross-cluster-migration-complete', 'running on site B, disks on NFS');"</span>
-oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT id, ts, stage, payload FROM marks ORDER BY id;"</span>
+oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>marks<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151
 oc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>student-01-0024-012<span class="w"> </span>deploy/sql-client<span class="w"> </span>--<span class="w"> </span>sql<span class="w"> </span>-h<span class="w"> </span><span class="m">10</span>.101.23.151<span class="w"> </span>-c<span class="w"> </span><span class="s2">"SELECT * FROM ovedr_verify('student-01-0024-012');"</span>
 </code></pre></div>
 <p>✅ Every row your server held is there (Demos 1a – 1c), then <code>cross-cluster-started</code>, <code>start-cross-cluster-migration</code>
