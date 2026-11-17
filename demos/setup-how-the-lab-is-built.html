@@ -1815,7 +1815,7 @@ oc<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><sp
   <code>auto-import-secret</code> (site A's kubeconfig; ACM deletes it after use) and waits for <strong>Available</strong>. ⚠ demo-openshift
   now installs ACM on <strong>both</strong> clusters. A cluster that is itself a hub cannot simply be imported into another hub, so CI
   <strong>skips</strong> the import and the readiness table says so (BL-D11, an open decision).
-- A <strong>per-demo readiness table</strong> in the run summary: which demos this booking can run (for example, Demo 2 needs a SAN array with copy offload).</p>
+- A <strong>per-demo readiness table</strong> in the run summary: one row per demo, measured on the live clusters, and any ⛔ fails the build. It includes a <strong>Capacity</strong> row per site: room on the workers' memory for every class VM (1 + students, 4 GiB each) and the Demo 1a test VM, counted node by node because a VM can't span nodes.</p>
 <p><strong>Check:</strong></p>
 <div class="highlight"><pre><span></span><code>oc<span class="w"> </span>--context<span class="w"> </span>site-a<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"> </span>get<span class="w"> </span>forkliftcontroller<span class="w"> </span>forklift-controller<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.spec}{"\n"}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
 oc<span class="w"> </span>--context<span class="w"> </span>site-b<span class="w"> </span>get<span class="w"> </span>managedclusters<span class="w">                       </span><span class="c1"># local-cluster, and site A if imported</span>
