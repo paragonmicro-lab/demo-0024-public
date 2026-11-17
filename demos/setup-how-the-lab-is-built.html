@@ -1275,7 +1275,7 @@ ask you to do the <strong>last step</strong> yourself (start your migration). Th
 </tr>
 <tr>
 <td><strong>demo-openshift</strong> (core-web dispatches it, twice)</td>
-<td>OpenShift 4.22 (the booking's <code>ocp_version</code>: <code>latest</code>; <code>previous</code> = 4.21, the same on both sites), OpenShift Virtualization (<code>ove: cnv</code>), ACM and cert-manager, NMState bridges + NADs per VLAN, <code>nfs-csi</code> storage; <strong>ODF on site A only</strong></td>
+<td>One tested <strong>stack</strong> of OpenShift + every operator, the same on both sites: the booking's <code>ocp_version</code> picks it by id (default <code>4.22-3</code> = OpenShift 4.22.22; <code>latest</code> = the newest validated stack; only validated stacks are offered). OpenShift Virtualization with MTV (<code>ove: cnv-mtv</code>, at the default <code>migration_tools: both</code>), ACM and cert-manager, NMState bridges + NADs per VLAN, <code>nfs-csi</code> storage, and <strong>ODF on both sites</strong> at the default <code>storage: odf</code></td>
 <td>site A <code>&lt;A&gt;</code> and site B <code>&lt;B&gt;</code></td>
 </tr>
 <tr>
