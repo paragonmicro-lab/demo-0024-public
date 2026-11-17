@@ -619,7 +619,7 @@ oc -n "$NS" set env deployment/toolbox PGHOST=<VM address> PGUSER=<login> PGDATA
   `auto-import-secret` (site A's kubeconfig; ACM deletes it after use) and waits for **Available**. ⚠ demo-openshift
   now installs ACM on **both** clusters. A cluster that is itself a hub cannot simply be imported into another hub, so CI
   **skips** the import and the readiness table says so (BL-D11, an open decision).
-- A **per-demo readiness table** in the run summary: which demos this booking can run (for example, Demo 2 needs a SAN array with copy offload).
+- A **per-demo readiness table** in the run summary: one row per demo, measured on the live clusters, and any ⛔ fails the build. It includes a **Capacity** row per site: room on the workers' memory for every class VM (1 + students, 4 GiB each) and the Demo 1a test VM, counted node by node because a VM can't span nodes.
 
 **Check:**
 
