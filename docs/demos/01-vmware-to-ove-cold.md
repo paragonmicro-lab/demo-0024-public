@@ -1,13 +1,13 @@
 ---
 title: "Demo 1 — VMware to OpenShift Virtualization: cold migration"
 subtitle: "Inject · check your plan and the vCenter link · shut down · migrate · review on OpenShift · inject and read back"
-version: 1.7.1
-date: 2026-11-10
+version: 1.7.2
+date: 2026-11-21
 ---
 
 # Demo 1: VMware to OpenShift Virtualization (cold migration)
 
-> **Version 1.7.1 · draft · 2026-11-10** · class/demos/01-vmware-to-ove-cold.md
+> **Version 1.7.2 · draft · 2026-11-21** · class/demos/01-vmware-to-ove-cold.md
 
 ## What you will learn
 
@@ -466,7 +466,7 @@ second run changes nothing. In order:
 |---|---|---|
 | `mtv-install` | Ansible role `mtv_operator` | checks MTV (installed by the OpenShift build, option `ove: cnv-mtv`), sets the pre-copy interval, grants students the right to create plans and migrations |
 | `mtv-fabric` | `automation/customize/mtv_fabric.sh` | the link to vCenter (a Secret + a **Provider**), and the **NetworkMap**s and **StorageMap** |
-| `stage` | `automation/customize/stage.sh` | one **Plan** per class VM, `d1-<vm>` (cold) and `d2-<vm>` (warm), **not started** |
+| `stage` | `automation/customize/stage.sh` | one cold **Plan** per class VM, `d1-<vm>`, **not started** (no warm plans: cold only, Demo 2 is coming soon) |
 | `migration-test` | `automation/test/migrate_both.sh` | the proof: a test clone migrates from vSphere to each site with the same Plan + Migration you used, and its data is checked (action `test-migration`) |
 
 The chain MTV follows, and each object as the lab declares it (the Secret's password never appears in the code: CI

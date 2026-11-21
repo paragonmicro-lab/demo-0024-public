@@ -1,13 +1,13 @@
 ---
 title: "Demo 4 — ODF Regional-DR: async replication, failover and clean failback"
 subtitle: "Replicate every 15 minutes · prove a sync completed · snapshot · fail over · reverse · come home · bonus: a hostile link break"
-version: 0.6.3
-date: 2026-10-15
+version: 0.6.4
+date: 2026-11-21
 ---
 
 # Demo 4: ODF Regional-DR
 
-> **Version 0.6.3 · draft · 2026-10-19** · class/demos/04-odf-regional-dr.md
+> **Version 0.6.4 · draft · 2026-11-21** · class/demos/04-odf-regional-dr.md
 
 ## What you will learn
 
@@ -42,7 +42,7 @@ console steps behind the shared pieces.
 ### Two identical sites, and the one step CI runs across both
 
 CI's customization builds **site A and site B the same**, each site on its own: migration tools, the vSphere provider
-and maps, the staged plans `d1-<vm>` / `d2-<vm>`, your namespace and `sql-client`, the VLAN bridges. That's why
+and maps, the staged cold plans `d1-<vm>`, your namespace and `sql-client`, the VLAN bridges. That's why
 your instructor can move a Demo 1 migration to site B when site A has a problem.
 
 The **ODF DR clustering is the one workflow that can't run on each site in parallel**, because it joins the two:
