@@ -1249,7 +1249,7 @@
 
 <h1 id="lab-s-how-this-lab-was-built">Lab S: How this lab was built<a class="headerlink" href="#lab-s-how-this-lab-was-built" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.8.0 · draft · 2026-10-18</strong> · class/demos/setup-how-the-lab-is-built.md</p>
+<p><strong>Version 0.8.1 · draft · 2026-11-21</strong> · class/demos/setup-how-the-lab-is-built.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>Before your class started, a CI pipeline built three environments and then customized them: operators, networks,
@@ -1901,17 +1901,14 @@ govc<span class="w"> </span>object.mv<span class="w"> </span><span class="s2">"<
 <td><strong><code>d1-&lt;vm&gt;</code></strong></td>
 <td>vSphere → that site, cold (Demo 1)</td>
 </tr>
-<tr>
-<td>site A and site B</td>
-<td><strong><code>d2-&lt;vm&gt;</code></strong></td>
-<td>vSphere → that site, <strong>warm</strong> (Demo 2): lands as <code>&lt;vm&gt;-warm</code>. It waits on Changed Block Tracking, which the student enables in Demo 2 (staged and reported, never blocking)</td>
-</tr>
 </tbody>
 </table>
 <p>Each plan targets <strong>its VM's owner's namespace</strong>: a student's VM lands in that student's own namespace (their class ID,
 <code>$VMNS</code>), the instructor's <code>win-pg-i01</code> in <code>ovedr-app</code>. It uses the <strong>bridge</strong> network map when it exists (your VM keeps its own address), plus the
 site's storage map. CI waits until every plan is <strong>Ready</strong>: MTV found the VM and the maps validate. <strong>No plan is started.</strong>
-That is the one step left to you (Demo 1, Demo 2). Both sites are staged the same (since 2026-10-16), but <strong>the demos
+That is the one step left to you (Demo 1). <strong>No warm plan is staged</strong> (cold only, lab admin 2026-11-15: warm needs
+VDDK, which the lab doesn't have; Demo 2 is coming soon). A <code>d2-&lt;vm&gt;</code> plan left by an older run is deleted unless it
+has started. Both sites are staged the same (since 2026-10-16), but <strong>the demos
 start site A's plan only</strong>: both sites share the VM's VLAN, so starting a plan on both would bring up two copies of
 your VM at one address. Your VM reaches site B from site A in Demo 1d, with a plan you build. Each demo's own addendum shows its objects as code. A plan that has started is never touched again.</p>
 <p><strong>Check:</strong></p>
@@ -2496,8 +2493,8 @@ oc<span class="w"> </span>-n<span class="w"> </span>openshift-mtv<span class="w"
 </li>
 </ol>
 <p>So nothing is redistributed, the licensed file leaves the lab's private storage only into the lab's own clusters, and a
-booking never waits on a download. If no saved image exists yet, the <code>vddk</code> job warns, Demo 2 shows <strong>blocked</strong> and
-the warm plans show <code>VDDKInitImageUnavailable</code> (Demo 2 §2.5); the cold class runs as normal.</p>
+booking never waits on a download. If no saved image exists yet, the <code>vddk</code> job warns and Demo 2 shows <strong>blocked</strong>; the
+cold class runs as normal. (This lab has no saved image and stages no warm plans: cold only, 2026-11-15.)</p>
 <p><strong>Where Broadcom keeps it:</strong> VDDK moved to Broadcom's developer portal
 (<a href="https://developer.broadcom.com/sdks/vmware-virtual-disk-development-kit-vddk/latest">developer.broadcom.com → SDKs → VMware Virtual Disk Development Kit</a>),
 behind a Broadcom sign-in. Older VMware download links no longer work. Use a VDDK version your vSphere release and your

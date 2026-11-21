@@ -1507,7 +1507,7 @@
 
 <h1 id="demo-4-odf-regional-dr">Demo 4: ODF Regional-DR<a class="headerlink" href="#demo-4-odf-regional-dr" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 0.6.3 · draft · 2026-10-19</strong> · class/demos/04-odf-regional-dr.md</p>
+<p><strong>Version 0.6.4 · draft · 2026-11-21</strong> · class/demos/04-odf-regional-dr.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You will protect running virtual machines with OpenShift Data Foundation (ODF) Regional-DR, which replicates their
@@ -1592,7 +1592,7 @@ console steps behind the shared pieces.</p>
 </table>
 <h3 id="two-identical-sites-and-the-one-step-ci-runs-across-both">Two identical sites, and the one step CI runs across both<a class="headerlink" href="#two-identical-sites-and-the-one-step-ci-runs-across-both" title="Permanent link">&para;</a></h3>
 <p>CI's customization builds <strong>site A and site B the same</strong>, each site on its own: migration tools, the vSphere provider
-and maps, the staged plans <code>d1-&lt;vm&gt;</code> / <code>d2-&lt;vm&gt;</code>, your namespace and <code>sql-client</code>, the VLAN bridges. That's why
+and maps, the staged cold plans <code>d1-&lt;vm&gt;</code>, your namespace and <code>sql-client</code>, the VLAN bridges. That's why
 your instructor can move a Demo 1 migration to site B when site A has a problem.</p>
 <p>The <strong>ODF DR clustering is the one workflow that can't run on each site in parallel</strong>, because it joins the two:
 <code>demo-prep</code> imports site A into site B's ACM hub, then <code>dr-fabric</code> turns on the object gateway (MCG) on both sites,

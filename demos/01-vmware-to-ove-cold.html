@@ -991,7 +991,7 @@
 
 <h1 id="demo-1-vmware-to-openshift-virtualization-cold-migration">Demo 1: VMware to OpenShift Virtualization (cold migration)<a class="headerlink" href="#demo-1-vmware-to-openshift-virtualization-cold-migration" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p><strong>Version 1.7.1 · draft · 2026-11-10</strong> · class/demos/01-vmware-to-ove-cold.md</p>
+<p><strong>Version 1.7.2 · draft · 2026-11-21</strong> · class/demos/01-vmware-to-ove-cold.md</p>
 </blockquote>
 <h2 id="what-you-will-learn">What you will learn<a class="headerlink" href="#what-you-will-learn" title="Permanent link">&para;</a></h2>
 <p>You move your own Windows Server + PostgreSQL VM off VMware vSphere and onto OpenShift Virtualization with the
@@ -1526,7 +1526,7 @@ second run changes nothing. In order:</p>
 <tr>
 <td><code>stage</code></td>
 <td><code>automation/customize/stage.sh</code></td>
-<td>one <strong>Plan</strong> per class VM, <code>d1-&lt;vm&gt;</code> (cold) and <code>d2-&lt;vm&gt;</code> (warm), <strong>not started</strong></td>
+<td>one cold <strong>Plan</strong> per class VM, <code>d1-&lt;vm&gt;</code>, <strong>not started</strong> (no warm plans: cold only, Demo 2 is coming soon)</td>
 </tr>
 <tr>
 <td><code>migration-test</code></td>
